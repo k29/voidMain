@@ -22,6 +22,7 @@ then read data by using GCData, and putting mutex locks while doing so.
 #include "../common/common.h"
 #include <pthread.h>
 #include <string.h>
+#include <unistd.h>
 #include "RoboCupGameControlData.h" 
 //RoboCupGameControlData GCData; pranet: shifted to common.h as global
 
