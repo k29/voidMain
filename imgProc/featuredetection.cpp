@@ -1,3 +1,4 @@
+//this is a line i am adding..kaustubh form my hp pavilion
 #include "featuredetection.h"
 //NOTE: THIS FILE ASSUMES IN SEVERAL PLACES THAT rgbimg_small IS HALF THE SIZE OF rgbimg!!!!!!!!!!!!!!!!!!!
 //1. Someplace in ballFind, i have multiplied ballX_var by 2 assuming main image is double the size of image used here
