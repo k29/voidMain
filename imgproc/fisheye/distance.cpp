@@ -115,31 +115,18 @@ int exitCam(HIDS hCam)
 
 void getLinearCoords(int xd, int yd, int* xu, int* yu)
 {
-	double ax = -7e-06;
-//	double id,jd,iu,ju;
-	
-	// id = (double)xd - WIDTHd/2;
-	// jd = (double)-yd + HEIGHTd/2;
-	// double r2 = id*id + jd*jd;
-
-	// iu = id/(1+ax*r2);
-	// ju = jd/(1+ax*r2);
-
- // 	*xu = iu + WIDTHu/2;
- // 	*yu = -ju + HEIGHTu/2;
-
+	double ax = 8.1e-06;
 	double r2 = xd*xd +yd*yd;
 	*xu = xd/(1+ax*r2);
 	*yu = yd/(1+ax*r2);
 }
 
-Point3D getPt(int x, int y)
+float by = 180/480, bx=180/480;
+void getPt(int x, int y)
 {
-	double a = 5*0.04; 
-	Point3D p;
-	//p.z = camHeight/y*a;
-	//p.y = 67.5;	//cm
-	return p; 
+	//double a = 5*0.04; 
+	int dep = y * by;
+	int wid = x * bx;
 }
 
 int main()
@@ -180,7 +167,7 @@ int main()
 				
 			cvCvtColor(frame,img_hsv,CV_BGR2HSV);
 			//Thresholding the frame for yellow
-			cvInRangeS(img_hsv, cvScalar(20, 100, 20), cvScalar(30, 255, 255), threshy);
+			cvInRangeS(img_hsv, cvScalar(10, 100, 0), cvScalar(30, 200, 255), threshy);
 			//Filtering the frame
 			cvSmooth(threshy,threshy,CV_MEDIAN,7,7);
 			//Finding the blobs
@@ -219,6 +206,14 @@ int main()
 
 			//Escape Sequence
 			char c=cvWaitKey(5);
+			if(c=='a')
+				by++;
+			if(c=='z')
+				by--;
+			if(c=='s')
+				bx++;
+			if(c=='x')
+				bx--;
 			if(c==27)
 				break;
 		}
