@@ -1,0 +1,5 @@
+all: path.o path.hpp path.cpp graph.hpp walkthread.cpp
+	g++ path.o walkthread.cpp -o pathfile `pkg-config --libs opencv`
+path.o: path.cpp path.hpp graph.hpp
+	g++ -c path.cpp
+
