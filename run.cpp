@@ -23,9 +23,9 @@ PathPacket pathpackvar;
 int main(void)
 {	
 	
-	/*Create walkthread */
+	// Create walkthread 
 	
-	//pthread_create (&thread_id_walk, NULL, walk_thread, NULL);
+	pthread_create (&thread_id_walk, NULL, walk_thread, NULL);
 	
     //pthread_create (&thread_id_gc, NULL, readGameController, NULL);
 	
