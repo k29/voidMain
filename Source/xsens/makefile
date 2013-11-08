@@ -6,18 +6,20 @@ all: ../Build/imu.a
 	@ar rc $@ ../Build/imu.o ../Build/totalxsens.o
 	@ranlib $@ 
 
-../Build/imu.o:	imu.o
+../Build/imu.o:	imu.cpp imu.h
 	@echo $@
-	cp imu.o $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c imu.cpp -o $@
+
+
 ../Build/totalxsens.o: totalxsens.o
 	@echo $@
 	cp totalxsens.o $@
 
-
+imu.o: imu.cpp imu.h totalxsens.o
+	g++ -c imu.cpp
 all1: imu.o test main
 test: test.cpp imu.o
 	g++ test.cpp totalxsens.o imu.o -o test -lrt
-imu.o: imu.cpp imu.h totalxsens.o
-	g++ -c imu.cpp
 main: main.cpp imu.o
 	g++ main.cpp totalxsens.o imu.o -o main -lrt
