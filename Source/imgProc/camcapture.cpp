@@ -1,5 +1,5 @@
 #include "camcapture.h"
-using namespace std;
+using namespace std; //
     HIDS hCam;
 //pass true as parameter to load luts, false to skip loading luts
 CamCapture::CamCapture(bool param, int percent, int percent2)
