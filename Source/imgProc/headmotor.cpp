@@ -433,3 +433,46 @@ int HeadMotor::go2state(int state)
 
 	return 0;
 }
+
+
+int get_pos(int ID)
+    {
+        byte pack[]={BEGIN,ID,LENGTH,READ,0x24,0x02,0x00};
+    int sz=sizeof(pack);
+	sendpack(pack,sz);
+    byte rpack[10000];
+
+            if(ftdi_read_data(&ftdic1_camera,rpack,10000)<0)
+                printf("GENORAI\n");
+
+
+    unsigned char CHECKSUM=0,ERROR;
+    int POS;
+    char FLAG=0;
+    int rz;
+	for(int i=0;i<10000;++i)
+	{
+            if(rpack[i]==0xFF)
+                {
+
+                        if(rpack[i+1]=0xFF && rpack[i+2]==n)
+                        {
+                        	CHECKSUM=0;
+                        	rz=rpack[i+3]+4;
+               	             ERROR=rpack[i+4];
+                            POS=rpack[i+5]+(rpack[i+6]<<8);
+                            for(int j=2;j<rz;++j)
+                                    CHECKSUM+=rpack[i+j];
+
+
+                                if(CHECKSUM==0xFF)
+                                	{FLAG=1;break;}
+
+                        }
+
+                }
+         }
+
+                if(FLAG==1) return POS;
+                else return -10;
+    }

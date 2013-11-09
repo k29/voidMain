@@ -11,6 +11,20 @@
 #include "../common/defines.h"
 //Name was changed from WRITE to WRITE_FTDI as it is a global #define.
 //Any way to make this local to headmotor class?
+
+
+#define BEGIN 0xFF,0xFF
+#define PING 0x01
+#define READ 0x02
+#define WRITE 0x03
+#define REG_WRITE 0x04
+#define RESET 0x05
+#define SYNC_WRITE 0x83
+#define BROADCAST 0xFE
+
+
+
+
 #define WRITE_FTDI ftdi_write_data(&ftdic1_camera,pack,pack[3]+4)
 #define serialusb2d_camera "A900fDpz"//"A800d2dg"//"A900fDpz"//"A7003N1d" //"A4007sgE"//"A900fDpz"//"A700eSSZ"//"A4007sgG"//"A900fDpz"//A700eSSZ"//"A4007sgG"//"A900fDhp"// "A900fDpA"//"A900fDpA"
 
@@ -57,6 +71,10 @@ public:
 	void update();
 	inline float thetaX(){ return thetaX_var;}
 	inline float thetaY(){ return thetaY_var;}
+
+	//new
+	int get_pos(int ID);
+
 };
 
 
