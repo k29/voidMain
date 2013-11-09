@@ -38,6 +38,7 @@ private:
 	void scurve(int id[],int final[], float time);
 	int swrite(float thetax, float thetay, float ttime=1.0);
 	float thetaX_var, thetaY_var;
+	int motorX_var, motorY_var;
 	int current_pos[2];
 	int goal_pos[2];
 	bool initPos;
@@ -57,6 +58,8 @@ public:
 	void update();
 	inline float thetaX(){ return thetaX_var;}
 	inline float thetaY(){ return thetaY_var;}
+	inline int motorX(){ return motorX_var;}
+	inline int motorY(){ return motorY_var;}
 };
 
 
