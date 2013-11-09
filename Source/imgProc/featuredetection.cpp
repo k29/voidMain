@@ -1,4 +1,4 @@
-#include "featuredetection.h"
+#include "featuredetection.h"//
 //NOTE: THIS FILE ASSUMES IN SEVERAL PLACES THAT rgbimg_small IS HALF THE SIZE OF rgbimg!!!!!!!!!!!!!!!!!!!
 //1. Someplace in ballFind, i have multiplied ballX_var by 2 assuming main image is double the size of image used here
 //2. in finding ballRatio, same assumption has been made

@@ -1,4 +1,4 @@
-#ifndef IMGPROC_H
+#ifndef IMGPROC_H//
 #define IMGPROC_H
 //WARNING: imgproc contains dangerous #defines, must be places after all other headers, otherwise causes errors
 #include <opencv2/opencv.hpp>

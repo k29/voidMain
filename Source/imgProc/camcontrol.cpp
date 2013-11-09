@@ -1,4 +1,4 @@
-#include "camcontrol.h"
+#include "camcontrol.h"//
 
 
 CamControl::CamControl(CamCapture &cam) : IMAGE_WIDTH(cam.width()), IMAGE_HEIGHT(cam.height()), 

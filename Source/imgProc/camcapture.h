@@ -1,5 +1,5 @@
 #ifndef CAMCAPTURE_H
-#define CAMCAPTURE_H //
+#define CAMCAPTURE_H ////
 
 #include <opencv2/opencv.hpp>
 #include "imgproc.h"

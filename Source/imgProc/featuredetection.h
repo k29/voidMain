@@ -1,5 +1,5 @@
 #ifndef FEATUREDETECTION_H
-#define FEATUREDETECTION_H
+#define FEATUREDETECTION_H//
 
 #include "camcapture.h"
 #include "../common/defines.h"

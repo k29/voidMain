@@ -1,4 +1,4 @@
-#ifndef CAMCONTROL_H
+#ifndef CAMCONTROL_H//
 #define CAMCONTROL_H
 //WARNING: imgproc contains dangerous #defines, must be places after all other headers, otherwise causes errors
 //TODO: Read HeadMotor header for TODO.

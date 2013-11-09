@@ -1,5 +1,5 @@
 #ifndef HEADMOTOR_H
-#define HEADMOTOR_H//
+#define HEADMOTOR_H////
 //IMPORTANT: implementation of this class has changed!
 //Now, only writing is done, that too only when update function is called(has to be called in loop)
 //TODO: add speed control. Right now, it is random, depends on frame rate

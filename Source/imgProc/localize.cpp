@@ -1,5 +1,5 @@
 #include "localize.h"
-
+//
 using namespace LOCALIZE_INTERNALS;
 
 //Feature detection functions are in featuredetection.h
