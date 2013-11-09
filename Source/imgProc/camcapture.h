@@ -1,12 +1,13 @@
 #ifndef CAMCAPTURE_H
-#define CAMCAPTURE_H
+#define CAMCAPTURE_H //
 
 #include <opencv2/opencv.hpp>
-#include <flycapture/FlyCapture2.h>
 #include "imgproc.h"
 #include <cstring>
+#include <cstdio>
+#include <ueye.h>
 
-//#define CAMCAPTURE_DEBUG
+// #define CAMCAPTURE_DEBUG
 /*
 HOW TO USE THIS CLASS
 1. Make object of class.
@@ -30,15 +31,11 @@ enum CamError {CAM_SUCCESS = 1, CAM_FAILURE = 0};
 class CamCapture
 {
 private:
-	bool isInit;
-	bool doLUT;
-	FlyCapture2::Error error;
-    FlyCapture2::PGRGuid guid;
-    FlyCapture2::BusManager busMgr;
-    FlyCapture2::Camera cam;
-    FlyCapture2::VideoMode vm;
-    FlyCapture2::FrameRate fr;
-    FlyCapture2::Image rawImage;
+
+    char* imgPointer;
+    int imgMemPointer;
+    bool isInit;
+    bool doLUT;
     unsigned char* lut_red;
     unsigned char* lut_yellow;
     unsigned char* lut_blue;
@@ -62,8 +59,8 @@ private:
  //   void makeinfoimg(IplImage*, unsigned char*);
 
 public:
-	IplImage* bayerimg;
-	IplImage* rgbimg;
+    IplImage* originalImg;
+    IplImage* rgbimg;
     IplImage* rgbimg_full;
     IplImage* rgbimg_small;
     IplImage* showSeg;
@@ -184,10 +181,10 @@ public:
         else
             return false;
     }
-	CamCapture(bool param = true, int percent = 100, int percent2 = 50);
-	~CamCapture();
-	CamError init();
-	CamError getImage();
+    CamCapture(bool param = true, int percent = 100, int percent2 = 50);
+    ~CamCapture();
+    CamError init();
+    CamError getImage();
     inline int width(){     return width_var;}
     inline int height(){    return height_var;}
     inline int width_full(){     return width_var_full;}

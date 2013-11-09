@@ -1,10 +1,11 @@
 #include "camcapture.h"
-
-
-
+using namespace std; //
+    HIDS hCam;
 //pass true as parameter to load luts, false to skip loading luts
 CamCapture::CamCapture(bool param, int percent, int percent2)
 {
+    hCam = 1;
+    imgPointer = NULL;
 	isInit = false;
     doLUT = param;
     small_percent = percent;
@@ -24,25 +25,16 @@ CamCapture::~CamCapture()
 	if(isInit==false)
 		return;
 
-	cvReleaseImage(&bayerimg);
+	
     cvReleaseImage(&rgbimg);
     // Stop capturing images
-    error = cam.StopCapture();
-    if (error != FlyCapture2::PGRERROR_OK)
+
+    int nRet = is_ExitCamera (hCam);
+    if(nRet != IS_SUCCESS)
     {
-        error.PrintErrorTrace();
-        return;
-    }      
-    
-    // Disconnect the camera
-    error = cam.Disconnect();
-    if (error != FlyCapture2::PGRERROR_OK)
-    {
-        error.PrintErrorTrace();
-        return;
+        printf("Could not exit camera \n");
     }
 }
-
 
 
 CamError CamCapture::init()
@@ -61,51 +53,69 @@ CamError CamCapture::init()
         }
         printf("Loaded.\n");
     }
-    
     //Initializing camera
-	error = busMgr.GetCameraFromIndex(0, &guid);
-    if (error != FlyCapture2::PGRERROR_OK)
+	
+    char* errMsg = (char*)malloc(sizeof(char)*200);
+    int err = 0;
+
+    int nRet = is_InitCamera (&hCam, NULL);
+    if (nRet != IS_SUCCESS)
     {
-        error.PrintErrorTrace();
+        is_GetError (hCam, &err, &errMsg);
+        printf("Camera Init Error %d: %s\n",err,errMsg);
         return CAM_FAILURE;
     }
 
-  	vm = FlyCapture2::VIDEOMODE_640x480Y8;
-    fr = FlyCapture2::FRAMERATE_60;
-
-    error = cam.Connect(&guid);
-    if (error != FlyCapture2::PGRERROR_OK)
+    nRet = is_SetColorMode(hCam, IS_CM_BGR8_PACKED);
+    if (nRet != IS_SUCCESS) 
     {
-        error.PrintErrorTrace();
+            is_GetError (hCam, &err, &errMsg);
+            printf("Color Mode Error %d: %s\n",err,errMsg);
+            return CAM_FAILURE;  
+    }
+
+    nRet = is_SetHardwareGain(hCam, 100, 4, 0, 13);
+    if (nRet != IS_SUCCESS) 
+    {
+            is_GetError (hCam, &err, &errMsg);
+            printf("Hardware Gain Error %d: %s\n",err,errMsg);
+            return CAM_FAILURE;
+    }
+
+    nRet = is_AllocImageMem(hCam, 752, 480, 24, &imgPointer, &imgMemPointer);
+    if(nRet != IS_SUCCESS)
+    {
+        is_GetError (hCam, &err, &errMsg);
+        printf("MemAlloc Unsuccessful %d: %s\n",err,errMsg);
         return CAM_FAILURE;
     }
-    
-    cam.SetVideoModeAndFrameRate(vm, fr);
-    //Starting the capture
-    
-    error = cam.StartCapture();
-    printf("lol\n");
-    if (error != FlyCapture2::PGRERROR_OK)
+
+    nRet = is_SetImageMem (hCam, imgPointer, imgMemPointer);
+    if(nRet != IS_SUCCESS)
     {
-        error.PrintErrorTrace();
-       	return CAM_FAILURE;
+        is_GetError (hCam, &err, &errMsg);
+        printf("Could not set/activate image memory %d: %s\n",err, errMsg);
+        return CAM_FAILURE;
     }
 
-    cam.RetrieveBuffer(&rawImage);
-    // Size variables cannot dynamically changed. Must be defined in constructor
-    // width_var_full = rawImage.GetCols();
-    // height_var_full = rawImage.GetRows();
-    bayerimg = cvCreateImage(cvSize(rawImage.GetCols(), rawImage.GetRows()), 8, 1);
-    rgbimg_full = cvCreateImage(cvSize(rawImage.GetCols(), rawImage.GetRows()), 8, 3);
-    rgbimg = cvCreateImage(cvSize((rawImage.GetCols()*small_percent)/100, (rawImage.GetRows()*small_percent)/100), 8, 3);
-    rgbimg_small = cvCreateImage(cvSize((rawImage.GetCols()*small_percent2)/100, (rawImage.GetRows()*small_percent2)/100), 8, 3);
+    double newFPS;
+    nRet = is_SetFrameRate(hCam, 60.0, &newFPS);
+    printf("FPS is set to %lf\n", newFPS);
+    if(nRet != IS_SUCCESS)
+    {
+        is_GetError (hCam, &err, &errMsg);
+        printf("Setting framerate Unsuccessful %d: %s\n",err,errMsg);
+        return CAM_FAILURE;
+    }
+
+    originalImg = cvCreateImage(cvSize(752,480),8,3);
+    rgbimg_full = cvCreateImage(cvSize(640, 480), 8, 3);
+    rgbimg = cvCreateImage(cvSize((640*small_percent)/100, (480*small_percent)/100), 8, 3);
+    rgbimg_small = cvCreateImage(cvSize((640*small_percent2)/100, (480*small_percent2)/100), 8, 3);
 
 #ifdef CAMCAPTURE_DEBUG
     showSeg = cvCreateImage(cvSize(rgbimg->width, rgbimg->height), 8, 3);
 #endif
-
-    // width_var = rgbimg->width;
-    // height_var = rgbimg->height;
     isInit = true;
     return CAM_SUCCESS;
 
@@ -118,35 +128,32 @@ CamError CamCapture::getImage()
 	if(isInit==false)
 		return CAM_FAILURE;
     // Start capturing images
-    cam.RetrieveBuffer(&rawImage);
+  
 
-    // Get the raw image dimensions
-    //TODO: are the following 3 lines required?
-    //Have been removed for now.
-    /*
-    FlyCapture2::PixelFormat pixFormat;
-    unsigned int rows, cols, stride;
-    rawImage.GetDimensions( &rows, &cols, &stride, &pixFormat );
-    */
+    char* errMsg = (char*)malloc(sizeof(char)*200);
+    int err = 0;
 
-    //Copy the image into the IplImage of OpenCV
-    //TODO
-    /*
-        Maybe make this more efficient by removing the
-        need to copy image or something? eg making bayerimg just point to
-        the data in rawImage?
-        TODO: need to check whether this function gives at least
-        60 fps on normal operation ie without any other
-        processing taking place.
-    */
-    memcpy(bayerimg->imageData, rawImage.GetData(), rawImage.GetDataSize());
 
-    if(!bayerimg)
-    	return CAM_FAILURE;
+    int nRet = is_FreezeVideo (hCam, IS_WAIT) ;
+    if(nRet != IS_SUCCESS)
+    {
+        is_GetError (hCam, &err, &errMsg);
+        printf("Could not grab image %d: %s\n",err,errMsg);
+        return CAM_FAILURE;
+    }
+        
+    //fill in the OpenCV imaga data 
+    memcpy(originalImg->imageData, imgPointer, 752*480 * 3);
+    //originalImg->imageData = imgPointer;
 
-    //TODO: see if this image conversion can be removed, and if
-    //bayer image can directly be used for segmentation using lut
-    cvCvtColor(bayerimg, rgbimg_full, CV_BayerBG2BGR);
+
+    cvSetImageROI(originalImg, cvRect(56, 0,640,480));
+        
+    cvCopy(originalImg, rgbimg_full, NULL);
+    cvResetImageROI(originalImg);
+
+
+
     if(small_percent==100)
         cvCopy(rgbimg_full, rgbimg);
     else
@@ -177,37 +184,37 @@ bool CamCapture::loadLUT(int color)
     //Loads lut in variable lut
     FILE *fp;
     uchar** lut_address;
-    char file[40];
+    char file[20];
     switch(color)
     {
         case REDC: 
         lut_address = &lut_red;
-        strcpy(file, "Source/lut/red.lut");
+        strcpy(file, "red.lut");
         break;
 
         case BLUEC:
         lut_address = &lut_blue;
-        strcpy(file, "Source/lut/blue.lut");
+        strcpy(file, "blue.lut");
         break;
 
         case YELLOWC:
         lut_address = &lut_yellow;
-        strcpy(file, "Source/lut/yellow.lut");
+        strcpy(file, "yellow.lut");
         break;
 
         case GREENC:
         lut_address = &lut_green;
-        strcpy(file, "Source/lut/green.lut");
+        strcpy(file, "green.lut");
         break;
 
         case WHITEC:
         lut_address = &lut_white;
-        strcpy(file, "Source/lut/white.lut");
+        strcpy(file, "white.lut");
         break;
 
         case BLACKC:
         lut_address = &lut_black;
-        strcpy(file, "Source/lut/black.lut");
+        strcpy(file, "black.lut");
         break;        
 
     }
