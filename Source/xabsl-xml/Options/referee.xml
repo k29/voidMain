@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE symbol-and-basic-behavior-files SYSTEM "../symbol-and-basic-behavior-files.dtd">
+<option xmlns="http://www.xabsl.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="referee" initial-state="_initial">
+  &mySymbols;
+  &options;
+  <common-decision-tree>
+    <if>
+      <condition description="If state is PLAYING">
+        <equal-to>
+          <decimal-input-symbol-ref ref="RoboCup.state"/>
+          <constant-ref ref="STATE_PLAYING"/>
+        </equal-to>
+      </condition>
+      <transition-to-state ref="playing"/>
+    </if>
+    <else>
+      <if>
+        <condition description="">
+          <equal-to>
+            <decimal-input-symbol-ref ref="RoboCup.state"/>
+            <constant-ref ref="STATE_INITIAL"/>
+          </equal-to>
+        </condition>
+        <transition-to-state ref="_initial"/>
+      </if>
+      <else>
+        <if>
+          <condition description="">
+            <equal-to>
+              <decimal-input-symbol-ref ref="RoboCup.state"/>
+              <constant-ref ref="STATE_FINISHED"/>
+            </equal-to>
+          </condition>
+          <transition-to-state ref="finished"/>
+        </if>
+        <else>
+          <if>
+            <condition description="">
+              <equal-to>
+                <decimal-input-symbol-ref ref="RoboCup.state"/>
+                <constant-ref ref="STATE_READY"/>
+              </equal-to>
+            </condition>
+            <transition-to-state ref="ready"/>
+          </if>
+          <else>
+            <if>
+              <condition description="">
+                <equal-to>
+                  <decimal-input-symbol-ref ref="RoboCup.state"/>
+                  <constant-ref ref="STATE_SET"/>
+                </equal-to>
+              </condition>
+              <transition-to-state ref="set"/>
+            </if>
+          </else>
+        </else>
+      </else>
+    </else>
+  </common-decision-tree>
+  <state name="playing">
+    <subsequent-option ref="begin"/>
+    <decision-tree>
+      <transition-to-state ref="playing"/>
+    </decision-tree>
+  </state>
+  <state name="finished">
+    <decision-tree>
+      <transition-to-state ref="finished"/>
+    </decision-tree>
+  </state>
+  <state name="_initial">
+    <decision-tree>
+      <transition-to-state ref="_initial"/>
+    </decision-tree>
+  </state>
+  <state name="ready">
+    <decision-tree>
+      <transition-to-state ref="ready"/>
+    </decision-tree>
+  </state>
+  <state name="set">
+    <decision-tree>
+      <transition-to-state ref="set"/>
+    </decision-tree>
+  </state>
+</option>

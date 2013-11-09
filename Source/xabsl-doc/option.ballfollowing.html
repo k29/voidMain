@@ -1,0 +1,577 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xabsl="http://www.xabsl.de" xmlns:dotml="http://www.martin-loetzsch.de/DOTML">
+  <head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>XABSL Behavior Documentation: Option ballfollowing</title>
+    <link rel="stylesheet" type="text/css" href="styles.css"> </link>
+  <link rel="stylesheet" type="text/css" href="svg/option_ballfollowing.size.css"><!--
+--></link><link rel="stylesheet" type="text/css" href="svg/option_ballfollowing_state_ballnotfound.size.css"><!--
+--></link><link rel="stylesheet" type="text/css" href="svg/option_ballfollowing_state_forward.size.css"><!--
+--></link><link rel="stylesheet" type="text/css" href="svg/option_ballfollowing_state_left.size.css"><!--
+--></link><link rel="stylesheet" type="text/css" href="svg/option_ballfollowing_state_right.size.css"><!--
+--></link><link rel="stylesheet" type="text/css" href="svg/option_ballfollowing_state_preparekick.size.css"><!--
+--></link></head>
+  <body>
+    <table border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td class="menu-cell">
+          <table border="0" cellspacing="0" cellpadding="1">
+            <tr>
+              <td colspan="2" class="xabsl-2-logo-big">
+                <a href="http://www.xabsl.de" title="The XABSL Web Site">&gt;xabsl</a>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" class="xabsl-2-logo-small">Behavior Documentation</td>
+            </tr>
+            <tr>
+              <td colspan="2" class="menu-item"><br></br>&gt;<a href="index.html" title="Start Page">Index</a></td>
+            </tr>
+            <tr>
+              <td colspan="2" class="menu-title">
+                <a href="agents.html" title="All available agents">&gt;Agents</a>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" class="menu-title">
+                <a href="symbols.html" title="All available symbols">&gt;Symbols</a>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" class="menu-title">
+                <a href="basic-behaviors.html" title="All available basic behaviors">&gt;Basic Behaviors</a>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" class="menu-title">
+                <a href="options.html" title="All available options">&gt;Options</a>
+              </td>
+            </tr>
+            <tr>
+              <td class="menu-item" nowrap colspan="2">   &gt;&gt;  ballfollowing</td>
+            </tr>
+            <tr>
+              <td class="menu-item" nowrap colspan="2">        &gt;&gt;&gt;  <a href="option.ballfollowing.html#state_ballnotfound" title="State ballnotfound">ballnotfound</a></td>
+            </tr>
+            <tr>
+              <td class="menu-item" nowrap colspan="2">        &gt;&gt;&gt;  <a href="option.ballfollowing.html#state_forward" title="State forward">forward</a></td>
+            </tr>
+            <tr>
+              <td class="menu-item" nowrap colspan="2">        &gt;&gt;&gt;  <a href="option.ballfollowing.html#state_left" title="State left">left</a></td>
+            </tr>
+            <tr>
+              <td class="menu-item" nowrap colspan="2">        &gt;&gt;&gt;  <a href="option.ballfollowing.html#state_right" title="State right">right</a></td>
+            </tr>
+            <tr>
+              <td class="menu-item" nowrap colspan="2">        &gt;&gt;&gt;  <a href="option.ballfollowing.html#state_preparekick" title="State preparekick">preparekick</a></td>
+            </tr>
+          </table>
+        </td>
+        <td class="main-area">
+          <h1>Option ballfollowing</h1>
+          <p></p>
+          <h2>State Machine</h2>
+          <object xmlns:html="http://www.w3.org/1999/xhtml" type="image/svg+xml" data="svg/option_ballfollowing.svg" class="svg-size-option_ballfollowing"><span style="background-color:#FFFF20;padding-top:1pt;padding-bottom:1pt;">This browser can't display the SVG file <a href="svg/option_ballfollowing.svg">svg/option_ballfollowing.svg</a>.<br></br><br></br>The <a href="http://www.adobe.com/svg/overview/whatsnew.html">Adobe SVG Viewer 3.0</a> can be downloaded from <a href="http://www.adobe.com/svg/viewer/install/main.html">http://www.adobe.com/svg/viewer/install/main.html</a></span></object>
+          <h2 id="state_ballnotfound">State ballnotfound</h2>
+          <table cellpadding="0" cellspacing="5">
+            <tr>
+              <td colspan="5">If that state is active, </td>
+            </tr>
+            <tr>
+              <td nowrap>
+                <span class="bold"> &gt; </span>
+              </td>
+              <td colspan="4">
+								The  basic behavior <a href="basic-behaviors.myBasicBehaviors.html#moveAcYuttemp" title="No longer in use. wasd walk">moveAcYuttemp</a> is executed. Parameters:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td class="pseudo-code-cell">
+                <a href="basic-behaviors.myBasicBehaviors.html#moveAcYuttemp" title="">moveAcYuttemp.x</a>
+              </td>
+              <td nowrap class="pseudo-code-cell"> = </td>
+              <td class="pseudo-code-cell">
+        120
+      ;
+							</td>
+            </tr>
+            <tr>
+              <td colspan="5"> </td>
+            </tr>
+            <tr>
+              <td colspan="5">The decision tree:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td colspan="4">
+                <object xmlns:html="http://www.w3.org/1999/xhtml" type="image/svg+xml" data="svg/option_ballfollowing_state_ballnotfound.svg" class="svg-size-option_ballfollowing_state_ballnotfound"><span style="background-color:#FFFF20;padding-top:1pt;padding-bottom:1pt;">This browser can't display the SVG file <a href="svg/option_ballfollowing_state_ballnotfound.svg">svg/option_ballfollowing_state_ballnotfound.svg</a>.<br></br><br></br>The <a href="http://www.adobe.com/svg/overview/whatsnew.html">Adobe SVG Viewer 3.0</a> can be downloaded from <a href="http://www.adobe.com/svg/viewer/install/main.html">http://www.adobe.com/svg/viewer/install/main.html</a></span></object>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5"> </td>
+            </tr>
+            <tr>
+              <td colspan="5">Pseudo code of the decision tree:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td colspan="4">
+                <table class="common-pseudo-code-frame">
+                  <tr>
+                    <td>
+                      <table cellpadding="0" cellspacing="0">
+    <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_ballnotfound_pseudo-code_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball not found */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>!(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#ballreturn" title="">ballreturn</a>()
+	<span class="nowrap"> == BallReturns.BALLFOUND</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+      
+      <tr><td class="pseudo-code-cell">goto <a href="#state_ballnotfound">ballnotfound</a>;
+					</td></tr>
+    </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+    <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+      <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_ballnotfound_pseudo-code_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is in front */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &lt; 8</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td nowrap class="pseudo-code-cell">&amp;&amp; </td><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &gt;= -8</span></td><td valign="bottom" class="pseudo-code-right-bracket" nowrap>)</td></tr></table></td></tr></table></td></tr></table></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+        
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_ballnotfound_pseudo-code_1_0_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is near */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#ball.distance" title="Distance from the ball">ball.distance</a>()
+	<span class="nowrap"> &lt; 5</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          
+          <tr><td class="pseudo-code-cell">goto <a href="#state_preparekick">preparekick</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          <tr><td class="pseudo-code-cell">goto <a href="#state_forward">forward</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_ballnotfound_pseudo-code_1_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is left */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &lt; 0</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          
+          <tr><td class="pseudo-code-cell">goto <a href="#state_left">left</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_ballnotfound_pseudo-code_1_1_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is right */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &gt; 0</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+            
+            <tr><td class="pseudo-code-cell">goto <a href="#state_right">right</a>;
+					</td></tr>
+          </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table class="pseudo-code-frame"><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell"><tr><td class="pseudo-code-cell">stay;</td></tr></td></tr></table></td></tr></table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+    </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+  </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+          <h2 id="state_forward">State forward</h2>
+          <table cellpadding="0" cellspacing="5">
+            <tr>
+              <td colspan="5">If that state is active, </td>
+            </tr>
+            <tr>
+              <td nowrap>
+                <span class="bold"> &gt; </span>
+              </td>
+              <td colspan="4">
+								The  basic behavior <a href="basic-behaviors.myBasicBehaviors.html#moveAcYuttemp" title="No longer in use. wasd walk">moveAcYuttemp</a> is executed. Parameters:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td class="pseudo-code-cell">
+                <a href="basic-behaviors.myBasicBehaviors.html#moveAcYuttemp" title="">moveAcYuttemp.x</a>
+              </td>
+              <td nowrap class="pseudo-code-cell"> = </td>
+              <td class="pseudo-code-cell">
+        119
+      ;
+							</td>
+            </tr>
+            <tr>
+              <td colspan="5"> </td>
+            </tr>
+            <tr>
+              <td colspan="5">The decision tree:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td colspan="4">
+                <object xmlns:html="http://www.w3.org/1999/xhtml" type="image/svg+xml" data="svg/option_ballfollowing_state_forward.svg" class="svg-size-option_ballfollowing_state_forward"><span style="background-color:#FFFF20;padding-top:1pt;padding-bottom:1pt;">This browser can't display the SVG file <a href="svg/option_ballfollowing_state_forward.svg">svg/option_ballfollowing_state_forward.svg</a>.<br></br><br></br>The <a href="http://www.adobe.com/svg/overview/whatsnew.html">Adobe SVG Viewer 3.0</a> can be downloaded from <a href="http://www.adobe.com/svg/viewer/install/main.html">http://www.adobe.com/svg/viewer/install/main.html</a></span></object>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5"> </td>
+            </tr>
+            <tr>
+              <td colspan="5">Pseudo code of the decision tree:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td colspan="4">
+                <table class="common-pseudo-code-frame">
+                  <tr>
+                    <td>
+                      <table cellpadding="0" cellspacing="0">
+    <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_forward_pseudo-code_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball not found */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>!(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#ballreturn" title="">ballreturn</a>()
+	<span class="nowrap"> == BallReturns.BALLFOUND</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+      
+      <tr><td class="pseudo-code-cell">goto <a href="#state_ballnotfound">ballnotfound</a>;
+					</td></tr>
+    </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+    <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+      <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_forward_pseudo-code_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is in front */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &lt; 8</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td nowrap class="pseudo-code-cell">&amp;&amp; </td><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &gt;= -8</span></td><td valign="bottom" class="pseudo-code-right-bracket" nowrap>)</td></tr></table></td></tr></table></td></tr></table></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+        
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_forward_pseudo-code_1_0_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is near */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#ball.distance" title="Distance from the ball">ball.distance</a>()
+	<span class="nowrap"> &lt; 5</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          
+          <tr><td class="pseudo-code-cell">goto <a href="#state_preparekick">preparekick</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          <tr><td class="pseudo-code-cell">goto <a href="#state_forward">forward</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_forward_pseudo-code_1_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is left */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &lt; 0</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          
+          <tr><td class="pseudo-code-cell">goto <a href="#state_left">left</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_forward_pseudo-code_1_1_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is right */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &gt; 0</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+            
+            <tr><td class="pseudo-code-cell">goto <a href="#state_right">right</a>;
+					</td></tr>
+          </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table class="pseudo-code-frame"><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell"><tr><td class="pseudo-code-cell">stay;</td></tr></td></tr></table></td></tr></table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+    </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+  </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+          <h2 id="state_left">State left</h2>
+          <table cellpadding="0" cellspacing="5">
+            <tr>
+              <td colspan="5">If that state is active, </td>
+            </tr>
+            <tr>
+              <td nowrap>
+                <span class="bold"> &gt; </span>
+              </td>
+              <td colspan="4">
+								The  basic behavior <a href="basic-behaviors.myBasicBehaviors.html#moveAcYuttemp" title="No longer in use. wasd walk">moveAcYuttemp</a> is executed. Parameters:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td class="pseudo-code-cell">
+                <a href="basic-behaviors.myBasicBehaviors.html#moveAcYuttemp" title="">moveAcYuttemp.x</a>
+              </td>
+              <td nowrap class="pseudo-code-cell"> = </td>
+              <td class="pseudo-code-cell">
+        97
+      ;
+							</td>
+            </tr>
+            <tr>
+              <td colspan="5"> </td>
+            </tr>
+            <tr>
+              <td colspan="5">The decision tree:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td colspan="4">
+                <object xmlns:html="http://www.w3.org/1999/xhtml" type="image/svg+xml" data="svg/option_ballfollowing_state_left.svg" class="svg-size-option_ballfollowing_state_left"><span style="background-color:#FFFF20;padding-top:1pt;padding-bottom:1pt;">This browser can't display the SVG file <a href="svg/option_ballfollowing_state_left.svg">svg/option_ballfollowing_state_left.svg</a>.<br></br><br></br>The <a href="http://www.adobe.com/svg/overview/whatsnew.html">Adobe SVG Viewer 3.0</a> can be downloaded from <a href="http://www.adobe.com/svg/viewer/install/main.html">http://www.adobe.com/svg/viewer/install/main.html</a></span></object>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5"> </td>
+            </tr>
+            <tr>
+              <td colspan="5">Pseudo code of the decision tree:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td colspan="4">
+                <table class="common-pseudo-code-frame">
+                  <tr>
+                    <td>
+                      <table cellpadding="0" cellspacing="0">
+    <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_left_pseudo-code_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball not found */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>!(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#ballreturn" title="">ballreturn</a>()
+	<span class="nowrap"> == BallReturns.BALLFOUND</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+      
+      <tr><td class="pseudo-code-cell">goto <a href="#state_ballnotfound">ballnotfound</a>;
+					</td></tr>
+    </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+    <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+      <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_left_pseudo-code_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is in front */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &lt; 8</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td nowrap class="pseudo-code-cell">&amp;&amp; </td><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &gt;= -8</span></td><td valign="bottom" class="pseudo-code-right-bracket" nowrap>)</td></tr></table></td></tr></table></td></tr></table></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+        
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_left_pseudo-code_1_0_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is near */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#ball.distance" title="Distance from the ball">ball.distance</a>()
+	<span class="nowrap"> &lt; 5</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          
+          <tr><td class="pseudo-code-cell">goto <a href="#state_preparekick">preparekick</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          <tr><td class="pseudo-code-cell">goto <a href="#state_forward">forward</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_left_pseudo-code_1_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is left */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &lt; 0</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          
+          <tr><td class="pseudo-code-cell">goto <a href="#state_left">left</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_left_pseudo-code_1_1_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is right */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &gt; 0</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+            
+            <tr><td class="pseudo-code-cell">goto <a href="#state_right">right</a>;
+					</td></tr>
+          </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table class="pseudo-code-frame"><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell"><tr><td class="pseudo-code-cell">stay;</td></tr></td></tr></table></td></tr></table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+    </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+  </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+          <h2 id="state_right">State right</h2>
+          <table cellpadding="0" cellspacing="5">
+            <tr>
+              <td colspan="5">If that state is active, </td>
+            </tr>
+            <tr>
+              <td nowrap>
+                <span class="bold"> &gt; </span>
+              </td>
+              <td colspan="4">
+								The  basic behavior <a href="basic-behaviors.myBasicBehaviors.html#moveAcYuttemp" title="No longer in use. wasd walk">moveAcYuttemp</a> is executed. Parameters:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td class="pseudo-code-cell">
+                <a href="basic-behaviors.myBasicBehaviors.html#moveAcYuttemp" title="">moveAcYuttemp.x</a>
+              </td>
+              <td nowrap class="pseudo-code-cell"> = </td>
+              <td class="pseudo-code-cell">
+        100
+      ;
+							</td>
+            </tr>
+            <tr>
+              <td colspan="5"> </td>
+            </tr>
+            <tr>
+              <td colspan="5">The decision tree:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td colspan="4">
+                <object xmlns:html="http://www.w3.org/1999/xhtml" type="image/svg+xml" data="svg/option_ballfollowing_state_right.svg" class="svg-size-option_ballfollowing_state_right"><span style="background-color:#FFFF20;padding-top:1pt;padding-bottom:1pt;">This browser can't display the SVG file <a href="svg/option_ballfollowing_state_right.svg">svg/option_ballfollowing_state_right.svg</a>.<br></br><br></br>The <a href="http://www.adobe.com/svg/overview/whatsnew.html">Adobe SVG Viewer 3.0</a> can be downloaded from <a href="http://www.adobe.com/svg/viewer/install/main.html">http://www.adobe.com/svg/viewer/install/main.html</a></span></object>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5"> </td>
+            </tr>
+            <tr>
+              <td colspan="5">Pseudo code of the decision tree:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td colspan="4">
+                <table class="common-pseudo-code-frame">
+                  <tr>
+                    <td>
+                      <table cellpadding="0" cellspacing="0">
+    <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_right_pseudo-code_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball not found */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>!(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#ballreturn" title="">ballreturn</a>()
+	<span class="nowrap"> == BallReturns.BALLFOUND</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+      
+      <tr><td class="pseudo-code-cell">goto <a href="#state_ballnotfound">ballnotfound</a>;
+					</td></tr>
+    </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+    <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+      <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_right_pseudo-code_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is in front */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &lt; 8</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td nowrap class="pseudo-code-cell">&amp;&amp; </td><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &gt;= -8</span></td><td valign="bottom" class="pseudo-code-right-bracket" nowrap>)</td></tr></table></td></tr></table></td></tr></table></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+        
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_right_pseudo-code_1_0_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is near */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#ball.distance" title="Distance from the ball">ball.distance</a>()
+	<span class="nowrap"> &lt; 5</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          
+          <tr><td class="pseudo-code-cell">goto <a href="#state_preparekick">preparekick</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          <tr><td class="pseudo-code-cell">goto <a href="#state_forward">forward</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_right_pseudo-code_1_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is left */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &lt; 0</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          
+          <tr><td class="pseudo-code-cell">goto <a href="#state_left">left</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_right_pseudo-code_1_1_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is right */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &gt; 0</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+            
+            <tr><td class="pseudo-code-cell">goto <a href="#state_right">right</a>;
+					</td></tr>
+          </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table class="pseudo-code-frame"><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell"><tr><td class="pseudo-code-cell">stay;</td></tr></td></tr></table></td></tr></table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+    </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+  </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+          <h2 id="state_preparekick">State preparekick</h2>
+          <table cellpadding="0" cellspacing="5">
+            <tr>
+              <td colspan="5">If that state is active, </td>
+            </tr>
+            <tr>
+              <td nowrap>
+                <span class="bold"> &gt; </span>
+              </td>
+              <td colspan="4">
+								The  basic behavior <a href="basic-behaviors.myBasicBehaviors.html#moveAcYuttemp" title="No longer in use. wasd walk">moveAcYuttemp</a> is executed. Parameters:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td> </td>
+              <td class="pseudo-code-cell">
+                <a href="basic-behaviors.myBasicBehaviors.html#moveAcYuttemp" title="">moveAcYuttemp.x</a>
+              </td>
+              <td nowrap class="pseudo-code-cell"> = </td>
+              <td class="pseudo-code-cell">
+        120
+      ;
+							</td>
+            </tr>
+            <tr>
+              <td colspan="5"> </td>
+            </tr>
+            <tr>
+              <td colspan="5">The decision tree:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td colspan="4">
+                <object xmlns:html="http://www.w3.org/1999/xhtml" type="image/svg+xml" data="svg/option_ballfollowing_state_preparekick.svg" class="svg-size-option_ballfollowing_state_preparekick"><span style="background-color:#FFFF20;padding-top:1pt;padding-bottom:1pt;">This browser can't display the SVG file <a href="svg/option_ballfollowing_state_preparekick.svg">svg/option_ballfollowing_state_preparekick.svg</a>.<br></br><br></br>The <a href="http://www.adobe.com/svg/overview/whatsnew.html">Adobe SVG Viewer 3.0</a> can be downloaded from <a href="http://www.adobe.com/svg/viewer/install/main.html">http://www.adobe.com/svg/viewer/install/main.html</a></span></object>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5"> </td>
+            </tr>
+            <tr>
+              <td colspan="5">Pseudo code of the decision tree:</td>
+            </tr>
+            <tr>
+              <td> </td>
+              <td colspan="4">
+                <table class="common-pseudo-code-frame">
+                  <tr>
+                    <td>
+                      <table cellpadding="0" cellspacing="0">
+    <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_preparekick_pseudo-code_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball not found */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>!(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#ballreturn" title="">ballreturn</a>()
+	<span class="nowrap"> == BallReturns.BALLFOUND</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+      
+      <tr><td class="pseudo-code-cell">goto <a href="#state_ballnotfound">ballnotfound</a>;
+					</td></tr>
+    </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+    <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+      <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_preparekick_pseudo-code_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is in front */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &lt; 8</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td nowrap class="pseudo-code-cell">&amp;&amp; </td><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap>(</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &gt;= -8</span></td><td valign="bottom" class="pseudo-code-right-bracket" nowrap>)</td></tr></table></td></tr></table></td></tr></table></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+        
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_preparekick_pseudo-code_1_0_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is near */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#ball.distance" title="Distance from the ball">ball.distance</a>()
+	<span class="nowrap"> &lt; 5</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          
+          <tr><td class="pseudo-code-cell">goto <a href="#state_preparekick">preparekick</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          <tr><td class="pseudo-code-cell">goto <a href="#state_forward">forward</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_preparekick_pseudo-code_1_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is left */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &lt; 0</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          
+          <tr><td class="pseudo-code-cell">goto <a href="#state_left">left</a>;
+					</td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+          <tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr id="state_preparekick_pseudo-code_1_1_1_0"><td colspan="4" class="pseudo-code-cell"><span class="italic">/** Ball is right */</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-left-bracket" nowrap><span class="bold">if</span> (
+									</td><td class="pseudo-code-cell"><a href="symbols.mySymbols.html#theta" title="Angle of ball">theta</a>()
+	<span class="nowrap"> &gt; 0</span></td><td class="pseudo-code-right-bracket">)</td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table cellpadding="0" cellspacing="0">
+            
+            <tr><td class="pseudo-code-cell">goto <a href="#state_right">right</a>;
+					</td></tr>
+          </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell"><span class="bold">else</span></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">{</td></tr></table></td></tr><tr><td colspan="4"><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell" nowrap>  </td><td><table class="pseudo-code-frame"><tr><td><table cellpadding="0" cellspacing="0"><tr><td class="pseudo-code-cell"><tr><td class="pseudo-code-cell">stay;</td></tr></td></tr></table></td></tr></table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+        </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+      </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+    </table></td></tr></table></td></tr><tr><td><table cellpadding="0" cellspacing="0"><tr><td colspan="4" class="pseudo-code-cell">}</td></tr></table></td></tr></table></td></tr>
+  </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
