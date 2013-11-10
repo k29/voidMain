@@ -10,12 +10,12 @@ all: ../Build/imgProc.a
 ../Build/camcapture.o: camcapture.cpp camcapture.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
-	@g++ -c camcapture.cpp -I/usr/include/flycapture -O3 -o $@
+	@g++ -c camcapture.cpp -lueye_api -o $@
 
 ../Build/camcontrol.o: camcontrol.cpp camcontrol.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
-	@g++ -c camcontrol.cpp -I/usr/include/flycapture -O3 -o $@
+	@g++ -c camcontrol.cpp -lueye_api  -o $@
 
 ../Build/featuredetection.o: featuredetection.cpp featuredetection.h
 	@echo $@
@@ -25,15 +25,14 @@ all: ../Build/imgProc.a
 ../Build/headmotor.o: headmotor.cpp headmotor.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
-	@g++ -c headmotor.cpp -I/usr/include/flycapture -O3 -o $@
+	@g++ -c headmotor.cpp -lueye_api  -o $@
 
 ../Build/localize.o: localize.cpp localize.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
-	@g++ -c localize.cpp -I/usr/include/flycapture -O3 -fpermissive -o $@
+	@g++ -c localize.cpp -lueye_api  -fpermissive -o $@
 
 ../Build/imgproc.o: imgproc.cpp imgproc.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c imgproc.cpp -o $@
-

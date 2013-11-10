@@ -3,6 +3,7 @@ option referee
 
 		common decision
 		{
+		/**If state is PLAYING */ 
 		if(RoboCup.state==STATE_PLAYING)
 			goto playing;
 		else if(RoboCup.state==STATE_INITIAL)

@@ -7,6 +7,19 @@
 #include "xsens_list.h"
 #include <pthread.h>
 #include "cmtscan.h"
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <unistd.h>
+
+#include "cmt3.h"
+
+
 class Imu
 {
 private:

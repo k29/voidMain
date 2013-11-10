@@ -1,4 +1,4 @@
-#include "camcontrol.h"
+#include "camcontrol.h"//
 
 
 CamControl::CamControl(CamCapture &cam) : IMAGE_WIDTH(cam.width()), IMAGE_HEIGHT(cam.height()), 
@@ -66,12 +66,12 @@ int CamControl::moveToPoint(int x, int y, HeadMotor &hm)
 	// float hori = 0;
 	// float vert = 0;
 	float theta_x, theta_y;
-	
+	int motor_X,motor_Y;
 	int return_value = 0;
 
 	hm.speed_motor(700,700);//HeadMotor::MOTOR_SPEED,700);
 	
-	hm.read_motor(theta_x, theta_y);
+	hm.read_motor(theta_x, theta_y,motor_X,motor_Y);
 /*	
 	FIXME
 	Earlier, *probably* camera was getting stuck in front of ball because
