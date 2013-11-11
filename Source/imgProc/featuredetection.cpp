@@ -24,6 +24,8 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
 	tempnObstacle = 0;
 	o.clear();
 	l.clear();
+    constants.open("Source/lut/constants.dat",ios::binary);
+
 }
 
 

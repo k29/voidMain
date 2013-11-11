@@ -52,7 +52,7 @@ public:
 	int ismoving_motor(int id = 0);	//TODO id not being used right now, both motors being checked (17 and 18)
 	void speed_motor(int speed1, int speed2);
 	void write_motor(float thetax, float thetay);
-	int read_motor(float &thetax, float &thetay);
+	int read_motor(float &thetax, float &thetay,int &motorX_var,int &motorY_var);
 	int stop_motor();
 	int go2state(int state);
 	void update();
