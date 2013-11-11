@@ -10,7 +10,7 @@
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range2d.h"
 #include <fstream>
-using namespace std;
+
 #define PLOT_LANDMARKS
 // #define PLOT_HOUGH_LINES
 //new technique to get features:
@@ -114,7 +114,7 @@ public:
 	int tempnObstacle;
 	std::vector<LOCALIZE_INTERNALS::Obstacle> o;
 	//Opening LUT for parameters
-	ifstream constants;
+	ifstream constants = fopen("Source/lut/constants.dat",ios::binary);
 	// int nLand;
 	Coords ball;
 	FeatureDetection(CamCapture &cam);

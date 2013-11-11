@@ -2,7 +2,7 @@ all: run
 
 run: Source/Build/path.a Source/Build/walk.a Source/Build/behavior.a Source/Build/imgProc.a Source/Build/imu.a run.cpp
 	@echo compiling and linking final code
-	g++ -w run.cpp Source/Build/path.o Source/Build/walk.a Source/Build/behavior.a Source/Build/imgProc.a Source/Build/imu.a -o run -lueye_api -lftdi -lopencv_highgui -lpthread -fpermissive -lopencv_core -lopencv_imgproc  -lcvblob -ltbb -O3 -fpermissive
+	g++ -w run.cpp Source/Build/path.o Source/Build/walk.a Source/Build/behavior.a Source/Build/imgProc.a Source/Build/imu.a -o run -I/usr/include/flycapture -lflycapture -lftdi -lopencv_highgui -lpthread -fpermissive -lopencv_core -lopencv_imgproc  -lcvblob -ltbb -O3 -fpermissive
 
 Source/Build/path.a: Source/path/*.cpp Source/path/*.hpp Source/common/*.h
 	@make -s -C Source/path

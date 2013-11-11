@@ -4,7 +4,7 @@
 //TODO: Read HeadMotor header for TODO.
 #include <opencv2/opencv.hpp>
 #include "featuredetection.h"
-#include "headmotor.h"
+
 
 class CamControl
 {
