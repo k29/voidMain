@@ -4,8 +4,8 @@ option reset
 			{
 				action
 				{
-				init.isDone=false;
-				
+				init.isDone=false;				
+				doReset();
 				}
 			}
 	}

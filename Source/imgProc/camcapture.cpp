@@ -53,7 +53,7 @@ CamError CamCapture::init()
     //Loading lookup table
     if(doLUT == true)
     {
-        printf("Loading lookup tables...");
+       printf("Loading lookup tables...");
         if(loadLUT(REDC)==false||loadLUT(BLUEC)==false||loadLUT(YELLOWC)==false||loadLUT(GREENC)==false||loadLUT(WHITEC)==false||loadLUT(BLACKC)==false)
         {
             printf("Unable to open LUT\n");
@@ -63,10 +63,12 @@ CamError CamCapture::init()
     }
     
     //Initializing camera
+    
 	error = busMgr.GetCameraFromIndex(0, &guid);
     if (error != FlyCapture2::PGRERROR_OK)
     {
         error.PrintErrorTrace();
+        
         return CAM_FAILURE;
     }
 
@@ -83,6 +85,7 @@ CamError CamCapture::init()
     cam.SetVideoModeAndFrameRate(vm, fr);
     //Starting the capture
     
+    //code fails on my laptop here-->pranet
     error = cam.StartCapture();
     printf("lol\n");
     if (error != FlyCapture2::PGRERROR_OK)

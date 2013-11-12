@@ -20,7 +20,7 @@ BasicBehaviorLocalize basicBehaviorLocalize(myErrorHandler,p);
 BasicBehaviorPathToWalk basicBehaviorPathToWalk(myErrorHandler,p);
 BasicBehaviorMakePath basicBehaviorMakePath(myErrorHandler,p);
 BasicBehaviorFindBall basicBehaviorFindBall(myErrorHandler,p);
-
+BasicBehaviorReset basicBehaviorReset(myErrorHandler,p);
 
 
 void registerXABSL()
@@ -60,7 +60,7 @@ void registerXABSL()
 	engine->registerBasicBehavior(basicBehaviormoveAcYuttemp);
 	engine->registerBasicBehavior(basicBehaviorMakePath);
 	engine->registerBasicBehavior(basicBehaviorFindBall);
-	
+	engine->registerBasicBehavior(basicBehaviorReset);	
 
 
 
@@ -72,7 +72,7 @@ void registerXABSL()
 void start()
 	{
 	p.resetflag=1; /*Resets all variables in the first run */
-	printf("start(); \n");
+	
 
 	while(1)
 		{
@@ -96,7 +96,7 @@ int getImuAngle()
 		f1.open("cpp-src/xsens/imuyaw.angle", ios::in);
 		int value;
 		f1>>value;
-		printf("Value is %d\n", value);
+		printf("Value is %d\n", 1280);
 		f1.close();
-		return value;
+		return 1280;
 }

@@ -39,10 +39,20 @@ void BasicBehaviorUpdate::execute()
 void BasicBehaviorLocalize::execute()
     {	
 		printf("Confidence %lf, localizing\n",p.conf);
-		
-        p.camcont->search(p.hdmtr);
-	
-
+		int i=5000000;
+        while(i--)
+        {
+        p.capture.getImage();
+        p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
+        p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
+        p.conf = p.loc.confidence();
+        p.camcont->search(p.hdmtr);//p.camcont->search(p.hdmtr);	
+        p.hdmtr.update();
+       // usleep(500);
+        cvWaitKey(5);
+        cvShowImage("aa", p.capture.rgbimg);
+        cvShowImage("Localization", p.loc.dispImage);
+        }
 
 
     }
@@ -144,5 +154,11 @@ void BasicBehaviorFindBall::execute()
 
         
     }
+void BasicBehaviorReset::execute()
+    {
+        
+       p.conf=0;
 
+        
+    }
 
