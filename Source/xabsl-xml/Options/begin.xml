@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE symbol-and-basic-behavior-files SYSTEM "../symbol-and-basic-behavior-files.dtd">
+<option xmlns="http://www.xabsl.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="begin" initial-state="initialize">
+  &mySymbols;
+  &myBasicBehaviors;
+  &options;
+  <state name="initialize">
+    <set-boolean-output-symbol ref="init.isDone">
+      <boolean-value value="true"/>
+    </set-boolean-output-symbol>
+    <subsequent-basic-behavior ref="doInitialize"/>
+    <decision-tree>
+      <if>
+        <condition description="If reset flag is true">
+          <equal-to>
+            <decimal-input-symbol-ref ref="resetflag"/>
+            <decimal-value value="1"/>
+          </equal-to>
+        </condition>
+        <transition-to-state ref="_reset"/>
+      </if>
+      <else>
+        <if>
+          <condition description="If initialized">
+            <boolean-output-symbol-ref ref="init.isDone"/>
+          </condition>
+          <transition-to-state ref="play"/>
+        </if>
+        <else>
+          <transition-to-state ref="initialize"/>
+        </else>
+      </else>
+    </decision-tree>
+  </state>
+  <state name="play">
+    <subsequent-option ref="checklocalize"/>
+    <subsequent-basic-behavior ref="doUpdate"/>
+    <decision-tree>
+      <if>
+        <condition description="If reset flag is true">
+          <equal-to>
+            <decimal-input-symbol-ref ref="resetflag"/>
+            <decimal-value value="1"/>
+          </equal-to>
+        </condition>
+        <transition-to-state ref="_reset"/>
+      </if>
+      <else>
+        <if>
+          <condition description="If initialized">
+            <boolean-output-symbol-ref ref="init.isDone"/>
+          </condition>
+          <transition-to-state ref="play"/>
+        </if>
+        <else>
+          <transition-to-state ref="initialize"/>
+        </else>
+      </else>
+    </decision-tree>
+  </state>
+  <state name="_reset">
+    <subsequent-option ref="reset"/>
+    <decision-tree>
+      <if>
+        <condition description="Reset flag">
+          <equal-to>
+            <decimal-input-symbol-ref ref="resetflag"/>
+            <decimal-value value="0"/>
+          </equal-to>
+        </condition>
+        <transition-to-state ref="initialize"/>
+      </if>
+      <else>
+        <transition-to-state ref="_reset"/>
+      </else>
+    </decision-tree>
+  </state>
+</option>
