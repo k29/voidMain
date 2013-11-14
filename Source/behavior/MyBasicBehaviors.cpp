@@ -39,13 +39,13 @@ void BasicBehaviorUpdate::execute()
 void BasicBehaviorLocalize::execute()
     {	
 		printf("Confidence %lf, localizing\n",p.conf);
-		int i=5000000;
+		int i=50;
         while(i--)
         {
         p.capture.getImage();
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
-        p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
-        p.conf = p.loc.confidence();
+        //p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
+        //p.conf = p.loc.confidence();
         p.camcont->search(p.hdmtr);//p.camcont->search(p.hdmtr);	
         p.hdmtr.update();
        // usleep(500);
@@ -91,12 +91,12 @@ void BasicBehaviorMakePath::execute()
     // {
     //     printf("Passed-->> obstacle %d : %lf %lf\n", i, p.pathstr.absObstacles[i].x, p.pathstr.absObstacles[i].y);
     // }
-    AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
-    double tempx=goalcoords.x-p.loc.selfX;
-    double tempy=goalcoords.y-p.loc.selfY;
-    p.pathstr.goal.x= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
-    p.pathstr.goal.y= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
-    printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
+    //AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
+    //double tempx=goalcoords.x-p.loc.selfX;
+    //double tempy=goalcoords.y-p.loc.selfY;
+    // p.pathstr.goal.x= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
+    //p.pathstr.goal.y= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
+    //printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
 
     //printf("goal coords y:%lf\n",pathstr.goal.x);
     p.pathstr.ball.x=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));

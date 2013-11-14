@@ -42,9 +42,10 @@ option begin
 				}
 				action
 					{
-						checklocalize();
+						
 						doUpdate();
-							
+						doFindBall();
+						ballfound();	
 					}
 					
 			}
