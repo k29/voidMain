@@ -13,6 +13,7 @@ then read data by using GCData, and putting mutex locks while doing so.
 */
 
 #include "gamecontrollerfunc.h"
+
 //#include "RoboCupGameControlData.h"
 //RoboCupGameControlData GCData; pranet: shifted to common.h as global
 
@@ -95,7 +96,7 @@ void* readGameController(void*)
        	if(strncmp(GCData1.header,"RGme",4)==0)//compare first 4 characters
        	{
             pthread_mutex_lock(&mutex_GCData);
-            GCData=GCData1;
+            GCData=GCData1;printf("VALUE RECIEVED IS %d\n",GCData.state);
             pthread_mutex_unlock(&mutex_GCData);
         }
         else

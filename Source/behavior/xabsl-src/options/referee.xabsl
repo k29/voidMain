@@ -20,7 +20,8 @@ option referee
 			{
 				action
 					{
-						
+
+						printmsg(o=3);
 						begin();
 					}
 			}
@@ -28,27 +29,28 @@ option referee
 			{
 				action
 					{
-						
+						printmsg(o=4);
 					}
 			}
 		initial state _initial
 			{
 				action	
 					{
-
+						printmsg(o=0);
 					}
 			}
 		state ready
 			{
 				action
 					{
+						printmsg(o=1);
 					}
 			}
 		state set
 			{
 				action
 					{
-					
+						printmsg(o=2);
 					}
 			}
 
