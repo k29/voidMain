@@ -145,4 +145,10 @@ void BasicBehaviorFindBall::execute()
         
     }
 
+void BasicBehaviorReset::execute()
+    {
+        
+       p.conf=0;
 
+        
+    }
