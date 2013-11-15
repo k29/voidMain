@@ -2,12 +2,12 @@
 #include "path.hpp"
 #define car2pol(x,y) sqrt((x)*(x)+(y)*(y))
 #define dist(x1,y1,x2,y2) sqrt(pow(((x1)-(x2)),2)+pow(((y1)-(y2)),2))
-//#define FRAMEPAINTING
+// #define FRAMEPAINTING
 //#define OLDENCIRCLING
 //#define NEWENCIRCLING
 //#define NEWNEWENCIRCLING
 #define OLDDELETION
-#define NEWDELETION
+// #define NEWDELETION
 
 
 using namespace std;
@@ -67,7 +67,9 @@ bool Path::side_check_orientation(Point a,Point b) // a is the parent point , b 
 	cout<<" the coordinates for the parent points are "<<a.x<<" "<<a.y<<endl;
 	cout<<" the coordinates for the child points are "<<b.x<<" "<<b.y<<endl;
 	double m = (a.y-ball.y)/(a.x-ball.x);
+	cout<<"m "<<m<<endl;
 	double c = ball.y-(m*ball.x);
+	cout<<"c "<<c<<endl;
 	cout<<"the coordinates of the ball are "<<ball.x<<" "<<ball.y<<endl;
 	cout<<"the equation of the line joining ball and the parent point is y="<<m<<"x+"<<c<<endl;
 	if(((goal.y-(m*goal.x)-c)*(b.y-(m*b.x)-c))<0) // other side of the line...point to be kept
@@ -623,7 +625,7 @@ PathReturns Path::path_return(PathStructure ps)
 		if(to_be_removed[i].remove_count==to_be_removed[i].connected_count && to_be_removed[i].remove_count!=0)
 		{
 			tree.remove_edge(i,1);
-			cout<<"\nremoving edge i "<<i<<endl;;
+			cout<<"\nremoving edge  "<<i<<endl;;
 		}
 	}
 	for(size_t n1_index=0;n1_index<tree.size(); n1_index++)
