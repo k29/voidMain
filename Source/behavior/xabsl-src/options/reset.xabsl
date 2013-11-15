@@ -5,7 +5,7 @@ option reset
 				action
 				{
 				init.isDone=false;
-				
+				doReset();
 				}
 			}
 	}
