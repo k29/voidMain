@@ -100,6 +100,7 @@
   <xabsl:option-tree root-option="referee">
     <xabsl:o-n name="referee">
       <xabsl:e2o to="begin"/>
+      <xabsl:e2b to="printmsg"/>
     </xabsl:o-n>
     <xabsl:o-n name="begin">
       <xabsl:e2o to="checklocalize"/>
@@ -134,6 +135,7 @@
     <xabsl:b-n name="doReset" g="myBasicBehaviors"/>
     <xabsl:b-n name="doInitialize" g="myBasicBehaviors"/>
     <xabsl:b-n name="doUpdate" g="myBasicBehaviors"/>
+    <xabsl:b-n name="printmsg" g="myBasicBehaviors"/>
   </xabsl:option-tree>
   <xabsl:option-tree root-option="reset">
     <xabsl:o-n name="reset">

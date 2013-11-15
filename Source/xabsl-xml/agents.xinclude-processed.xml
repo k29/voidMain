@@ -708,6 +708,23 @@
 </symbols>
 
   
+<basic-behaviors id="myBasicBehaviors" title="My Behaviors" description="">
+  <basic-behavior name="moveAcYuttemp" description="No longer in use. wasd walk">
+    <decimal-parameter name="moveAcYuttemp.x" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="printmsg" description="Display a number">
+    <decimal-parameter name="printmsg.o" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="doInitialize" description="Initialize AcYut"/>
+  <basic-behavior name="doUpdate" description="Calculate confidence and"/>
+  <basic-behavior name="doLocalize" description="If confidence is low, search , get landmarks and localize"/>
+  <basic-behavior name="doPathToWalk" description="Send the made path to walk"/>
+  <basic-behavior name="doMakePath" description="Create a path to the ball based on localization inputs"/>
+  <basic-behavior name="doFindBall" description="Find the ball"/>
+  <basic-behavior name="doReset" description="Reset the input symbols(cant touch them in XABSL??? verify )"/>
+</basic-behaviors>
+
+  
 <option-definitions>
   <option-definition name="ballfollowing" description=""/>
   <option-definition name="ballfound" description=""/>
@@ -775,27 +792,52 @@
     </else>
   </common-decision-tree>
   <state name="playing">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="3"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
     <subsequent-option ref="begin"/>
     <decision-tree>
       <transition-to-state ref="playing"/>
     </decision-tree>
   </state>
   <state name="finished">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="4"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
     <decision-tree>
       <transition-to-state ref="finished"/>
     </decision-tree>
   </state>
   <state name="_initial">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="0"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
     <decision-tree>
       <transition-to-state ref="_initial"/>
     </decision-tree>
   </state>
   <state name="ready">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="1"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
     <decision-tree>
       <transition-to-state ref="ready"/>
     </decision-tree>
   </state>
   <state name="set">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="2"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
     <decision-tree>
       <transition-to-state ref="set"/>
     </decision-tree>

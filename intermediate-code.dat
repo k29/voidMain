@@ -433,7 +433,11 @@ set n
 
 _initial
 0
+2
+a printmsg
 1
+d printmsg.o
+v 3
 o begin
 0
 i
@@ -468,7 +472,11 @@ c 2
 t set
 t playing
 0
-0
+1
+a printmsg
+1
+d printmsg.o
+v 4
 i
 =
 i RoboCup.state
@@ -501,7 +509,11 @@ c 2
 t set
 t finished
 0
-0
+1
+a printmsg
+1
+d printmsg.o
+v 0
 i
 =
 i RoboCup.state
@@ -534,7 +546,11 @@ c 2
 t set
 t _initial
 0
-0
+1
+a printmsg
+1
+d printmsg.o
+v 1
 i
 =
 i RoboCup.state
@@ -567,7 +583,11 @@ c 2
 t set
 t ready
 0
-0
+1
+a printmsg
+1
+d printmsg.o
+v 2
 i
 =
 i RoboCup.state

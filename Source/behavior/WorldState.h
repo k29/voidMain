@@ -71,7 +71,7 @@ class playerstate
 
         /*Game Controller */
         GameControllerAcyut GC;
-        RoboCupGameControlData localgcdata;
+        RoboCupGameControlData GCData;
 
         
 
@@ -83,4 +83,6 @@ class playerstate
 
 
 	};
+
+
 #endif

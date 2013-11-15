@@ -2,6 +2,7 @@
 <!DOCTYPE symbol-and-basic-behavior-files SYSTEM "../symbol-and-basic-behavior-files.dtd">
 <option xmlns="http://www.xabsl.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="referee" initial-state="_initial">
   &mySymbols;
+  &myBasicBehaviors;
   &options;
   <common-decision-tree>
     <if>
@@ -59,27 +60,52 @@
     </else>
   </common-decision-tree>
   <state name="playing">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="3"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
     <subsequent-option ref="begin"/>
     <decision-tree>
       <transition-to-state ref="playing"/>
     </decision-tree>
   </state>
   <state name="finished">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="4"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
     <decision-tree>
       <transition-to-state ref="finished"/>
     </decision-tree>
   </state>
   <state name="_initial">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="0"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
     <decision-tree>
       <transition-to-state ref="_initial"/>
     </decision-tree>
   </state>
   <state name="ready">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="1"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
     <decision-tree>
       <transition-to-state ref="ready"/>
     </decision-tree>
   </state>
   <state name="set">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="2"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
     <decision-tree>
       <transition-to-state ref="set"/>
     </decision-tree>
