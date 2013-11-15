@@ -2,7 +2,7 @@
 #include "path.hpp"
 #define car2pol(x,y) sqrt((x)*(x)+(y)*(y))
 #define dist(x1,y1,x2,y2) sqrt(pow(((x1)-(x2)),2)+pow(((y1)-(y2)),2))
-// #define FRAMEPAINTING
+#define FRAMEPAINTING
 //#define OLDENCIRCLING
 //#define NEWENCIRCLING
 //#define NEWNEWENCIRCLING
