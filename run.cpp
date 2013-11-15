@@ -2,7 +2,7 @@
 #include <time.h>
 #include "./Source/common/common.h"
 #include "./Source/walk/walk_thread.h"
-
+#include "./Source/gameController/gamecontrollerfunc.h"
 
 
 pthread_t thread_id_walk;
@@ -27,7 +27,7 @@ int main(void)
 	
 	//pthread_create (&thread_id_walk, NULL, walk_thread, NULL);
 	
-    //pthread_create (&thread_id_gc, NULL, readGameController, NULL);
+    pthread_create (&thread_id_gc, NULL, readGameController, NULL);
 	
     
   	 /* main.cpp */
@@ -35,6 +35,6 @@ int main(void)
     registerXABSL();
 	
 	/* main.cpp */
-	start();
+	//start();
 	return 0;
 }
