@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!ENTITY mySymbols SYSTEM "Symbols/mySymbols.xml">
+<!ENTITY myBasicBehaviors SYSTEM "BasicBehaviors/myBasicBehaviors.xml">
+<!ENTITY options SYSTEM "options.xml">

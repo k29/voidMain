@@ -8,33 +8,35 @@
 
 using namespace std;
 
-playerstate p;
+playerstate ACYUT;
 MyErrorHandler myErrorHandler;
 xabsl::Engine* engine = new xabsl::Engine(myErrorHandler,&getCurrentSystemTime);
 
-BasicBehaviorInitialize basicBehaviorInitialize(myErrorHandler,p);
-BasicBehaviorPrint basicBehaviorPrint(myErrorHandler,p);
-BasicBehaviorUpdate basicBehaviorUpdate(myErrorHandler,p);
-BasicBehaviormoveAcYuttemp basicBehaviormoveAcYuttemp(myErrorHandler,p);
-BasicBehaviorLocalize basicBehaviorLocalize(myErrorHandler,p);
-BasicBehaviorPathToWalk basicBehaviorPathToWalk(myErrorHandler,p);
-BasicBehaviorMakePath basicBehaviorMakePath(myErrorHandler,p);
-BasicBehaviorFindBall basicBehaviorFindBall(myErrorHandler,p);
-BasicBehaviorReset basicBehaviorReset(myErrorHandler,p);
+
+BasicBehaviorInitialize basicBehaviorInitialize(myErrorHandler,ACYUT);
+BasicBehaviorPrint basicBehaviorPrint(myErrorHandler,ACYUT);
+BasicBehaviorUpdate basicBehaviorUpdate(myErrorHandler,ACYUT);
+BasicBehaviormoveAcYuttemp basicBehaviormoveAcYuttemp(myErrorHandler,ACYUT);
+BasicBehaviorLocalize basicBehaviorLocalize(myErrorHandler,ACYUT);
+BasicBehaviorPathToWalk basicBehaviorPathToWalk(myErrorHandler,ACYUT);
+BasicBehaviorMakePath basicBehaviorMakePath(myErrorHandler,ACYUT);
+BasicBehaviorFindBall basicBehaviorFindBall(myErrorHandler,ACYUT);
+BasicBehaviorReset basicBehaviorReset(myErrorHandler,ACYUT);
+
 
 
 void registerXABSL()
 {
 	
 
-	engine->registerEnumeratedInputSymbol("ballreturn", "BallReturns", (int*)&p.ballreturn);
+	engine->registerEnumeratedInputSymbol("ballreturn", "BallReturns", (int*)&ACYUT.ballreturn);
 	engine->registerEnumElement("BallReturns", "BallReturns.BALLFOUND",BALLFOUND);
 	engine->registerEnumElement("BallReturns", "BallReturns.BALLFINDING",BALLFINDING);
 	engine->registerEnumElement("BallReturns", "BallReturns.TURNRIGHT",TURNRIGHT);
 	engine->registerEnumElement("BallReturns", "BallReturns.TURNLEFT",TURNLEFT);
 
 
-	engine->registerEnumeratedInputSymbol("pathreturn", "PathReturns", (int*)&p.pathreturn);
+	engine->registerEnumeratedInputSymbol("pathreturn", "PathReturns", (int*)&ACYUT.pathreturn);
 	engine->registerEnumElement("PathReturns", "PathReturns.DOWALK",DOWALK);
 	engine->registerEnumElement("PathReturns", "PathReturns.DOKICK",DOKICK);
 	engine->registerEnumElement("PathReturns", "PathReturns.DOENCIRCLE",DOENCIRCLE);
@@ -61,7 +63,7 @@ void registerXABSL()
 	engine->registerBasicBehavior(basicBehaviorMakePath);
 	engine->registerBasicBehavior(basicBehaviorFindBall);
 	engine->registerBasicBehavior(basicBehaviorReset);
-
+	
 
 
 	MyFileInputSource input("intermediate-code.dat");
@@ -71,23 +73,25 @@ void registerXABSL()
 
 void start()
 	{
-	p.resetflag=1; /*Resets all variables in the first run */
+	ACYUT.resetflag=1; /*Resets all variables in the first run */
 	printf("start(); \n");
 
 	while(1)
 		{
-				printf("start();");
-			/*Get GC data from GC thread */
-			// pthread_mutex_lock(&mutex_GCData);
-   //          p.localgcdata=GCData;
-   //          pthread_mutex_unlock(&mutex_GCData);
-   //          p.GC.update(p.localgcdata);
-	//		printf("Going to execute engine ");		
-			p.localgcdata.state=STATE_PLAYING;
-			p.ACTIVE_GOAL=0;
+			printf("start();");
+			#ifndef GC_IS_ON		
+			ACYUT.GCData.state=STATE_PLAYING;
+			#endif
+			#ifdef GC_IS_ON
+			pthread_mutex_lock(&mutex_GCData);
+            ACYUT.GCData=GCData;
+            pthread_mutex_unlock(&mutex_GCData);
+			#endif
+			printf("State passed is %lf\n",ACYUT.getRoboCupState());
+			ACYUT.ACTIVE_GOAL=1;
 			engine->execute();
-	//		printf("Executed");
-			p.resetflag=0;
+			
+			ACYUT.resetflag=0;
 		}
 	
 	}

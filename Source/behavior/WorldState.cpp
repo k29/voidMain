@@ -32,7 +32,7 @@ double playerstate::getReset()
 	}
 double playerstate::getRoboCupState()
 	{
-		return (double)theInstance->localgcdata.state;
+		return (double)theInstance->GCData.state;
 	}
 double playerstate::getDistance()
 	{

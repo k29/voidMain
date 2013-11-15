@@ -9,9 +9,9 @@
 #include "../gameController/gamecontrollerfunc.h"
 #include "../gameController/gamecontrollerobj.h"
 #include "opencv2/opencv.hpp"
-
+#include "modes.h"
 #define MYPORT "3838"
-
+#define GC_IS_ON
 int getImuAngle();
 
 void registerXABSL();
