@@ -43,8 +43,7 @@ option begin
 				action
 					{
 						doUpdate();
-						doFindBall();
-						ballfound();	
+						checkLocalization();	
 					}
 					
 			}
