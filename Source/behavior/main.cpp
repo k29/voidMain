@@ -20,7 +20,7 @@ BasicBehaviorLocalize basicBehaviorLocalize(myErrorHandler,p);
 BasicBehaviorPathToWalk basicBehaviorPathToWalk(myErrorHandler,p);
 BasicBehaviorMakePath basicBehaviorMakePath(myErrorHandler,p);
 BasicBehaviorFindBall basicBehaviorFindBall(myErrorHandler,p);
-
+BasicBehaviorReset basicBehaviorReset(myErrorHandler,p);
 
 
 void registerXABSL()
@@ -60,7 +60,7 @@ void registerXABSL()
 	engine->registerBasicBehavior(basicBehaviormoveAcYuttemp);
 	engine->registerBasicBehavior(basicBehaviorMakePath);
 	engine->registerBasicBehavior(basicBehaviorFindBall);
-	
+	engine->registerBasicBehavior(basicBehaviorReset);
 
 
 
