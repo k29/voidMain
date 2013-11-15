@@ -84,6 +84,7 @@ void start()
    //          p.GC.update(p.localgcdata);
 	//		printf("Going to execute engine ");		
 			p.localgcdata.state=STATE_PLAYING;
+			p.ACTIVE_GOAL=0;
 			engine->execute();
 	//		printf("Executed");
 			p.resetflag=0;

@@ -1,5 +1,5 @@
 #ifndef HEADMOTOR_H
-#define HEADMOTOR_H
+#define HEADMOTOR_H////
 //IMPORTANT: implementation of this class has changed!
 //Now, only writing is done, that too only when update function is called(has to be called in loop)
 //TODO: add speed control. Right now, it is random, depends on frame rate
@@ -38,6 +38,7 @@ private:
 	void scurve(int id[],int final[], float time);
 	int swrite(float thetax, float thetay, float ttime=1.0);
 	float thetaX_var, thetaY_var;
+	int motorX_var, motorY_var;
 	int current_pos[2];
 	int goal_pos[2];
 	bool initPos;
@@ -51,12 +52,14 @@ public:
 	int ismoving_motor(int id = 0);	//TODO id not being used right now, both motors being checked (17 and 18)
 	void speed_motor(int speed1, int speed2);
 	void write_motor(float thetax, float thetay);
-	int read_motor(float &thetax, float &thetay);
+	int read_motor(float &thetax, float &thetay,int &motorX_var,int &motorY_var);
 	int stop_motor();
 	int go2state(int state);
 	void update();
 	inline float thetaX(){ return thetaX_var;}
 	inline float thetaY(){ return thetaY_var;}
+	inline int motorX(){ return motorX_var;}
+	inline int motorY(){ return motorY_var;}
 };
 
 

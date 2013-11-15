@@ -1,4 +1,4 @@
-#include "featuredetection.h"
+#include "featuredetection.h"//
 //NOTE: THIS FILE ASSUMES IN SEVERAL PLACES THAT rgbimg_small IS HALF THE SIZE OF rgbimg!!!!!!!!!!!!!!!!!!!
 //1. Someplace in ballFind, i have multiplied ballX_var by 2 assuming main image is double the size of image used here
 //2. in finding ballRatio, same assumption has been made
@@ -24,6 +24,8 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
 	tempnObstacle = 0;
 	o.clear();
 	l.clear();
+    constants.open("Source/lut/constants.dat",ios::binary);
+
 }
 
 
@@ -31,18 +33,52 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
 //TODO: re-write this function to make it readable and maybe more efficient.
 //TODO: document how it works (if documenting somewhere else, give a link)
 //returns angle in degrees
+// void FeatureDetection::findReal(int x,int y, float &objdis, float &objangdeg, HeadMotor &hm)
+// {
+// 	float s=1,focal=533.33;
+// 	float thetaX = hm.thetaX();
+// 	float thetaY = hm.thetaY();
+// 	thetaX += forwardTiltCorrection*(PI/180.);
+// 	objdis=(((IMAGE_HEIGHT/2-y)+(focal/s)*tan(thetaX))/(1-(s/focal)*(IMAGE_HEIGHT/2-y)*tan(thetaX)));
+// 	float perpend=(x-(IMAGE_WIDTH/2))*((s/focal)*(objdis)*sin(thetaX)+cos(thetaX))*pix2cm;
+// 	objdis=pix2cm*(objdis-(focal/s)*tan(thetaX)) + (s_height+(neck_len/sin(thetaX)))*tan(thetaX);
+// 	//printf("%f %f %f %f\n",perpend,objdis,rad2deg(atan2(perpend,objdis)),rad2deg(thetaY));
+// //	printf("thetaX is %f\t",rad2deg(thetaY));
+// //	printf("x %f y %f\n", rad2deg(thetaX), rad2deg(thetaY));
+// 	objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
+// 	objdis=sqrt(objdis*objdis+perpend*perpend);
+	
+// }
+
 void FeatureDetection::findReal(int x,int y, float &objdis, float &objangdeg, HeadMotor &hm)
 {
-	float s=1,focal=533.33;
+	float s = 1;
+	float motorX = hm.motorX();
 	float thetaX = hm.thetaX();
 	float thetaY = hm.thetaY();
-	thetaX += forwardTiltCorrection*(PI/180.);
-	objdis=(((IMAGE_HEIGHT/2-y)+(focal/s)*tan(thetaX))/(1-(s/focal)*(IMAGE_HEIGHT/2-y)*tan(thetaX)));
-	float perpend=(x-(IMAGE_WIDTH/2))*((s/focal)*(objdis)*sin(thetaX)+cos(thetaX))*pix2cm;
-	objdis=pix2cm*(objdis-(focal/s)*tan(thetaX)) + (s_height+(neck_len/sin(thetaX)))*tan(thetaX);
-	//printf("%f %f %f %f\n",perpend,objdis,rad2deg(atan2(perpend,objdis)),rad2deg(thetaY));
-//	printf("thetaX is %f\t",rad2deg(thetaY));
-//	printf("x %f y %f\n", rad2deg(thetaX), rad2deg(thetaY));
+
+	parameters entry;
+	parameters temp;
+
+	while(1)
+	{
+		if(constants.eof())
+		{
+			constants.close();
+			break;
+		}
+		constants.read((char*)&temp,sizeof(temp));
+		if(temp.motor_pos == motorX)
+		{
+			entry = temp;
+			break;
+		}
+	}
+
+	objdis=(((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
+	float perpend=(x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx;
+	objdis=entry.pix2cmy*(objdis-(entry.focal/s)*tan(entry.angle)) + entry.s_view_compensation;
+
 	objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
 	objdis=sqrt(objdis*objdis+perpend*perpend);
 	

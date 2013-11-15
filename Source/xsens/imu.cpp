@@ -4,19 +4,7 @@
     This file contains an example of the CMT level 2 serial interface.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <unistd.h>
 
-#include "cmtdef.h"
-#include "xsens_time.h"
-#include "xsens_list.h"
-#include "cmtscan.h"
-#include "cmt3.h"
 #include "imu.h"
 
 using namespace xsens;

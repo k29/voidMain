@@ -1,5 +1,5 @@
 
-#include "headmotor.h"
+#include "headmotor.h"////
 
 
 //NOTE: goal pos and current pos set here must be same as that set in bootup_files()!!! they both also must be same
@@ -254,8 +254,10 @@ void HeadMotor::write_motor(float thetax, float thetay)
 
 
 
-int HeadMotor::read_motor(float &thetax, float &thetay)
+int HeadMotor::read_motor(float &thetax, float &thetay, int &motorX_var, int &motorY_var)
 {
+	motorX_var = current_pos[1];
+	motorY_var = current_pos[0];
 	thetay = 300.0 - ((current_pos[0]+offsety)*300.0/1023.0);
 	thetax = 300.0 - ((current_pos[1]+offsetx)*300.0/1023.0);
 	return 1;

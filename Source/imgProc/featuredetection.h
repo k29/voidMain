@@ -1,5 +1,5 @@
 #ifndef FEATUREDETECTION_H
-#define FEATUREDETECTION_H
+#define FEATUREDETECTION_H//
 
 #include "camcapture.h"
 #include "../common/defines.h"
@@ -9,7 +9,8 @@
 #include <cvblob.h>
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range2d.h"
-
+#include <fstream>
+using namespace std;
 #define PLOT_LANDMARKS
 // #define PLOT_HOUGH_LINES
 //new technique to get features:
@@ -18,6 +19,16 @@
 //2. for each new feature, check main array
 //3. if same feature with similar location exists, refresh its values and set its framecounter to 0
 //4. if feature does not exist, add it to main vector and set its counter to 0
+struct parameters
+{
+	int motor_pos;
+	float angle;
+	float focal;
+	float pix2cmx;
+	float pix2cmy;
+	float s_view_compensation;
+};
+
 class FeatureDetection
 {
 private:
@@ -102,6 +113,8 @@ public:
 	LOCALIZE_INTERNALS::Obstacle tempo[20];	//Max obstacles you might detect in an image
 	int tempnObstacle;
 	std::vector<LOCALIZE_INTERNALS::Obstacle> o;
+	//Opening LUT for parameters
+	ifstream constants;
 	// int nLand;
 	Coords ball;
 	FeatureDetection(CamCapture &cam);
