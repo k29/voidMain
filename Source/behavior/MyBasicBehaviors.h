@@ -125,4 +125,17 @@ private:
 		playerstate &p;
 
 };
+
+class BasicBehaviorReset: public xabsl::BasicBehavior
+{
+	public:
+	BasicBehaviorReset(xabsl::ErrorHandler& errorHandler,playerstate &p):xabsl::BasicBehavior("doReset",errorHandler),p(p)
+		{
+
+		}
+	virtual void execute();
+private:
+		playerstate &p;
+
+};
 #endif
