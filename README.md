@@ -1,5 +1,12 @@
 voidMain
 ========
-This is the master repo. and contains all the codes for AcYut.
+Main repo of AcYut.
 
-testing read write access
+Contains the following branches:
+master                   : final code tested and released (with new camera)
+OldCamera                : final codes for Old camera 
+NoLocaliszationOldCamera : codes meant for testing of path walk sans localization
+
+
+
+
