@@ -2,8 +2,7 @@
 #include <time.h>
 #include "./Source/common/common.h"
 #include "./Source/walk/walk_thread.h"
-
-
+#include "./Source/gameController/gamecontrollerfunc.h"
 
 pthread_t thread_id_walk;
 pthread_t thread_id_gc;
@@ -20,21 +19,32 @@ WalkStructure walkstr;
 RoboCupGameControlData GCData;
 PathPacket pathpackvar;
 
+
+ 
 int main(void)
 {	
 	
 	// Create walkthread 
 	
 	//pthread_create (&thread_id_walk, NULL, walk_thread, NULL);
-	
-    //pthread_create (&thread_id_gc, NULL, readGameController, NULL);
-	
+	#ifdef GC_IS_ON
+    pthread_create (&thread_id_gc, NULL, readGameController, NULL);
+	#endif
     
-    /* main.cpp */
+  	 /* main.cpp */
 
     registerXABSL();
 	
 	/* main.cpp */
 	start();
+
+
+
+    #ifdef GC_IS_ON
+	pthread_join(thread_id_gc,NULL);
+	#endif
+	pthread_join(thread_id_walk,NULL);
+
+
 	return 0;
 }
