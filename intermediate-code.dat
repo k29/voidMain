@@ -1,0 +1,620 @@
+// Intermediate code for the agents of 
+
+0
+1
+b init.isDone
+
+8
+ballfollowing 0
+ballfound 0
+begin 0
+checklocalize 0
+checkpath 0
+path 0
+referee 0
+reset 0
+
+5
+ballnotfound n
+forward n
+left n
+right n
+preparekick n
+
+ballnotfound
+0
+1
+a moveAcYuttemp
+1
+d moveAcYuttemp.x
+v 120
+i
+!
+c
+i ballreturn
+0
+v BallReturns.BALLFOUND 
+t ballnotfound
+i
+& 2
+l
+i theta
+0
+v 8
+g
+i theta
+0
+v -8
+i
+<
+i ball.distance
+0
+v 5
+t preparekick
+t forward
+i
+<
+i theta
+0
+v 0
+t left
+i
+>
+i theta
+0
+v 0
+t right
+t ballnotfound
+0
+1
+a moveAcYuttemp
+1
+d moveAcYuttemp.x
+v 119
+i
+!
+c
+i ballreturn
+0
+v BallReturns.BALLFOUND 
+t ballnotfound
+i
+& 2
+l
+i theta
+0
+v 8
+g
+i theta
+0
+v -8
+i
+<
+i ball.distance
+0
+v 5
+t preparekick
+t forward
+i
+<
+i theta
+0
+v 0
+t left
+i
+>
+i theta
+0
+v 0
+t right
+t forward
+0
+1
+a moveAcYuttemp
+1
+d moveAcYuttemp.x
+v 97
+i
+!
+c
+i ballreturn
+0
+v BallReturns.BALLFOUND 
+t ballnotfound
+i
+& 2
+l
+i theta
+0
+v 8
+g
+i theta
+0
+v -8
+i
+<
+i ball.distance
+0
+v 5
+t preparekick
+t forward
+i
+<
+i theta
+0
+v 0
+t left
+i
+>
+i theta
+0
+v 0
+t right
+t left
+0
+1
+a moveAcYuttemp
+1
+d moveAcYuttemp.x
+v 100
+i
+!
+c
+i ballreturn
+0
+v BallReturns.BALLFOUND 
+t ballnotfound
+i
+& 2
+l
+i theta
+0
+v 8
+g
+i theta
+0
+v -8
+i
+<
+i ball.distance
+0
+v 5
+t preparekick
+t forward
+i
+<
+i theta
+0
+v 0
+t left
+i
+>
+i theta
+0
+v 0
+t right
+t right
+0
+1
+a moveAcYuttemp
+1
+d moveAcYuttemp.x
+v 120
+i
+!
+c
+i ballreturn
+0
+v BallReturns.BALLFOUND 
+t ballnotfound
+i
+& 2
+l
+i theta
+0
+v 8
+g
+i theta
+0
+v -8
+i
+<
+i ball.distance
+0
+v 5
+t preparekick
+t forward
+i
+<
+i theta
+0
+v 0
+t left
+i
+>
+i theta
+0
+v 0
+t right
+t preparekick
+
+
+
+2
+ballfound n
+noball n
+
+ballfound
+0
+2
+a doMakePath
+0
+o checkpath
+0
+i
+c
+i ballreturn
+0
+v BallReturns.BALLFOUND 
+t ballfound
+i
+!
+c
+i ballreturn
+0
+v BallReturns.BALLFOUND 
+t noball
+t ballfound
+0
+0
+i
+c
+i ballreturn
+0
+v BallReturns.BALLFOUND 
+t ballfound
+i
+!
+c
+i ballreturn
+0
+v BallReturns.BALLFOUND 
+t noball
+t noball
+
+
+
+3
+initialize n
+play n
+_reset n
+
+initialize
+0
+2
+b init.isDone
+v true
+a doInitialize
+0
+i
+=
+i resetflag
+0
+v 1
+t _reset
+i
+o init.isDone
+t play
+t initialize
+0
+3
+a doUpdate
+0
+a doFindBall
+0
+o ballfound
+0
+i
+=
+i resetflag
+0
+v 1
+t _reset
+i
+o init.isDone
+t play
+t initialize
+0
+1
+o reset
+0
+i
+=
+i resetflag
+0
+v 0
+t initialize
+t _reset
+
+
+
+2
+localize n
+findball n
+
+localize
+0
+1
+a doLocalize
+0
+i
+>
+i confidence
+0
+c 0.5
+t findball
+t localize
+0
+2
+a doFindBall
+0
+o ballfound
+0
+i
+<
+i confidence
+0
+c 0.5
+t localize
+t findball
+
+
+
+2
+pathfollow n
+ballfollow n
+
+pathfollow
+0
+1
+a doPathToWalk
+0
+i
+c
+i pathreturn
+0
+v PathReturns.DOWALK 
+t pathfollow
+i
+c
+i pathreturn
+0
+v PathReturns.NOPATH 
+t ballfollow
+t pathfollow
+0
+1
+o ballfollowing
+0
+i
+c
+i pathreturn
+0
+v PathReturns.DOWALK 
+t pathfollow
+i
+c
+i pathreturn
+0
+v PathReturns.NOPATH 
+t ballfollow
+t ballfollow
+
+
+
+1
+__initial n
+
+__initial
+0
+1
+a printmsg
+1
+d printmsg.o
+v 5
+t __initial
+
+
+
+5
+playing n
+finished n
+_initial n
+ready n
+set n
+
+_initial
+0
+1
+o begin
+0
+i
+=
+i RoboCup.state
+0
+c 3
+t playing
+i
+=
+i RoboCup.state
+0
+c 0
+t _initial
+i
+=
+i RoboCup.state
+0
+c 4
+t finished
+i
+=
+i RoboCup.state
+0
+c 1
+t ready
+i
+=
+i RoboCup.state
+0
+c 2
+t set
+t playing
+0
+0
+i
+=
+i RoboCup.state
+0
+c 3
+t playing
+i
+=
+i RoboCup.state
+0
+c 0
+t _initial
+i
+=
+i RoboCup.state
+0
+c 4
+t finished
+i
+=
+i RoboCup.state
+0
+c 1
+t ready
+i
+=
+i RoboCup.state
+0
+c 2
+t set
+t finished
+0
+0
+i
+=
+i RoboCup.state
+0
+c 3
+t playing
+i
+=
+i RoboCup.state
+0
+c 0
+t _initial
+i
+=
+i RoboCup.state
+0
+c 4
+t finished
+i
+=
+i RoboCup.state
+0
+c 1
+t ready
+i
+=
+i RoboCup.state
+0
+c 2
+t set
+t _initial
+0
+0
+i
+=
+i RoboCup.state
+0
+c 3
+t playing
+i
+=
+i RoboCup.state
+0
+c 0
+t _initial
+i
+=
+i RoboCup.state
+0
+c 4
+t finished
+i
+=
+i RoboCup.state
+0
+c 1
+t ready
+i
+=
+i RoboCup.state
+0
+c 2
+t set
+t ready
+0
+0
+i
+=
+i RoboCup.state
+0
+c 3
+t playing
+i
+=
+i RoboCup.state
+0
+c 0
+t _initial
+i
+=
+i RoboCup.state
+0
+c 4
+t finished
+i
+=
+i RoboCup.state
+0
+c 1
+t ready
+i
+=
+i RoboCup.state
+0
+c 2
+t set
+t set
+
+
+
+1
+reset n
+
+reset
+0
+1
+b init.isDone
+v false
+t reset
+
+
+
+1
+player referee
