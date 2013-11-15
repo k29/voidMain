@@ -33,7 +33,7 @@ void *get_in_addr(struct sockaddr *sa)
 /////////
 void* readGameController(void*)
 {
-    printf("Game controller thread made");
+    printf("Game controller thread made\n");
     int sockfd;
     struct addrinfo hints, *servinfo, *p;
     int rv;

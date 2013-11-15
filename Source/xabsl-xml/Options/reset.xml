@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE symbol-and-basic-behavior-files SYSTEM "../symbol-and-basic-behavior-files.dtd">
+<option xmlns="http://www.xabsl.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="reset" initial-state="reset">
+  &mySymbols;
+  &options;
+  <state name="reset">
+    <set-boolean-output-symbol ref="init.isDone">
+      <boolean-value value="false"/>
+    </set-boolean-output-symbol>
+    <decision-tree>
+      <transition-to-state ref="reset"/>
+    </decision-tree>
+  </state>
+</option>

@@ -36,5 +36,11 @@ int main(void)
 	
 	/* main.cpp */
 	//start();
+
+
+	pthread_join(thread_id_gc,NULL);
+	pthread_join(thread_id_walk,NULL);
+
+	
 	return 0;
 }
