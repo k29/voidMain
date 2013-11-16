@@ -1,5 +1,3 @@
-/*  */
-
 #ifndef COMMONN_H
 #define COMMONN_H
 
@@ -38,6 +36,5 @@ extern RoboCupGameControlData GCData;
 
 /* Direct interface between path and walk. Updating this variable is controlled by behavior */ 
 extern PathPacket pathpackvar;
-
 
 #endif
