@@ -29,6 +29,11 @@ int main(void)
   		pthread_create (&thread_id_gc, NULL, readGameController, NULL);
 	#endif
     
+    #ifdef IMU_IS_ON
+    	Imu imu;
+    	imu.init();
+    #endif
+
   	registerXABSL(); /* main.cpp */
 	start();
 

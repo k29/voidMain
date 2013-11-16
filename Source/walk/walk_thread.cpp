@@ -35,48 +35,7 @@ using namespace std;
 
 bool quit = false;
 
-int kbhit()
-{
-	struct timeval tv;
-	fd_set read_fd;
-	tv.tv_sec=0;
-	tv.tv_usec=0;
-	FD_ZERO(&read_fd);
-	FD_SET(0,&read_fd);
-	if(select(1, &read_fd,NULL, /*No writes*/NULL, /*No exceptions*/&tv) == -1)
-		return 0; /* An error occured */
-	if(FD_ISSET(0,&read_fd))
-		return 1;
-	return 0;
-}
 
-
-int kbhit2()
-{
-	int	 count = 0;
-	int	 error;
-	static struct termios	Otty, Ntty;
-
-	tcgetattr(STDIN_FILENO, &Otty);
-	Ntty = Otty;
-
-	Ntty.c_lflag &= ~ICANON; /* raw mode */
-	Ntty.c_cc[VMIN] = CMIN; /* minimum chars to wait for */
-	Ntty.c_cc[VTIME] = CTIME; /* minimum wait time	 */
-
-	if (0 == (error = tcsetattr(STDIN_FILENO, TCSANOW, &Ntty)))
-	{
-		struct timeval	tv;
-		error += ioctl(STDIN_FILENO, FIONREAD, &count);
-		error += tcsetattr(STDIN_FILENO, TCSANOW, &Otty);
-/* minimal delay gives up cpu time slice, and
-* allows use in a tight loop */
-		tv.tv_sec = 0;
-		tv.tv_usec = 10;
-		select(1, NULL, NULL, NULL, &tv);
-	}
-	return (error == 0 ? count : -1 );
-}
 
 
 
@@ -389,147 +348,15 @@ float scurve2(float in,float fi,float t, float tot)
 	return in+(fi-in)*ret_frac;
 }
 
-/*
-int balanceStatic(AcYut& bot, int phase, int leg = DSP)
-{
-	sleep(1);
-	const double (&COM)[AXES] = bot.getRotCOM(); 
-	//printf("COM X\t%3.3lf\tY\t%3.3lf\tZ\t%3.3lf\n",COM[0],COM[1],COM[2]);
-	printf("R\t%3.3lf\tP\t%3.3lf\n",bot.imu->roll,bot.imu->pitch);
-	const supportPolygon poly = bot.calcSupportPolygon();
-	const Point center = getPolyCentroid(bot.calcSupportPolygon());
-	printf("\n\n");
-	float error[AXES] = {0};
-	float corr[AXES] = {0};
-	error[Y] = COM[Y] - center.y;
-	error[Z] = COM[Z] - center.x;
-	corr[Y] = 0.2 * error[Y];
-	corr[Z] = 0.2 * error[Z];
-	
-	const float (&leftLeg)[AXES+1] = bot.left_leg->getLegCoods();
-	const float (&rightLeg)[AXES+1] = bot.right_leg->getLegCoods();
-	printf("Left Leg\t%lf\t%lf\t%lf\n",leftLeg[X],leftLeg[Y],leftLeg[Z],leftLeg[4]);
-	printf("Right Leg\t%lf\t%lf\t%lf\n",rightLeg[X],rightLeg[Y],rightLeg[Z],rightLeg[4]);
-	 
-	
-	bot.right_leg->runIK(rightLeg[X],rightLeg[Y] + corr[Y],rightLeg[Z],rightLeg[4]);
-	bot.updateBot();
-	printf("COMY\t%3.3lf\tZ\t%3.3lf\n",COM[1],COM[2]);
-	printf("CenY\t%3.3lf\tX\t%3.3lf\n",center.y,center.x);
-	printf("CorY\t%3.3lf\tZ\t%3.3lf\n",corr[Y],corr[Z]);
-	for(int i=0;i<100;i++);
-	printf("\n");
-	return 1;
-	
-}
-*/
-
-int kick(AcYut *bot)
-{
-	float kickTime = 1.0;
-	int fps = 80;
-	float frameTime	= (float)1.0/(float)fps;
-	int sleep = frameTime * 1000000;
-	printf("FrameTime\t%lf\n",frameTime);
-	float kickHeight = 40;
-	float botHeight  = 390;
-	float wtShift    = 50;
-	float wtShiftTime= 0.5;
-	float liftTime   = 0.5;
-	float counterBalance = 15;
-	
-	
-	float yStart=0, yrStart=0, zStart=0, zrStart=0;
-	float x,xr,y,yr,z,zr;
-	for(float time=0;time<wtShiftTime;time+=frameTime)
-	{
-		x = botHeight;
-		xr= botHeight;
-		y = yStart;
-		yr= yrStart;
-		z = scurve2(zStart, wtShift, time, wtShiftTime);
-		zr= scurve2(zrStart, -wtShift, time, wtShiftTime);
-		printf("Time\t%lf\tX\t%lf\tY\t%lf\tZ\t%lf\tXR\t%lf\tYR\t%lf\tZR\t%lf\n",time,x,y,z,xr,yr,zr);
-	
-		bot->right_leg->runIK(x,y,z,0);
-		bot->left_leg->runIK(xr,yr,zr,0);
-		bot->updateBot();
-		
-		usleep(sleep);
-	}
-	
-	for(float time=0;time<liftTime;time+=frameTime)
-	{
-		x = scurve2(botHeight, botHeight - kickHeight, time, liftTime);
-		xr= botHeight;
-		y = yStart;
-		yr= yrStart;
-		z = scurve2(wtShift,wtShift+counterBalance,time,liftTime);
-		zr= scurve2(-wtShift,-wtShift - counterBalance, time, liftTime);
-	
-		printf("Time\t%lf\tX\t%lf\tY\t%lf\tZ\t%lf\tXR\t%lf\tYR\t%lf\tZR\t%lf\n",time,x,y,z,xr,yr,zr);
-		bot->right_leg->runIK(x,y,z,0);
-		bot->left_leg->runIK(xr,yr,zr,0);
-		bot->updateBot();
-		
-		usleep(sleep);
-		
-	} 		
-	
-};
-
-void test(AcYut *bot)
-{
-
-	int xmax = 390;
-	int xmin = 360;
-	int ymax = 30;
-	int ymin = -30;
-	float time = 0.5;
-	float frameTime = 1.0/60;
-	
-	float t = 0;
-	float x=xmax, y= ymin;
-	for(t=0;t<time;t+=frameTime)
-	{
-		x = linear(xmax,xmin,t,time);
-		y = linear(ymin,ymax,t,time);
-		bot->right_leg->runIK(x,y,0,0);
-		bot->updateBot();
-		usleep(16670);
-		printf("test x %lf y %lf\n",x,y);
-		getchar();
-	}
-	
-	for(t=0;t<time;t+=frameTime)
-	{
-		x = linear(xmin,xmax,t,time);
-		y = linear(ymax,ymin,t,time);
-		bot->right_leg->runIK(x,y,0,0);
-		bot->updateBot();
-		usleep(16670);
-		printf("test x %lf y %lf\n",x,y);
-		getchar();
-	}
-	
-	
-	
-	
-	
-
-}
-
-
-
 void* walk_thread(void*)
 {
-	Imu imu;
+	//Imu imu;
 	// printf("GENORAI");
-	imu.init();
+	//imu.init();
 	foot foot1[1000];
 
 	Communication comm;
-	AcYut bot(&comm,&imu);
+	AcYut bot(&comm,NULL);
 	Walk walk(&bot);
 	int j=0,i=0;
 	PathPacket pathpackvarlocal;
