@@ -1,0 +1,921 @@
+<?xml version="1.0"?>
+<agent-collection xmlns="http://www.xabsl.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <title/>
+  <platform/>
+  <software-environment/>
+  <agent id="player" title="AcYut" description="" root-option="referee"/>
+  
+<option-definitions>
+  <option-definition name="ballfollowing" description=""/>
+  <option-definition name="ballfound" description=""/>
+  <option-definition name="begin" description="Root option"/>
+  <option-definition name="checklocalize" description=""/>
+  <option-definition name="checkpath" description=""/>
+  <option-definition name="path" description=""/>
+  <option-definition name="referee" description=""/>
+  <option-definition name="reset" description=""/>
+</option-definitions>
+
+  <options>
+    <option name="ballfollowing" initial-state="ballnotfound" xml:base="Options/ballfollowing.xml">
+  
+<symbols id="mySymbols" title="My Symbols" description="">
+  <decimal-input-symbol name="resetflag" description="If true resets all XABSL parameters" measure="" range=""/>
+  <enumeration name="BallReturns" description="">
+    <enum-element name="BallReturns.BALLFOUND"/>
+    <enum-element name="BallReturns.BALLFINDING"/>
+    <enum-element name="BallReturns.TURNRIGHT"/>
+    <enum-element name="BallReturns.TURNLEFT"/>
+  </enumeration>
+  <enumerated-input-symbol name="ballreturn" enumeration="BallReturns" description=""/>
+  <enumeration name="PathReturns" description="Path's instruction to Walk">
+    <enum-element name="PathReturns.DOWALK"/>
+    <enum-element name="PathReturns.DOENCIRCLE"/>
+    <enum-element name="PathReturns.DOKICK"/>
+    <enum-element name="PathReturns.NOPATH"/>
+  </enumeration>
+  <enumerated-input-symbol name="pathreturn" enumeration="PathReturns" description="Path's instruction to Walk"/>
+  <decimal-input-symbol name="RoboCup.state" description="Current state of the game as specified by the referee box" measure="" range=""/>
+  <constant name="STATE_INITIAL" value="0" measure="" description="Stand up"/>
+  <constant name="STATE_READY" value="1" measure="" description="Take position"/>
+  <constant name="STATE_SET" value="2" measure="" description="Re-position"/>
+  <constant name="STATE_PLAYING" value="3" measure="" description="Start/continue play"/>
+  <constant name="STATE_FINISHED" value="4" measure="" description="Free"/>
+  <decimal-input-symbol name="confidence" description="Localization confidence" measure="" range=""/>
+  <constant name="TH" value="0.5" measure="" description="Localization threshhold"/>
+  <constant name="TL" value="0.03" measure="" description="Localization critical threshhold"/>
+  <decimal-input-symbol name="MM.confidence" description="MotionModel confidence" measure="" range=""/>
+  <constant name="MM.TH" value="0.5" measure="" description="MotionModel threshhold"/>
+  <decimal-input-symbol name="ball.distance" description="Distance from the ball" measure="" range=""/>
+  <decimal-input-symbol name="theta" description="Angle of ball" measure="" range=""/>
+  <constant name="r" value="15" measure="cm" description="Predetermined near radius"/>
+  <boolean-output-symbol name="init.isDone" description="AcYut initialization state" internal="true"/>
+</symbols>
+
+  
+<basic-behaviors id="myBasicBehaviors" title="My Behaviors" description="">
+  <basic-behavior name="moveAcYuttemp" description="No longer in use. wasd walk">
+    <decimal-parameter name="moveAcYuttemp.x" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="printmsg" description="Display a number">
+    <decimal-parameter name="printmsg.o" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="doInitialize" description="Initialize AcYut"/>
+  <basic-behavior name="doUpdate" description="Calculate confidence and"/>
+  <basic-behavior name="doLocalize" description="If confidence is low, search , get landmarks and localize"/>
+  <basic-behavior name="doPathToWalk" description="Send the made path to walk"/>
+  <basic-behavior name="doMakePath" description="Create a path to the ball based on localization inputs"/>
+  <basic-behavior name="doFindBall" description="Find the ball"/>
+  <basic-behavior name="doReset" description="Reset the input symbols(cant touch them in XABSL??? verify )"/>
+</basic-behaviors>
+
+  
+<option-definitions>
+  <option-definition name="ballfollowing" description=""/>
+  <option-definition name="ballfound" description=""/>
+  <option-definition name="begin" description="Root option"/>
+  <option-definition name="checklocalize" description=""/>
+  <option-definition name="checkpath" description=""/>
+  <option-definition name="path" description=""/>
+  <option-definition name="referee" description=""/>
+  <option-definition name="reset" description=""/>
+</option-definitions>
+
+  <common-decision-tree>
+    <if>
+      <condition description="Ball not found">
+        <not>
+          <enumerated-input-symbol-comparison>
+            <enumerated-input-symbol-ref ref="ballreturn"/>
+            <enum-element-ref ref="BallReturns.BALLFOUND"/>
+          </enumerated-input-symbol-comparison>
+        </not>
+      </condition>
+      <transition-to-state ref="ballnotfound"/>
+    </if>
+    <else>
+      <if>
+        <condition description="Ball is in front">
+          <and>
+            <less-than-or-equal-to>
+              <decimal-input-symbol-ref ref="theta"/>
+              <decimal-value value="8"/>
+            </less-than-or-equal-to>
+            <greater-than-or-equal-to>
+              <decimal-input-symbol-ref ref="theta"/>
+              <decimal-value value="-8"/>
+            </greater-than-or-equal-to>
+          </and>
+        </condition>
+        <if>
+          <condition description="Ball is near">
+            <less-than>
+              <decimal-input-symbol-ref ref="ball.distance"/>
+              <decimal-value value="5"/>
+            </less-than>
+          </condition>
+          <transition-to-state ref="preparekick"/>
+        </if>
+        <else>
+          <transition-to-state ref="forward"/>
+        </else>
+      </if>
+      <else>
+        <if>
+          <condition description="Ball is left">
+            <less-than>
+              <decimal-input-symbol-ref ref="theta"/>
+              <decimal-value value="0"/>
+            </less-than>
+          </condition>
+          <transition-to-state ref="left"/>
+        </if>
+        <else>
+          <if>
+            <condition description="Ball is right">
+              <greater-than>
+                <decimal-input-symbol-ref ref="theta"/>
+                <decimal-value value="0"/>
+              </greater-than>
+            </condition>
+            <transition-to-state ref="right"/>
+          </if>
+        </else>
+      </else>
+    </else>
+  </common-decision-tree>
+  <state name="ballnotfound">
+    <subsequent-basic-behavior ref="moveAcYuttemp">
+      <set-parameter ref="moveAcYuttemp.x">
+        <decimal-value value="120"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
+    <decision-tree>
+      <transition-to-state ref="ballnotfound"/>
+    </decision-tree>
+  </state>
+  <state name="forward">
+    <subsequent-basic-behavior ref="moveAcYuttemp">
+      <set-parameter ref="moveAcYuttemp.x">
+        <decimal-value value="119"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
+    <decision-tree>
+      <transition-to-state ref="forward"/>
+    </decision-tree>
+  </state>
+  <state name="left">
+    <subsequent-basic-behavior ref="moveAcYuttemp">
+      <set-parameter ref="moveAcYuttemp.x">
+        <decimal-value value="97"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
+    <decision-tree>
+      <transition-to-state ref="left"/>
+    </decision-tree>
+  </state>
+  <state name="right">
+    <subsequent-basic-behavior ref="moveAcYuttemp">
+      <set-parameter ref="moveAcYuttemp.x">
+        <decimal-value value="100"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
+    <decision-tree>
+      <transition-to-state ref="right"/>
+    </decision-tree>
+  </state>
+  <state name="preparekick">
+    <subsequent-basic-behavior ref="moveAcYuttemp">
+      <set-parameter ref="moveAcYuttemp.x">
+        <decimal-value value="120"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
+    <decision-tree>
+      <transition-to-state ref="preparekick"/>
+    </decision-tree>
+  </state>
+</option>
+    <option name="ballfound" initial-state="ballfound" xml:base="Options/ballfound.xml">
+  
+<symbols id="mySymbols" title="My Symbols" description="">
+  <decimal-input-symbol name="resetflag" description="If true resets all XABSL parameters" measure="" range=""/>
+  <enumeration name="BallReturns" description="">
+    <enum-element name="BallReturns.BALLFOUND"/>
+    <enum-element name="BallReturns.BALLFINDING"/>
+    <enum-element name="BallReturns.TURNRIGHT"/>
+    <enum-element name="BallReturns.TURNLEFT"/>
+  </enumeration>
+  <enumerated-input-symbol name="ballreturn" enumeration="BallReturns" description=""/>
+  <enumeration name="PathReturns" description="Path's instruction to Walk">
+    <enum-element name="PathReturns.DOWALK"/>
+    <enum-element name="PathReturns.DOENCIRCLE"/>
+    <enum-element name="PathReturns.DOKICK"/>
+    <enum-element name="PathReturns.NOPATH"/>
+  </enumeration>
+  <enumerated-input-symbol name="pathreturn" enumeration="PathReturns" description="Path's instruction to Walk"/>
+  <decimal-input-symbol name="RoboCup.state" description="Current state of the game as specified by the referee box" measure="" range=""/>
+  <constant name="STATE_INITIAL" value="0" measure="" description="Stand up"/>
+  <constant name="STATE_READY" value="1" measure="" description="Take position"/>
+  <constant name="STATE_SET" value="2" measure="" description="Re-position"/>
+  <constant name="STATE_PLAYING" value="3" measure="" description="Start/continue play"/>
+  <constant name="STATE_FINISHED" value="4" measure="" description="Free"/>
+  <decimal-input-symbol name="confidence" description="Localization confidence" measure="" range=""/>
+  <constant name="TH" value="0.5" measure="" description="Localization threshhold"/>
+  <constant name="TL" value="0.03" measure="" description="Localization critical threshhold"/>
+  <decimal-input-symbol name="MM.confidence" description="MotionModel confidence" measure="" range=""/>
+  <constant name="MM.TH" value="0.5" measure="" description="MotionModel threshhold"/>
+  <decimal-input-symbol name="ball.distance" description="Distance from the ball" measure="" range=""/>
+  <decimal-input-symbol name="theta" description="Angle of ball" measure="" range=""/>
+  <constant name="r" value="15" measure="cm" description="Predetermined near radius"/>
+  <boolean-output-symbol name="init.isDone" description="AcYut initialization state" internal="true"/>
+</symbols>
+
+  
+<basic-behaviors id="myBasicBehaviors" title="My Behaviors" description="">
+  <basic-behavior name="moveAcYuttemp" description="No longer in use. wasd walk">
+    <decimal-parameter name="moveAcYuttemp.x" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="printmsg" description="Display a number">
+    <decimal-parameter name="printmsg.o" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="doInitialize" description="Initialize AcYut"/>
+  <basic-behavior name="doUpdate" description="Calculate confidence and"/>
+  <basic-behavior name="doLocalize" description="If confidence is low, search , get landmarks and localize"/>
+  <basic-behavior name="doPathToWalk" description="Send the made path to walk"/>
+  <basic-behavior name="doMakePath" description="Create a path to the ball based on localization inputs"/>
+  <basic-behavior name="doFindBall" description="Find the ball"/>
+  <basic-behavior name="doReset" description="Reset the input symbols(cant touch them in XABSL??? verify )"/>
+</basic-behaviors>
+
+  
+<option-definitions>
+  <option-definition name="ballfollowing" description=""/>
+  <option-definition name="ballfound" description=""/>
+  <option-definition name="begin" description="Root option"/>
+  <option-definition name="checklocalize" description=""/>
+  <option-definition name="checkpath" description=""/>
+  <option-definition name="path" description=""/>
+  <option-definition name="referee" description=""/>
+  <option-definition name="reset" description=""/>
+</option-definitions>
+
+  <common-decision-tree>
+    <if>
+      <condition description="">
+        <enumerated-input-symbol-comparison>
+          <enumerated-input-symbol-ref ref="ballreturn"/>
+          <enum-element-ref ref="BallReturns.BALLFOUND"/>
+        </enumerated-input-symbol-comparison>
+      </condition>
+      <transition-to-state ref="ballfound"/>
+    </if>
+    <else>
+      <if>
+        <condition description="">
+          <not>
+            <enumerated-input-symbol-comparison>
+              <enumerated-input-symbol-ref ref="ballreturn"/>
+              <enum-element-ref ref="BallReturns.BALLFOUND"/>
+            </enumerated-input-symbol-comparison>
+          </not>
+        </condition>
+        <transition-to-state ref="noball"/>
+      </if>
+    </else>
+  </common-decision-tree>
+  <state name="ballfound">
+    <subsequent-basic-behavior ref="doMakePath"/>
+    <subsequent-option ref="checkpath"/>
+    <decision-tree>
+      <transition-to-state ref="ballfound"/>
+    </decision-tree>
+  </state>
+  <state name="noball">
+    <decision-tree>
+      <transition-to-state ref="noball"/>
+    </decision-tree>
+  </state>
+</option>
+    <option name="begin" initial-state="initialize" xml:base="Options/begin.xml">
+  
+<symbols id="mySymbols" title="My Symbols" description="">
+  <decimal-input-symbol name="resetflag" description="If true resets all XABSL parameters" measure="" range=""/>
+  <enumeration name="BallReturns" description="">
+    <enum-element name="BallReturns.BALLFOUND"/>
+    <enum-element name="BallReturns.BALLFINDING"/>
+    <enum-element name="BallReturns.TURNRIGHT"/>
+    <enum-element name="BallReturns.TURNLEFT"/>
+  </enumeration>
+  <enumerated-input-symbol name="ballreturn" enumeration="BallReturns" description=""/>
+  <enumeration name="PathReturns" description="Path's instruction to Walk">
+    <enum-element name="PathReturns.DOWALK"/>
+    <enum-element name="PathReturns.DOENCIRCLE"/>
+    <enum-element name="PathReturns.DOKICK"/>
+    <enum-element name="PathReturns.NOPATH"/>
+  </enumeration>
+  <enumerated-input-symbol name="pathreturn" enumeration="PathReturns" description="Path's instruction to Walk"/>
+  <decimal-input-symbol name="RoboCup.state" description="Current state of the game as specified by the referee box" measure="" range=""/>
+  <constant name="STATE_INITIAL" value="0" measure="" description="Stand up"/>
+  <constant name="STATE_READY" value="1" measure="" description="Take position"/>
+  <constant name="STATE_SET" value="2" measure="" description="Re-position"/>
+  <constant name="STATE_PLAYING" value="3" measure="" description="Start/continue play"/>
+  <constant name="STATE_FINISHED" value="4" measure="" description="Free"/>
+  <decimal-input-symbol name="confidence" description="Localization confidence" measure="" range=""/>
+  <constant name="TH" value="0.5" measure="" description="Localization threshhold"/>
+  <constant name="TL" value="0.03" measure="" description="Localization critical threshhold"/>
+  <decimal-input-symbol name="MM.confidence" description="MotionModel confidence" measure="" range=""/>
+  <constant name="MM.TH" value="0.5" measure="" description="MotionModel threshhold"/>
+  <decimal-input-symbol name="ball.distance" description="Distance from the ball" measure="" range=""/>
+  <decimal-input-symbol name="theta" description="Angle of ball" measure="" range=""/>
+  <constant name="r" value="15" measure="cm" description="Predetermined near radius"/>
+  <boolean-output-symbol name="init.isDone" description="AcYut initialization state" internal="true"/>
+</symbols>
+
+  
+<basic-behaviors id="myBasicBehaviors" title="My Behaviors" description="">
+  <basic-behavior name="moveAcYuttemp" description="No longer in use. wasd walk">
+    <decimal-parameter name="moveAcYuttemp.x" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="printmsg" description="Display a number">
+    <decimal-parameter name="printmsg.o" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="doInitialize" description="Initialize AcYut"/>
+  <basic-behavior name="doUpdate" description="Calculate confidence and"/>
+  <basic-behavior name="doLocalize" description="If confidence is low, search , get landmarks and localize"/>
+  <basic-behavior name="doPathToWalk" description="Send the made path to walk"/>
+  <basic-behavior name="doMakePath" description="Create a path to the ball based on localization inputs"/>
+  <basic-behavior name="doFindBall" description="Find the ball"/>
+  <basic-behavior name="doReset" description="Reset the input symbols(cant touch them in XABSL??? verify )"/>
+</basic-behaviors>
+
+  
+<option-definitions>
+  <option-definition name="ballfollowing" description=""/>
+  <option-definition name="ballfound" description=""/>
+  <option-definition name="begin" description="Root option"/>
+  <option-definition name="checklocalize" description=""/>
+  <option-definition name="checkpath" description=""/>
+  <option-definition name="path" description=""/>
+  <option-definition name="referee" description=""/>
+  <option-definition name="reset" description=""/>
+</option-definitions>
+
+  <state name="initialize">
+    <set-boolean-output-symbol ref="init.isDone">
+      <boolean-value value="true"/>
+    </set-boolean-output-symbol>
+    <subsequent-basic-behavior ref="doInitialize"/>
+    <decision-tree>
+      <if>
+        <condition description="If reset flag is true">
+          <equal-to>
+            <decimal-input-symbol-ref ref="resetflag"/>
+            <decimal-value value="1"/>
+          </equal-to>
+        </condition>
+        <transition-to-state ref="_reset"/>
+      </if>
+      <else>
+        <if>
+          <condition description="If initialized">
+            <boolean-output-symbol-ref ref="init.isDone"/>
+          </condition>
+          <transition-to-state ref="play"/>
+        </if>
+        <else>
+          <transition-to-state ref="initialize"/>
+        </else>
+      </else>
+    </decision-tree>
+  </state>
+  <state name="play">
+    <subsequent-basic-behavior ref="doUpdate"/>
+    <subsequent-option ref="checklocalize"/>
+    <decision-tree>
+      <if>
+        <condition description="If reset flag is true">
+          <equal-to>
+            <decimal-input-symbol-ref ref="resetflag"/>
+            <decimal-value value="1"/>
+          </equal-to>
+        </condition>
+        <transition-to-state ref="_reset"/>
+      </if>
+      <else>
+        <if>
+          <condition description="If initialized">
+            <boolean-output-symbol-ref ref="init.isDone"/>
+          </condition>
+          <transition-to-state ref="play"/>
+        </if>
+        <else>
+          <transition-to-state ref="initialize"/>
+        </else>
+      </else>
+    </decision-tree>
+  </state>
+  <state name="_reset">
+    <subsequent-option ref="reset"/>
+    <decision-tree>
+      <if>
+        <condition description="Reset flag">
+          <equal-to>
+            <decimal-input-symbol-ref ref="resetflag"/>
+            <decimal-value value="0"/>
+          </equal-to>
+        </condition>
+        <transition-to-state ref="initialize"/>
+      </if>
+      <else>
+        <transition-to-state ref="_reset"/>
+      </else>
+    </decision-tree>
+  </state>
+</option>
+    <option name="checklocalize" initial-state="localize" xml:base="Options/checklocalize.xml">
+  
+<symbols id="mySymbols" title="My Symbols" description="">
+  <decimal-input-symbol name="resetflag" description="If true resets all XABSL parameters" measure="" range=""/>
+  <enumeration name="BallReturns" description="">
+    <enum-element name="BallReturns.BALLFOUND"/>
+    <enum-element name="BallReturns.BALLFINDING"/>
+    <enum-element name="BallReturns.TURNRIGHT"/>
+    <enum-element name="BallReturns.TURNLEFT"/>
+  </enumeration>
+  <enumerated-input-symbol name="ballreturn" enumeration="BallReturns" description=""/>
+  <enumeration name="PathReturns" description="Path's instruction to Walk">
+    <enum-element name="PathReturns.DOWALK"/>
+    <enum-element name="PathReturns.DOENCIRCLE"/>
+    <enum-element name="PathReturns.DOKICK"/>
+    <enum-element name="PathReturns.NOPATH"/>
+  </enumeration>
+  <enumerated-input-symbol name="pathreturn" enumeration="PathReturns" description="Path's instruction to Walk"/>
+  <decimal-input-symbol name="RoboCup.state" description="Current state of the game as specified by the referee box" measure="" range=""/>
+  <constant name="STATE_INITIAL" value="0" measure="" description="Stand up"/>
+  <constant name="STATE_READY" value="1" measure="" description="Take position"/>
+  <constant name="STATE_SET" value="2" measure="" description="Re-position"/>
+  <constant name="STATE_PLAYING" value="3" measure="" description="Start/continue play"/>
+  <constant name="STATE_FINISHED" value="4" measure="" description="Free"/>
+  <decimal-input-symbol name="confidence" description="Localization confidence" measure="" range=""/>
+  <constant name="TH" value="0.5" measure="" description="Localization threshhold"/>
+  <constant name="TL" value="0.03" measure="" description="Localization critical threshhold"/>
+  <decimal-input-symbol name="MM.confidence" description="MotionModel confidence" measure="" range=""/>
+  <constant name="MM.TH" value="0.5" measure="" description="MotionModel threshhold"/>
+  <decimal-input-symbol name="ball.distance" description="Distance from the ball" measure="" range=""/>
+  <decimal-input-symbol name="theta" description="Angle of ball" measure="" range=""/>
+  <constant name="r" value="15" measure="cm" description="Predetermined near radius"/>
+  <boolean-output-symbol name="init.isDone" description="AcYut initialization state" internal="true"/>
+</symbols>
+
+  
+<basic-behaviors id="myBasicBehaviors" title="My Behaviors" description="">
+  <basic-behavior name="moveAcYuttemp" description="No longer in use. wasd walk">
+    <decimal-parameter name="moveAcYuttemp.x" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="printmsg" description="Display a number">
+    <decimal-parameter name="printmsg.o" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="doInitialize" description="Initialize AcYut"/>
+  <basic-behavior name="doUpdate" description="Calculate confidence and"/>
+  <basic-behavior name="doLocalize" description="If confidence is low, search , get landmarks and localize"/>
+  <basic-behavior name="doPathToWalk" description="Send the made path to walk"/>
+  <basic-behavior name="doMakePath" description="Create a path to the ball based on localization inputs"/>
+  <basic-behavior name="doFindBall" description="Find the ball"/>
+  <basic-behavior name="doReset" description="Reset the input symbols(cant touch them in XABSL??? verify )"/>
+</basic-behaviors>
+
+  
+<option-definitions>
+  <option-definition name="ballfollowing" description=""/>
+  <option-definition name="ballfound" description=""/>
+  <option-definition name="begin" description="Root option"/>
+  <option-definition name="checklocalize" description=""/>
+  <option-definition name="checkpath" description=""/>
+  <option-definition name="path" description=""/>
+  <option-definition name="referee" description=""/>
+  <option-definition name="reset" description=""/>
+</option-definitions>
+
+  <state name="localize">
+    <subsequent-basic-behavior ref="doLocalize"/>
+    <decision-tree>
+      <if>
+        <condition description="Sufficient confidence and ball not found">
+          <greater-than>
+            <decimal-input-symbol-ref ref="confidence"/>
+            <constant-ref ref="TH"/>
+          </greater-than>
+        </condition>
+        <transition-to-state ref="findball"/>
+      </if>
+      <else>
+        <transition-to-state ref="localize"/>
+      </else>
+    </decision-tree>
+  </state>
+  <state name="findball">
+    <subsequent-basic-behavior ref="doFindBall"/>
+    <subsequent-option ref="ballfound"/>
+    <decision-tree>
+      <if>
+        <condition description="Insufficient confidence">
+          <less-than>
+            <decimal-input-symbol-ref ref="confidence"/>
+            <constant-ref ref="TH"/>
+          </less-than>
+        </condition>
+        <transition-to-state ref="localize"/>
+      </if>
+      <else>
+        <transition-to-state ref="findball"/>
+      </else>
+    </decision-tree>
+  </state>
+</option>
+    <option name="checkpath" initial-state="pathfollow" xml:base="Options/checkpath.xml">
+  
+<symbols id="mySymbols" title="My Symbols" description="">
+  <decimal-input-symbol name="resetflag" description="If true resets all XABSL parameters" measure="" range=""/>
+  <enumeration name="BallReturns" description="">
+    <enum-element name="BallReturns.BALLFOUND"/>
+    <enum-element name="BallReturns.BALLFINDING"/>
+    <enum-element name="BallReturns.TURNRIGHT"/>
+    <enum-element name="BallReturns.TURNLEFT"/>
+  </enumeration>
+  <enumerated-input-symbol name="ballreturn" enumeration="BallReturns" description=""/>
+  <enumeration name="PathReturns" description="Path's instruction to Walk">
+    <enum-element name="PathReturns.DOWALK"/>
+    <enum-element name="PathReturns.DOENCIRCLE"/>
+    <enum-element name="PathReturns.DOKICK"/>
+    <enum-element name="PathReturns.NOPATH"/>
+  </enumeration>
+  <enumerated-input-symbol name="pathreturn" enumeration="PathReturns" description="Path's instruction to Walk"/>
+  <decimal-input-symbol name="RoboCup.state" description="Current state of the game as specified by the referee box" measure="" range=""/>
+  <constant name="STATE_INITIAL" value="0" measure="" description="Stand up"/>
+  <constant name="STATE_READY" value="1" measure="" description="Take position"/>
+  <constant name="STATE_SET" value="2" measure="" description="Re-position"/>
+  <constant name="STATE_PLAYING" value="3" measure="" description="Start/continue play"/>
+  <constant name="STATE_FINISHED" value="4" measure="" description="Free"/>
+  <decimal-input-symbol name="confidence" description="Localization confidence" measure="" range=""/>
+  <constant name="TH" value="0.5" measure="" description="Localization threshhold"/>
+  <constant name="TL" value="0.03" measure="" description="Localization critical threshhold"/>
+  <decimal-input-symbol name="MM.confidence" description="MotionModel confidence" measure="" range=""/>
+  <constant name="MM.TH" value="0.5" measure="" description="MotionModel threshhold"/>
+  <decimal-input-symbol name="ball.distance" description="Distance from the ball" measure="" range=""/>
+  <decimal-input-symbol name="theta" description="Angle of ball" measure="" range=""/>
+  <constant name="r" value="15" measure="cm" description="Predetermined near radius"/>
+  <boolean-output-symbol name="init.isDone" description="AcYut initialization state" internal="true"/>
+</symbols>
+
+  
+<basic-behaviors id="myBasicBehaviors" title="My Behaviors" description="">
+  <basic-behavior name="moveAcYuttemp" description="No longer in use. wasd walk">
+    <decimal-parameter name="moveAcYuttemp.x" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="printmsg" description="Display a number">
+    <decimal-parameter name="printmsg.o" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="doInitialize" description="Initialize AcYut"/>
+  <basic-behavior name="doUpdate" description="Calculate confidence and"/>
+  <basic-behavior name="doLocalize" description="If confidence is low, search , get landmarks and localize"/>
+  <basic-behavior name="doPathToWalk" description="Send the made path to walk"/>
+  <basic-behavior name="doMakePath" description="Create a path to the ball based on localization inputs"/>
+  <basic-behavior name="doFindBall" description="Find the ball"/>
+  <basic-behavior name="doReset" description="Reset the input symbols(cant touch them in XABSL??? verify )"/>
+</basic-behaviors>
+
+  
+<option-definitions>
+  <option-definition name="ballfollowing" description=""/>
+  <option-definition name="ballfound" description=""/>
+  <option-definition name="begin" description="Root option"/>
+  <option-definition name="checklocalize" description=""/>
+  <option-definition name="checkpath" description=""/>
+  <option-definition name="path" description=""/>
+  <option-definition name="referee" description=""/>
+  <option-definition name="reset" description=""/>
+</option-definitions>
+
+  <common-decision-tree>
+    <if>
+      <condition description="">
+        <enumerated-input-symbol-comparison>
+          <enumerated-input-symbol-ref ref="pathreturn"/>
+          <enum-element-ref ref="PathReturns.DOWALK"/>
+        </enumerated-input-symbol-comparison>
+      </condition>
+      <transition-to-state ref="pathfollow"/>
+    </if>
+    <else>
+      <if>
+        <condition description="">
+          <enumerated-input-symbol-comparison>
+            <enumerated-input-symbol-ref ref="pathreturn"/>
+            <enum-element-ref ref="PathReturns.NOPATH"/>
+          </enumerated-input-symbol-comparison>
+        </condition>
+        <transition-to-state ref="ballfollow"/>
+      </if>
+    </else>
+  </common-decision-tree>
+  <state name="pathfollow">
+    <subsequent-basic-behavior ref="doPathToWalk"/>
+    <decision-tree>
+      <transition-to-state ref="pathfollow"/>
+    </decision-tree>
+  </state>
+  <state name="ballfollow">
+    <subsequent-option ref="ballfollowing"/>
+    <decision-tree>
+      <transition-to-state ref="ballfollow"/>
+    </decision-tree>
+  </state>
+</option>
+    <option name="path" initial-state="__initial" xml:base="Options/path.xml">
+  
+<basic-behaviors id="myBasicBehaviors" title="My Behaviors" description="">
+  <basic-behavior name="moveAcYuttemp" description="No longer in use. wasd walk">
+    <decimal-parameter name="moveAcYuttemp.x" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="printmsg" description="Display a number">
+    <decimal-parameter name="printmsg.o" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="doInitialize" description="Initialize AcYut"/>
+  <basic-behavior name="doUpdate" description="Calculate confidence and"/>
+  <basic-behavior name="doLocalize" description="If confidence is low, search , get landmarks and localize"/>
+  <basic-behavior name="doPathToWalk" description="Send the made path to walk"/>
+  <basic-behavior name="doMakePath" description="Create a path to the ball based on localization inputs"/>
+  <basic-behavior name="doFindBall" description="Find the ball"/>
+  <basic-behavior name="doReset" description="Reset the input symbols(cant touch them in XABSL??? verify )"/>
+</basic-behaviors>
+
+  
+<option-definitions>
+  <option-definition name="ballfollowing" description=""/>
+  <option-definition name="ballfound" description=""/>
+  <option-definition name="begin" description="Root option"/>
+  <option-definition name="checklocalize" description=""/>
+  <option-definition name="checkpath" description=""/>
+  <option-definition name="path" description=""/>
+  <option-definition name="referee" description=""/>
+  <option-definition name="reset" description=""/>
+</option-definitions>
+
+  <state name="__initial">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="5"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
+    <decision-tree>
+      <transition-to-state ref="__initial"/>
+    </decision-tree>
+  </state>
+</option>
+    <option name="referee" initial-state="_initial" xml:base="Options/referee.xml">
+  
+<symbols id="mySymbols" title="My Symbols" description="">
+  <decimal-input-symbol name="resetflag" description="If true resets all XABSL parameters" measure="" range=""/>
+  <enumeration name="BallReturns" description="">
+    <enum-element name="BallReturns.BALLFOUND"/>
+    <enum-element name="BallReturns.BALLFINDING"/>
+    <enum-element name="BallReturns.TURNRIGHT"/>
+    <enum-element name="BallReturns.TURNLEFT"/>
+  </enumeration>
+  <enumerated-input-symbol name="ballreturn" enumeration="BallReturns" description=""/>
+  <enumeration name="PathReturns" description="Path's instruction to Walk">
+    <enum-element name="PathReturns.DOWALK"/>
+    <enum-element name="PathReturns.DOENCIRCLE"/>
+    <enum-element name="PathReturns.DOKICK"/>
+    <enum-element name="PathReturns.NOPATH"/>
+  </enumeration>
+  <enumerated-input-symbol name="pathreturn" enumeration="PathReturns" description="Path's instruction to Walk"/>
+  <decimal-input-symbol name="RoboCup.state" description="Current state of the game as specified by the referee box" measure="" range=""/>
+  <constant name="STATE_INITIAL" value="0" measure="" description="Stand up"/>
+  <constant name="STATE_READY" value="1" measure="" description="Take position"/>
+  <constant name="STATE_SET" value="2" measure="" description="Re-position"/>
+  <constant name="STATE_PLAYING" value="3" measure="" description="Start/continue play"/>
+  <constant name="STATE_FINISHED" value="4" measure="" description="Free"/>
+  <decimal-input-symbol name="confidence" description="Localization confidence" measure="" range=""/>
+  <constant name="TH" value="0.5" measure="" description="Localization threshhold"/>
+  <constant name="TL" value="0.03" measure="" description="Localization critical threshhold"/>
+  <decimal-input-symbol name="MM.confidence" description="MotionModel confidence" measure="" range=""/>
+  <constant name="MM.TH" value="0.5" measure="" description="MotionModel threshhold"/>
+  <decimal-input-symbol name="ball.distance" description="Distance from the ball" measure="" range=""/>
+  <decimal-input-symbol name="theta" description="Angle of ball" measure="" range=""/>
+  <constant name="r" value="15" measure="cm" description="Predetermined near radius"/>
+  <boolean-output-symbol name="init.isDone" description="AcYut initialization state" internal="true"/>
+</symbols>
+
+  
+<basic-behaviors id="myBasicBehaviors" title="My Behaviors" description="">
+  <basic-behavior name="moveAcYuttemp" description="No longer in use. wasd walk">
+    <decimal-parameter name="moveAcYuttemp.x" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="printmsg" description="Display a number">
+    <decimal-parameter name="printmsg.o" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="doInitialize" description="Initialize AcYut"/>
+  <basic-behavior name="doUpdate" description="Calculate confidence and"/>
+  <basic-behavior name="doLocalize" description="If confidence is low, search , get landmarks and localize"/>
+  <basic-behavior name="doPathToWalk" description="Send the made path to walk"/>
+  <basic-behavior name="doMakePath" description="Create a path to the ball based on localization inputs"/>
+  <basic-behavior name="doFindBall" description="Find the ball"/>
+  <basic-behavior name="doReset" description="Reset the input symbols(cant touch them in XABSL??? verify )"/>
+</basic-behaviors>
+
+  
+<option-definitions>
+  <option-definition name="ballfollowing" description=""/>
+  <option-definition name="ballfound" description=""/>
+  <option-definition name="begin" description="Root option"/>
+  <option-definition name="checklocalize" description=""/>
+  <option-definition name="checkpath" description=""/>
+  <option-definition name="path" description=""/>
+  <option-definition name="referee" description=""/>
+  <option-definition name="reset" description=""/>
+</option-definitions>
+
+  <common-decision-tree>
+    <if>
+      <condition description="If state is PLAYING">
+        <equal-to>
+          <decimal-input-symbol-ref ref="RoboCup.state"/>
+          <constant-ref ref="STATE_PLAYING"/>
+        </equal-to>
+      </condition>
+      <transition-to-state ref="playing"/>
+    </if>
+    <else>
+      <if>
+        <condition description="">
+          <equal-to>
+            <decimal-input-symbol-ref ref="RoboCup.state"/>
+            <constant-ref ref="STATE_INITIAL"/>
+          </equal-to>
+        </condition>
+        <transition-to-state ref="_initial"/>
+      </if>
+      <else>
+        <if>
+          <condition description="">
+            <equal-to>
+              <decimal-input-symbol-ref ref="RoboCup.state"/>
+              <constant-ref ref="STATE_FINISHED"/>
+            </equal-to>
+          </condition>
+          <transition-to-state ref="finished"/>
+        </if>
+        <else>
+          <if>
+            <condition description="">
+              <equal-to>
+                <decimal-input-symbol-ref ref="RoboCup.state"/>
+                <constant-ref ref="STATE_READY"/>
+              </equal-to>
+            </condition>
+            <transition-to-state ref="ready"/>
+          </if>
+          <else>
+            <if>
+              <condition description="">
+                <equal-to>
+                  <decimal-input-symbol-ref ref="RoboCup.state"/>
+                  <constant-ref ref="STATE_SET"/>
+                </equal-to>
+              </condition>
+              <transition-to-state ref="set"/>
+            </if>
+          </else>
+        </else>
+      </else>
+    </else>
+  </common-decision-tree>
+  <state name="playing">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="3"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
+    <subsequent-option ref="begin"/>
+    <decision-tree>
+      <transition-to-state ref="playing"/>
+    </decision-tree>
+  </state>
+  <state name="finished">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="4"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
+    <decision-tree>
+      <transition-to-state ref="finished"/>
+    </decision-tree>
+  </state>
+  <state name="_initial">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="0"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
+    <decision-tree>
+      <transition-to-state ref="_initial"/>
+    </decision-tree>
+  </state>
+  <state name="ready">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="1"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
+    <decision-tree>
+      <transition-to-state ref="ready"/>
+    </decision-tree>
+  </state>
+  <state name="set">
+    <subsequent-basic-behavior ref="printmsg">
+      <set-parameter ref="printmsg.o">
+        <decimal-value value="2"/>
+      </set-parameter>
+    </subsequent-basic-behavior>
+    <decision-tree>
+      <transition-to-state ref="set"/>
+    </decision-tree>
+  </state>
+</option>
+    <option name="reset" initial-state="reset" xml:base="Options/reset.xml">
+  
+<symbols id="mySymbols" title="My Symbols" description="">
+  <decimal-input-symbol name="resetflag" description="If true resets all XABSL parameters" measure="" range=""/>
+  <enumeration name="BallReturns" description="">
+    <enum-element name="BallReturns.BALLFOUND"/>
+    <enum-element name="BallReturns.BALLFINDING"/>
+    <enum-element name="BallReturns.TURNRIGHT"/>
+    <enum-element name="BallReturns.TURNLEFT"/>
+  </enumeration>
+  <enumerated-input-symbol name="ballreturn" enumeration="BallReturns" description=""/>
+  <enumeration name="PathReturns" description="Path's instruction to Walk">
+    <enum-element name="PathReturns.DOWALK"/>
+    <enum-element name="PathReturns.DOENCIRCLE"/>
+    <enum-element name="PathReturns.DOKICK"/>
+    <enum-element name="PathReturns.NOPATH"/>
+  </enumeration>
+  <enumerated-input-symbol name="pathreturn" enumeration="PathReturns" description="Path's instruction to Walk"/>
+  <decimal-input-symbol name="RoboCup.state" description="Current state of the game as specified by the referee box" measure="" range=""/>
+  <constant name="STATE_INITIAL" value="0" measure="" description="Stand up"/>
+  <constant name="STATE_READY" value="1" measure="" description="Take position"/>
+  <constant name="STATE_SET" value="2" measure="" description="Re-position"/>
+  <constant name="STATE_PLAYING" value="3" measure="" description="Start/continue play"/>
+  <constant name="STATE_FINISHED" value="4" measure="" description="Free"/>
+  <decimal-input-symbol name="confidence" description="Localization confidence" measure="" range=""/>
+  <constant name="TH" value="0.5" measure="" description="Localization threshhold"/>
+  <constant name="TL" value="0.03" measure="" description="Localization critical threshhold"/>
+  <decimal-input-symbol name="MM.confidence" description="MotionModel confidence" measure="" range=""/>
+  <constant name="MM.TH" value="0.5" measure="" description="MotionModel threshhold"/>
+  <decimal-input-symbol name="ball.distance" description="Distance from the ball" measure="" range=""/>
+  <decimal-input-symbol name="theta" description="Angle of ball" measure="" range=""/>
+  <constant name="r" value="15" measure="cm" description="Predetermined near radius"/>
+  <boolean-output-symbol name="init.isDone" description="AcYut initialization state" internal="true"/>
+</symbols>
+
+  
+<basic-behaviors id="myBasicBehaviors" title="My Behaviors" description="">
+  <basic-behavior name="moveAcYuttemp" description="No longer in use. wasd walk">
+    <decimal-parameter name="moveAcYuttemp.x" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="printmsg" description="Display a number">
+    <decimal-parameter name="printmsg.o" measure="" range="" description=""/>
+  </basic-behavior>
+  <basic-behavior name="doInitialize" description="Initialize AcYut"/>
+  <basic-behavior name="doUpdate" description="Calculate confidence and"/>
+  <basic-behavior name="doLocalize" description="If confidence is low, search , get landmarks and localize"/>
+  <basic-behavior name="doPathToWalk" description="Send the made path to walk"/>
+  <basic-behavior name="doMakePath" description="Create a path to the ball based on localization inputs"/>
+  <basic-behavior name="doFindBall" description="Find the ball"/>
+  <basic-behavior name="doReset" description="Reset the input symbols(cant touch them in XABSL??? verify )"/>
+</basic-behaviors>
+
+  
+<option-definitions>
+  <option-definition name="ballfollowing" description=""/>
+  <option-definition name="ballfound" description=""/>
+  <option-definition name="begin" description="Root option"/>
+  <option-definition name="checklocalize" description=""/>
+  <option-definition name="checkpath" description=""/>
+  <option-definition name="path" description=""/>
+  <option-definition name="referee" description=""/>
+  <option-definition name="reset" description=""/>
+</option-definitions>
+
+  <state name="reset">
+    <set-boolean-output-symbol ref="init.isDone">
+      <boolean-value value="false"/>
+    </set-boolean-output-symbol>
+    <subsequent-basic-behavior ref="doReset"/>
+    <decision-tree>
+      <transition-to-state ref="reset"/>
+    </decision-tree>
+  </state>
+</option>
+  </options>
+</agent-collection>
