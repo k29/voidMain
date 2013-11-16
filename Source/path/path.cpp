@@ -1,4 +1,5 @@
 
+//obstacle id for the initial obstacle is?? as of now is -3
 #include "path.hpp"
 #define car2pol(x,y) sqrt((x)*(x)+(y)*(y))
 #define dist(x1,y1,x2,y2) sqrt(pow(((x1)-(x2)),2)+pow(((y1)-(y2)),2))
@@ -281,6 +282,13 @@ PathReturns Path::path_return(PathStructure ps)
 	obstacle[NO_OF_OBSTACLES+1].obstacle_id=-2;
 	obstacle[NO_OF_OBSTACLES+1].type= CIRCLE;
 	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+1].x+200, obstacle[NO_OF_OBSTACLES+1].y+200),  ORIENTATION_RADIUS, cvScalar(255,0,0));
+	//adding the obstacles near the starting point for convinience of path walk
+	obstacle[NO_OF_OBSTACLES+2].obstacle_radius= OBSTACLE_RADIUS;
+	obstacle[NO_OF_OBSTACLES+2].x=0;
+	obstacle[NO_OF_OBSTACLES+2].y=-obstacle[NO_OF_OBSTACLES+2].obstacle_radius;
+	obstacle[NO_OF_OBSTACLES+2].obstacle_id=-3; 
+	obstacle[NO_OF_OBSTACLES+2].type= CIRCLE;
+
 	for(int i=0;i< NO_OF_OBSTACLES;i++)
 	{
 		for(int j=NO_OF_OBSTACLES;j<NO_OF_OBSTACLES+2;j++)
