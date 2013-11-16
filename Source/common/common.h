@@ -9,7 +9,7 @@
 #include "../gameController/gamecontrollerfunc.h"
 #include "../gameController/gamecontrollerobj.h"
 #include "opencv2/opencv.hpp"
-
+#include "modes.h"
 #define MYPORT "3838"
 
 int getImuAngle();

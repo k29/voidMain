@@ -34,5 +34,8 @@ namespace myBasicBehaviors("My Behaviors")
 		behavior doFindBall
 			{
 			}
-
+		/** Reset the input symbols(cant touch them in XABSL??? verify ) */
+		behavior doReset
+			{
+			}
 	}
