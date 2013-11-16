@@ -40,12 +40,12 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	polyPoints=0;
 	this->comm = comm;
 	this->imu = imu;
-	offsets[0] = 40;
+	offsets[0] = -100;
 	offsets[1] = 0;
 	offsets[2] = 32;
 	offsets[3] = -32;
 	offsets[4] = 0;
-	offsets[5] = -40;
+	offsets[5] = 0;
 	offsets[6] = 280;
 
 	offsets[20] = 20;
@@ -146,6 +146,31 @@ int AcYut::getFeetCoods(int leg)
 		printf("\n");
 	}
 	return EXIT_SUCCESS;
+}
+
+int AcYut::reachSlow(double left_x,double left_y,double left_z,double right_x,double right_y,double right_z)
+{
+	left_leg->setSpeed(50);
+	right_leg->setSpeed(50);
+	left_hand->setSpeed(50);
+	right_hand->setSpeed(50);
+	comm->syncFlush();
+	
+	left_leg->runIK(left_x,left_y,left_z,0);
+	left_leg->setGoalPositionSync();
+	right_leg->runIK(right_x,right_y,right_z,0);
+	right_leg->setGoalPositionSync();
+	left_hand->init();
+	right_hand->init();
+	comm->syncFlush();
+	
+	sleep(3);
+	
+	left_leg->setSpeed(0);
+	right_leg->setSpeed(0);
+	left_hand->setSpeed(0);
+	right_hand->setSpeed(0);
+	comm->syncFlush();
 }
 
 const supportPolygon AcYut::calcSupportPolygon()
