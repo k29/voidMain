@@ -9,3 +9,5 @@
 *.dat
 *.output
 *.rb
+Source/xabsl-doc/
+Source/xabsl-xml/
