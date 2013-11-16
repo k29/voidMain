@@ -94,12 +94,12 @@ void start()
 }
 
 int getImuAngle()
-{
-        fstream f1;
-        f1.open("cpp-src/xsens/imuyaw.angle", ios::in);
-        int value;
-        f1>>value;
-        printf("Value is %d\n", value);
-        f1.close();
-        return value;
+{        
+        #ifdef IMU_IS_ON
+            return imu.yaw-IMU_INITIAL_ANGLE;
+        #endif
+
+        #ifndef IMU_IS_ON
+            return -9999;
+        #endif
 }
