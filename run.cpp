@@ -1,8 +1,11 @@
 #include <curses.h>
 #include <time.h>
+#include <cstdio>
 #include "./Source/common/common.h"
 #include "./Source/walk/walk_thread.h"
 #include "./Source/gameController/gamecontrollerfunc.h"
+
+using namespace std;
 
 pthread_t thread_id_walk;
 pthread_t thread_id_gc;
@@ -13,7 +16,8 @@ pthread_mutex_t mutex_changewalkflag=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_GCData=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_pathpacket=PTHREAD_MUTEX_INITIALIZER;
 
-//Imu imu;
+Imu imu;
+int IMU_INITIAL_ANGLE;
 WalkStructure prevwalkstr;
 WalkStructure walkstr;
 RoboCupGameControlData GCData;
@@ -30,8 +34,13 @@ int main(void)
 	#endif
     
     #ifdef IMU_IS_ON
-    	Imu imu;
     	imu.init();
+
+    	fstream f1;
+        f1.open("cpp-src/xsens/imuyaw.angle", ios::in);
+        f1>>IMU_INITIAL_ANGLE;
+        f1.close();
+        
     #endif
 
   	registerXABSL(); /* main.cpp */
