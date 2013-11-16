@@ -19,32 +19,26 @@ WalkStructure walkstr;
 RoboCupGameControlData GCData;
 PathPacket pathpackvar;
 
-
- 
 int main(void)
 {	
-	
-	// Create walkthread 
-	
-	//pthread_create (&thread_id_walk, NULL, walk_thread, NULL);
+	#ifdef WALK_IS_ON
+		pthread_create (&thread_id_walk, NULL, walk_thread, NULL);
+	#endif
+
 	#ifdef GC_IS_ON
-    pthread_create (&thread_id_gc, NULL, readGameController, NULL);
+  		pthread_create (&thread_id_gc, NULL, readGameController, NULL);
 	#endif
     
-  	 /* main.cpp */
-
-    registerXABSL();
-	
-	/* main.cpp */
+  	registerXABSL(); /* main.cpp */
 	start();
 
-
-
     #ifdef GC_IS_ON
-	pthread_join(thread_id_gc,NULL);
+		pthread_join(thread_id_gc,NULL);
 	#endif
+	
+	#ifdef WALK_IS_ON
 	pthread_join(thread_id_walk,NULL);
-
+	#endif
 
 	return 0;
 }

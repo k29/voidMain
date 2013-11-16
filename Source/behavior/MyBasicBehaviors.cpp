@@ -1,6 +1,7 @@
 #include "MyBasicBehaviors.h"
 
 void BasicBehaviorPrint::execute()
+<<<<<<< HEAD
 	{
 	printf("\nu asked for %lf\n",o);
 	}
@@ -25,6 +26,26 @@ void BasicBehaviorUpdate::execute()
     {
         
 		p.hdmtr.update();
+=======
+{
+    printf("\nu asked for %lf\n",o);
+}
+
+void BasicBehaviorInitialize::execute()
+{
+    printf("Initializing\n");
+    
+    p.hdmtr.bootup_files();
+    p.capture.init();
+    p.globalflags.reset();
+    p.conf=0;
+    
+    printf("Initialized\n");
+}
+void BasicBehaviorUpdate::execute()
+{
+        p.hdmtr.update();
+>>>>>>> 4155cb1... cleaning behav
         p.capture.getImage();
         
         cvWaitKey(5);
@@ -34,9 +55,10 @@ void BasicBehaviorUpdate::execute()
         printf("localization updated to %lf\n",p.conf);
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
-    }
+}
 
 void BasicBehaviorLocalize::execute()
+<<<<<<< HEAD
     {	
 		printf("Confidence %lf, localizing\n",p.conf);
 		int i=5000000;
@@ -56,23 +78,28 @@ void BasicBehaviorLocalize::execute()
 
 
     }
-void BasicBehaviormoveAcYuttemp::execute()
-    {
+=======
+{   
+        printf("Confidence %lf, localizing\n",p.conf);
         
+        p.camcont->search(p.hdmtr);
+}
+
+>>>>>>> 4155cb1... cleaning behav
+void BasicBehaviormoveAcYuttemp::execute()
+{
     unsigned int _x=int(x);
     
-    pthread_mutex_lock(&mutex_walkstr);
-        
+    pthread_mutex_lock(&mutex_walkstr);    
         printf("to walk %c\n",_x);
         walkstr.instr = _x;
         walkstr.isFresh = true;
-
     pthread_mutex_unlock(&mutex_walkstr);
         
-    }
+}
 
 void BasicBehaviorMakePath::execute()
-    {
+{
          // p.pathstr.n_obstacles = 2;
         // p.pathstr.absObstacles[0].x=20; 
         // p.pathstr.absObstacles[0].y=31;
@@ -101,8 +128,10 @@ void BasicBehaviorMakePath::execute()
     //printf("goal coords y:%lf\n",pathstr.goal.x);
     p.pathstr.ball.x=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));
     p.pathstr.ball.y=p.fd->ball.r*sin(deg2rad(p.fd->ball.theta));
+    
     printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
     printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
+<<<<<<< HEAD
 
 
 
@@ -135,12 +164,17 @@ void BasicBehaviorMakePath::execute()
         p.pathreturn=p.path.path_return(p.pathstr);
 		printf("Path Made\n");
     }
+=======
+    p.pathreturn=p.path.path_return(p.pathstr);
+    
+    printf("Path Made\n");
+}
+>>>>>>> 4155cb1... cleaning behav
 
 void BasicBehaviorPathToWalk::execute()
-    {
-        
-    
+{
         p.path.updatePathPacket();
+<<<<<<< HEAD
 		printf("Path updated\n");
 
         
@@ -151,14 +185,19 @@ void BasicBehaviorFindBall::execute()
         
 		printf("FINDING THE FUCKING BALL\n");
        p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);
+=======
+        printf("Path updated\n");
+}
 
-        
-    }
+void BasicBehaviorFindBall::execute()
+{        
+    printf("FINDING THE FUCKING BALL\n");
+    p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);        
+}
+>>>>>>> 4155cb1... cleaning behav
+
 void BasicBehaviorReset::execute()
-    {
-        
-       p.conf=0;
-
-        
-    }
+{
+    p.conf=0;        
+}
 

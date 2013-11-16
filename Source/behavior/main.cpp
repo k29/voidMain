@@ -22,17 +22,13 @@ BasicBehaviorMakePath basicBehaviorMakePath(myErrorHandler,ACYUT);
 BasicBehaviorFindBall basicBehaviorFindBall(myErrorHandler,ACYUT);
 BasicBehaviorReset basicBehaviorReset(myErrorHandler,ACYUT);
 
-
 void registerXABSL()
 {
-    
-
     engine->registerEnumeratedInputSymbol("ballreturn", "BallReturns", (int*)&ACYUT.ballreturn);
     engine->registerEnumElement("BallReturns", "BallReturns.BALLFOUND",BALLFOUND);
     engine->registerEnumElement("BallReturns", "BallReturns.BALLFINDING",BALLFINDING);
     engine->registerEnumElement("BallReturns", "BallReturns.TURNRIGHT",TURNRIGHT);
     engine->registerEnumElement("BallReturns", "BallReturns.TURNLEFT",TURNLEFT);
-
 
     engine->registerEnumeratedInputSymbol("pathreturn", "PathReturns", (int*)&ACYUT.pathreturn);
     engine->registerEnumElement("PathReturns", "PathReturns.DOWALK",DOWALK);
@@ -40,17 +36,11 @@ void registerXABSL()
     engine->registerEnumElement("PathReturns", "PathReturns.DOENCIRCLE",DOENCIRCLE);
     engine->registerEnumElement("PathReturns", "PathReturns.NOPATH",NOPATH);
 
-    // engine->registerEnumeratedInputSymbol("init.state", "init.state"nt*)&p.initstate);
-    // engine->registerEnumElement("init.state", "init.state.DONE",DONE);
-    // engine->registerEnumElement("init.state", "init.state.NOTDONE",NOTDONE);
-
-
     engine->registerDecimalInputSymbol("theta", &playerstate::getTheta);
     engine->registerDecimalInputSymbol("confidence", &playerstate::getConfidence);
     engine->registerDecimalInputSymbol("resetflag", &playerstate::getReset);
     engine->registerDecimalInputSymbol("RoboCup.state",&playerstate::getRoboCupState);
     engine->registerDecimalInputSymbol("ball.distance",&playerstate::getDistance);
-
 
     engine->registerBasicBehavior(basicBehaviorInitialize);
     engine->registerBasicBehavior(basicBehaviorLocalize);
@@ -62,37 +52,47 @@ void registerXABSL()
     engine->registerBasicBehavior(basicBehaviorFindBall);
     engine->registerBasicBehavior(basicBehaviorReset);
 
-
-
     MyFileInputSource input("intermediate-code.dat");
-    engine->createOptionGraph(input);
-    
+    engine->createOptionGraph(input);   
 }
 
 void start()
-    {
+{
     ACYUT.resetflag=1; /*Resets all variables in the first run */
-    printf("start(); \n");
+    ACYUT.ACTIVE_GOAL=1;
 
-    while(1)
-        {
-            printf("start();");
-            #ifndef GC_IS_ON        
-            ACYUT.GCData.state=STATE_PLAYING;
-            #endif
-            #ifdef GC_IS_ON
-            pthread_mutex_lock(&mutex_GCData);
-            ACYUT.GCData=GCData;
-            pthread_mutex_unlock(&mutex_GCData);
-            #endif
-            printf("State passed is %lf\n",ACYUT.getRoboCupState());
-            ACYUT.ACTIVE_GOAL=1;
-            engine->execute();
+    #ifndef GC_IS_ON 
+
+        ACYUT.GCData.state=STATE_PLAYING;
+        while(1)
+            {
+                printf("started without GC");
+                
+                engine->execute();
+                
+                ACYUT.resetflag=0;
+            }
+
+    #endif
+
+    #ifdef GC_IS_ON
+        
+        while(1)
+            {
+                printf("started with GC");
             
-            ACYUT.resetflag=0;
-        }
-    
-    }
+                pthread_mutex_lock(&mutex_GCData);
+                    ACYUT.GCData=GCData;
+                pthread_mutex_unlock(&mutex_GCData);
+            
+                engine->execute();
+            
+                ACYUT.resetflag=0;
+            }
+
+    #endif
+}
+
 int getImuAngle()
 {
         fstream f1;
