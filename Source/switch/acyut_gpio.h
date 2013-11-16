@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/io.h>
-#include "stdlib.h"
+#include <stdlib.h>
+#include "../common/common.h"
 #define Superio2_Addr 0x2E
 
 void outportb(unsigned char aa, unsigned char bb);
