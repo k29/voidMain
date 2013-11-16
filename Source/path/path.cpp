@@ -603,7 +603,7 @@ PathReturns Path::path_return(PathStructure ps)
 			}
 		}
 	}
-	cout<<"\nto be removed remove count "<<to_be_removed[11].remove_count<<" "<<"to be removed connected count "<<to_be_removed[11].connected_count<<endl;
+	cout<<"\nto be removed remove count "<<to_be_removed[11].remove_count<<"\t"<<"to be removed connected count "<<to_be_removed[11].connected_count<<endl;
 #endif
 
 #ifdef NEWDELETION
