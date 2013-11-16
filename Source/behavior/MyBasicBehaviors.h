@@ -126,6 +126,7 @@ private:
 
 };
 
+
 class BasicBehaviorReset: public xabsl::BasicBehavior
 {
 	public:

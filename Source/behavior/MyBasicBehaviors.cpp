@@ -1,9 +1,9 @@
 #include "MyBasicBehaviors.h"
 
 void BasicBehaviorPrint::execute()
-	{
-	printf("\nu asked for %lf\n",o);
-	}
+    {
+    printf("\nu asked for %lf\n",o);
+    }
 void BasicBehaviorInitialize::execute()
     {
         /*
@@ -15,8 +15,8 @@ void BasicBehaviorInitialize::execute()
 
         p.capture.init();
 
-		p.globalflags.reset();
-		
+        p.globalflags.reset();
+        
         p.conf=0;
         printf("Initialized\n");
 
@@ -24,7 +24,7 @@ void BasicBehaviorInitialize::execute()
 void BasicBehaviorUpdate::execute()
     {
         
-		p.hdmtr.update();
+        p.hdmtr.update();
         p.capture.getImage();
         
         cvWaitKey(5);
@@ -37,11 +37,11 @@ void BasicBehaviorUpdate::execute()
     }
 
 void BasicBehaviorLocalize::execute()
-    {	
-		printf("Confidence %lf, localizing\n",p.conf);
-		
+    {   
+        printf("Confidence %lf, localizing\n",p.conf);
+        
         p.camcont->search(p.hdmtr);
-	
+    
 
 
 
@@ -123,7 +123,7 @@ void BasicBehaviorMakePath::execute()
         // p.pathstr.goal=p.loc.getGoalCoords(p.ACTIVE_GOAL);
 
         p.pathreturn=p.path.path_return(p.pathstr);
-		printf("Path Made\n");
+        printf("Path Made\n");
     }
 
 void BasicBehaviorPathToWalk::execute()
@@ -131,7 +131,7 @@ void BasicBehaviorPathToWalk::execute()
         
     
         p.path.updatePathPacket();
-		printf("Path updated\n");
+        printf("Path updated\n");
 
         
     }
@@ -139,12 +139,11 @@ void BasicBehaviorPathToWalk::execute()
 void BasicBehaviorFindBall::execute()
     {
         
-		printf("FINDING THE FUCKING BALL\n");
+        printf("FINDING THE FUCKING BALL\n");
        p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);
 
         
     }
-
 void BasicBehaviorReset::execute()
     {
         
