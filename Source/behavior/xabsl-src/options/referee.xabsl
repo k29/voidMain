@@ -20,8 +20,9 @@ option referee
 				action
 					{
 
-						printmsg(o=3);
 						begin();
+						printmsg(o=3);
+						
 					}
 			}
 		state finished

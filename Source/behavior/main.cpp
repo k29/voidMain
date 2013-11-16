@@ -72,7 +72,7 @@ void registerXABSL()
 void start()
         {
         ACYUT.resetflag=1; /*Resets all variables in the first run */
-        printf("start(); \n");
+        
 
         while(1)
                 {
@@ -85,8 +85,8 @@ void start()
             ACYUT.GCData=GCData;
             pthread_mutex_unlock(&mutex_GCData);
                         #endif
-                        printf("State passed is %lf\n",ACYUT.getRoboCupState());
-                        ACYUT.ACTIVE_GOAL=1;
+                        //printf("State passed is %lf\n",ACYUT.getRoboCupState());
+                        //ACYUT.ACTIVE_GOAL=1;
                         engine->execute();
                         
                         ACYUT.resetflag=0;
