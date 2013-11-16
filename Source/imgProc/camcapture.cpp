@@ -184,37 +184,37 @@ bool CamCapture::loadLUT(int color)
     //Loads lut in variable lut
     FILE *fp;
     uchar** lut_address;
-    char file[20];
+    char file[100];
     switch(color)
     {
         case REDC: 
         lut_address = &lut_red;
-        strcpy(file, "red.lut");
+        strcpy(file, "Source/lut/red.lut");
         break;
 
         case BLUEC:
         lut_address = &lut_blue;
-        strcpy(file, "blue.lut");
+        strcpy(file, "Source/lut/blue.lut");
         break;
 
         case YELLOWC:
         lut_address = &lut_yellow;
-        strcpy(file, "yellow.lut");
+        strcpy(file, "Source/lut/yellow.lut");
         break;
 
         case GREENC:
         lut_address = &lut_green;
-        strcpy(file, "green.lut");
+        strcpy(file, "Source/lut/green.lut");
         break;
 
         case WHITEC:
         lut_address = &lut_white;
-        strcpy(file, "white.lut");
+        strcpy(file, "Source/lut/white.lut");
         break;
 
         case BLACKC:
         lut_address = &lut_black;
-        strcpy(file, "black.lut");
+        strcpy(file, "Source/lut/black.lut");
         break;        
 
     }

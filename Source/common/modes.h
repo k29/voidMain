@@ -1,1 +1,1 @@
-#define GC_IS_ON
+//#define GC_IS_ON
