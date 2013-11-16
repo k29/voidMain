@@ -1,53 +1,25 @@
 #include "MyBasicBehaviors.h"
 
 void BasicBehaviorPrint::execute()
-<<<<<<< HEAD
-	{
-	printf("\nu asked for %lf\n",o);
-	}
-void BasicBehaviorInitialize::execute()
-    {
-        /*
-                Registered headers for these.Walkthread in main
-        
-                                                   */
-        printf("Initializing\n");
-        p.hdmtr.bootup_files();
-
-        p.capture.init();
-
-		p.globalflags.reset();
-		
-        p.conf=0;
-        printf("Initialized\n");
-
-    }
-void BasicBehaviorUpdate::execute()
-    {
-        
-		p.hdmtr.update();
-=======
 {
     printf("\nu asked for %lf\n",o);
 }
 
 void BasicBehaviorInitialize::execute()
 {
-    printf("Initializing\n");
-    
-    p.hdmtr.bootup_files();
-    p.capture.init();
-    p.globalflags.reset();
-    p.conf=0;
-    
-    printf("Initialized\n");
+        printf("Initializing\n");
+        p.hdmtr.bootup_files();
+        p.capture.init();
+        p.globalflags.reset();
+        p.conf=0;
+        printf("Initialized\n");
 }
+
 void BasicBehaviorUpdate::execute()
 {
-        p.hdmtr.update();
->>>>>>> 4155cb1... cleaning behav
-        p.capture.getImage();
         
+        p.hdmtr.update();
+        p.capture.getImage();        
         cvWaitKey(5);
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
@@ -58,40 +30,31 @@ void BasicBehaviorUpdate::execute()
 }
 
 void BasicBehaviorLocalize::execute()
-<<<<<<< HEAD
-    {	
-		printf("Confidence %lf, localizing\n",p.conf);
-		int i=5000000;
+{   
+        printf("Confidence %lf, localizing\n",p.conf);
+        int i=5000000;
         while(i--)
         {
         p.capture.getImage();
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
         p.conf = p.loc.confidence();
-        p.camcont->search(p.hdmtr);//p.camcont->search(p.hdmtr);	
+        p.camcont->search(p.hdmtr);//p.camcont->search(p.hdmtr);    
         p.hdmtr.update();
        // usleep(500);
         cvWaitKey(5);
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
         }
-
-
-    }
-=======
-{   
-        printf("Confidence %lf, localizing\n",p.conf);
-        
-        p.camcont->search(p.hdmtr);
 }
 
->>>>>>> 4155cb1... cleaning behav
 void BasicBehaviormoveAcYuttemp::execute()
 {
+        
     unsigned int _x=int(x);
     
-    pthread_mutex_lock(&mutex_walkstr);    
-        printf("to walk %c\n",_x);
+    pthread_mutex_lock(&mutex_walkstr);
+    printf("to walk %c\n",_x);
         walkstr.instr = _x;
         walkstr.isFresh = true;
     pthread_mutex_unlock(&mutex_walkstr);
@@ -128,73 +91,24 @@ void BasicBehaviorMakePath::execute()
     //printf("goal coords y:%lf\n",pathstr.goal.x);
     p.pathstr.ball.x=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));
     p.pathstr.ball.y=p.fd->ball.r*sin(deg2rad(p.fd->ball.theta));
-    
     printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
     printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
-<<<<<<< HEAD
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // printf("PATH CALLED\n\n");
-        // printf("X:%lf\n",(double)p.fd->ballX();
-        // printf("Y:%lf\n",(double)p.fd->ballXY();
-        // p.pathstr.ball.x =(double)p.fd->ballX();
-        // p.pathstr.ball.y =(double)p.fd->ballY();
-
-        // p.pathstr.goal=p.loc.getGoalCoords(p.ACTIVE_GOAL);
-
-        p.pathreturn=p.path.path_return(p.pathstr);
-		printf("Path Made\n");
-    }
-=======
-    p.pathreturn=p.path.path_return(p.pathstr);
     
+    p.pathreturn=p.path.path_return(p.pathstr);
     printf("Path Made\n");
 }
->>>>>>> 4155cb1... cleaning behav
 
 void BasicBehaviorPathToWalk::execute()
 {
-        p.path.updatePathPacket();
-<<<<<<< HEAD
-		printf("Path updated\n");
-
-        
-    }
-
-void BasicBehaviorFindBall::execute()
-    {
-        
-		printf("FINDING THE FUCKING BALL\n");
-       p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);
-=======
-        printf("Path updated\n");
+    p.path.updatePathPacket();
+    printf("Path updated\n");
 }
 
 void BasicBehaviorFindBall::execute()
-{        
+{
     printf("FINDING THE FUCKING BALL\n");
-    p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);        
+    p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);
 }
->>>>>>> 4155cb1... cleaning behav
 
 void BasicBehaviorReset::execute()
 {
