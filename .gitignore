@@ -1,1 +1,15 @@
-genorai
+*.a
+*.o
+*.dump
+*.dot
+*.svg
+*.html
+*.xml
+*.css
+*.dat
+*.output
+*.rb
+Source/xabsl-doc/
+Source/xabsl-xml/
+run
+Xabsl/compiler/timestamp
