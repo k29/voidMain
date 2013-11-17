@@ -2,7 +2,7 @@ XABSLFILES=$(shell echo `ls ../../Xabsl/XabslEngine/ -c1 | grep .cpp` | sed "s%X
 
 all: ../Build/behavior.a
 
-../Build/behavior.a: $(XABSLFILES) ../Build/WorldState.o ../Build/MyBasicBehaviors.o ../Build/main.o
+../Build/behavior.a: ../Build/WorldState.o ../Build/MyBasicBehaviors.o ../Build/main.o $(XABSLFILES) 
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@ar rc $@ $(XABSLFILES) ../Build/WorldState.o ../Build/MyBasicBehaviors.o ../Build/main.o

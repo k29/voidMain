@@ -16,3 +16,7 @@ path: path.o path.hpp path.cpp graph.hpp
 
 path.o:path.hpp path.cpp graph.hpp
 	g++ -c path.cpp
+
+clean:
+	@rm -f path.o 
+	@rm -f testpath
