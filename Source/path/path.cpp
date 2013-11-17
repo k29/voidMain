@@ -100,7 +100,7 @@ int Path::closest_intersecting_obstacle(Point n1,Point n2) //Returns the closest
 	b=1;
 	a=-slope;
 	c=(slope*n2.x)-n2.y;
-	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
 	{
 		if(on_which_side(a,b,n1,n2,obstacle[i]))//i.e only the obstacles which are in between the two lines will be checked
 		{
@@ -288,10 +288,18 @@ PathReturns Path::path_return(PathStructure ps)
 	obstacle[NO_OF_OBSTACLES+2].y=-obstacle[NO_OF_OBSTACLES+2].obstacle_radius;
 	obstacle[NO_OF_OBSTACLES+2].obstacle_id=-3; 
 	obstacle[NO_OF_OBSTACLES+2].type= CIRCLE;
+	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+2].x+200, obstacle[NO_OF_OBSTACLES+3].y+200),  OBSTACLE_RADIUS, cvScalar(255,0,0));
+	// obstacle[NO_OF_OBSTACLES+3].obstacle_radius= OBSTACLE_RADIUS;
+	// obstacle[NO_OF_OBSTACLES+3].x=0;
+	// obstacle[NO_OF_OBSTACLES+3].y=obstacle[NO_OF_OBSTACLES+3].obstacle_radius;
+	// obstacle[NO_OF_OBSTACLES+3].obstacle_id=-3; 
+	// obstacle[NO_OF_OBSTACLES+3].type= CIRCLE;
+	// cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+3].x+200, obstacle[NO_OF_OBSTACLES+3].y+200),  OBSTACLE_RADIUS, cvScalar(255,0,0));
+
 
 	for(int i=0;i< NO_OF_OBSTACLES;i++)
 	{
-		for(int j=NO_OF_OBSTACLES;j<NO_OF_OBSTACLES+2;j++)
+		for(int j=NO_OF_OBSTACLES;j<NO_OF_OBSTACLES+4;j++)
 		{
 			double d=sqrt(pow((obstacle[i].x - obstacle[j].x),2)+pow((obstacle[i].y - obstacle[j].y),2));
 			if(d < (obstacle[i].obstacle_radius+obstacle[j].obstacle_radius)-0.005)
@@ -301,7 +309,6 @@ PathReturns Path::path_return(PathStructure ps)
 			}
 
 		}
-
 	}
 //implementing circle design
 	for(int i=0;i< NO_OF_OBSTACLES;i++)
@@ -319,7 +326,7 @@ PathReturns Path::path_return(PathStructure ps)
 			}
 		}
 	}
-	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
 	{
 		if(obstacle[i].type==DNE)
 		{
@@ -330,7 +337,7 @@ PathReturns Path::path_return(PathStructure ps)
 			NO_OF_OBSTACLES--;
 		}
 	}
-	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
 	{
 		if(dist(obstacle[i].x,obstacle[i].y,0,0)<obstacle[i].obstacle_radius)
 		{
@@ -428,7 +435,7 @@ PathReturns Path::path_return(PathStructure ps)
 								}
 							}
 						}
-						for(int j=0;j<NO_OF_OBSTACLES+2;j++)
+						for(int j=0;j<NO_OF_OBSTACLES+4;j++)
 						{
 							cvCircle(image, cvPoint(obstacle[j].x+200, obstacle[j].y+200), 2, cvScalar(255,0,0));
 							cvCircle(image, cvPoint(obstacle[j].x+200, obstacle[j].y+200), obstacle[j].obstacle_radius , cvScalar(255,0,0));
@@ -661,7 +668,7 @@ PathReturns Path::path_return(PathStructure ps)
 		b=tree.returnPathPoint(b);
 	}
 	path_completed_flag=true;
-	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
 	{
 		cvCircle(image, cvPoint(obstacle[i].x + 200, obstacle[i].y+200), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}
@@ -832,7 +839,7 @@ PathReturns Path::path_return(PathStructure ps)
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #endif
 
-	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
 	{
 		cvCircle(image, cvPoint(obstacle[i].x + 200, obstacle[i].y+200), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}
