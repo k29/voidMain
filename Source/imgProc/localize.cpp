@@ -267,7 +267,8 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, int imuangle)
 			{
 				p[k].x = rand()%(MAX_X);	//Assigns a random number between 0 and MAX_X INCLUSIVE
 				p[k].y = rand()%(MAX_Y);	//Assigns a random number between 0 and MAX_Y INCLUSIVE
-				p[k].angle = ((double)((rand()%(360))))*PI/180.0;	//Assigns a random angle with given resolution
+				//p[k].angle = ((double)((rand()%(360))))*PI/180.0;	//Assigns a random angle with given resolution
+				p[k].angle = (double)imuangle + (rand()%(10) - 5);
 				continue;
 			}
 			p[k].angle = p[k].angle + ((float)(rand()%4 - 2 - mm.theta))*PI/180.0;
