@@ -288,18 +288,20 @@ PathReturns Path::path_return(PathStructure ps)
 	obstacle[NO_OF_OBSTACLES+2].y=-obstacle[NO_OF_OBSTACLES+2].obstacle_radius;
 	obstacle[NO_OF_OBSTACLES+2].obstacle_id=-3; 
 	obstacle[NO_OF_OBSTACLES+2].type= CIRCLE;
-	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+2].x+200, obstacle[NO_OF_OBSTACLES+3].y+200),  OBSTACLE_RADIUS, cvScalar(255,0,0));
-	// obstacle[NO_OF_OBSTACLES+3].obstacle_radius= OBSTACLE_RADIUS;
-	// obstacle[NO_OF_OBSTACLES+3].x=0;
-	// obstacle[NO_OF_OBSTACLES+3].y=obstacle[NO_OF_OBSTACLES+3].obstacle_radius;
-	// obstacle[NO_OF_OBSTACLES+3].obstacle_id=-3; 
-	// obstacle[NO_OF_OBSTACLES+3].type= CIRCLE;
-	// cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+3].x+200, obstacle[NO_OF_OBSTACLES+3].y+200),  OBSTACLE_RADIUS, cvScalar(255,0,0));
+	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+2].x+200,obstacle[NO_OF_OBSTACLES+2].y+200),obstacle[NO_OF_OBSTACLES+2].obstacle_radius,cvScalar(255,0,0));
+
+	obstacle[NO_OF_OBSTACLES+3].obstacle_radius= OBSTACLE_RADIUS;
+	obstacle[NO_OF_OBSTACLES+3].x=0;
+	obstacle[NO_OF_OBSTACLES+3].y=obstacle[NO_OF_OBSTACLES+3].obstacle_radius;
+	obstacle[NO_OF_OBSTACLES+3].obstacle_id=-3; 
+	obstacle[NO_OF_OBSTACLES+3].type= CIRCLE;
+	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+3].x+200,obstacle[NO_OF_OBSTACLES+3].y+200),obstacle[NO_OF_OBSTACLES+3].obstacle_radius,cvScalar(255,0,0));
 
 
+	//If the orientation obstacles are intersecting with any obstacle then that obstacle is cancelled totally. i.e. it is sent to the point 1000,1000
 	for(int i=0;i< NO_OF_OBSTACLES;i++)
 	{
-		for(int j=NO_OF_OBSTACLES;j<NO_OF_OBSTACLES+4;j++)
+		for(int j=NO_OF_OBSTACLES;j<NO_OF_OBSTACLES+2;j++)
 		{
 			double d=sqrt(pow((obstacle[i].x - obstacle[j].x),2)+pow((obstacle[i].y - obstacle[j].y),2));
 			if(d < (obstacle[i].obstacle_radius+obstacle[j].obstacle_radius)-0.005)
@@ -309,8 +311,10 @@ PathReturns Path::path_return(PathStructure ps)
 			}
 
 		}
+
 	}
-//implementing circle design
+//implementing circle design .. i.e if the obstacles are intersecting then a new obstacle is made at the centre of the intersecting obstacles and 
+//the old obstacles is given a DNE(Does not exsist) status.
 	for(int i=0;i< NO_OF_OBSTACLES;i++)
 	{
 		for(int j=i+1;j<NO_OF_OBSTACLES;j++)
@@ -326,20 +330,22 @@ PathReturns Path::path_return(PathStructure ps)
 			}
 		}
 	}
-	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
+	for(int i=0;i<NO_OF_OBSTACLES;i++)
 	{
 		if(obstacle[i].type==DNE)
 		{
-			for (int j = i; j < NO_OF_OBSTACLES-1+2; ++j)
+			for (int j = i; j < NO_OF_OBSTACLES+4-1; ++j)
 			{
-				obstacle[j]=obstacle[j+1];
+				obstacle[j]=obstacle[j+1]; //shifting the DNE to the end of the obstacle queue.
 			}
 			NO_OF_OBSTACLES--;
 		}
 	}
+
+	//if the obstacle is intersecting with the origin then again it is sent ot 1000,1000
 	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
 	{
-		if(dist(obstacle[i].x,obstacle[i].y,0,0)<obstacle[i].obstacle_radius)
+		if(dist(obstacle[i].x,obstacle[i].y,0,0)-0.005<obstacle[i].obstacle_radius)
 		{
 			obstacle[i].x=1000;
 			obstacle[i].y=1000;
