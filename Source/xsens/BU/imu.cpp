@@ -4,24 +4,13 @@
     This file contains an example of the CMT level 2 serial interface.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <fcntl.h>
-#include <signal.h>
 
-#include "cmtdef.h"
-#include "xsens_time.h"
-#include "xsens_list.h"
-#include "cmtscan.h"
-#include "cmt3.h"
 #include "imu.h"
 
 using namespace xsens;
 
 #define EXIT_ERROR(loc) {printf("Error %d occurred during " loc ": %s\n", serial.getLastResult(), xsensResultText(serial.getLastResult())); return false; }
-
+void* readerThreadFunction(void* data);
 bool Imu::init()
 {
     if(initialized)
@@ -31,7 +20,7 @@ bool Imu::init()
     unsigned long portCount = 0;
     int mtCount;
     
-    printf("Scanning for connected Xsens devices...");
+    printf("Scanning for connected Xsens devices...\n");
     xsens::cmtScanPorts(portInfo);
     portCount = portInfo.length();
     printf("done\n");
@@ -71,37 +60,37 @@ bool Imu::init()
     if (serial.open(portInfo[0].m_portName, B115200) != XRV_OK)
         EXIT_ERROR("open");
     
-    msg.setMessageId(CMT_MID_GOTOCONFIG);
-    printf("Putting MT in config mode\n");
-    if (serial.writeMessage(&msg))
-        EXIT_ERROR("goto config");
-    if (serial.waitForMessage(&reply, CMT_MID_GOTOCONFIGACK, 0,  1) != XRV_OK)
-        EXIT_ERROR("goto config ack");
-    printf("MT now in config mode\n");
-
-    // msg.setMessageId(CMT_MID_SETPERIOD);
-    // msg.setDataShort(1152);
+    // msg.setMessageId(CMT_MID_GOTOCONFIG);
+    // printf("Putting MT in config mode\n");
     // if (serial.writeMessage(&msg))
-    //     EXIT_ERROR("set period");
-    // if (serial.waitForMessage(&reply, CMT_MID_SETPERIODACK, 0,  1) != XRV_OK)
-    //     EXIT_ERROR("set period ack");
-    // printf("Period is now set to 100Hz\n");
+    //     EXIT_ERROR("goto config");
+    // if (serial.waitForMessage(&reply, CMT_MID_GOTOCONFIGACK, 0,  1) != XRV_OK)
+    //     EXIT_ERROR("goto config ack");
+    // printf("MT now in config mode\n");
 
-    msg.setMessageId(CMT_MID_SETOUTPUTMODE);
-    msg.setDataShort(CMT_OUTPUTMODE_ORIENT);
-    if (serial.writeMessage(&msg))
-        EXIT_ERROR("set output mode");
-    if (serial.waitForMessage(&reply, CMT_MID_SETOUTPUTMODEACK, 0,  1) != XRV_OK)
-        EXIT_ERROR("set output mode ack");
-    printf("Output mode is now set to orientation\n");
+    // // msg.setMessageId(CMT_MID_SETPERIOD);
+    // // msg.setDataShort(1152);
+    // // if (serial.writeMessage(&msg))
+    // //     EXIT_ERROR("set period");
+    // // if (serial.waitForMessage(&reply, CMT_MID_SETPERIODACK, 0,  1) != XRV_OK)
+    // //     EXIT_ERROR("set period ack");
+    // // printf("Period is now set to 100Hz\n");
 
-    msg.setMessageId(CMT_MID_SETOUTPUTSETTINGS);
-    msg.setDataLong(CMT_OUTPUTSETTINGS_ORIENTMODE_EULER | CMT_OUTPUTSETTINGS_TIMESTAMP_SAMPLECNT);
-    if (serial.writeMessage(&msg))
-        EXIT_ERROR("set output settings");
-    if (serial.waitForMessage(&reply, CMT_MID_SETOUTPUTSETTINGSACK, 0,  1) != XRV_OK)
-        EXIT_ERROR("set output settings ack");
-    printf("Output settings now set to euler + timestamp\n");
+    // msg.setMessageId(CMT_MID_SETOUTPUTMODE);
+    // msg.setDataShort(CMT_OUTPUTMODE_ORIENT);
+    // if (serial.writeMessage(&msg))
+    //     EXIT_ERROR("set output mode");
+    // if (serial.waitForMessage(&reply, CMT_MID_SETOUTPUTMODEACK, 0,  1) != XRV_OK)
+    //     EXIT_ERROR("set output mode ack");
+    // printf("Output mode is now set to orientation\n");
+
+    // msg.setMessageId(CMT_MID_SETOUTPUTSETTINGS);
+    // msg.setDataLong(CMT_OUTPUTSETTINGS_ORIENTMODE_EULER | CMT_OUTPUTSETTINGS_TIMESTAMP_SAMPLECNT);
+    // if (serial.writeMessage(&msg))
+    //     EXIT_ERROR("set output settings");
+    // if (serial.waitForMessage(&reply, CMT_MID_SETOUTPUTSETTINGSACK, 0,  1) != XRV_OK)
+    //     EXIT_ERROR("set output settings ack");
+    // printf("Output settings now set to euler + timestamp\n");
 
     msg.setMessageId(CMT_MID_GOTOMEASUREMENT);
     msg.resizeData(0);
@@ -110,16 +99,12 @@ bool Imu::init()
     if (serial.waitForMessage(&reply, CMT_MID_GOTOMEASUREMENTACK, 0,  1) != XRV_OK)
         EXIT_ERROR("goto measurement ack");
     printf("Now in measurement mode, Time of day: %u\n", getTimeOfDay());
-
-
-    initialized = true;
-    return true;
 }
 
-void Imu::update()
+void Imu::__update()
 {
-    if(!initialized)
-        return;
+    // if(!initialized)
+    //     return;
     if (serial.waitForMessage(&reply, 0, 0, 1) != XRV_OK)
     {
         printf("Error reading from IMU\n");
@@ -138,18 +123,16 @@ void Imu::update()
     roll = reply.getDataFloat(0*4);
     pitch = reply.getDataFloat(1*4);
     yaw = reply.getDataFloat(2*4);
+    // printf("%lf\n", yaw);
 }
 
-double Imu::return_yaw()
+void Imu::__flush()
 {
-	 if(!initialized)
-        return -1;
-    if (serial.waitForMessage(&reply, 0, 0, 1) != XRV_OK)
-    {
-        printf("Error reading from IMU\n");
-        return -1;
-    }
+    (serial.getCmt1s())->flushData();
+}
 
-    yaw = reply.getDataFloat(2*4);
-    return yaw;
+Imu::~Imu()
+{
+    threadActive = false;
+    pthread_join(readerThread, NULL);
 }
