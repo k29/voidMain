@@ -96,7 +96,9 @@ void start()
 int getImuAngle()
 {        
         #ifdef IMU_IS_ON
-            return imu.yaw-IMU_INITIAL_ANGLE;
+        imu.update();
+        printf("imu yaw is%lf\ninitial is %lf\n",imu.yaw,IMU_INITIAL_ANGLE);
+            return int(imu.yaw-IMU_INITIAL_ANGLE);
         #endif
 
         #ifndef IMU_IS_ON

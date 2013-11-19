@@ -20,7 +20,7 @@ void BasicBehaviorUpdate::execute()
         
         p.hdmtr.update();
         p.capture.getImage();        
-        cvWaitKey(5);
+        //cvWaitKey(5);
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
         p.conf = p.loc.confidence();
@@ -42,7 +42,7 @@ void BasicBehaviorLocalize::execute()
         p.camcont->search(p.hdmtr);//p.camcont->search(p.hdmtr);    
         p.hdmtr.update();
        // usleep(500);
-        cvWaitKey(5);
+        //cvWaitKey(5);
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
         }
