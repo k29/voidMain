@@ -32,7 +32,7 @@ void BasicBehaviorUpdate::execute()
 void BasicBehaviorLocalize::execute()
 {   
         printf("Confidence %lf, localizing\n",p.conf);
-        int i=5000000;
+        int i=2000;
         while(i--)
         {
         p.capture.getImage();

@@ -20,7 +20,7 @@ pthread_mutex_t mutex_pathpacket=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_switch=PTHREAD_MUTEX_INITIALIZER;
 
 Imu imu;
-int IMU_INITIAL_ANGLE;
+double IMU_INITIAL_ANGLE;
 WalkStructure prevwalkstr;
 WalkStructure walkstr;
 RoboCupGameControlData GCData;
