@@ -59,7 +59,7 @@ void registerXABSL()
 void start()
 {
     ACYUT.resetflag=1; /*Resets all variables in the first run */
-    ACYUT.ACTIVE_GOAL=1;
+    ACYUT.ACTIVE_GOAL=0;
 
     #ifndef GC_IS_ON 
 
