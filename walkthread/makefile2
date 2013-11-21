@@ -1,5 +1,0 @@
-all: path.o path.hpp path.cpp graph.hpp pathfile.cpp
-	g++ path.o pathfile.cpp -o pathfile `pkg-config --libs opencv`
-path.o: path.cpp path.hpp graph.hpp
-	g++ -c path.cpp
-

@@ -1,7 +1,0 @@
-The walkthread serves to combine the path code, footstep planning code, and the walk code into one thread. 
-
-->Information is provided by the path code as to the position of obstacles and the path to be followed to navigate through them. The path is made up of lines and circular arcs.
-
-->Footstep Planning converts this information into footstep positions. It obeys the constraints imposed by walk. It plans differently depending on whether the path is a straight line or a circular arc.
-
--> Walk takes the footstep positions and sends instructions to the bot.
