@@ -107,6 +107,7 @@ CamError CamCapture::init()
         printf("Setting framerate Unsuccessful %d: %s\n",err,errMsg);
         return CAM_FAILURE;
     }
+    free(errMsg);
 
     originalImg = cvCreateImage(cvSize(752,480),8,3);
     rgbimg_full = cvCreateImage(cvSize(640, 480), 8, 3);
@@ -168,6 +169,7 @@ CamError CamCapture::getImage()
         else
             cvResize(rgbimg_full, rgbimg_small, CV_INTER_NN);
     }
+    free(errMsg);
 
 #ifdef CAMCAPTURE_DEBUG
     if(doLUT==true)

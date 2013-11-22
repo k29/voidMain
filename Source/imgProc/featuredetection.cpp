@@ -1,4 +1,4 @@
-#include "featuredetection.h"//
+#include "featuredetection.h"
 //NOTE: THIS FILE ASSUMES IN SEVERAL PLACES THAT rgbimg_small IS HALF THE SIZE OF rgbimg!!!!!!!!!!!!!!!!!!!
 //1. Someplace in ballFind, i have multiplied ballX_var by 2 assuming main image is double the size of image used here
 //2. in finding ballRatio, same assumption has been made
@@ -139,12 +139,12 @@ void FeatureDetection::getBlobs(CamCapture &cam)
 	// cvMorphologyEx(seg_yellow, seg_yellow, NULL, morphkernel, CV_MOP_OPEN, 1);
 
     getInGreen(cam);
-	cvLabel(seg_yellow, labelImg, blobs_yellow);
+	// cvLabel(seg_yellow, labelImg, blobs_yellow);
 	// cvLabel(seg_blue, labelImg, blobs_blue);
 	cvLabel(seg_red, labelImg, blobs_red);
 	//getInGreen should have been called before this
 	// cvLabel(seg_black, labelImg_small, blobs_black);
-	cvFilterByArea(blobs_yellow, 100, 1000000);
+	// cvFilterByArea(blobs_yellow, 100, 1000000);
 	// cvFilterByArea(blobs_blue, 100, 1000000);
 	cvFilterByArea(blobs_red, 200, 1000000);
 	//minimum obstacle area defined here
@@ -170,6 +170,81 @@ void FeatureDetection::getBlobs(CamCapture &cam)
 void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
 {
 	int nGoals = 0;
+	IplImage* histogram_y = cvCreateImage(cvSize(IMAGE_WIDTH,1),8,1);   //image colours (histogram_y)
+    IplImage* histogram_x = cvCreateImage(cvSize(1, IMAGE_HEIGHT),8,1);   //image colours (histogram_y)
+	int max_x=0,max_y = 0;
+    int threshold;	//threshold for peaks
+
+    for(int x=0;x<IMAGE_WIDTH;++x)
+    {
+        cvSetImageROI(seg_yellow,cvRect(x,0,1,IMAGE_HEIGHT));
+        int n = cvCountNonZero(seg_yellow);
+        cvResetImageROI(seg_yellow);
+        if(max_y<=n)
+            max_y=n;
+        returnPixel1C(histogram_y,x,0) = n;
+    }
+
+    for(int y=0;y<IMAGE_HEIGHT;++y)
+    {
+        cvSetImageROI(seg_yellow,cvRect(0,y,IMAGE_WIDTH,1));
+        int n = cvCountNonZero(seg_yellow);
+        cvResetImageROI(seg_yellow);
+        if(max_x<=n)
+            max_x=n;
+        returnPixel1C(histogram_x,0,y) = n;
+    }
+
+    threshold = max_y/5;
+    cvSmooth(histogram_x,histogram_x);
+    cvSmooth(histogram_y,histogram_y);
+    int gpx1 = 0,gpx2 = 0;					//x COORDINATE FOR GOAL POSTS
+    int pixels_at_gpx1 = 0,pixels_at_gpx2 = 0;
+    for(int i=0;i<IMAGE_WIDTH;++i)
+    {
+        if(returnPixel1C(histogram_y,i,0)>threshold)
+        {
+            int peak_x = 0;
+            int pixels_at_x = 0;                        
+            while(1)
+            {
+                if(i>=IMAGE_WIDTH)
+                    break;
+                if(returnPixel1C(histogram_y,i,0)<threshold)
+                    break;
+                if(returnPixel1C(histogram_y,i,0)>pixels_at_x)
+                {
+                    peak_x = i;
+                    pixels_at_x = returnPixel1C(histogram_y,i,0);
+                }
+                ++i;
+            }
+            if(pixels_at_x >= pixels_at_gpx1)     //COMPARING COLOR SO THAT ONLY THE TWO PEAKS WITH MAX WHITE REGION ARE CONSIDERED AS GOAL POSTS
+            {
+                gpx2 = gpx1;
+                pixels_at_gpx2 = pixels_at_gpx1;
+                gpx1 = peak_x;
+                pixels_at_gpx1 = pixels_at_x;
+            }
+
+            else if (pixels_at_x < pixels_at_gpx1 && pixels_at_x >=pixels_at_gpx2)
+            {
+                gpx2 = peak_x;
+                pixels_at_gpx2 = pixels_at_x;
+            }
+        }
+    }
+    cvSetImageROI(seg_yellow,cvRect(0,max_x-25,IMAGE_WIDTH,50));
+    cvZero(seg_yellow);
+    cvResetImageROI(seg_yellow);
+    cvErode(seg_yellow,seg_yellow);
+    cvDilate(seg_yellow,seg_yellow,NULL,3);
+    cvLabel(seg_yellow, labelImg, blobs_yellow);
+    cvFilterByArea(blobs_yellow, 100, 1000000);
+    cvShowImage("yellow",seg_yellow);
+
+    CvPoint gp = cvPoint(0,0);
+
 	for (CvBlobs::const_iterator it=blobs_yellow.begin(); it!=blobs_yellow.end(); ++it)
     {
     	if(((it->second->maxy - it->second->miny)/(it->second->maxx - it->second->minx)) >= 2)
@@ -191,12 +266,18 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     		if(isOnImageEdge((it->second->maxx + it->second->minx)/2, it->second->maxy)==true)
     			continue;
 
+    		if(it->second ->maxx >= gpx1 && it->second ->minx <= gpx1)	//MATCHING BLOBS TO GPX1 AND GPX2
+    			gp = cvPoint(gpx1*2,it->second->maxy*2);
+    		if(it->second ->maxx >= gpx2 && it->second ->minx <= gpx2)
+    			gp = cvPoint(gpx2*2,it->second->maxy*2);
+
     		printf("Found GPY\n");
     		#ifdef PLOT_LANDMARKS
 		    	CvScalar color = {255,255,0};
-		    	cvCircle(cam.rgbimg, cvPoint((it->second->maxx + it->second->minx), it->second->maxy*2), 2, color, 2);
+                printf("gp.x :%d\tgp.y :%d\n\n\n\n", gp.x,gp.y);
+		    	cvCircle(cam.rgbimg, gp, 2, color, 2);
 		    #endif
-			findReal((it->second->maxx + it->second->minx)/2, it->second->maxy, templ[tempnLand].distance, templ[tempnLand].angle, hm);
+			findReal(gp.x/2,gp.y/2, templ[tempnLand].distance, templ[tempnLand].angle, hm);
 			templ[tempnLand].type = LAND_GPY;
 			tempnLand++;
 			nGoals++;
@@ -234,6 +315,7 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
 			if(nGoals>=2) break;
     	}
     }
+    cvReleaseImage(&histogram_y);
 }
 
 
