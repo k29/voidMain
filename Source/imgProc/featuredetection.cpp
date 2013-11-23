@@ -185,14 +185,28 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
         returnPixel1C(histogram_y,x,0) = n;
     }
 
-    for(int y=0;y<IMAGE_HEIGHT;++y)
+    // int max = 0;
+    // for(int y=0;y<IMAGE_HEIGHT;++y)
+    // {
+    //     cvSetImageROI(seg_yellow,cvRect(0,y,IMAGE_WIDTH,1));
+    //     int n = cvCountNonZero(seg_yellow);
+    //     cvResetImageROI(seg_yellow);
+    //     if(max_x<=n)
+    //     {
+    //         max_x=n;
+    //         max = y;
+    //     }
+    //     returnPixel1C(histogram_x,0,y) = n;
+    // }
+
+    cvLabel(seg_yellow, labelImg, blobs_yellow);
+    cvFilterByArea(blobs_yellow, 100, 1000000);
+    cvShowImage("yellow",seg_yellow);
+    int max = IMAGE_HEIGHT;
+    for (CvBlobs::const_iterator it=blobs_yellow.begin(); it!=blobs_yellow.end(); ++it)
     {
-        cvSetImageROI(seg_yellow,cvRect(0,y,IMAGE_WIDTH,1));
-        int n = cvCountNonZero(seg_yellow);
-        cvResetImageROI(seg_yellow);
-        if(max_x<=n)
-            max_x=n;
-        returnPixel1C(histogram_x,0,y) = n;
+    	if(it->second->miny <= max)
+    		max = it->second->miny;
     }
 
     threshold = max_y/5;
@@ -234,10 +248,10 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
             }
         }
     }
-    cvSetImageROI(seg_yellow,cvRect(0,max_x-5,IMAGE_WIDTH,50));
-    // cvLine(cam.rgbimg,cvPoint(0,(int)max_x),cvPoint(IMAGE_WIDTH,(int)max_x),cvScalar(255,0,0));
+    cvSetImageROI(seg_yellow,cvRect(0,max,IMAGE_WIDTH,20));
     cvZero(seg_yellow);
     cvResetImageROI(seg_yellow);
+    cvLine(seg_yellow,cvPoint(0,max),cvPoint(IMAGE_WIDTH,max),cvScalar(255,0,0));
     // cvErode(seg_yellow,seg_yellow);
     cvDilate(seg_yellow,seg_yellow);
     cvLabel(seg_yellow, labelImg, blobs_yellow);
