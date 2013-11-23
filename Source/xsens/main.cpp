@@ -8,11 +8,11 @@ int main()
 {
 	Imu imu;
 	imu.init();
-	int i=500;
+	int i=500000;
 	double value;
 	while(i--)
 	{
-		imu.update();
+		
 		value=imu.yaw;
 		printf("%lf\n",value);
 		
