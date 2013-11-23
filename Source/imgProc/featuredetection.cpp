@@ -237,8 +237,8 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     cvSetImageROI(seg_yellow,cvRect(0,max_x-25,IMAGE_WIDTH,50));
     cvZero(seg_yellow);
     cvResetImageROI(seg_yellow);
-    cvErode(seg_yellow,seg_yellow);
-    cvDilate(seg_yellow,seg_yellow,NULL,3);
+    // cvErode(seg_yellow,seg_yellow);
+    cvDilate(seg_yellow,seg_yellow);
     cvLabel(seg_yellow, labelImg, blobs_yellow);
     cvFilterByArea(blobs_yellow, 100, 1000000);
     cvShowImage("yellow",seg_yellow);
