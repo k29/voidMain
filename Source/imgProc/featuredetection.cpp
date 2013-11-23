@@ -234,7 +234,8 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
             }
         }
     }
-    cvSetImageROI(seg_yellow,cvRect(0,max_x-25,IMAGE_WIDTH,50));
+    cvSetImageROI(seg_yellow,cvRect(0,max_x-5,IMAGE_WIDTH,50));
+    // cvLine(cam.rgbimg,cvPoint(0,(int)max_x),cvPoint(IMAGE_WIDTH,(int)max_x),cvScalar(255,0,0));
     cvZero(seg_yellow);
     cvResetImageROI(seg_yellow);
     // cvErode(seg_yellow,seg_yellow);
