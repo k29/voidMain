@@ -1,9 +1,8 @@
 
-//obstacle id for the initial obstacle is?? as of now is -3
 #include "path.hpp"
 #define car2pol(x,y) sqrt((x)*(x)+(y)*(y))
 #define dist(x1,y1,x2,y2) sqrt(pow(((x1)-(x2)),2)+pow(((y1)-(y2)),2))
-#define FRAMEPAINTING
+// #define FRAMEPAINTING
 //#define OLDENCIRCLING
 //#define NEWENCIRCLING
 //#define NEWNEWENCIRCLING
@@ -100,7 +99,7 @@ int Path::closest_intersecting_obstacle(Point n1,Point n2) //Returns the closest
 	b=1;
 	a=-slope;
 	c=(slope*n2.x)-n2.y;
-	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
 	{
 		if(on_which_side(a,b,n1,n2,obstacle[i]))//i.e only the obstacles which are in between the two lines will be checked
 		{
@@ -282,23 +281,6 @@ PathReturns Path::path_return(PathStructure ps)
 	obstacle[NO_OF_OBSTACLES+1].obstacle_id=-2;
 	obstacle[NO_OF_OBSTACLES+1].type= CIRCLE;
 	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+1].x+200, obstacle[NO_OF_OBSTACLES+1].y+200),  ORIENTATION_RADIUS, cvScalar(255,0,0));
-	//adding the obstacles near the starting point for convinience of path walk
-	obstacle[NO_OF_OBSTACLES+2].obstacle_radius= OBSTACLE_RADIUS;
-	obstacle[NO_OF_OBSTACLES+2].x=0;
-	obstacle[NO_OF_OBSTACLES+2].y=-obstacle[NO_OF_OBSTACLES+2].obstacle_radius;
-	obstacle[NO_OF_OBSTACLES+2].obstacle_id=-3; 
-	obstacle[NO_OF_OBSTACLES+2].type= CIRCLE;
-	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+2].x+200,obstacle[NO_OF_OBSTACLES+2].y+200),obstacle[NO_OF_OBSTACLES+2].obstacle_radius,cvScalar(255,0,0));
-
-	obstacle[NO_OF_OBSTACLES+3].obstacle_radius= OBSTACLE_RADIUS;
-	obstacle[NO_OF_OBSTACLES+3].x=0;
-	obstacle[NO_OF_OBSTACLES+3].y=obstacle[NO_OF_OBSTACLES+3].obstacle_radius;
-	obstacle[NO_OF_OBSTACLES+3].obstacle_id=-3; 
-	obstacle[NO_OF_OBSTACLES+3].type= CIRCLE;
-	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+3].x+200,obstacle[NO_OF_OBSTACLES+3].y+200),obstacle[NO_OF_OBSTACLES+3].obstacle_radius,cvScalar(255,0,0));
-
-
-	//If the orientation obstacles are intersecting with any obstacle then that obstacle is cancelled totally. i.e. it is sent to the point 1000,1000
 	for(int i=0;i< NO_OF_OBSTACLES;i++)
 	{
 		for(int j=NO_OF_OBSTACLES;j<NO_OF_OBSTACLES+2;j++)
@@ -313,8 +295,7 @@ PathReturns Path::path_return(PathStructure ps)
 		}
 
 	}
-//implementing circle design .. i.e if the obstacles are intersecting then a new obstacle is made at the centre of the intersecting obstacles and 
-//the old obstacles is given a DNE(Does not exsist) status.
+//implementing circle design
 	for(int i=0;i< NO_OF_OBSTACLES;i++)
 	{
 		for(int j=i+1;j<NO_OF_OBSTACLES;j++)
@@ -330,22 +311,20 @@ PathReturns Path::path_return(PathStructure ps)
 			}
 		}
 	}
-	for(int i=0;i<NO_OF_OBSTACLES;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
 	{
 		if(obstacle[i].type==DNE)
 		{
-			for (int j = i; j < NO_OF_OBSTACLES+4-1; ++j)
+			for (int j = i; j < NO_OF_OBSTACLES-1+2; ++j)
 			{
-				obstacle[j]=obstacle[j+1]; //shifting the DNE to the end of the obstacle queue.
+				obstacle[j]=obstacle[j+1];
 			}
 			NO_OF_OBSTACLES--;
 		}
 	}
-
-	//if the obstacle is intersecting with the origin then again it is sent ot 1000,1000
-	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
 	{
-		if(dist(obstacle[i].x,obstacle[i].y,0,0)-0.005<obstacle[i].obstacle_radius)
+		if(dist(obstacle[i].x,obstacle[i].y,0,0)<obstacle[i].obstacle_radius)
 		{
 			obstacle[i].x=1000;
 			obstacle[i].y=1000;
@@ -441,7 +420,7 @@ PathReturns Path::path_return(PathStructure ps)
 								}
 							}
 						}
-						for(int j=0;j<NO_OF_OBSTACLES+4;j++)
+						for(int j=0;j<NO_OF_OBSTACLES+2;j++)
 						{
 							cvCircle(image, cvPoint(obstacle[j].x+200, obstacle[j].y+200), 2, cvScalar(255,0,0));
 							cvCircle(image, cvPoint(obstacle[j].x+200, obstacle[j].y+200), obstacle[j].obstacle_radius , cvScalar(255,0,0));
@@ -624,7 +603,7 @@ PathReturns Path::path_return(PathStructure ps)
 			}
 		}
 	}
-	cout<<"\nto be removed remove count "<<to_be_removed[11].remove_count<<"\t"<<"to be removed connected count "<<to_be_removed[11].connected_count<<endl;
+	cout<<"\nto be removed remove count "<<to_be_removed[11].remove_count<<" "<<"to be removed connected count "<<to_be_removed[11].connected_count<<endl;
 #endif
 
 #ifdef NEWDELETION
@@ -674,7 +653,7 @@ PathReturns Path::path_return(PathStructure ps)
 		b=tree.returnPathPoint(b);
 	}
 	path_completed_flag=true;
-	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
 	{
 		cvCircle(image, cvPoint(obstacle[i].x + 200, obstacle[i].y+200), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}
@@ -845,7 +824,7 @@ PathReturns Path::path_return(PathStructure ps)
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #endif
 
-	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
 	{
 		cvCircle(image, cvPoint(obstacle[i].x + 200, obstacle[i].y+200), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}

@@ -1,4 +1,4 @@
-all: ../Build/imu.a
+all: ../Build/imu.a ../../imu-calibrator
 
 ../Build/imu.a: ../Build/cmt1.o ../Build/cmt2.o ../Build/cmt3.o ../Build/cmtmessage.o ../Build/cmtscan.o ../Build/cmtpacket.o ../Build/xsens_time.o ../Build/xsens_std.o ../Build/imu.o
 	@echo $@
@@ -50,3 +50,7 @@ all: ../Build/imu.a
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c imu.cpp -o $@
+
+../../imu-calibrator: ../Build/imu.a main.cpp 
+	@echo $@
+	g++ main.cpp ../Build/imu.a -o $@ -lpthread -lrt

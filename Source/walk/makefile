@@ -1,4 +1,7 @@
-all: ../Build/walk.a
+all: ../Build/walk.a 
+
+main: main.cpp ../Build/walk.a ../Build/imu.a
+	g++ main.cpp ../Build/walk.a ../Build/imu.a -o main -lftdi -lm -lrt -lpthread
 
 ../Build/walk.a: ../Build/commondefswalk.o ../Build/hand.o ../Build/leg.o ../Build/walk_thread.o ../Build/walk.o ../Build/AcYut.o ../Build/communication.o ../Build/motor.o
 	@echo $@
