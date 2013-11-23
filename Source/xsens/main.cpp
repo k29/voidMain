@@ -38,10 +38,14 @@ int main()
 {
 	Imu imu;
 	imu.init();
-	while(1)
+	int i=500000;
+	double value;
+	while(i--)
 	{
-		imu.update();
-		cout<<"\n"<<setprecision(3)<<double(imu.yaw);
+		
+		value=imu.yaw;
+		printf("%lf\n",value);
+		
 	}
 	return 0;
 }
