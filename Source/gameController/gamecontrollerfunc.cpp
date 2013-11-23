@@ -3,12 +3,12 @@ for using it
 include this file and make a thread with the readGameController() function
 then read data by using GCData, and putting mutex locks while doing so.
 
-    pthread_t thread_id_gc;
+	pthread_t thread_id_gc;
 
     pthread_create (&thread_id_gc, NULL, readGameController, NULL);
-    
-    
-    to close the thread after the main function is done-->
+	
+	
+	to close the thread after the main function is done-->
      void *status_gc; pthread_join (thread_id_gc, &status_gc);
 */
 
@@ -17,7 +17,7 @@ then read data by using GCData, and putting mutex locks while doing so.
 //#include "RoboCupGameControlData.h"
 //RoboCupGameControlData GCData; pranet: shifted to common.h as global
 
-// //pranet: common.h   
+// //pranet: common.h	
 
 //pthread_mutex_t mutex_GCData=PTHREAD_MUTEX_INITIALIZER; pranet: shifted to common.h,run.cpp
 
@@ -82,19 +82,19 @@ void* readGameController(void*)
     RoboCupGameControlData GCData1;
 
     int count1=0;
-    //  printf("listener: waiting to recvfrom...\n");
+    //	printf("listener: waiting to recvfrom...\n");
     while(1)
     {
         addr_len = sizeof their_addr;
 
         if ((numbytes = recvfrom(sockfd, &GCData1,sizeof(RoboCupGameControlData), 0,(struct sockaddr *)&their_addr, &addr_len)) == -1)
-        {   
+        {	
             perror("recvfrom");
             printf("\nno Game Controller :(\n");
             //exit(1);
         }
-        if(strncmp(GCData1.header,"RGme",4)==0)//compare first 4 characters
-        {
+       	if(strncmp(GCData1.header,"RGme",4)==0)//compare first 4 characters
+       	{
             pthread_mutex_lock(&mutex_GCData);
             GCData=GCData1;printf("VALUE RECIEVED IS %d\n",GCData.state);
             pthread_mutex_unlock(&mutex_GCData);
@@ -104,8 +104,8 @@ void* readGameController(void*)
         usleep(50000);
 
 
-    //printf("listener: got packet from %s\n",inet_ntop(their_addr.ss_family,get_in_addr((struct sockaddr *)&their_addr),s, sizeof s))
-    //printf("listener: packet is %d bytes long\n", numbytes);
+	//printf("listener: got packet from %s\n",inet_ntop(their_addr.ss_family,get_in_addr((struct sockaddr *)&their_addr),s, sizeof s))
+	//printf("listener: packet is %d bytes long\n", numbytes);
     }
     close(sockfd);
 }

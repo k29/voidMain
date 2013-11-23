@@ -21,13 +21,8 @@ option referee
 				action
 					{
 
-<<<<<<< HEAD
 						printmsg(o=3);
-=======
->>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225
 						begin();
-						printmsg(o=3);
-						
 					}
 			}
 		state finished

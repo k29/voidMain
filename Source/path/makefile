@@ -15,12 +15,8 @@ path: path.o path.hpp path.cpp graph.hpp
 	g++ path.o testpath.cpp -o testpath -lopencv_highgui -lopencv_core -lopencv_imgproc
 
 path.o:path.hpp path.cpp graph.hpp
-<<<<<<< HEAD
 	g++ -c path.cpp
 
 clean:
 	@rm -f path.o 
 	@rm -f testpath
-=======
-	g++ -c path.cpp
->>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225

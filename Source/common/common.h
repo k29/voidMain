@@ -41,10 +41,6 @@ extern PathPacket pathpackvar;
 
 extern Imu imu; 
 
-<<<<<<< HEAD
 extern int IMU_INITIAL_ANGLE;
-=======
-extern double IMU_INITIAL_ANGLE;
->>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225
 
 #endif

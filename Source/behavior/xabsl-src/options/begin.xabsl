@@ -42,9 +42,8 @@ option begin
 				}
 				action
 					{
-						checklocalize();
 						doUpdate();
-							
+						checklocalize();	
 					}
 					
 			}
@@ -63,7 +62,7 @@ option begin
 					{
 
 						reset();
-						
+
 					}			
 			}
 	}

@@ -45,7 +45,7 @@ CamError CamCapture::init()
     //Loading lookup table
     if(doLUT == true)
     {
-       printf("Loading lookup tables...");
+        printf("Loading lookup tables...");
         if(loadLUT(REDC)==false||loadLUT(BLUEC)==false||loadLUT(YELLOWC)==false||loadLUT(GREENC)==false||loadLUT(WHITEC)==false||loadLUT(BLACKC)==false)
         {
             printf("Unable to open LUT\n");
@@ -54,7 +54,6 @@ CamError CamCapture::init()
         printf("Loaded.\n");
     }
     //Initializing camera
-<<<<<<< HEAD
 	
     char* errMsg = (char*)malloc(sizeof(char)*200);
     int err = 0;
@@ -64,14 +63,6 @@ CamError CamCapture::init()
     {
         is_GetError (hCam, &err, &errMsg);
         printf("Camera Init Error %d: %s\n",err,errMsg);
-=======
-    
-	error = busMgr.GetCameraFromIndex(0, &guid);
-    if (error != FlyCapture2::PGRERROR_OK)
-    {
-        error.PrintErrorTrace();
-        
->>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225
         return CAM_FAILURE;
     }
 
@@ -98,20 +89,9 @@ CamError CamCapture::init()
         printf("MemAlloc Unsuccessful %d: %s\n",err,errMsg);
         return CAM_FAILURE;
     }
-<<<<<<< HEAD
 
     nRet = is_SetImageMem (hCam, imgPointer, imgMemPointer);
     if(nRet != IS_SUCCESS)
-=======
-    
-    cam.SetVideoModeAndFrameRate(vm, fr);
-    //Starting the capture
-    
-    //code fails on my laptop here-->pranet
-    error = cam.StartCapture();
-    printf("lol\n");
-    if (error != FlyCapture2::PGRERROR_OK)
->>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225
     {
         is_GetError (hCam, &err, &errMsg);
         printf("Could not set/activate image memory %d: %s\n",err, errMsg);
