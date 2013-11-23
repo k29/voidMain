@@ -9,9 +9,15 @@
 *.dat
 *.output
 *.rb
+<<<<<<< HEAD
 testpath
+=======
+>>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225
 Source/xabsl-doc/
 Source/xabsl-xml/
 run
 Xabsl/compiler/timestamp
+<<<<<<< HEAD
 
+=======
+>>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225

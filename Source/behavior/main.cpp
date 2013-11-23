@@ -59,7 +59,11 @@ void registerXABSL()
 void start()
 {
     ACYUT.resetflag=1; /*Resets all variables in the first run */
+<<<<<<< HEAD
     ACYUT.ACTIVE_GOAL=1;
+=======
+    ACYUT.ACTIVE_GOAL=0;
+>>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225
 
     #ifndef GC_IS_ON 
 
@@ -96,7 +100,13 @@ void start()
 int getImuAngle()
 {        
         #ifdef IMU_IS_ON
+<<<<<<< HEAD
             return imu.yaw-IMU_INITIAL_ANGLE;
+=======
+        imu.update();
+        printf("imu yaw is%lf\ninitial is %lf\n",imu.yaw,IMU_INITIAL_ANGLE);
+            return int(imu.yaw-IMU_INITIAL_ANGLE);
+>>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225
         #endif
 
         #ifndef IMU_IS_ON

@@ -247,12 +247,14 @@ void Localize::randomize()
 		p[i].x = rand()%(MAX_X);	//Assigns a random number between 0 and MAX_X INCLUSIVE
 		p[i].y = rand()%(MAX_Y);	//Assigns a random number between 0 and MAX_Y INCLUSIVE
 		p[i].angle = ((double)((rand()%(360))))*PI/180.0;	//Assigns a random angle with given resolution
+		
 	}
 }
 
 
 void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, int imuangle)
 {
+	printf("getImuAngle is %d\n",imuangle);
 	if(mm.updated==1)
 	{
 		printf("Confidence before %lf\n", confidence());
@@ -323,7 +325,7 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, int imuangle)
 
 	if(imuangle != -9999 && fd.l.size()>1)
 	{
-		double angle = imuangle ;
+		double angle = imuangle  ;
 		angle = deg2rad(angle);
 		while(angle >= 2*PI)
 			angle -= 2*PI;
@@ -331,7 +333,7 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, int imuangle)
 			angle += 2*PI;
 		for (int i = 0; i < NO_OF_PARTICLES; ++i)
 		{
-			p[i].angle =  angle + ((float)(rand()%50 - 25))*PI/180.0;
+			p[i].angle =  angle + ((float)(rand()%10 - 5))*PI/180.0;
 			while(p[i].angle >= 2*PI)
 				p[i].angle -= 2*PI;
 			while(p[i].angle < 0)

@@ -20,11 +20,7 @@ pthread_mutex_t mutex_pathpacket=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_switch=PTHREAD_MUTEX_INITIALIZER;
 
 Imu imu;
-<<<<<<< HEAD
 int IMU_INITIAL_ANGLE;
-=======
-double IMU_INITIAL_ANGLE;
->>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225
 WalkStructure prevwalkstr;
 WalkStructure walkstr;
 RoboCupGameControlData GCData;
@@ -50,11 +46,7 @@ int main(void)
 	    		imu.init();
 
 	    		fstream f1;
-<<<<<<< HEAD
 	        	f1.open("cpp-src/xsens/imuyaw.angle", ios::in);
-=======
-	        	f1.open("Source/xsens/imuyaw.angle", ios::in);
->>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225
 	        	f1>>IMU_INITIAL_ANGLE;
 	        	f1.close();
 	    	#endif

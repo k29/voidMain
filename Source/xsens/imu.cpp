@@ -10,7 +10,10 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <signal.h>
+<<<<<<< HEAD
 #include <unistd.h>
+=======
+>>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225
 
 #include "cmtdef.h"
 #include "xsens_time.h"
@@ -22,7 +25,7 @@
 using namespace xsens;
 
 #define EXIT_ERROR(loc) {printf("Error %d occurred during " loc ": %s\n", serial.getLastResult(), xsensResultText(serial.getLastResult())); return false; }
-void* readerThreadFunction(void* data);
+
 bool Imu::init()
 {
     if(initialized)
@@ -114,6 +117,7 @@ bool Imu::init()
 
 
     initialized = true;
+<<<<<<< HEAD
     threadActive = true;
     pthread_create(&readerThread, NULL, 
                           readerThreadFunction, (void *)this);
@@ -139,9 +143,12 @@ void* readerThreadFunction(void* data)
     }
     printf("IMU thread closing\n");
     pthread_exit(NULL);
+=======
+    return true;
+>>>>>>> 69f8829d20fbb6f84639f7d7262273b65cc18225
 }
 
-void Imu::__update()
+void Imu::update()
 {
     if(!initialized)
         return;
@@ -165,13 +172,16 @@ void Imu::__update()
     yaw = reply.getDataFloat(2*4);
 }
 
-void Imu::__flush()
+double Imu::return_yaw()
 {
-    (serial.getCmt1s())->flushData();
-}
+	 if(!initialized)
+        return -1;
+    if (serial.waitForMessage(&reply, 0, 0, 1) != XRV_OK)
+    {
+        printf("Error reading from IMU\n");
+        return -1;
+    }
 
-Imu::~Imu()
-{
-    threadActive = false;
-    pthread_join(readerThread, NULL);
+    yaw = reply.getDataFloat(2*4);
+    return yaw;
 }
