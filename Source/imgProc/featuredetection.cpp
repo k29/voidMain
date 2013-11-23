@@ -52,33 +52,34 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
 
 void FeatureDetection::findReal(int x,int y, float &objdis, float &objangdeg, HeadMotor &hm)
 {
-	float s = 1;
+	double s = 1.0;
 	float motorX = hm.motorX();
 	float thetaX = hm.thetaX();
 	float thetaY = hm.thetaY();
 
 	parameters entry;
 	parameters temp;
-
-	while(1)
+    constants.seekg(0,ios::beg);
+    while(1)
 	{
 		if(constants.eof())
 		{
 			constants.close();
+            printf("MOTOR POS NOT FOUND\n");
 			break;
 		}
 		constants.read((char*)&temp,sizeof(temp));
 		if(temp.motor_pos == motorX)
 		{
 			entry = temp;
+            printf("FOUND\n");
 			break;
 		}
 	}
 
 	objdis=(((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
 	float perpend=(x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx;
-	objdis=entry.pix2cmy*(objdis-(entry.focal/s)*tan(entry.angle)) + entry.s_view_compensation;
-
+	objdis=entry.pix2cmy*(objdis) + entry.s_view_compensation;
 	objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
 	objdis=sqrt(objdis*objdis+perpend*perpend);
 	
@@ -234,7 +235,7 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
             }
         }
     }
-    cvSetImageROI(seg_yellow,cvRect(0,max,IMAGE_WIDTH,20));
+    cvSetImageROI(seg_yellow,cvRect(0,max-10,IMAGE_WIDTH,20));
     cvZero(seg_yellow);
     cvResetImageROI(seg_yellow);
     // cvLine(seg_yellow,cvPoint(0,max),cvPoint(IMAGE_WIDTH,max),cvScalar(255,0,0));
@@ -268,17 +269,35 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     			continue;
 
     		if(it->second ->maxx >= gpx1 && it->second ->minx <= gpx1)	//MATCHING BLOBS TO GPX1 AND GPX2
-    			gp = cvPoint(gpx1*2,it->second->maxy*2);
+    			gp = cvPoint(gpx1,it->second->maxy);
     		if(it->second ->maxx >= gpx2 && it->second ->minx <= gpx2)
-    			gp = cvPoint(gpx2*2,it->second->maxy*2);
+    			gp = cvPoint(gpx2,it->second->maxy);
 
     		printf("Found GPY\n");
     		#ifdef PLOT_LANDMARKS
 		    	CvScalar color = {255,255,0};
-                printf("gp.x :%d\tgp.y :%d\n\n\n\n", gp.x,gp.y);
-		    	cvCircle(cam.rgbimg, gp, 2, color, 2);
+                printf("gp.x :%d\tgp.y :%d\n\n\n\n", gp.x*2,gp.y*2);
+		    	cvCircle(cam.rgbimg, cvPoint(gp.x*2,gp.y*2), 2, color, 2);
 		    #endif
-			findReal(gp.x/2,gp.y/2, templ[tempnLand].distance, templ[tempnLand].angle, hm);
+			findReal(gp.x,gp.y, templ[tempnLand].distance, templ[tempnLand].angle, hm);
+            CvFont font;
+            cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
+            char A[100] = "DISTANCE :";
+            char B[100] = "ANGLE :";
+            ostringstream s1;
+            s1<<templ[tempnLand].distance;
+            const std::string tmp1 = s1.str();
+            const char* cs1 = tmp1.c_str();
+            strcat(A,cs1);
+            ostringstream s2;
+            s2<<templ[tempnLand].angle;
+            const std::string tmp2 = s2.str();
+            const char* cs2 = tmp2.c_str();
+            strcat(B,cs2);
+
+            cvPutText(cam.rgbimg,A,cvPoint(gp.x*2,gp.y*2),&font,cvScalar(255,255,255));
+            cvPutText(cam.rgbimg,B,cvPoint(gp.x*2,gp.y*2+10),&font,cvScalar(255,255,255));
+
 			templ[tempnLand].type = LAND_GPY;
 			tempnLand++;
 			nGoals++;
