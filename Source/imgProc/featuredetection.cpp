@@ -185,6 +185,20 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
         returnPixel1C(histogram_y,x,0) = n;
     }
 
+    // int max = 0;
+    // for(int y=0;y<IMAGE_HEIGHT;++y)
+    // {
+    //     cvSetImageROI(seg_yellow,cvRect(0,y,IMAGE_WIDTH,1));
+    //     int n = cvCountNonZero(seg_yellow);
+    //     cvResetImageROI(seg_yellow);
+    //     if(max_x<=n)
+    //     {
+    //         max_x=n;
+    //         max = y;
+    //     }
+    //     returnPixel1C(histogram_x,0,y) = n;
+    // }
+
     cvLabel(seg_yellow, labelImg, blobs_yellow);
     cvFilterByArea(blobs_yellow, 100, 1000000);
     cvShowImage("yellow",seg_yellow);
@@ -237,7 +251,7 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     cvSetImageROI(seg_yellow,cvRect(0,max,IMAGE_WIDTH,20));
     cvZero(seg_yellow);
     cvResetImageROI(seg_yellow);
-    // cvLine(seg_yellow,cvPoint(0,max),cvPoint(IMAGE_WIDTH,max),cvScalar(255,0,0));
+    cvLine(seg_yellow,cvPoint(0,max),cvPoint(IMAGE_WIDTH,max),cvScalar(255,0,0));
     // cvErode(seg_yellow,seg_yellow);
     cvDilate(seg_yellow,seg_yellow);
     cvLabel(seg_yellow, labelImg, blobs_yellow);
