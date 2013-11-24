@@ -10,6 +10,8 @@
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range2d.h"
 #include <fstream>
+#include <stdio.h>
+
 using namespace std;
 #define PLOT_LANDMARKS
 // #define PLOT_HOUGH_LINES

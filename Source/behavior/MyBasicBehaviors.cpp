@@ -22,12 +22,11 @@ void BasicBehaviorUpdate::execute()
         p.hdmtr.update();
         printf("Entered update\n");
 
-        while( !p.capture.getImage() )
-                {
-                    continue;
-                }
-        printf("escaped error\n");       
-        printf("lol\n");
+        p.capture.getImage();
+                // {
+                //     continue;
+                // }
+        
         cvWaitKey(5);
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
@@ -47,11 +46,11 @@ void BasicBehaviorLocalize::execute()
         printf("lol\n");
         p.hdmtr.update();
         printf("lol2");
-        while(!p.capture.getImage())
-        {
-            printf("worked\n");
-            continue;
-        }
+        p.capture.getImage();
+        // {
+        //     printf("worked\n");
+        //     continue;
+        // }
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         p.camcont->search(p.hdmtr);
         p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 

@@ -99,7 +99,7 @@ CamError CamCapture::init()
     }
 
     double newFPS;
-    nRet = is_SetFrameRate(hCam, 3.0, &newFPS);
+    nRet = is_SetFrameRate(hCam, 60.0, &newFPS);
     printf("FPS is set to %lf\n", newFPS);
     if(nRet != IS_SUCCESS)
     {
@@ -134,9 +134,7 @@ CamError CamCapture::getImage()
     char* errMsg = (char*)malloc(sizeof(char)*200);
     int err = 0;
 
-    printf("1\n");
-    int nRet = is_FreezeVideo (hCam, IS_DONT_WAIT) ;
-    printf("2\n");
+    int nRet = is_FreezeVideo (hCam, IS_WAIT) ;
     if(nRet != IS_SUCCESS)
     {
         is_GetError (hCam, &err, &errMsg);
@@ -153,7 +151,6 @@ CamError CamCapture::getImage()
         
     cvCopy(originalImg, rgbimg_full, NULL);
     cvResetImageROI(originalImg);
-printf("3\n");
 
 
     if(small_percent==100)
