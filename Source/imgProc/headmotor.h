@@ -12,7 +12,7 @@
 //Name was changed from WRITE to WRITE_FTDI as it is a global #define.
 //Any way to make this local to headmotor class?
 #define WRITE_FTDI ftdi_write_data(&ftdic1_camera,pack,pack[3]+4)
-#define serialusb2d_camera "A900fDpz"//"A800d2dg"//"A900fDpz"//"A7003N1d" //"A4007sgE"//"A900fDpz"//"A700eSSZ"//"A4007sgG"//"A900fDpz"//A700eSSZ"//"A4007sgG"//"A900fDhp"// "A900fDpA"//"A900fDpA"
+#define serialusb2d_camera "A4007rXO"//"A800d2dg"//"A900fDpz"//"A7003N1d" //"A4007sgE"//"A900fDpz"//"A700eSSZ"//"A4007sgG"//"A900fDpz"//A700eSSZ"//"A4007sgG"//"A900fDhp"// "A900fDpA"//"A900fDpA"
 
 typedef unsigned char byte;
 
