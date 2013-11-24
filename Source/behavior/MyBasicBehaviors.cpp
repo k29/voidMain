@@ -43,17 +43,21 @@ void BasicBehaviorLocalize::execute()
         while(i--)
         {
         cvWaitKey(5);
-        printf("lol\n");
+        
         p.hdmtr.update();
-        printf("lol2");
+        
         p.capture.getImage();
         // {
         //     printf("worked\n");
         //     continue;
         // }
+
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         p.camcont->search(p.hdmtr);
         p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
+        cvShowImage("aa", p.capture.rgbimg);
+        cvShowImage("Localization", p.loc.dispImage);
+
         p.conf = p.loc.confidence();
         }
 }
