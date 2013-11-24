@@ -134,7 +134,6 @@ CamError CamCapture::getImage()
     char* errMsg = (char*)malloc(sizeof(char)*200);
     int err = 0;
 
-
     int nRet = is_FreezeVideo (hCam, IS_WAIT) ;
     if(nRet != IS_SUCCESS)
     {
@@ -142,7 +141,7 @@ CamError CamCapture::getImage()
         printf("Could not grab image %d: %s\n",err,errMsg);
         return CAM_FAILURE;
     }
-        
+    
     //fill in the OpenCV imaga data 
     memcpy(originalImg->imageData, imgPointer, 752*480 * 3);
     //originalImg->imageData = imgPointer;
@@ -152,7 +151,6 @@ CamError CamCapture::getImage()
         
     cvCopy(originalImg, rgbimg_full, NULL);
     cvResetImageROI(originalImg);
-
 
 
     if(small_percent==100)

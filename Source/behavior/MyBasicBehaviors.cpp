@@ -18,8 +18,14 @@ void BasicBehaviorInitialize::execute()
 }
 void BasicBehaviorUpdate::execute()
 {
+        
         p.hdmtr.update();
+        printf("Entered update\n");
+
         p.capture.getImage();
+                // {
+                //     continue;
+                // }
         
         cvWaitKey(5);
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
@@ -33,8 +39,27 @@ void BasicBehaviorUpdate::execute()
 void BasicBehaviorLocalize::execute()
 {   
         printf("Confidence %lf, localizing\n",p.conf);
+        int i=50000000;
+        while(i--)
+        {
+        cvWaitKey(5);
         
+        p.hdmtr.update();
+        
+        p.capture.getImage();
+        // {
+        //     printf("worked\n");
+        //     continue;
+        // }
+
+        p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         p.camcont->search(p.hdmtr);
+        p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
+        cvShowImage("aa", p.capture.rgbimg);
+        cvShowImage("Localization", p.loc.dispImage);
+
+        p.conf = p.loc.confidence();
+        }
 }
 
 void BasicBehaviormoveAcYuttemp::execute()
