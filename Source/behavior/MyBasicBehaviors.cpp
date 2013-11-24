@@ -2,23 +2,30 @@
 
 void BasicBehaviorPrint::execute()
 {
+    #ifdef XABSL_PRINTING_IS_ON
     printf("\nu asked for %lf\n",o);
+    #endif
 }
 
 void BasicBehaviorInitialize::execute()
 {
+    
+    #ifdef IP_IS_ON
     printf("Initializing\n");
     
+
     p.hdmtr.bootup_files();
     p.capture.init();
     p.globalflags.reset();
     p.conf=0;
     
     printf("Initialized\n");
+    #endif
 }
 void BasicBehaviorUpdate::execute()
 {
-        
+     
+        #ifdef IP_IS_ON
         p.hdmtr.update();
         printf("Entered update\n");
 
@@ -34,10 +41,17 @@ void BasicBehaviorUpdate::execute()
         printf("localization updated to %lf\n",p.conf);
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
+        #endif
+
+        #ifndef IP_IS_ON
+        p.conf=1;
+        #endif
 }
 
 void BasicBehaviorLocalize::execute()
 {   
+        
+        #ifdef IP_IS_ON
         printf("Confidence %lf, localizing\n",p.conf);
         int i=50000000;
         while(i--)
@@ -60,6 +74,11 @@ void BasicBehaviorLocalize::execute()
 
         p.conf = p.loc.confidence();
         }
+        #endif
+
+        #ifndef IP_IS_ON
+        p.conf=1;
+        #endif
 }
 
 void BasicBehaviormoveAcYuttemp::execute()
@@ -94,6 +113,7 @@ void BasicBehaviorMakePath::execute()
     // {
     //     printf("Passed-->> obstacle %d : %lf %lf\n", i, p.pathstr.absObstacles[i].x, p.pathstr.absObstacles[i].y);
     // }
+    #ifdef IP_IS_ON
     AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
     double tempx=goalcoords.x-p.loc.selfX;
     double tempy=goalcoords.y-p.loc.selfY;
@@ -110,18 +130,43 @@ void BasicBehaviorMakePath::execute()
     p.pathreturn=p.path.path_return(p.pathstr);
     
     printf("Path Made\n");
+    #endif
+
+   
 }
 
 void BasicBehaviorPathToWalk::execute()
 {
+        #ifdef IP_IS_ON
         p.path.updatePathPacket();
         printf("Path updated\n");
+        #endif
+
+    #ifndef IP_IS_ON
+
+    
+    //printf("UPDATING PATHPACKVAR\n");
+    
+
+    fstream fil1;
+    fil1.open("Source/path/paths1.dat", ios::in|ios::binary);
+    fil1.read((char*)&pathpackvar,sizeof(pathpackvar));
+    fil1.close();
+    
+
+    #endif
 }
 
 void BasicBehaviorFindBall::execute()
-{        
+{    
+    #ifdef IP_IS_ON    
     printf("FINDING THE FUCKING BALL\n");
-    p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);        
+    p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);       
+    #endif
+
+    #ifndef IP_IS_ON
+    p.ballreturn=BALLFOUND;
+    #endif 
 }
 
 void BasicBehaviorReset::execute()

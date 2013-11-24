@@ -14,7 +14,7 @@ option checklocalize
 
 			action
 				{
-					
+					printmsg(o=11);
 					doLocalize();
 				}
 		}
@@ -32,7 +32,7 @@ option checklocalize
 				}
 			action
 				{					
-					
+					printmsg(o=12);
 					doFindBall();
 					ballfound();
 				}
