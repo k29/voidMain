@@ -181,14 +181,14 @@ BallReturns CamControl::findBall(FeatureDetection &fd, HeadMotor &hm) // new fin
 				state_of_motion = 1;
 				
 			}
-			moveSearch(hm, 30, 60);
+			moveSearch(hm, 45, 60);
 
 		}
 		else// ball not in prev. img either....
 		{
 			if(!hm.ismoving_motor(18))//if motor is not moving 
 			{
-				moveSearch(hm, 30, 60);
+				moveSearch(hm, 45, 60);
 				pass_counter++;
 				if(pass_counter>1)
 				{

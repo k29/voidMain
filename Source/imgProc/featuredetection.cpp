@@ -185,7 +185,15 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
         returnPixel1C(histogram_y,x,0) = n;
     }
 
+<<<<<<< HEAD
     for(int y=0;y<IMAGE_HEIGHT;++y)
+=======
+    cvLabel(seg_yellow, labelImg, blobs_yellow);
+    cvFilterByArea(blobs_yellow, 100, 1000000);
+    cvShowImage("yellow",seg_yellow);
+    int max = IMAGE_HEIGHT-50;
+    for (CvBlobs::const_iterator it=blobs_yellow.begin(); it!=blobs_yellow.end(); ++it)
+>>>>>>> 9082e56... Camera not woprking on my pc
     {
         cvSetImageROI(seg_yellow,cvRect(0,y,IMAGE_WIDTH,1));
         int n = cvCountNonZero(seg_yellow);
@@ -234,7 +242,13 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
             }
         }
     }
+<<<<<<< HEAD
     cvSetImageROI(seg_yellow,cvRect(0,max_x-25,IMAGE_WIDTH,50));
+=======
+
+    printf("MAX IS %d\n",max);
+    cvSetImageROI(seg_yellow,cvRect(0,max,IMAGE_WIDTH,20));
+>>>>>>> 9082e56... Camera not woprking on my pc
     cvZero(seg_yellow);
     cvResetImageROI(seg_yellow);
     cvErode(seg_yellow,seg_yellow);

@@ -45,7 +45,7 @@ private:
 	//0 is Y-axis motor, 1 is X-axis (in goal and current pos) everywhere
 
 public:
-	static const int MOTOR_SPEED = 600;
+	static const int MOTOR_SPEED = 150;
 	int read_pos(int id);	//Actually reads position from motor. Should not be used in current implementation. Only for testing
 	HeadMotor(bool param = true);
 	int bootup_files();

@@ -99,7 +99,7 @@ CamError CamCapture::init()
     }
 
     double newFPS;
-    nRet = is_SetFrameRate(hCam, 60.0, &newFPS);
+    nRet = is_SetFrameRate(hCam, 3.0, &newFPS);
     printf("FPS is set to %lf\n", newFPS);
     if(nRet != IS_SUCCESS)
     {
@@ -134,15 +134,16 @@ CamError CamCapture::getImage()
     char* errMsg = (char*)malloc(sizeof(char)*200);
     int err = 0;
 
-
-    int nRet = is_FreezeVideo (hCam, IS_WAIT) ;
+    printf("1\n");
+    int nRet = is_FreezeVideo (hCam, IS_DONT_WAIT) ;
+    printf("2\n");
     if(nRet != IS_SUCCESS)
     {
         is_GetError (hCam, &err, &errMsg);
         printf("Could not grab image %d: %s\n",err,errMsg);
         return CAM_FAILURE;
     }
-        
+    
     //fill in the OpenCV imaga data 
     memcpy(originalImg->imageData, imgPointer, 752*480 * 3);
     //originalImg->imageData = imgPointer;
@@ -152,7 +153,7 @@ CamError CamCapture::getImage()
         
     cvCopy(originalImg, rgbimg_full, NULL);
     cvResetImageROI(originalImg);
-
+printf("3\n");
 
 
     if(small_percent==100)
