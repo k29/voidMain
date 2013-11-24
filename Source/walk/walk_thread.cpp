@@ -12,11 +12,13 @@ const double pi = acos(-1);
 //	vd = Current velocity, vf = Final velocity, delta_y = Step length of the foot when it moves from back to front
 													//	vd is taken as velocity at the beginning of the step and vf as vlocity at the end of the step
 
-const double c1=1.721463;							//	vf_max = c1*vd			Maximum possible velocity at the end of the step
+// const double c1=1.721463;							//	vf_max = c1*vd			Maximum possible velocity at the end of the step
+const double c1=1.8367262;							// New constant
 const double c2=(c1 - pow(pow(c1,2)-1,0.5));		//	vf_min = c2*vd			Minimum possible velocity at the beginning of the step
-const double c5=7.853317745/2;						// 	vf + vd = c5*delta_y 	Generalised equation which connects the above equations
-const double c3=2.721463/c5;				//	delta_y_max = c3*vd		Maximum step length possible, this corresponds to equation 1
-const double c4=1.320237/c5;				//	delta_y_min	= c4*vd		Minimum step length possible, this corresponds to equation 2
+// const double c5=7.853317745/2;						// 	vf + vd = c5*delta_y 	Generalised equation which connects the above equations
+const double c5=7.445192041/2;						//	New constant
+const double c3=(c1+1)/c5;				//	delta_y_max = c3*vd		Maximum step length possible, this corresponds to equation 1
+const double c4=(c2+1)/c5;				//	delta_y_min	= c4*vd		Minimum step length possible, this corresponds to equation 2
 // const double v_initial = 10;				 //	Velocity when bot begins to move
 // const double initial_delta_y= 2*v_initial/c5;//	Initial step length is calculated by using equation 4 and given initial velocity which is assumed constant, i.e, vf=vd=vi
 const double max_velocity = 40;//	Maximum velocity corresponding to above delta y assuming step length is constant for the motion	
@@ -367,7 +369,7 @@ void* walk_thread(void*)
 	footstepmain(10 , foot1[j].delta_y , j%2 ,  foot1 , i , pathpackvarlocal);
 	while (1)
 	{
-		//printf("in walk thread");
+		printf("in walk thread\n");
 		j = 0;
 		while (j<i-1 && j<10)
 		{
