@@ -71,7 +71,7 @@ void BasicBehaviorLocalize::execute()
         p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
-
+    
         p.conf = p.loc.confidence();
         }
         #endif
