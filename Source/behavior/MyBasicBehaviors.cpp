@@ -149,7 +149,7 @@ void BasicBehaviorPathToWalk::execute()
     
 
     fstream fil1;
-    fil1.open("Source/path/paths1.dat", ios::in|ios::binary);
+    fil1.open("Source/path/paths1.data", ios::in|ios::binary);
     fil1.read((char*)&pathpackvar,sizeof(pathpackvar));
     fil1.close();
     
