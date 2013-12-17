@@ -388,6 +388,7 @@ void* walk_thread(void*)
 		while (j<i-1 && j<10)
 		{
 			walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
+			printf("theta = %f delta_x = %f \n" , foot1[j].delta_theta , foot1[j].delta_x);
 			j++;
 		}
 		j--;
