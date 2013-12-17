@@ -19,7 +19,7 @@ option begin
 				}
 				action
 					{	
-						
+						printmsg(o=0);
 						init.isDone=true;
 						doInitialize();
 						
@@ -60,7 +60,7 @@ option begin
 
 				action
 					{
-
+						
 						reset();
 
 					}			

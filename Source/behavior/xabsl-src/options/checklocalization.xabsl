@@ -6,7 +6,6 @@ option checklocalize
 			decision
 				{
 					/**Sufficient confidence and ball not found*/
-					/*if(  confidence > TH || (confidence < TH && MM.confidence > MM.TH)  )*/
 					if(confidence > TH)
 						goto findball;
 					else 
@@ -15,6 +14,7 @@ option checklocalize
 
 			action
 				{
+					
 					doLocalize();
 				}
 		}
@@ -24,7 +24,6 @@ option checklocalize
 			decision
 				{
 					/**Insufficient confidence */
-					/*if(confidence < TL || (confidence < TH && MM.confidence < MM.TH) )*/
 					if(confidence < TH)
 						goto localize;
 					

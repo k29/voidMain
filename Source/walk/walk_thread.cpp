@@ -12,13 +12,15 @@ const double pi = acos(-1);
 //	vd = Current velocity, vf = Final velocity, delta_y = Step length of the foot when it moves from back to front
 													//	vd is taken as velocity at the beginning of the step and vf as vlocity at the end of the step
 
-const double c1=1.721463;							//	vf_max = c1*vd			Maximum possible velocity at the end of the step
+// const double c1=1.721463;							//	vf_max = c1*vd			Maximum possible velocity at the end of the step
+const double c1=1.8367262;							// New constant
 const double c2=(c1 - pow(pow(c1,2)-1,0.5));		//	vf_min = c2*vd			Minimum possible velocity at the beginning of the step
-const double c5=7.853317745/2;						// 	vf + vd = c5*delta_y 	Generalised equation which connects the above equations
-const double c3=2.721463/c5;				//	delta_y_max = c3*vd		Maximum step length possible, this corresponds to equation 1
-const double c4=1.320237/c5;				//	delta_y_min	= c4*vd		Minimum step length possible, this corresponds to equation 2
-// const double v_initial = 10;				 //	Velocity when bot begins to move
-// const double initial_delta_y= 2*v_initial/c5;//	Initial step length is calculated by using equation 4 and given initial velocity which is assumed constant, i.e, vf=vd=vi
+// const double c5=7.853317745/2;						// 	vf + vd = c5*delta_y 	Generalised equation which connects the above equations
+const double c5=7.445192041/2;						//	New constant
+const double c3=(c1+1)/c5;				//	delta_y_max = c3*vd		Maximum step length possible, this corresponds to equation 1
+const double c4=(c2+1)/c5;				//	delta_y_min	= c4*vd		Minimum step length possible, this corresponds to equation 2
+const double v_initial = 10;				 //	Velocity when bot begins to move
+const double first_delta_y= 2*v_initial/c5;//	Initial step length is calculated by using equation 4 and given initial velocity which is assumed constant, i.e, vf=vd=vi
 const double max_velocity = 40;//	Maximum velocity corresponding to above delta y assuming step length is constant for the motion	
 const double max_delta_y  = 2*max_velocity/c5;				 //	Maximum length of a step (read delta y), from back to front. This is a limitation of stability; if bot moves more farther than this, it will be unstable
 const double foot_width  = 100;				 //	Width of the foot, might not be used
@@ -170,7 +172,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 
 	double vf;
 	if (initial_delta_y == 0)
-		step[0].delta_y = 5.093388718;
+		step[0].delta_y = first_delta_y;
 	else
 		step[0].delta_y = initial_delta_y;			//	delta_length is initialized with initial step length	
 	if (step[0].delta_y >= max_delta_y - 0.01)
@@ -194,6 +196,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	// count =	0;									//	Counts number of footsteps
 	int i=0;	
 	int no_obstacles = pathpackvarlocal.no_of_points/2;
+	int fmscheck = 0;
 	for (int i=0;i<=no_obstacles;i++)	
 	{
 	
@@ -205,7 +208,20 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 			step[count+1].delta_y = c3 * vd - 0.01;
 			if (step[count+1].delta_y>=max_delta_y)
 			{
-				step[count+1].delta_y = max_delta_y;
+				if (fmscheck == 0)
+				{
+					step[count+1].delta_y = max_delta_y;
+					fmscheck++;
+				}
+				else if (fmscheck == 1)
+				{
+					step[count+1].delta_y = (vd + c5*step[count].delta_y/2)/c5;
+					fmscheck++;
+				}
+				else if (fmscheck == 2)
+				{
+					step[count+1].delta_y = max_delta_y;
+				}
 			}
 
 			vf = c5*step[count+1].delta_y - vd;
@@ -367,7 +383,7 @@ void* walk_thread(void*)
 	footstepmain(10 , foot1[j].delta_y , j%2 ,  foot1 , i , pathpackvarlocal);
 	while (1)
 	{
-		//printf("in walk thread");
+		printf("in walk thread\n");
 		j = 0;
 		while (j<i-1 && j<10)
 		{
