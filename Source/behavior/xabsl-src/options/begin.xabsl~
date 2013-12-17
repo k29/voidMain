@@ -42,7 +42,9 @@ option begin
 				}
 				action
 					{
+						printmsg(o=1);
 						doUpdate();
+						printmsg(o=22);
 						checklocalize();	
 					}
 					
@@ -60,7 +62,7 @@ option begin
 
 				action
 					{
-						
+						printmsg(o=2);
 						reset();
 
 					}			
