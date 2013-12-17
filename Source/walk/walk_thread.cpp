@@ -385,7 +385,7 @@ void* walk_thread(void*)
 	{
 		printf("in walk thread\n");
 		j = 0;
-		while (j<i-1 && j<10)
+		while (j<i-1)// && j<10)
 		{
 			walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
 			j++;
