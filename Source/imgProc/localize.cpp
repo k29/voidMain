@@ -140,7 +140,9 @@ void Localize::printPosition()
 	}
 	cvQuiver(dispImage, 98+selfX*2.5, 71+ (MAX_Y - selfY)*2.5, 100*cos(deg2rad(selfAngle)), -100*sin(deg2rad(selfAngle)),line_color, 20,2);
 	cvCircle(dispImage, cvPoint(98+selfX*2.5,71+ (MAX_Y - selfY)*2.5), 5, circle_color, 2);
-	printf("X: %lf Y:%lf Angle:%lf\n", selfX, selfY, selfAngle);
+	#ifndef ALL_PRINTING_OFF
+		printf("X: %lf Y:%lf Angle:%lf\n", selfX, selfY, selfAngle);
+	#endif
 
 	return;
 #endif
@@ -174,9 +176,10 @@ void Localize::printPosition()
 	cvPutText(dispImage, "Y", cvPoint(2, dispImage->height/2), &font, cvScalar(255));
 	cvPutText(dispImage, "B", cvPoint(dispImage->width - 13, dispImage->height/2), &font, cvScalar(255));
 	cvPutText(dispImage, "BYB", cvPoint(dispImage->width/2 - 12, dispImage->height - 8), &font, cvScalar(255));
-	printf("X: %lf Y:%lf Angle:%lf\n", selfX, selfY, selfAngle);
-	printf("Count0: %d Count180: %d\n", count0, count180);
-
+	#ifndef ALL_PRINTING_OFF
+		printf("X: %lf Y:%lf Angle:%lf\n", selfX, selfY, selfAngle);
+		printf("Count0: %d Count180: %d\n", count0, count180);
+	#endif
 	return;
 #endif
 }
@@ -254,12 +257,13 @@ void Localize::randomize()
 void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, int imuangle)
 {
 	if(mm.updated==1)
-	{
-		printf("Confidence before %lf\n", confidence());
-		printf("[localize] Angle changed %f \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.theta);
-		printf("[localize] Moved ahead %f cm\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.r/10.0);
-		printf("[localize] Angle2 changed %f \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.theta2);
-		
+	{	
+		#ifndef ALL_PRINTING_OFF
+			printf("Confidence before %lf\n", confidence());
+			printf("[localize] Angle changed %f \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.theta);
+			printf("[localize] Moved ahead %f cm\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.r/10.0);
+			printf("[localize] Angle2 changed %f \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.theta2);
+		#endif
 
 		for(int k=0; k<NO_OF_PARTICLES; k++)
 		{
@@ -304,7 +308,9 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, int imuangle)
 				p[k].angle -= 2*PI;
 		}
 		updatePosition();
-		printf("Confidence after %lf\n", confidence());
+		#ifndef ALL_PRINTING_OFF
+			printf("Confidence after %lf\n", confidence());
+		#endif
 	}
 	else
 	{
@@ -613,7 +619,9 @@ double Localize::confidence()
 	varAngle *= (180.0*180.0)/(PI*PI);
 
 	// printf("Confidence: X: %lf Y: %lf Angle: %lf\n", varX, varY, varAngle);
-	printf("Confidence: %lf\n", 125.0/(varX + varY + varAngle));
+	#ifndef ALL_PRINTING_OFF
+		printf("Confidence: %lf\n", 125.0/(varX + varY + varAngle));
+	#endif
 	if(nFrames < 5)
 		return 0.0;
 	return 125.0/(varX + varY + varAngle);

@@ -10,7 +10,13 @@ void BasicBehaviorInitialize::execute()
     printf("Initializing\n");
     
     p.hdmtr.bootup_files();
-    p.capture.init();
+    
+
+    while(!p.capture.init())
+            {
+                usleep(500000);
+                continue;
+            }
     p.globalflags.reset();
     p.conf=0;
     
@@ -21,13 +27,29 @@ void BasicBehaviorUpdate::execute()
         
         p.hdmtr.update();
         printf("Entered update\n");
+        int i=0;
+        int e=1;
+        while(e)
+                {
 
-        p.capture.getImage();
+                    printf("lol\n");
+                    printf("received error %d from camcapture\n",i++);
+                    usleep(500000);
+                    e=!p.capture.getImage();
+                    printf("e is %d\n",e);     
+                        if(e==11)
+                            while(!p.capture.init())
+            {
+                usleep(500000);
+                continue;
+            }
+                
+                }
                 // {
                 //     continue;
                 // }
         
-        cvWaitKey(5);
+        //cvWaitKey(5);
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
         p.conf = p.loc.confidence();
@@ -42,11 +64,14 @@ void BasicBehaviorLocalize::execute()
         int i=50000000;
         while(i--)
         {
-        cvWaitKey(5);
+        
         
         p.hdmtr.update();
         
-        p.capture.getImage();
+        while(!p.capture.getImage())
+            {
+                continue;
+            }
         // {
         //     printf("worked\n");
         //     continue;
@@ -59,6 +84,7 @@ void BasicBehaviorLocalize::execute()
         cvShowImage("Localization", p.loc.dispImage);
 
         p.conf = p.loc.confidence();
+        //cvWaitKey(5);
         }
 }
 
