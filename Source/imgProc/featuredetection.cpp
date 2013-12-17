@@ -242,7 +242,7 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     // cvErode(seg_yellow,seg_yellow);
     cvDilate(seg_yellow,seg_yellow);
     cvLabel(seg_yellow, labelImg, blobs_yellow);
-    cvFilterByArea(blobs_yellow, 100, 1000000);
+    cvFilterByArea(blobs_yellow, 200, 1000000);
     cvShowImage("yellow",seg_yellow);
 
     CvPoint gp = cvPoint(0,0);
@@ -856,6 +856,7 @@ void FeatureDetection::getLandmarks(CamCapture &cam, HeadMotor &hm, MotionModel 
     getBlobs(cam);
     //cam is passed for plotting
     getGoals(cam, hm);
+
 #ifndef SYMMETRIC_LANDMARKS
     getLPs(cam, hm);
 #endif
@@ -950,6 +951,8 @@ void FeatureDetection::getLandmarks(CamCapture &cam, HeadMotor &hm, MotionModel 
         ballRatio = 99999.0;
     // if(ballFound_var)
     //     printf("THERE IS A BALL!!!\n");
+
+    #ifndef ALL_PRINTING_OFF
     for(std::vector<Landmark>::iterator it = l.begin(); it != l.end(); ++it)
     {
         printf("Type: %d Distance: %f Angle: %f Counter: %d\n",it->type, it->distance, it->angle, it->counter);
@@ -959,6 +962,7 @@ void FeatureDetection::getLandmarks(CamCapture &cam, HeadMotor &hm, MotionModel 
     {
         printf("Obstacle Distance: %f Angle: %f Counter: %d\n",it->distance, it->angle, it->counter);
     }
+    #endif
 }
 
 
