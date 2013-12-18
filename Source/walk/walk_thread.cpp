@@ -12,16 +12,16 @@ const double pi = acos(-1);
 //	vd = Current velocity, vf = Final velocity, delta_y = Step length of the foot when it moves from back to front
 													//	vd is taken as velocity at the beginning of the step and vf as vlocity at the end of the step
 
-// const double c1=1.721463;							//	vf_max = c1*vd			Maximum possible velocity at the end of the step
-const double c1=1.8367262;							// New constant
+											//	vf_max = c1*vd			Maximum possible velocity at the end of the step
+const double c1=1.981991;							// For zmax = 65 ,  1.8367262
 const double c2=(c1 - pow(pow(c1,2)-1,0.5));		//	vf_min = c2*vd			Minimum possible velocity at the beginning of the step
 // const double c5=7.853317745/2;						// 	vf + vd = c5*delta_y 	Generalised equation which connects the above equations
-const double c5=7.445192041/2;						//	New constant
+const double c5=3.523127;						//	For zMax = 65 , 7.445192041/2
 const double c3=(c1+1)/c5;				//	delta_y_max = c3*vd		Maximum step length possible, this corresponds to equation 1
 const double c4=(c2+1)/c5;				//	delta_y_min	= c4*vd		Minimum step length possible, this corresponds to equation 2
 const double v_initial = 10;				 //	Velocity when bot begins to move
 const double first_delta_y= 2*v_initial/c5;//	Initial step length is calculated by using equation 4 and given initial velocity which is assumed constant, i.e, vf=vd=vi
-const double max_velocity = 40;//	Maximum velocity corresponding to above delta y assuming step length is constant for the motion	
+const double max_velocity = 90;//	Maximum velocity corresponding to above delta y assuming step length is constant for the motion	
 const double max_delta_y  = 2*max_velocity/c5;				 //	Maximum length of a step (read delta y), from back to front. This is a limitation of stability; if bot moves more farther than this, it will be unstable
 const double foot_width  = 100;				 //	Width of the foot, might not be used
 const double foot_separation = 130;			 //	Standard Length between centers of the feet during linear motion
@@ -80,11 +80,11 @@ double calc_delta_theta(double inner_radius , foot step)
 
 int constraint_check(foot step , double vf , int loop_num)
 {
-	if (loop_num == 1 && step.delta_y>max_delta_y)
+	if (loop_num == 1 && step.delta_y>max_delta_y/2)
 		return 2;
 	else if (loop_num ==2 && step.delta_y<min_delta_y)
 		return 3;
-	else if (vf>max_velocity)
+	else if (vf>max_velocity/2)
 		return 4;
 	else if (step.delta_x>max_delta_x)
 		return 5;
@@ -109,7 +109,7 @@ void convert_values (PathPacket pathpackvarlocal	,	double dist_circstart[],	doub
 			// printf ("X[i] = %f\tY[i]=%f\n",pathpackvar.finalpath[pathpackvar.no_of_points - 2*i].x,pathpackvar.finalpath[pathpackvar.no_of_points - 2*i].y);
 			// printf ("X[i+1] = %f\tY[i+1]=%f\n", pathpackvar.finalpath[pathpackvar.no_of_points - 2*i -1].x,pathpackvar.finalpath[pathpackvar.no_of_points - 2*i -1].y);
 			// printf ("X[i+2] = %f\tY[i+2]=%f\n",pathpackvar.finalpath[pathpackvar.no_of_points - 2*i-2].x,pathpackvar.finalpath[pathpackvar.no_of_points - 2*i-2].y);
-			// printf("i = %d\tDist_circstart = %f\tRadius = %f\tTheta_arc	= %f\tfootlr = %d\n",i,dist_circstart[i],radius[i],theta_arc[i],footlr[i]);
+			printf("i = %d\tDist_circstart = %f\tRadius = %f\tTheta_arc	= %f\tfootlr = %d\n",i,dist_circstart[i],radius[i],theta_arc[i],footlr[i]);
 		}
 }
 
@@ -203,6 +203,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 		footlr[i] = pow((footlr[i] - lr),2); 
 		double dist_covered = 0	;					//	Corresponds to cal_dist_covered function.
 		count_ref = count;
+		fmscheck = 0;
 		while (dist_covered<dist_circstart[i])
 		{
 			step[count+1].delta_y = c3 * vd - 0.01;
@@ -227,8 +228,8 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 			vf = c5*step[count+1].delta_y - vd;
 			vd = vf;								//	It seems unnecessary to involve vf here, but this is done to establish a standard for the code used to develop motion along
 													//  the circle, where vf will be necessary. It will also be useful for later modifications.
-			step[count].delta_x = 0;
-			step[count].delta_theta = 0;
+			step[count + 1].delta_x = 0;
+			step[count + 1].delta_theta = 0;
 			count++;
 			dist_covered = calc_dist_covered(count,count_ref,step);
 			// printf(" I was here %d\n",count);
@@ -238,6 +239,21 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 		double inner_radius = fabs(radius[i] - foot_separation/2); 
 		double theta_current = 0;	
 		check = 0;
+		if (fmscheck == 2)
+		{
+			step[count+1].delta_y = c4 * vd + 0.01;
+			step[count+1].delta_x = 0;
+			step[count+1].delta_theta = 0;
+			vf = c5*step[count+1].delta_y - vd;
+			vd = vf;
+			count++;
+			step[count+1].delta_y = c4 * vd + 0.01;
+			step[count+1].delta_x = 0;
+			step[count+1].delta_theta = 0;
+			vf = c5*step[count+1].delta_y - vd;
+			vd = vf;
+			count++;	
+		}
 		if (theta_arc[i]>=365 || theta_arc[i]<=-5 )
 			check = 2;
 		while(check!=2)

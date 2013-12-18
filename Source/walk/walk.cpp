@@ -12,7 +12,7 @@ Walk::Walk(AcYut* bot)
 	supLegZin=25.155276;
 	veloZin=-170;
 	veloZfi=170;
-	zMax=65;
+	zMax=60;
 	lift=30;
 	legRotin=0;
 	legRotfi=0;
@@ -327,7 +327,8 @@ int Walk::dribble()
 {
 	leg=(LEG)(1-(int)leg);	
 //	printf("%d\t",leg);
-	
+	// if (leg==1)
+		// legRotfi-=5;
 //	printf("VYin\t%lf\tVyfi\t%lf\n",veloYin,veloYfi);
 	int fps = 200;
 	int sleep = 1000000.0/(double)fps;
@@ -341,8 +342,8 @@ int Walk::dribble()
 	
 	///// desired Values 
 	
-	double D_dsp1Time = 0.03;
-	double D_dsp2Time = 0.03;
+	double D_dsp1Time = 0.05;		//changed from 0.03
+	double D_dsp2Time = 0.05;		//""
 	
 	// ////printf("Tc\t\t%lf\n",Tc);
 	// ////printf("legZin\t\t%lf\n",legZin);
@@ -549,7 +550,7 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 	leg=(LEG)(1-(int)leg);	
 	printf("%d\t",leg);
 	
-	printf("X:%lf Y:%lf\n\n",dx,dy);
+	printf("X:%lf Y:%lf T1:%lf T2:  %lf\n\n",dx,dy,t1,t2);
 	
 	printf("VYin\t%lf\tVyfi\t%lf\n",veloYin,veloYfi);
 	int fps = 60;
@@ -567,8 +568,8 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 	supLegRotfi=t2;
 	///// desired Values 
 	
-	double D_dsp1Time = 0.05+dx/(2.0*veloZfi);
-	double D_dsp2Time = 0.05+dx/(2.0*veloZfi);
+	double D_dsp1Time = 0.05+dx/(veloZfi);
+	double D_dsp2Time = 0.05+dx/(veloZfi);
 	
 	// ////printf("Tc\t\t%lf\n",Tc);
 	// ////printf("legZin\t\t%lf\n",legZin);
@@ -666,7 +667,7 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 	printf("P_sspYfi\t\t%lf\n",P_sspYfi);
 	// Y (cubic)
 	*/ //Uncommented for behavior testing
-	double a = ((-veloYfi-veloYin)-2*(-sspYfi+sspYin)/sspTime)/pow(sspTime,2);
+	double a = ((-veloYfi_d-veloYin)-2*(-sspYfi+sspYin)/sspTime)/pow(sspTime,2);
 	double b = ((-sspYfi+sspYin)/sspTime+veloYin-a*pow(sspTime,2))/sspTime;
 	double c = -veloYin;
 	double d = -sspYin;

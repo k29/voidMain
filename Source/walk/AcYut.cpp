@@ -24,7 +24,12 @@ void AcYut::initialize()
 	right_hand->init();
 	comm->syncFlush();
 	
-	sleep(3);
+	int arr_l[]={4096-2048,4096-1100,0,4096-3000};
+	int arr_r[]={2048,1100,0,3000};
+	left_hand->setGoalPositionSync(arr_l);
+	right_hand->setGoalPositionSync(arr_r);
+	comm->syncFlush();
+	sleep(4);
 	
 	left_leg->setSpeed(0);
 	right_leg->setSpeed(0);
@@ -32,7 +37,30 @@ void AcYut::initialize()
 	right_hand->setSpeed(0);
 	comm->syncFlush();
 	
-	printf("Initialized Bot\n");
+	//left_leg->getLoad();
+	//right_leg->getLoad();	// left_leg->setSpeed(50);
+	// right_leg->setSpeed(50);
+	// left_hand->setSpeed(50);
+	// right_hand->setSpeed(50);
+	// comm->syncFlush();
+	
+	// left_leg->runIK(legHeight,0,0,0);
+	// left_leg->setGoalPositionSync();
+	// right_leg->runIK(legHeight,0,0,0);
+	// right_leg->setGoalPositionSync();
+	// left_hand->init();
+	// right_hand->init();
+	// comm->syncFlush();
+	
+	// sleep(3);
+	
+	// left_leg->setSpeed(0);
+	// right_leg->setSpeed(0);
+	// left_hand->setSpeed(0);
+	// right_hand->setSpeed(0);
+	// comm->syncFlush();
+	
+	// printf("Initialized Bot\n");
 }
 
 AcYut::AcYut(Communication* comm, Imu* imu)
@@ -40,7 +68,7 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	polyPoints=0;
 	this->comm = comm;
 	this->imu = imu;
-	offsets[0] = -100;
+	offsets[0] = -120;
 	offsets[1] = 0;
 	offsets[2] = 32;
 	offsets[3] = -32;
@@ -48,13 +76,29 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	offsets[5] = 0;
 	offsets[6] = 280;
 
-	offsets[20] = 20;
+	offsets[20] = 10;
 	offsets[21] = 0;
 	offsets[22] = 32;
 	offsets[23] = -32;
 	offsets[24] = 0;
 	offsets[25] = -20;
 	offsets[26] = -256;
+
+	// offsets[0] = -100;
+	// offsets[1] = 0;
+	// offsets[2] = 32;
+	// offsets[3] = -32;
+	// offsets[4] = 0;
+	// offsets[5] = 0;
+	// offsets[6] = 280;
+
+	// offsets[20] = 20;
+	// offsets[21] = 0;
+	// offsets[22] = 32;
+	// offsets[23] = -32;
+	// offsets[24] = 0;
+	// offsets[25] = -20;
+	// offsets[26] = -256;
 	
 	
 
