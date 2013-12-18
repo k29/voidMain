@@ -57,8 +57,9 @@ CamError CamCapture::init()
 	
     char* errMsg = (char*)malloc(sizeof(char)*200);
     int err = 0;
-
+    
     int nRet = is_InitCamera (&hCam, NULL);
+    
     if (nRet != IS_SUCCESS)
     {
         is_GetError (hCam, &err, &errMsg);
@@ -105,6 +106,7 @@ CamError CamCapture::init()
     {
         is_GetError (hCam, &err, &errMsg);
         printf("Setting framerate Unsuccessful %d: %s\n",err,errMsg);
+
         return CAM_FAILURE;
     }
     free(errMsg);
@@ -126,22 +128,45 @@ CamError CamCapture::init()
 
 CamError CamCapture::getImage()
 {
-	if(isInit==false)
-		return CAM_FAILURE;
+	// if(isInit==false)
+ //        {
+ //        printf("CAMERA NOT INIT.\n");
+ //        sleep
+	// 	return CAM_FAILURE;
+ //        }
+
+        while(isInit==false)
+                {
+                    printf("Waiting for camera to init\n");
+                    usleep(500000);
+                }
     // Start capturing images
-  
+    
 
     char* errMsg = (char*)malloc(sizeof(char)*200);
     int err = 0;
+    printf("stage1 getImage\n");
+    int nRet = is_FreezeVideo (hCam,IS_DONT_WAIT);
+    printf("stage2 getImage\n");
+    // if(nRet != IS_SUCCESS)
+    // {
+    //     printf("nRet is %d\n",nRet);
+    //     is_GetError (hCam, &err, &errMsg);
+    //     printf("Could not grab image %d: %s\n",err,errMsg);
+    //     printf("lol\n");
 
-    int nRet = is_FreezeVideo (hCam, IS_WAIT) ;
-    if(nRet != IS_SUCCESS)
-    {
-        is_GetError (hCam, &err, &errMsg);
-        printf("Could not grab image %d: %s\n",err,errMsg);
-        return CAM_FAILURE;
-    }
+    //     return CAM_FAILURE;
+    // }
     
+    if(nRet != IS_SUCCESS)
+        {
+            this->~CamCapture();
+            printf("Camera instance destroyed");
+            return CAM_REINITIALIZE;
+        }
+
+
+
     //fill in the OpenCV imaga data 
     memcpy(originalImg->imageData, imgPointer, 752*480 * 3);
     //originalImg->imageData = imgPointer;

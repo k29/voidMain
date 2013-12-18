@@ -3,6 +3,7 @@
 
 #include "camcapture.h"
 #include "../common/defines.h"
+#include "../common/modes.h"
 #include "headmotor.h"
 #include "../common/commondefs.h"
 #include <math.h>
@@ -13,7 +14,9 @@
 #include <stdio.h>
 
 using namespace std;
+#define SYMMETRIC_LANDMARKS
 #define PLOT_LANDMARKS
+
 // #define PLOT_HOUGH_LINES
 //new technique to get features:
 //0. for each feature in main array, increase framecounter. if framecounter above a threshold, delete it.

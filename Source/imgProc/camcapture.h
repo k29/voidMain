@@ -27,7 +27,7 @@ rgbimg_small - 2nd reduced image. to be used for blob detection. associated lut 
 //Maybe enum it for ease of use
 
 
-enum CamError {CAM_SUCCESS = 1, CAM_FAILURE = 0};
+enum CamError {CAM_SUCCESS = 1, CAM_FAILURE = 0, CAM_REINITIALIZE=11};
 class CamCapture
 {
 private:
