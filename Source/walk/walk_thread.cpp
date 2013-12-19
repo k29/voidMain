@@ -73,8 +73,8 @@ double calc_delta_x(double inner_radius , foot step)
 
 double calc_delta_theta(double inner_radius , foot step)	
 {
-	double delta_theta = fabs(acos((pow ((pow(inner_radius,2) - pow(step.delta_y,2)), 0.5))/inner_radius))*180/pi;
-
+	// double delta_theta = fabs(acos((pow ((pow(inner_radius,2) - pow(step.delta_y,2)), 0.5))/inner_radius))*180/pi;
+	double delta_theta = fabs(asin(step.delta_y/inner_radius))*180/pi;
 	return delta_theta;
 }
 
@@ -401,9 +401,10 @@ void* walk_thread(void*)
 	{
 		printf("in walk thread\n");
 		j = 0;
-		while (j<i-1)// && j<10)
+		while (j<i-1 && j<10)
 		{
 			walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
+			printf("theta = %f delta_x = %f \n" , foot1[j].delta_theta , foot1[j].delta_x);
 			j++;
 		}
 		j--;

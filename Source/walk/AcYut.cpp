@@ -68,22 +68,22 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	polyPoints=0;
 	this->comm = comm;
 	this->imu = imu;
+
 	offsets[0] = -120;
 	offsets[1] = 0;
 	offsets[2] = 32;
 	offsets[3] = -32;
 	offsets[4] = 0;
-	offsets[5] = 0;
+	offsets[5] = -30;
 	offsets[6] = 280;
 
-	offsets[20] = 10;
+	offsets[20] = 20;
 	offsets[21] = 0;
 	offsets[22] = 32;
 	offsets[23] = -32;
 	offsets[24] = 0;
 	offsets[25] = -20;
 	offsets[26] = -256;
-
 	// offsets[0] = -100;
 	// offsets[1] = 0;
 	// offsets[2] = 32;
@@ -98,7 +98,11 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	// offsets[23] = -32;
 	// offsets[24] = 0;
 	// offsets[25] = -20;
-	// offsets[26] = -256;
+// 	// offsets[26] = -256;
+// =======
+// 	offsets[25] = 20;				//Decreasing = Outward
+// 	offsets[26] = -256;				
+// >>>>>>> walkmod
 	
 	
 
