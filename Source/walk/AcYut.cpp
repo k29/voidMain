@@ -74,7 +74,7 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	offsets[2] = 32;
 	offsets[3] = -32;
 	offsets[4] = 0;
-	offsets[5] = -30;
+	offsets[5] = 0;
 	offsets[6] = 280;
 
 	offsets[20] = 20;
