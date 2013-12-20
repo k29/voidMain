@@ -44,7 +44,7 @@ int HeadMotor::bootup_files()
 			int gp[2];
 			gp[0] = (300.0 - 150)*(1023.0/300.0) - offsety;
 			gp[1] = (300.0 - 80)*(1023.0/300.0) - offsetx; 
-			sync_write_gp(id, gp, 2);
+			// sync_write_gp(id, gp, 2);
 		}
 	}
 
