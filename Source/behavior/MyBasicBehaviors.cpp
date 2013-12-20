@@ -26,7 +26,7 @@ void BasicBehaviorUpdate::execute()
 {
      
         #ifdef IP_IS_ON
-        p.hdmtr.update();
+        // p.hdmtr.update();
         printf("Entered update\n");
 
         p.capture.getImage();
@@ -58,7 +58,7 @@ void BasicBehaviorLocalize::execute()
         {
         cvWaitKey(5);
         
-        p.hdmtr.update();
+        // p.hdmtr.update();
         
         p.capture.getImage();
         // {
