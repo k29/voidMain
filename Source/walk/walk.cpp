@@ -12,7 +12,7 @@ Walk::Walk(AcYut* bot)
 	supLegZin=25.155276;
 	veloZin=-170;
 	veloZfi=170;
-	zMax=60;
+	zMax=65;
 	lift=30;
 	legRotin=0;
 	legRotfi=0;
