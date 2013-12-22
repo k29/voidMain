@@ -7,23 +7,21 @@ double detectAndDraw( Mat& img, CascadeClassifier& cascade,
                     CascadeClassifier& nestedCascade,
                     double scale, bool tryflip );
 
+// string cascadeName = "haarcascade_frontalface_alt.xml"
+
 double faceDetect(CamCapture &capture)
 {
-    CascadeClassifier cascade, nestedCascade;
-    string cascadeName = "haarcascade_frontalface_alt.xml";
-    string nestedCascadeName = "haarcascade_eye_tree_eyeglasses.xml";
 	if( !nestedCascade.load( nestedCascadeName ) )
     {
-        cerr << " ERROR: Could not load classifier nestedcascade" << endl;
+        cerr << "ERROR: Could not load classifier nestedcascade" << endl;
         return -1;
     }
 
     if( !cascade.load( cascadeName ) )
     {
-        cerr << " ERROR: Could not load classifier cascade" << endl;
+        cerr << "ERROR: Could not load classifier cascade" << endl;
         return -1;
     }
-    // cascade.load( cascadeName );
         Mat frame(capture.rgbimg_full);
         return detectAndDraw(frame,cascade,nestedCascade,scale,tryflip);    
 }
