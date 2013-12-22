@@ -56,7 +56,11 @@ void Hand::init()
 		pos[0]=2048;
 		pos[1]=3071;
 		pos[2]=1792;
+<<<<<<< HEAD
 		pos[3]=4096-3000;
+=======
+		pos[3]=4096-3100;
+>>>>>>> walkwohand
 	}
 	else
 	{
