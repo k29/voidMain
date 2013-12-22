@@ -2,7 +2,7 @@
 #define __MyBasicBehaviors_h_
 
 #include <cstdio>
-
+#include "../imgProc/face_detect.h"
 #include "../../Xabsl/XabslEngine/XabslBasicBehavior.h"
 #include "WorldState.h"
 class BasicBehaviorPrint: public xabsl::BasicBehavior

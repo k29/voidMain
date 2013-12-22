@@ -49,8 +49,8 @@ class playerstate
                         FeatureDetection *fd;
                         HeadMotor hdmtr;
                         CamControl *camcont;
-                
-       
+                        
+                        int face; 
 
         Localize loc;
         float bwt,lmwt;

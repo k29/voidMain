@@ -1,25 +1,7 @@
-#include <iostream>
-#include <stdio.h>
+#include "face_detect.h"
 
-//OpenCV Headers
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
-//Input-Output
-#include <stdio.h>
-//Blob Library Headers
-#include <cvblob.h>
 
-#include <flycapture/FlyCapture2.h>
-
-using namespace std;
-using namespace cvb;
-using namespace cv;
-
-enum CamError {CAM_SUCCESS = 1, CAM_FAILURE = 0};
-
-CvScalar cColor = CV_RGB(255, 255, 255);
-
-void detectAndDraw( Mat& img, CascadeClassifier& cascade,
+int detectAndDraw( Mat& img, CascadeClassifier& cascade,
                     CascadeClassifier& nestedCascade,
                     double scale, bool tryflip );
 
@@ -27,42 +9,8 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
 string cascadeName = "haarcascade_frontalface_alt.xml";
 string nestedCascadeName = "haarcascade_eye_tree_eyeglasses.xml";
 
-int main()
+int faceDetect(CamCapture &capture)
 {
-    FlyCapture2::Error error;
-    FlyCapture2::PGRGuid guid;
-    FlyCapture2::BusManager busMgr;
-    FlyCapture2::Camera cam;
-    FlyCapture2::VideoMode vm;
-    FlyCapture2::FrameRate fr;
-    FlyCapture2::Image rawImage;
-
-    //Initializing camera
-        error = busMgr.GetCameraFromIndex(0, &guid);
-    if (error != FlyCapture2::PGRERROR_OK)
-    {
-        error.PrintErrorTrace();
-        return CAM_FAILURE;
-    }
-
-          vm = FlyCapture2::VIDEOMODE_640x480Y8;
-    fr = FlyCapture2::FRAMERATE_60;
-
-    error = cam.Connect(&guid);
-    if (error != FlyCapture2::PGRERROR_OK)
-    {
-        error.PrintErrorTrace();
-        return CAM_FAILURE;
-    }
-
-    cam.SetVideoModeAndFrameRate(vm, fr);
-    //Starting the capture
-    error = cam.StartCapture();
-    if (error != FlyCapture2::PGRERROR_OK)
-    {
-        error.PrintErrorTrace();
-               return CAM_FAILURE;
-    }
 
     bool tryflip = false;
     double scale = 1;
@@ -80,29 +28,11 @@ int main()
         cerr << "ERROR: Could not load classifier cascade" << endl;
         return -1;
     }
-    // printf("3\n");
-    while(1)
-    {
-        Mat img_scene = Mat(Size(640,480),CV_8UC1);
-        Mat frame = Mat(Size(640,480),CV_8UC3);
-        cam.RetrieveBuffer(&rawImage);
-        memcpy(img_scene.data, rawImage.GetData(), rawImage.GetDataSize());
-        cvtColor(img_scene,frame,CV_BayerBG2BGR);
-        // Mat frame = imread("1.bmp",CV_LOAD_IMAGE_COLOR);
-        // printf("4\n");
-        // getFrame(hCam,frame);
-        // printf("5\n");
-        // printf("1\n");
-        detectAndDraw(frame,cascade,nestedCascade,scale,tryflip);
-        // printf("2\n");
-        int c = cvWaitKey(10);
-        if(c == 27)
-            break;
-    }
-    return 0;
+        Mat frame(capture.rgbimg_full);
+        return detectAndDraw(frame,cascade,nestedCascade,scale,tryflip);    
 }
 
-void detectAndDraw( Mat& img, CascadeClassifier& cascade,
+int detectAndDraw( Mat& img, CascadeClassifier& cascade,
                     CascadeClassifier& nestedCascade,
                     double scale, bool tryflip )
 {
@@ -152,18 +82,19 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
     {
         Mat smallImgROI;
         // vector<Rect> nestedObjects;
-        Point center;
+        cv::Point center;
         Scalar color = colors[i%8];
         int radius;
 
         double aspect_ratio = (double)r->width/r->height;
         if( 0.75 < aspect_ratio && aspect_ratio < 1.3 )
         {
-			printf("FOUND\n");
             center.x = cvRound((r->x + r->width*0.5)*scale);
             center.y = cvRound((r->y + r->height*0.5)*scale);
             radius = cvRound((r->width + r->height)*0.25*scale);
             circle( img, center, radius, color, 2, 8, 0 );
+            // imshow("result",img);
+            return 1;
         }
         else
             rectangle( img, cvPoint(cvRound(r->x*scale), cvRound(r->y*scale)),
@@ -188,5 +119,5 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
         //     circle( img, center, radius, color, 3, 8, 0 );
         // }
     }
-    cv::imshow( "result", img );
+    // cv::imshow( "result", img );
 }

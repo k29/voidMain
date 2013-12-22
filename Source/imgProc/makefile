@@ -1,9 +1,9 @@
 all: ../Build/imgProc.a
 
 
-../Build/imgProc.a: ../Build/camcapture.o ../Build/camcontrol.o ../Build/featuredetection.o ../Build/headmotor.o ../Build/imgproc.o ../Build/localize.o
+../Build/imgProc.a: ../Build/camcapture.o ../Build/camcontrol.o ../Build/featuredetection.o ../Build/headmotor.o ../Build/imgproc.o ../Build/localize.o ../Build/face_detect.o
 	@echo $@
-	@ar rc $@ ../Build/camcapture.o ../Build/camcontrol.o ../Build/featuredetection.o ../Build/headmotor.o ../Build/imgproc.o ../Build/localize.o
+	@ar rc $@ ../Build/camcapture.o ../Build/camcontrol.o ../Build/featuredetection.o ../Build/headmotor.o ../Build/imgproc.o ../Build/localize.o ../Build/face_detect.o
 	@echo
 	@ranlib $@
 
@@ -36,4 +36,9 @@ all: ../Build/imgProc.a
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c imgproc.cpp -o $@
+
+../Build/face_detect.o: face_detect.cpp face_detect.h
+	@echo $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c face_detect.cpp -o $@
 

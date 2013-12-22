@@ -11,22 +11,26 @@ void BasicBehaviorInitialize::execute()
         p.hdmtr.bootup_files();
         p.capture.init();
         p.globalflags.reset();
-        p.conf=0;
+        //p.conf=0;
         printf("Initialized\n");
 }
 
 void BasicBehaviorUpdate::execute()
 {
-        
+        p.capture.getImage();
+
+        p.face=faceDetect(p.capture);
+        p.camcont->search(p.hdmtr);
         p.hdmtr.update();
-        p.capture.getImage();        
+
+                
         cvWaitKey(5);
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
-        p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
-        p.conf = p.loc.confidence();
-        printf("localization updated to %lf\n",p.conf);
+        //p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
+        //p.conf = p.loc.confidence();
+        //printf("localization updated to %lf\n",p.conf);
         cvShowImage("aa", p.capture.rgbimg);
-        cvShowImage("Localization", p.loc.dispImage);
+        //cvShowImage("Localization", p.loc.dispImage);
 }
 
 void BasicBehaviorLocalize::execute()
