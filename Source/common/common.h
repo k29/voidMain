@@ -43,4 +43,5 @@ extern Imu imu;
 
 extern double IMU_INITIAL_ANGLE;
 
+extern int FACE_FOUND;
 #endif

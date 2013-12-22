@@ -21,6 +21,7 @@ pthread_mutex_t mutex_switch=PTHREAD_MUTEX_INITIALIZER;
 
 Imu imu;
 double IMU_INITIAL_ANGLE;
+int FACE_FOUND; // BGM Haar
 WalkStructure prevwalkstr;
 WalkStructure walkstr;
 RoboCupGameControlData GCData;
