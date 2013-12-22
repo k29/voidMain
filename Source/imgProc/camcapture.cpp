@@ -145,9 +145,9 @@ CamError CamCapture::getImage()
 
     char* errMsg = (char*)malloc(sizeof(char)*200);
     int err = 0;
-    printf("stage1 getImage\n");
+    // printf("stage1 getImage\n");
     int nRet = is_FreezeVideo (hCam,IS_DONT_WAIT);
-    printf("stage2 getImage\n");
+    // printf("stage2 getImage\n");
     // if(nRet != IS_SUCCESS)
     // {
     //     printf("nRet is %d\n",nRet);
@@ -158,12 +158,12 @@ CamError CamCapture::getImage()
     //     return CAM_FAILURE;
     // }
     
-    if(nRet != IS_SUCCESS)
-        {
-            this->~CamCapture();
-            printf("Camera instance destroyed");
-            return CAM_REINITIALIZE;
-        }
+    // if(nRet != IS_SUCCESS)
+    //     {
+    //         this->~CamCapture();
+    //         printf("Camera instance destroyed");
+    //         return CAM_REINITIALIZE;
+    //     }
 
 
 
