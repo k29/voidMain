@@ -44,7 +44,7 @@ option begin
 					{
 						
 						doUpdate();
-							
+						decideNext();	
 					}
 					
 			}

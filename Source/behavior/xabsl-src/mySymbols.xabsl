@@ -78,4 +78,7 @@ namespace mySymbols("My Symbols")
 	/**AcYut initialization state */ 
 	bool internal init.isDone; 
 
+	/** Haar classifier for BGM face detect status */
+	float input facefound;
+
 	}

@@ -38,4 +38,12 @@ namespace myBasicBehaviors("My Behaviors")
 		behavior doReset
 			{
 			}
+		/** BGM only. Searches left and right for a face */
+		behavior doSearch
+			{
+			}
+		/** BGM only.To greet people when we see their face */
+		behavior doMove
+			{
+			}
 	}

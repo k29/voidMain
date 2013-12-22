@@ -21,6 +21,8 @@ BasicBehaviorPathToWalk basicBehaviorPathToWalk(myErrorHandler,ACYUT);
 BasicBehaviorMakePath basicBehaviorMakePath(myErrorHandler,ACYUT);
 BasicBehaviorFindBall basicBehaviorFindBall(myErrorHandler,ACYUT);
 BasicBehaviorReset basicBehaviorReset(myErrorHandler,ACYUT);
+BasicBehaviorSearch basicBehaviorSearch(myErrorHandler,ACYUT);
+BasicBehaviorMove basicBehaviorMove(myErrorHandler,ACYUT);
 
 void registerXABSL()
 {
@@ -41,6 +43,7 @@ void registerXABSL()
     engine->registerDecimalInputSymbol("resetflag", &playerstate::getReset);
     engine->registerDecimalInputSymbol("RoboCup.state",&playerstate::getRoboCupState);
     engine->registerDecimalInputSymbol("ball.distance",&playerstate::getDistance);
+    engine->registerDecimalInputSymbol("facefound",&playerstate::getFace);
 
     engine->registerBasicBehavior(basicBehaviorInitialize);
     engine->registerBasicBehavior(basicBehaviorLocalize);
@@ -51,6 +54,8 @@ void registerXABSL()
     engine->registerBasicBehavior(basicBehaviorMakePath);
     engine->registerBasicBehavior(basicBehaviorFindBall);
     engine->registerBasicBehavior(basicBehaviorReset);
+    engine->registerBasicBehavior(basicBehaviorSearch);
+    engine->registerBasicBehavior(basicBehaviorMove);
 
     MyFileInputSource input("intermediate-code.dat");
     engine->createOptionGraph(input);   

@@ -24,6 +24,7 @@ class playerstate
                         /* To register XABSL input symbols */
                         static double getTheta();
                         static double getConfidence();
+                        static double getFace();
                         static playerstate* theInstance;
 						static double getRoboCupState();
                         static double getDistance();      
@@ -50,7 +51,7 @@ class playerstate
                         HeadMotor hdmtr;
                         CamControl *camcont;
                         
-                        int face; 
+                        double face; 
 
         Localize loc;
         float bwt,lmwt;

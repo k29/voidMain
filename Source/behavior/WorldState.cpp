@@ -38,3 +38,7 @@ double playerstate::getDistance()
 	{
 		return (double)theInstance->fd->ball.r;
 	}
+double playerstate::getFace()
+	{
+		return (double)theInstance->face;
+	}

@@ -139,4 +139,32 @@ private:
 		playerstate &p;
 
 };
+
+
+class BasicBehaviorSearch: public xabsl::BasicBehavior
+{
+
+	public:
+	BasicBehaviorSearch(xabsl::ErrorHandler& errorHandler,playerstate &p):xabsl::BasicBehavior("doSearch",errorHandler),p(p)
+		{
+		}
+
+	virtual void execute();
+    private:
+            playerstate &p;
+};
+
+
+class BasicBehaviorMove: public xabsl::BasicBehavior
+{
+
+	public:
+	BasicBehaviorMove(xabsl::ErrorHandler& errorHandler,playerstate &p):xabsl::BasicBehavior("doMove",errorHandler),p(p)
+		{
+		}
+
+	virtual void execute();
+    private:
+            playerstate &p;
+};
 #endif
