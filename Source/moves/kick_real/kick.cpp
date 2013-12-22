@@ -97,6 +97,9 @@ float scurve(float in,float fi,float t, float tot)
 
 int main()
 {
+
+	/* left leg up(390 - x) and out(+ve z). right leg inward. right arm outward. change in order of tens
+	*/
 	Imu imu;
 	imu.init();
 	
