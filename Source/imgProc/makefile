@@ -42,3 +42,6 @@ all: ../Build/imgProc.a
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c face_detect.cpp -o $@
 
+ballfollow: ../Build/imgProc.a
+	g++ -w ballfollow.cpp ../Build/imgProc.a -o ../../ballfollow `pkg-config --libs opencv` -lflycapture -lftdi -fpermissive -lcvblob -ltbb -lrt -lm -O3
+
