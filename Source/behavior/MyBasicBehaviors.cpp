@@ -146,6 +146,5 @@ void BasicBehaviorMove::execute()
 {
         cvShowImage("face",p.capture.rgbimg_full);
         cvWaitKey(1000);
-        printf("Executing move for 5 secs");
-        sleep(5);
+        wave();
 }

@@ -49,6 +49,7 @@ public:
 	int printCOM();
 	int printRotCOM();
 	int writeSensedCurrent(FILE *&fp);
+	int reachSlow(double left_x,double left_y,double left_z,double right_x,double right_y,double right_z);
 };
 
 

@@ -5,6 +5,7 @@
 #include "../imgProc/face_detect.h"
 #include "../../Xabsl/XabslEngine/XabslBasicBehavior.h"
 #include "WorldState.h"
+#include "../moves/fdwave.h"
 class BasicBehaviorPrint: public xabsl::BasicBehavior
 {
 
