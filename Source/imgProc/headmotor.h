@@ -20,7 +20,7 @@ class HeadMotor
 {
 private:
 	static const int NO_OF_TRIES = 20;
-	static const int offsetx=210,offsety=95;
+	static const int offsetx=300,offsety=95;
 	static const int ERROR_MOTORS = -900;
 	static const int FPS = 120;
 	static const int MAX_STEP = 30;

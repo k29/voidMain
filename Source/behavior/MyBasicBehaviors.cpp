@@ -22,16 +22,16 @@ void BasicBehaviorUpdate::execute()
 
         p.face=faceDetect(p.capture);
         
-        p.camcont->search(p.hdmtr);
-        p.hdmtr.update();
+        // p.camcont->search(p.hdmtr);
+        // p.hdmtr.update();
 
                 
-        cvWaitKey(5);
+        // cvWaitKey(5);
         //p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         //p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
         //p.conf = p.loc.confidence();
         //printf("localization updated to %lf\n",p.conf);
-        cvShowImage("aa", p.capture.rgbimg);
+        // cvShowImage("aa", p.capture.rgbimg_full);
         //cvShowImage("Localization", p.loc.dispImage);
 }
 
@@ -50,8 +50,8 @@ void BasicBehaviorLocalize::execute()
         p.hdmtr.update();
        // usleep(500);
         cvWaitKey(5);
-        cvShowImage("aa", p.capture.rgbimg);
-        cvShowImage("Localization", p.loc.dispImage);
+        cvShowImage("aa", p.capture.rgbimg_full);
+        // cvShowImage("Localization", p.loc.dispImage);
         }
 }
 
@@ -124,11 +124,16 @@ void BasicBehaviorReset::execute()
 
 void BasicBehaviorSearch::execute()
 {
-        p.camcont->search(p.hdmtr);
-        p.hdmtr.update();
+        int i = 500;
+        // while(i--)
+        // {
+            p.camcont->search(p.hdmtr);
+            p.hdmtr.update();
+        // }
+        // usleep(1000000);
 
                 
-        cvWaitKey(5);
+        // cvWaitKey(5);
         //p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         //p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
         //p.conf = p.loc.confidence();
@@ -139,6 +144,8 @@ void BasicBehaviorSearch::execute()
 
 void BasicBehaviorMove::execute()
 {
+        cvShowImage("face",p.capture.rgbimg_full);
+        cvWaitKey(1000);
         printf("Executing move for 5 secs");
         sleep(5);
 }

@@ -19,7 +19,7 @@ CENTRE_RECT_Y2 ((IMAGE_HEIGHT*3)/4)
 //Think of what angles might be best and use those. Also give reason
 void CamControl::moveSearch(HeadMotor &hm, int lower, int upper)
 {
-	hm.speed_motor(HeadMotor::MOTOR_SPEED,700);
+	hm.speed_motor(HeadMotor::MOTOR_SPEED,100);
 	if(state_of_motion==0)
 	{
 		state_of_motion = 1;
