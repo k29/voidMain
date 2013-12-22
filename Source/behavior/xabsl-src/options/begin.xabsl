@@ -42,7 +42,7 @@ option begin
 				}
 				action
 					{
-						checklocalize();
+						
 						doUpdate();
 							
 					}
