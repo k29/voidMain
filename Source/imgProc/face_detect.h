@@ -1,5 +1,5 @@
-#ifndef FACE_DETECT
-#define FACE_DETECT
+#ifndef FACE_DETECT__H_
+#define FACE_DETECT__H_
 #include <iostream>
 #include <stdio.h>
 
@@ -21,11 +21,9 @@ using namespace std;
 using namespace cvb;
 using namespace cv;
 
-bool tryflip = false;
-double scale = 1;
+
 
 double detectAndDraw( Mat& img, CascadeClassifier& cascade,
-                    CascadeClassifier& nestedCascade,
-                    double scale, bool tryflip );
+                    CascadeClassifier& nestedCascade);
 double faceDetect(CamCapture &capture);
 #endif

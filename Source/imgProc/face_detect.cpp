@@ -2,16 +2,13 @@
 using namespace std;
 using namespace cvb;
 using namespace cv;
-
-double detectAndDraw( Mat& img, CascadeClassifier& cascade,
-                    CascadeClassifier& nestedCascade,
-                    double scale, bool tryflip );
+double scale = 1;
 
 double faceDetect(CamCapture &capture)
 {
     CascadeClassifier cascade, nestedCascade;
-    string cascadeName = "haarcascade_frontalface_alt.xml";
-    string nestedCascadeName = "haarcascade_eye_tree_eyeglasses.xml";
+    string cascadeName = "Source/imgProc/haarcascade_frontalface_alt.xml";
+    string nestedCascadeName = "Source/imgProc/haarcascade_eye_tree_eyeglasses.xml";
 	if( !nestedCascade.load( nestedCascadeName ) )
     {
         cerr << " ERROR: Could not load classifier nestedcascade" << endl;
@@ -25,12 +22,11 @@ double faceDetect(CamCapture &capture)
     }
     // cascade.load( cascadeName );
         Mat frame(capture.rgbimg_full);
-        return detectAndDraw(frame,cascade,nestedCascade,scale,tryflip);    
+        return detectAndDraw(frame,cascade,nestedCascade);    
 }
 
 double detectAndDraw( Mat& img, CascadeClassifier& cascade,
-                    CascadeClassifier& nestedCascade,
-                    double scale, bool tryflip )
+                    CascadeClassifier& nestedCascade)
 {
     int i = 0;
     double t = 0;
@@ -57,21 +53,7 @@ double detectAndDraw( Mat& img, CascadeClassifier& cascade,
         |CV_HAAR_SCALE_IMAGE
         ,
         Size(30, 30) );
-    if( tryflip )
-    {
-        flip(smallImg, smallImg, 1);
-        cascade.detectMultiScale( smallImg, faces2,
-                                 1.1, 2, 0
-                                 //|CV_HAAR_FIND_BIGGEST_OBJECT
-                                 //|CV_HAAR_DO_ROUGH_SEARCH
-                                 |CV_HAAR_SCALE_IMAGE
-                                 ,
-                                 Size(30, 30) );
-        for( vector<Rect>::const_iterator r = faces2.begin(); r != faces2.end(); r++ )
-        {
-            faces.push_back(Rect(smallImg.cols - r->x - r->width, r->y, r->width, r->height));
-        }
-    }
+  
     t = (double)cvGetTickCount() - t;
     printf( "detection time = %g ms\n", t/((double)cvGetTickFrequency()*1000.) );
     for( vector<Rect>::const_iterator r = faces.begin(); r != faces.end(); r++, i++ )
