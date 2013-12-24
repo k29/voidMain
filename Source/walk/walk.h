@@ -44,6 +44,7 @@ class Walk
 	int dribble_new(double dy, double dx,double t1,double t2);
 	int dribble(double dy, double dx,double t1,double t2);
 	int start();
+	int start2();
 	float accelerate();
 	float velocity();
 	float velocity2();

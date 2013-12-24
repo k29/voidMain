@@ -1,8 +1,8 @@
 all: run
 
-run: Source/Build/path.a Source/Build/walk.a Source/Build/behavior.a Source/Build/imgProc.a Source/Build/imu.a run.cpp Source/Build/gameController.a Source/Build/switch.a
+run: Source/Build/fdwave.o Source/Build/path.a Source/Build/walk.a Source/Build/behavior.a Source/Build/imgProc.a Source/Build/imu.a run.cpp Source/Build/gameController.a Source/Build/switch.a
 	@echo compiling and linking final code
-	g++ -w run.cpp Source/Build/switch.a Source/Build/path.o Source/Build/walk.a Source/Build/behavior.a Source/Build/imgProc.a Source/Build/imu.a Source/Build/gameController.a -o run `pkg-config --libs opencv` -I/usr/include/flycapture -lflycapture -lftdi -lopencv_highgui -lpthread -fpermissive -lopencv_core -lopencv_imgproc -lrt -lcvblob -ltbb -O3 -fpermissive 
+	g++ -w run.cpp Source/Build/fdwave.o Source/Build/switch.a Source/Build/path.o Source/Build/walk.a Source/Build/behavior.a Source/Build/imgProc.a Source/Build/imu.a Source/Build/gameController.a -o run `pkg-config --libs opencv` -I/usr/include/flycapture -lflycapture -lftdi -lopencv_highgui -lpthread -fpermissive -lopencv_core -lopencv_imgproc -lrt -lcvblob -ltbb -O3 -fpermissive 
 
 Source/Build/path.a: Source/path/*.cpp Source/path/*.hpp Source/common/*.h
 	@make -s -C Source/path
@@ -18,6 +18,8 @@ Source/Build/gameController.a: Source/gameController/*.cpp Source/gameController
 	@make -s -C Source/gameController
 Source/Build/switch.a:
 	@make -s -C Source/switch
+Source/Build/fdwave.o:
+	@make -s -C Source/moves
 
 DOC:
 	@make -s -C Source/behavior/xabsl-src DOC
