@@ -141,7 +141,7 @@
 #include "featuredetection.h"
 #include <time.h>
 //#include "xsens/imu.h"
-//#define CAMCAPTURE_DEBUG
+// #define CAMCAPTURE_DEBUG
 using namespace std;
 
 int main()

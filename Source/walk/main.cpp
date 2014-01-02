@@ -161,8 +161,8 @@ void test(AcYut *bot)
 */
 int main()
 {
-	Imu imu;
-	imu.init();
+	// Imu imu;
+	// imu.init();
 	
 //	(void) signal(SIGINT,doquit);	
 	Communication comm;
