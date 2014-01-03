@@ -69,7 +69,7 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	offsets[2] = 22;
 	offsets[3] = -22;//Dec= Fw torso
 	offsets[4] = 0;
-	offsets[5] = -90;			//Making outward results in marginal improvement//Best Tuned 1 -90
+	offsets[5] = -45;		//-90	//Making outward results in marginal improvement//Best Tuned 1 -90
 	offsets[6] = 280;
 
 	offsets[20] = -5;			//Best tuned 1 -5
