@@ -178,7 +178,7 @@ int main()
 		//cout<<"getimg"<<endl;
 		// continue;
 
-		//fd.getLandmarks(cam, hm, mm);
+		fd.getLandmarks(cam, hm, mm);
 		//cout<<"landmark"<<endl;
 		cc.findBall(fd, hm);
 		//cc.search(hm);
