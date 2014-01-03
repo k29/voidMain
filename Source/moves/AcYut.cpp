@@ -38,20 +38,38 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	polyPoints=0;
 	this->comm = comm;
 	this->imu = imu;
-	offsets[0] = -100;
-	offsets[1] = 0;
-	offsets[2] = 32;
-	offsets[3] = -32;
-	offsets[4] = 0;
-	offsets[5] = 0;
-	offsets[6] = 280;
+	// offsets[0] = -100;
+	// offsets[1] = 0;
+	// offsets[2] = 32;
+	// offsets[3] = -32;
+	// offsets[4] = 0;
+	// offsets[5] = 0;
+	// offsets[6] = 280;
 
-	offsets[20] = 20;
+	// offsets[20] = 20;
+	// offsets[21] = 0;
+	// offsets[22] = 32;
+	// offsets[23] = -32;
+	// offsets[24] = 0;
+	// offsets[25] = -20;
+	// offsets[26] = -256;
+
+
+
+	offsets[0] = -10;			//Best tuned 1 -10
+	offsets[1] = 0;
+	offsets[2] = 22;
+	offsets[3] = -22;//Dec= Fw torso
+	offsets[4] = 0;
+	offsets[5] = -45;		//-90	//Making outward results in marginal improvement//Best Tuned 1 -90
+	offsets[6] = 280;	
+
+	offsets[20] = -5;			//Best tuned 1 -5
 	offsets[21] = 0;
-	offsets[22] = 32;
-	offsets[23] = -32;
+	offsets[22] = 22;
+	offsets[23] = -22;//Dec= Fw torso
 	offsets[24] = 0;
-	offsets[25] = -20;
+	offsets[25] = 10;			//Making outward results in improvement//Best Tuned 1 10
 	offsets[26] = -256;
 /*	offsets[0] = 0;
 	offsets[1] = 0;

@@ -681,8 +681,8 @@ void FeatureDetection::getInGreen(CamCapture &cam)
         }
     }
 
-    cvShowImage("RED", seg_red);
-    // cvShowImage("Yellow", seg_yellow);
+    cvShowImage("Red", seg_red);
+    cvShowImage("Yellow", seg_yellow);
 
     cvReleaseImage(&histogram);
 	// convex corner algo?

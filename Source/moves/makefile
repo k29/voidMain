@@ -10,7 +10,7 @@ getup: getup-try.cpp communication.o motor.o leg.o hand.o AcYut.o xsens/imu.o xs
 	g++ commondefswalk.o motor.o communication.o hand.o leg.o AcYut.o xsens/imu.o xsens/totalxsens.o -o getup getup-try.cpp -lftdi -lm -lrt -lpthread
 salute: salute.cpp communication.o motor.o leg.o hand.o AcYut.o xsens/imu.o xsens/totalxsens.o commondefswalk.o
 	g++ commondefswalk.o motor.o communication.o hand.o leg.o AcYut.o xsens/imu.o xsens/totalxsens.o -o salute salute.cpp -lftdi -lm -lrt -lpthread
-wave: wave.cpp communication.o motor.o leg.o hand.o AcYut.o xsens/imu.o xsens/totalxsens.o commondefswalk.o
+wave: wave.cpp communication.o motor.o leg.o hand.o AcYut.o xsens/imu.o commondefswalk.o
 	g++ commondefswalk.o motor.o communication.o hand.o leg.o AcYut.o xsens/imu.o xsens/totalxsens.o -o wave wave.cpp -lftdi -lm -lrt -lpthread
 motor.o: motor.cpp motor.h commondefswalk.o
 	g++ -c motor.cpp 
