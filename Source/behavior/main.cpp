@@ -71,10 +71,8 @@ void start()
         ACYUT.GCData.state=STATE_PLAYING;
         while(1)
             {
-                printf("started without GC");
-                
-                engine->execute();
-                
+                printf("started without GC");                
+                engine->execute();                
                 ACYUT.resetflag=0;
             }
 

@@ -113,7 +113,7 @@ void BasicBehaviorPathToWalk::execute()
 
 void BasicBehaviorFindBall::execute()
 {
-    printf("FINDING THE FUCKING BALL\n");
+    //printf("FINDING THE FUCKING BALL\n");
     p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);
 }
 
@@ -124,7 +124,7 @@ void BasicBehaviorReset::execute()
 
 void BasicBehaviorSearch::execute()
 {
-        int i = 500;
+        //int i = 500;
         // while(i--)
         // {
             p.camcont->search(p.hdmtr);
