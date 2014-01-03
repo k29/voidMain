@@ -127,6 +127,7 @@ void BasicBehaviorSearch::execute()
         //int i = 500;
         // while(i--)
         // {
+            printf("searching\n");
             p.camcont->search(p.hdmtr);
             p.hdmtr.update();
         // }
