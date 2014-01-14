@@ -158,7 +158,7 @@ void wave()
 		printf("%d %d %d %d %d %d %f %f %f %f %f %f\n",vm7,vm8,vm10,vm27,vm28,vm30,vlx,vly,vlz,vrx,vry,vrz);
 						
 	}
-		
+		printf("Move completed\n");
 }	
 
 

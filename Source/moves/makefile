@@ -24,7 +24,7 @@ hand.o : hand.h hand.cpp motor.o communication.o commondefswalk.o
 	g++ -c hand.cpp
 commondefswalk.o : bot1.h commondefswalk.h commondefswalk.cpp
 	g++ -c commondefswalk.cpp
-../Build/fdwave.o: fdwave.cpp fdwave.h communication.o motor.o leg.o hand.o AcYut.o xsens/imu.o xsens/totalxsens.o commondefswalk.o
+../Build/fdwave.o: fdwave.cpp fdwave.h communication.o motor.o leg.o hand.o AcYut.o xsens/imu.o commondefswalk.o
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c fdwave.cpp -lftdi -lm -lrt -lpthread -o $@
