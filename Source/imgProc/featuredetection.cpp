@@ -677,12 +677,12 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     {
         for(int y = 0; y < returnPixel1C(histogram, x/4, 0)*4; y++)
         {
-            returnPixel1C(seg_red, x, y) = 0;
+            // returnPixel1C(seg_red, x, y) = 0;
         }
     }
 
-    // cvShowImage("RED", seg_red);
-    // cvShowImage("Yellow", seg_yellow);
+    cvShowImage("RED", seg_red);
+    cvShowImage("Yellow", seg_yellow);
 
     cvReleaseImage(&histogram);
 	// convex corner algo?
