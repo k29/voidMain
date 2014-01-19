@@ -677,11 +677,15 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     {
         for(int y = 0; y < returnPixel1C(histogram, x/4, 0)*4; y++)
         {
-            returnPixel1C(seg_red, x, y) = 0;
+            // returnPixel1C(seg_red, x, y) = 0;
         }
     }
 
+<<<<<<< HEAD
     cvShowImage("Red", seg_red);
+=======
+    cvShowImage("RED", seg_red);
+>>>>>>> 054b8100a62780e9bc3c46ad9a8e54912e0528fe
     cvShowImage("Yellow", seg_yellow);
 
     cvReleaseImage(&histogram);
