@@ -35,34 +35,35 @@ void BasicBehaviorUpdate::execute()
         // p.hdmtr.update();
         printf("Entered update\n");
         int i=0;
-        int e=1;
-        while(e)
-                {
+        // int e=1;
+        // while(e)
+        //         {
 
-                    printf("lol\n");
-                    printf("received error %d from camcapture\n",i++);
-                    usleep(500000);
-                    e=!p.capture.getImage();
-                    printf("e is %d\n",e);     
-                        if(e==11)
-                            while(!p.capture.init())
-            {
-                usleep(500000);
-                continue;
-            }
+        //             printf("lol\n");
+        //             printf("received error %d from camcapture\n",i++);
+        //             usleep(500000);
+        //             e=!p.capture.getImage();
+        //             printf("e is %d\n",e);     
+        //                 if(e==11)
+        //                     while(!p.capture.init())
+        //     {
+        //         usleep(500000);
+        //         continue;
+        //     }
                 
-                }
+//                }
                 // {
                 //     continue;
                 // }
-        
-        //cvWaitKey(5);
+        p.capture.getImage();
+        // usleep(500000);    
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
         p.conf = p.loc.confidence();
         printf("localization updated to %lf\n",p.conf);
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
+        cvWaitKey(5);
         #endif
 
         #ifndef IP_IS_ON
@@ -98,7 +99,7 @@ void BasicBehaviorLocalize::execute()
         cvShowImage("Localization", p.loc.dispImage);
     
         p.conf = p.loc.confidence();
-        //cvWaitKey(5);
+        cvWaitKey(5);
         }
         #endif
 
