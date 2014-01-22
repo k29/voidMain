@@ -1,0 +1,23 @@
+paths1.data is the active path.
+
+paths2.data : SL : 28 cm
+	      Left : 92 degree
+	      SL : 66 cm
+	      Left : 108 degree
+	      SL : 44 cm
+
+paths3.data : SL : 63 cm
+	      Right : 61 degree
+	      SL : 63 cm
+              Left : 164 degree
+
+paths4.data : SL : 30 cm
+	      Left : 142 degree
+	      SL : 88 cm
+	      Left : 115 degree
+
+paths5.data : SL : 28 cm
+	      Right : 49 degree
+	      SL : 100 cm
+	      SL : 100 cm
+	      Left : 49 degree

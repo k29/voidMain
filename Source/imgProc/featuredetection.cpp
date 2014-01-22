@@ -86,8 +86,8 @@ void FeatureDetection::findReal(int x,int y, float &objdis, float &objangdeg, He
     objdis=(((IMAGE_HEIGHT/2-y)+(31.641/s)*tan(31.641))/(1-(s/98.44)*(IMAGE_HEIGHT/2-y)*tan(31.641)));
     float perpend=(x-(IMAGE_WIDTH/2))*((s/98.44)*(objdis)*sin(31.641)+cos(31.641))*0.66667;
     objdis=1.0211*(objdis) + 240;
-    // printf("PERPEND : \t\t\t%f\n", perpend);
-    // printf("OBJDIS: \t\t\t%f\n\n\n\n", objdis);
+    printf("PERPEND : \t\t\t%f\n", perpend);
+    printf("OBJDIS: \t\t\t%f\n\n\n\n", objdis);
     objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
     objdis=sqrt(objdis*objdis+perpend*perpend);
     
