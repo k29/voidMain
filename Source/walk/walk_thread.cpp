@@ -197,6 +197,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	int i=0;	
 	int no_obstacles = pathpackvarlocal.no_of_points/2;
 	int fmscheck = 0;
+	int first_circ_foot[4] , last_circ_foot[4]; //FSPMOD CODE
 	for (int i=0;i<=no_obstacles;i++)	
 	{
 	
@@ -234,6 +235,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 			dist_covered = calc_dist_covered(count,count_ref,step);
 			// printf(" I was here %d\n",count);
 		}
+		first_circ_foot[i] = count + 1;	//FSPMOD CODE
 						
 		int constraint_value;
 		double inner_radius = fabs(radius[i] - foot_separation/2); 
@@ -341,12 +343,42 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 			}
 
 		}
+		last_circ_foot[i] = count;		//FSPMOD CODE
 	}
 	// for (int i=0;i<count-1;i++)
 	// {
 	// 	printf ("Delta_y = %f\tDelta_x = %f\tDelta_theta = %f\n",step[i].delta_y,step[i].delta_x,step[i].delta_theta);
 	// }
-	// // printf("COUNT = %d",count);
+	//FSPMOD CODE
+	for (int i=0; i<no_obstacles; i++)
+	{	
+		double outer_foot_dist = 0, inner_foot_dist = 0;
+		for(int j = first_circ_foot[i] ; j <= last_circ_foot[i] ; j++)
+		{
+			if ((j + first_circ_foot[i])%2)
+			{
+				if (step[first_circ_foot[i]].delta_theta)
+				{
+					outer_foot_dist += step[j].delta_y;
+				}
+				else
+					inner_foot_dist += step[j].delta_y;
+			}
+			else
+			{
+				if (step[first_circ_foot[i]].delta_theta)
+				{
+					inner_foot_dist += step[j].delta_y;
+				}
+				else
+					outer_foot_dist += step[j].delta_y;
+			}
+			printf("\n\nOuter Foot Distance = %f\n" , outer_foot_dist);
+			printf("Inner Foot Distance = %f\n\n" , inner_foot_dist);
+		}
+	}
+	//FSPMOD CODE
+	// printf("COUNT = %d",count);
 	stepcount = count ;
 	// imagepaint(step , count);
 	return 0;

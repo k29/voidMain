@@ -671,7 +671,7 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 	double b = ((-sspYfi+sspYin)/sspTime+veloYin-a*pow(sspTime,2))/sspTime;
 	double c = -veloYin;
 	double d = -sspYin;
-	//WALKMOD CODE
+	/*//WALKMOD CODE
 	// printf("abcd = %f\t%f\t%f\t%f\n " , a , b , c , d);
 	double A[6] ;
 	A[5] = -sspYin ;
@@ -684,7 +684,7 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 	// printf("abcdef = %f\t%f\t%f\t%f\t%f\t%f\n" , A[0] , A[1] , A[2] , A[3] , A[4] , A[5] );
 	// printf("sspTime = %f\n" , sspTime);
 	double y_mod;
-	//TILL HERE
+	//TILL HERE*/
 	double height = 390;
 	//double lift   = 30;
 	double xfreq  = 2*3.14;
