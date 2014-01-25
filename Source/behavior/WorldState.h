@@ -11,8 +11,13 @@
 #include "../path/path.hpp"
 #include "../common/common.h"
 #include "../common/commondefs.h"
-#include "../walk/commondefswalk.h"
 
+#ifdef SEGWAY_MODE
+#include "../testwalk/commondefswalk.h"
+#endif
+#ifndef SEGWAY_MODE
+#include "../walk/commondefswalk.h"
+#endif
 
 
 class playerstate

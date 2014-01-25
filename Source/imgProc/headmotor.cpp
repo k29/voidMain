@@ -10,6 +10,8 @@ HeadMotor::HeadMotor(bool param)	//param is there to see if need to initialize p
 	initPos = param;
 	goal_pos[0] = (300.0 - 150)*(1023.0/300.0) - offsety;
 	goal_pos[1] = (300.0 - 50)*(1023.0/300.0) - offsetx;
+	// goal_pos[0] = 512;		//testing for loc tp
+	// goal_pos[1] = 640;
 	current_pos[0] = goal_pos[0];
 	current_pos[1] = goal_pos[1];
 	speed_motor(MOTOR_SPEED,700);
