@@ -49,15 +49,32 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
 //  objdis=sqrt(objdis*objdis+perpend*perpend);
     
 // }
-
-void FeatureDetection::findReal(int x,int y, float &objdis, float &objangdeg, HeadMotor &hm)
+void FeatureDetection::undistort(int xd, int yd, int* xu, int* yu)
 {
+    double ax = -7.1e-06;
+    double r2 = xd*xd +yd*yd;    
+    *xu = xd/(1+ax*r2);
+    *yu = yd/(1+ax*r2);
+    #ifndef ALL_PRINTING_OFF
+    printf("xd = %d \t\t\t yd = %d\n", xd, yd);
+    printf("xu = %d \t\t\t yu = %d\n", *xu, *yu);
+    #endif
+}
+
+void FeatureDetection::findReal(int X,int Y, float &objdis, float &objangdeg, HeadMotor &hm)
+{
+    int x,y;
+    X = X - IMAGE_WIDTH/2;
+    Y = IMAGE_HEIGHT/2 - Y;
+    undistort(X,Y,&x,&y);
+    x = x + IMAGE_WIDTH/2;
+    y = IMAGE_HEIGHT/2 - y;
     double s = 1.0;
     float motorX = hm.motorX();
     float thetaX = hm.thetaX();
     float thetaY = hm.thetaY();
 
-    // parameters entry;
+    parameters entry;
     // parameters temp;
     // constants.seekg(0,ios::beg);
     // while(1)
@@ -76,20 +93,32 @@ void FeatureDetection::findReal(int x,int y, float &objdis, float &objangdeg, He
     //         break;
     //     }
     // }
+    entry.angle = 35.0;
+    entry.focal = 76.1;
+    entry.pix2cmy = 40.0/24.0;
+    entry.pix2cmx = 40.0/32.0;
+    entry.s_view_compensation = 46.0;
 
-    // objdis=(((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
-    // float perpend=(x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx;
-    // objdis=entry.pix2cmy*(objdis) + entry.s_view_compensation;
-    // objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
-    // objdis=sqrt(objdis*objdis+perpend*perpend);
+    //correct    // objdis=(((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
+        // float perpend= - (x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx; //NEGATiVE VALUE!!
+        // objdis=entry.pix2cmy*(objdis) + entry.s_view_compensation;
 
-    objdis=(((IMAGE_HEIGHT/2-y)+(31.641/s)*tan(31.641))/(1-(s/98.44)*(IMAGE_HEIGHT/2-y)*tan(31.641)));
-    float perpend=(x-(IMAGE_WIDTH/2))*((s/98.44)*(objdis)*sin(31.641)+cos(31.641))*0.66667;
-    objdis=1.0211*(objdis) + 240;
+    objdis=(((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
+    float perpend= - (x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx; //NEGATiVE VALUE!!
+    objdis=entry.pix2cmy*(objdis) + entry.s_view_compensation;
+    objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
+    // objangdeg = 0.0 + rad2deg(atan2(perpend,objdis));
+    objdis=sqrt(objdis*objdis+perpend*perpend);
+
+    // objdis=(((IMAGE_HEIGHT/2-y)+(31.641/s)*tan(31.641))/(1-(s/98.44)*(IMAGE_HEIGHT/2-y)*tan(31.641)));
+    // float perpend=(x-(IMAGE_WIDTH/2))*((s/98.44)*(objdis)*sin(31.641)+cos(31.641))*0.66667;
+    // objdis=1.0211*(objdis) + 240;
+    #ifndef ALL_PRINTING_OFF
     printf("PERPEND : \t\t\t%f\n", perpend);
     printf("OBJDIS: \t\t\t%f\n\n\n\n", objdis);
-    objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
-    objdis=sqrt(objdis*objdis+perpend*perpend);
+    #endif
+    // objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
+    // objdis=sqrt(objdis*objdis+perpend*perpend);
     
 }
 
@@ -155,7 +184,7 @@ void FeatureDetection::getBlobs(CamCapture &cam)
     // cvLabel(seg_black, labelImg_small, blobs_black);
     // cvFilterByArea(blobs_yellow, 100, 1000000);
     // cvFilterByArea(blobs_blue, 100, 1000000);
-    cvFilterByArea(blobs_red, 200, 1000000);
+    cvFilterByArea(blobs_red, 10, 1000000);
     //minimum obstacle area defined here
     // cvFilterByArea(blobs_black, 50, 10000);
     int i = 0;
@@ -180,7 +209,7 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
 {
     int nGoals = 0;
     IplImage* histogram_y = cvCreateImage(cvSize(IMAGE_WIDTH,1),8,1);   //image colours (histogram_y)
-    IplImage* histogram_x = cvCreateImage(cvSize(1, IMAGE_HEIGHT),8,1);   //image colours (histogram_y)
+    // IplImage* histogram_x = cvCreateImage(cvSize(1, IMAGE_HEIGHT),8,1);   //image colours (histogram_y)
     int max_x=0,max_y = 0;
     int threshold;  //threshold for peaks
 
@@ -205,7 +234,7 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     }
 
     threshold = max_y/5;
-    cvSmooth(histogram_x,histogram_x);
+    // cvSmooth(histogram_x,histogram_x);
     cvSmooth(histogram_y,histogram_y);
     int gpx1 = 0,gpx2 = 0;                  //x COORDINATE FOR GOAL POSTS
     int pixels_at_gpx1 = 0,pixels_at_gpx2 = 0;
@@ -280,18 +309,21 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
                 gp = cvPoint(gpx1,it->second->maxy);
             if(it->second ->maxx >= gpx2 && it->second ->minx <= gpx2)
                 gp = cvPoint(gpx2,it->second->maxy);
-
+            #ifndef ALL_PRINTING_OFF
             printf("Found GPY\n");
+            #endif
             #ifdef PLOT_LANDMARKS
                 CvScalar color = {255,255,0};
+                #ifndef ALL_PRINTING_OFF
                 printf("gp.x :%d\tgp.y :%d\n\n\n\n", gp.x*2,gp.y*2);
+                #endif
                 cvCircle(cam.rgbimg, cvPoint(gp.x*2,gp.y*2), 2, color, 2);
             #endif
             findReal(gp.x,gp.y, templ[tempnLand].distance, templ[tempnLand].angle, hm);
             CvFont font;
             cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
-            char A[100] = "DISTANCE :";
-            char B[100] = "ANGLE :";
+            char A[100] = "  DISTANCE : ";
+            char B[100] = "  ANGLE : ";
             ostringstream s1;
             s1<<templ[tempnLand].distance;
             const std::string tmp1 = s1.str();
@@ -334,9 +366,13 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
             if(isOnImageEdge((it->second->maxx + it->second->minx)/2, it->second->maxy)==true)
                 continue;
 
+            #ifndef ALL_PRINTING_OFF
             printf("Found GPB\n");
+            #endif
             findReal((it->second->maxx + it->second->minx)/2, it->second->maxy, templ[tempnLand].distance, templ[tempnLand].angle, hm);
+            #ifndef ALL_PRINTING_OFF
             printf("GPB distance %lf angle %lf\n", templ[tempnLand].distance, templ[tempnLand].angle);
+            #endif
             templ[tempnLand].type = LAND_GPB;
             tempnLand++;
             nGoals++;
@@ -369,7 +405,9 @@ void FeatureDetection::getLPs(CamCapture &cam, HeadMotor &hm)
                 //Check if on edge
                 if(isOnImageEdge((it3->second->maxx + it3->second->minx)/2, it3->second->maxy)==true)
                     continue;
+                #ifndef ALL_PRINTING_OFF
                 printf("Found YBY\n");
+                #endif
                 #ifdef PLOT_LANDMARKS
                 CvScalar color = {255,0,0};
                 cvCircle(cam.rgbimg, cvPoint((it3->second->maxx + it3->second->minx), it3->second->maxy*2), 2, color, 2);
@@ -405,7 +443,9 @@ void FeatureDetection::getLPs(CamCapture &cam, HeadMotor &hm)
                 //Check if on edge
                 if(isOnImageEdge((it3->second->maxx + it3->second->minx)/2, it3->second->maxy)==true)
                     continue;
+                #ifndef ALL_PRINTING_OFF
                 printf("Found BYB\n");
+                #endif
                 #ifdef PLOT_LANDMARKS
                 CvScalar color = {255,0,0};
                 cvCircle(cam.rgbimg, cvPoint((it3->second->maxx + it3->second->minx), it3->second->maxy*2), 2, color, 2);
@@ -437,7 +477,9 @@ bool FeatureDetection::getObstacles(CamCapture &cam, HeadMotor &hm)
             //Check if on image edge
             if(isOnImageEdgeObstacle((it->second->maxx + it->second->minx)*2, it->second->maxy*4)==true)
               continue;
+            #ifndef ALL_PRINTING_OFF
             printf("Found Obstacle\n");
+            #endif
             #ifdef PLOT_LANDMARKS
                 CvScalar color = {255,255,255};
                 cvCircle(cam.rgbimg, cvPoint((it->second->maxx + it->second->minx)*4, it->second->maxy*8), 2, color, 2);
@@ -823,7 +865,7 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     {
         for(int y = 0; y < returnPixel1C(histogram, x/4, 0)*4; y++)
         {
-            returnPixel1C(seg_red, x, y) = 0;
+            // returnPixel1C(seg_red, x, y) = 0;
         }
     }
 
@@ -963,12 +1005,16 @@ void FeatureDetection::getLandmarks(CamCapture &cam, HeadMotor &hm, MotionModel 
     #ifndef ALL_PRINTING_OFF
     for(std::vector<Landmark>::iterator it = l.begin(); it != l.end(); ++it)
     {
+        #ifndef ALL_PRINTING_OFF
         printf("Type: %d Distance: %f Angle: %f Counter: %d\n",it->type, it->distance, it->angle, it->counter);
+        #endif    
     }
 
     for(std::vector<Obstacle>::iterator it = o.begin(); it != o.end(); ++it)
     {
+        #ifndef ALL_PRINTING_OFF
         printf("Obstacle Distance: %f Angle: %f Counter: %d\n",it->distance, it->angle, it->counter);
+        #endif
     }
     #endif
 }
@@ -1002,6 +1048,23 @@ void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
         findReal(it2->second->centroid.x, it2->second->centroid.y, ball.r, ball.theta, hm);
         ball.theta +=10;
     }
+    CvFont font;
+    cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
+    char A[100] = "  DISTANCE : ";
+    char B[100] = "  ANGLE : ";
+    ostringstream s1;
+    s1<<ball.r;
+    const std::string tmp1 = s1.str();
+    const char* cs1 = tmp1.c_str();
+    strcat(A,cs1);
+    ostringstream s2;
+    s2<<ball.theta;
+    const std::string tmp2 = s2.str();
+    const char* cs2 = tmp2.c_str();
+    strcat(B,cs2);
+    cvCircle(cam.rgbimg, cvPoint(ballX_var,ballY_var), 2, cvScalar(255,255,0), 2);
+    cvPutText(cam.rgbimg,A,cvPoint(ballX_var,ballY_var),&font,cvScalar(255,255,255));
+    cvPutText(cam.rgbimg,B,cvPoint(ballX_var,ballY_var + 10),&font,cvScalar(255,255,255));
     /* Simple Begin */
     // int bx = 0, by = 0, count = 0;
     // for(int x = 0; x < IMAGE_WIDTH; x++)

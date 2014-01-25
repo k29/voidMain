@@ -129,10 +129,18 @@ typedef struct
 
 typedef struct 
 {
+	int updated;
 	int id;
 	int no_of_points;
 	PathCoords finalpath[30];
 }PathPacket;
+
+typedef struct
+{
+	int id;
+	int no_of_points;
+	Coords finalPath[30];
+}WalkPacket;
 
 typedef struct 
 {
@@ -152,6 +160,6 @@ typedef struct
 	MotionPacket mot_pack;
 	BehaviourPacket behav_pack;
 }Packet;
-//---------------------------------------------------------------------------------------
+
 
 #endif

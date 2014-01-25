@@ -46,6 +46,7 @@ private:
 	//No of frames to persist
 	static const int LANDMARK_PERSISTENCE = 30;
 	static const int OBSTACLE_PERSISTENCE = 30;
+	static const double ax = -7.1e-06;
 	cvb::CvBlobs blobs_red;
 	cvb::CvBlobs blobs_blue;
 	cvb::CvBlobs blobs_yellow;
@@ -59,6 +60,7 @@ private:
 	IplImage* seg_black;
 	IplImage* seg_green;
 	IplImage* seg_white_count;
+	void undistort(int xd, int yd, int* xu, int* yu);
 	void findReal(int x,int y, float &objdis, float &objangdeg, HeadMotor &hm);
 	void getGoals(CamCapture &cam, HeadMotor &hm);
 	void getBlobs(CamCapture &cam);

@@ -58,7 +58,7 @@ void BasicBehaviorUpdate::execute()
         p.capture.getImage();
         // usleep(500000);    
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
-        p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
+        p.loc.doLocalize(*p.fd, p.mm, p.capture, getImuAngle());  
         p.conf = p.loc.confidence();
         printf("localization updated to %lf\n",p.conf);
         cvShowImage("aa", p.capture.rgbimg);
@@ -93,8 +93,8 @@ void BasicBehaviorLocalize::execute()
         // }
 
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
-        p.camcont->search(p.hdmtr);
-        p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
+        // p.camcont->search(p.hdmtr);
+        p.loc.doLocalize(*p.fd, p.mm, p.capture, getImuAngle()); 
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
     
@@ -188,7 +188,7 @@ void BasicBehaviorFindBall::execute()
 {    
     #ifdef IP_IS_ON    
     printf("FINDING THE FUCKING BALL\n");
-    p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);       
+    p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);    
     #endif
 
     #ifndef IP_IS_ON
