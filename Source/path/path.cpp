@@ -839,15 +839,15 @@ PathReturns Path::path_return(PathStructure ps)
 		return NOPATH;
 	}
 	cout<<"\npath returning \n\nDOWALK\n\n  theta "<<next.theta<< " distance "<<next.r<<endl;
-
+	cvReleaseImage(&image);
     return DOWALK;
 }
 
 void Path::updatePathPacket()
 {
-	if(path_completed_flag)
+	if(1)
 	{
-
+		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
 		std::size_t b;
