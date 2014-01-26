@@ -231,7 +231,7 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     {
         if(it->second->miny <= max)
             max = it->second->miny;
-    }
+    } 
 
     threshold = max_y/5;
     // cvSmooth(histogram_x,histogram_x);
