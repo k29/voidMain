@@ -31,6 +31,9 @@ Walk::Walk(testBot* bot)
 /* theta is in radians , not degrees*/
 void Walk::move(float walkr,float walktheta)
 {
+
+
+	printf("Move called\n");
 	double deltaR;
 	double deltaTheta;
 	double arclen;
@@ -74,6 +77,7 @@ void Walk::move(float walkr,float walktheta)
 		
 		usleep((int)(deltaR));
 
+		usleep(500000);
 		this->sync_write_data_motor(tbSTOP);
 
 		

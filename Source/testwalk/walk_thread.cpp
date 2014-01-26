@@ -91,7 +91,6 @@ void* walk_thread(void*)
 	PathPacket pathpackvarlocal;
 	WalkPacket walkpacket;
 	Coords coords;
-
 	walkpacket.no_of_points=30;
 	int fps=30.0;
 	while (1)
@@ -123,7 +122,7 @@ void* walk_thread(void*)
 			printf("Path sent signal %f %f\n",walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 			// #endif
 			walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
-
+			
 		}
 
 	}

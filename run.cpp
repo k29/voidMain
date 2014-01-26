@@ -42,6 +42,7 @@ int main(void)
     #endif
 
 			#ifdef WALK_IS_ON
+        		pathpackvar.updated=0;
 				pthread_create (&thread_id_walk, NULL, walk_thread, NULL);
 			#endif
 		

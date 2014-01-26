@@ -76,7 +76,7 @@ void BasicBehaviorLocalize::execute()
         
         #ifdef IP_IS_ON
         printf("Confidence %lf, localizing\n",p.conf);
-        int i=500000;
+        int i=50;
         while(i--)
         {
         
@@ -161,8 +161,6 @@ void BasicBehaviorMakePath::execute()
     
     printf("Path Made\n");
     #endif
-
-   
 }
 
 void BasicBehaviorPathToWalk::execute()

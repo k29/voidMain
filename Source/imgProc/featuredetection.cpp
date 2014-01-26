@@ -281,7 +281,7 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     cvDilate(seg_yellow,seg_yellow);
     cvLabel(seg_yellow, labelImg, blobs_yellow);
     cvFilterByArea(blobs_yellow, 200, 1000000);
-    cout<<"height = "<<seg_yellow->height<<"\n\n\n \n\n";
+    // cout<<"height = "<<seg_yellow->height<<"\n\n\n \n\n";
     CvPoint gp = cvPoint(0,0);
 
     for (CvBlobs::const_iterator it=blobs_yellow.begin(); it!=blobs_yellow.end(); ++it)

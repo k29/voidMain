@@ -21,8 +21,8 @@ class Path
 private:
 	//member variables
 	static const std::size_t MAXIMUM=300;
-	static const int SIZEX=200;
-	static const int SIZEY=200;
+	static const int SIZEX=500;
+	static const int SIZEY=500;
 	int NO_OF_OBSTACLES;
 	static const int OBSTACLE_RADIUS=25;
 	static const int ENCIRCLE_THRESHOLD=25;

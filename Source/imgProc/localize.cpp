@@ -556,7 +556,9 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam
     char A[100] = "  POSITION : ";
     char B[100] = "  ANGLE : ";
     char C[100];
-    sprintf(C, "Y : %lf", selfY);
+    char D[100];
+    sprintf(D,"CONFIDENCE : %lf",confidence());
+    sprintf(C, "       Y : %lf", selfY);
     ostringstream s1;
     s1<< "X: " << selfX;
     const std::string tmp1 = s1.str();
@@ -571,6 +573,7 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam
     cvPutText(cam.rgbimg,A,cvPoint(10,10),&font,cvScalar(255,255,255));
     cvPutText(cam.rgbimg,B,cvPoint(10,30),&font,cvScalar(255,255,255));
     cvPutText(cam.rgbimg,C,cvPoint(30,20),&font,cvScalar(255,255,255));
+    cvPutText(cam.rgbimg,D,cvPoint(10,40),&font,cvScalar(255,255,255));
 }
 
 

@@ -225,26 +225,26 @@ PathReturns Path::path_return(PathStructure ps)
 {
 	cout<<".....................................................PATH CALLED.......................................................";
 	srand(time(NULL));
-	IplImage* image= cvCreateImage(cvSize(SIZEX*2, SIZEY*2), 8, 3); //displaying the results.
+	IplImage* image= cvCreateImage(cvSize(SIZEX*5, SIZEY*5), 8, 3); //displaying the results. beacuse pranet had a problem.
 	cvZero(image);
 	int flag=1; //Flag used for iteration in the graph...i.e. assigned the value 0 once iteration through the entire graph is done to break out of loop.
 	start.x=0;
 	start.y=0;
 	start.obstacle_id=-1;
 	start.parent_id=0;
-	cvCircle(image, cvPoint(start.x + 200, start.y + 200), 2, cvScalar(0,255,0)); //Initialising the start point and painting it.
+	cvCircle(image, cvPoint(start.x + 500, start.y + 500), 2, cvScalar(0,255,0)); //Initialising the start point and painting it.
 	NO_OF_OBSTACLES = ps.n_obstacles;
 	ball.x=ps.ball.x;
 	ball.y=ps.ball.y;
 	ball.obstacle_id=-1;
 	ball.parent_id=0;
 	//////cout<<"Ball Position:\n"<<ball.x<<" "<<ball.y<<endl;
-	cvCircle(image, cvPoint(ball.x+200, ball.y+200), 2, cvScalar(255,0,255)); //Initialising the ball point and painting it.
+	cvCircle(image, cvPoint(ball.x+500, ball.y+500), 2, cvScalar(255,0,255)); //Initialising the ball point and painting it.
 	goal.x=ps.goal.x;
 	goal.y=ps.goal.y;
 	goal.obstacle_id=-1;
 	//////cout<<"Goal Position\n"<<goal.x<<" "<<goal.y<<endl;
-	cvCircle(image, cvPoint(goal.x+200, goal.y+200), 10, cvScalar(255,0,255)); //Initialising the goal point and painting it.
+	cvCircle(image, cvPoint(goal.x+500, goal.y+500), 10, cvScalar(255,0,255)); //Initialising the goal point and painting it.
 	tree.cleartree(); //Clearing all previous data from the graphs....i.e. initialises the graph for a fresh start.
 	for(int i = 0; i < NO_OF_OBSTACLES; i++)
 	{
@@ -253,9 +253,9 @@ PathReturns Path::path_return(PathStructure ps)
 		obstacle[i].obstacle_radius=OBSTACLE_RADIUS;
 		obstacle[i].type= CIRCLE;
 		//////cout<<"Obstacle Position(s)\n"<<obstacle[i].x<<" "<<obstacle[i].y<<endl;
-		cvCircle(image, cvPoint(obstacle[i].x+200,obstacle[i].y+200), obstacle[i].obstacle_radius, cvScalar(255,0,0));
+		cvCircle(image, cvPoint(obstacle[i].x+500,obstacle[i].y+500), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	} //Initialising the obstacles and painting them.
-	cvCircle(image, cvPoint(ball.x+200, ball.y+200), ENCIRCLE_THRESHOLD , cvScalar(0,130,70));
+	cvCircle(image, cvPoint(ball.x+500, ball.y+500), ENCIRCLE_THRESHOLD , cvScalar(0,130,70));
 	//Making the two orientation markers near the ball  ---->
 	double m=(goal.y-ball.y)/(goal.x-ball.x);
 	double m_prime=-1/m;
@@ -274,13 +274,13 @@ PathReturns Path::path_return(PathStructure ps)
 	obstacle[NO_OF_OBSTACLES].y=ball.y - ( ORIENTATION_RADIUS*sin_prime);
 	obstacle[NO_OF_OBSTACLES].obstacle_id=-2;
 	obstacle[NO_OF_OBSTACLES].type= CIRCLE;
-	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES].x+200, obstacle[NO_OF_OBSTACLES].y+200),  ORIENTATION_RADIUS, cvScalar(255,0,0));
+	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES].x+500, obstacle[NO_OF_OBSTACLES].y+500),  ORIENTATION_RADIUS, cvScalar(255,0,0));
 	obstacle[NO_OF_OBSTACLES+1].obstacle_radius= ORIENTATION_RADIUS;
 	obstacle[NO_OF_OBSTACLES+1].x=ball.x + ( ORIENTATION_RADIUS*cos_prime);
 	obstacle[NO_OF_OBSTACLES+1].y=ball.y + ( ORIENTATION_RADIUS*sin_prime);
 	obstacle[NO_OF_OBSTACLES+1].obstacle_id=-2;
 	obstacle[NO_OF_OBSTACLES+1].type= CIRCLE;
-	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+1].x+200, obstacle[NO_OF_OBSTACLES+1].y+200),  ORIENTATION_RADIUS, cvScalar(255,0,0));
+	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+1].x+500, obstacle[NO_OF_OBSTACLES+1].y+500),  ORIENTATION_RADIUS, cvScalar(255,0,0));
 	for(int i=0;i< NO_OF_OBSTACLES;i++)
 	{
 		for(int j=NO_OF_OBSTACLES;j<NO_OF_OBSTACLES+2;j++)
@@ -390,7 +390,7 @@ PathReturns Path::path_return(PathStructure ps)
 	tree.add_vertex(start);
 	tree.add_vertex(ball);
 	tree.add_edge(0,1,cost_calculation(0,1,tree));
-	cvLine(image,cvPoint(200,200),cvPoint(ball.x+200,ball.y+200),cvScalar(255,255,0)); // creates the nodes for start and ball point and paints a line.
+	cvLine(image,cvPoint(500,500),cvPoint(ball.x+500,ball.y+500),cvScalar(255,255,0)); // creates the nodes for start and ball point and paints a line.
 
 	while(flag) // iterates over the entire tree.
 	{
@@ -416,20 +416,20 @@ PathReturns Path::path_return(PathStructure ps)
 								{
 									Point n1 = tree[ni_index];
 									Point n2 = tree[nj_index];
-									cvLine(image,cvPoint(n1.x+200,n1.y+200),cvPoint(n2.x+200,n2.y+200),cvScalar(255,255,0));
+									cvLine(image,cvPoint(n1.x+500,n1.y+500),cvPoint(n2.x+500,n2.y+500),cvScalar(255,255,0));
 								}
 							}
 						}
 						for(int j=0;j<NO_OF_OBSTACLES+2;j++)
 						{
-							cvCircle(image, cvPoint(obstacle[j].x+200, obstacle[j].y+200), 2, cvScalar(255,0,0));
-							cvCircle(image, cvPoint(obstacle[j].x+200, obstacle[j].y+200), obstacle[j].obstacle_radius , cvScalar(255,0,0));
+							cvCircle(image, cvPoint(obstacle[j].x+500, obstacle[j].y+500), 2, cvScalar(255,0,0));
+							cvCircle(image, cvPoint(obstacle[j].x+500, obstacle[j].y+500), obstacle[j].obstacle_radius , cvScalar(255,0,0));
 						}
-						cvCircle(image, cvPoint(n1.x+200, n1.y+200), 2, cvScalar(255,255,255), 2);
-						cvCircle(image, cvPoint(n2.x+200, n2.y+200), 2, cvScalar(0,0,255), 2);
-						cvCircle(image, cvPoint(start.x + 200, start.y + 200), 2, cvScalar(0,255,0));
-						cvCircle(image, cvPoint(ball.x+200, ball.y+200), 2, cvScalar(255,0,255));
-						cvCircle(image, cvPoint(goal.x+200, goal.y+200), 10, cvScalar(255,0,255));
+						cvCircle(image, cvPoint(n1.x+500, n1.y+500), 2, cvScalar(255,255,255), 2);
+						cvCircle(image, cvPoint(n2.x+500, n2.y+500), 2, cvScalar(0,0,255), 2);
+						cvCircle(image, cvPoint(start.x + 500, start.y + 500), 2, cvScalar(0,255,0));
+						cvCircle(image, cvPoint(ball.x+500, ball.y+500), 2, cvScalar(255,0,255));
+						cvCircle(image, cvPoint(goal.x+500, goal.y+500), 10, cvScalar(255,0,255));
 						cvShowImage("Field", image);
 						cvZero(image);
 					 	cvWaitKey();
@@ -636,7 +636,7 @@ PathReturns Path::path_return(PathStructure ps)
 			{
 				Point n1 = tree[n1_index];
 				Point n2 = tree[n2_index];
-				cvLine(image,cvPoint(n1.x+200,n1.y+200),cvPoint(n2.x+200,n2.y+200),cvScalar(255,255,0));
+				cvLine(image,cvPoint(n1.x+500,n1.y+500),cvPoint(n2.x+500,n2.y+500),cvScalar(255,255,0));
 			}
 		}
 	}
@@ -648,19 +648,19 @@ PathReturns Path::path_return(PathStructure ps)
 	b=tree.returnPathPoint(1);
 	while(b!=0)
 	{
-		cvLine(image,cvPoint(tree[b].x+200,tree[b].y+200),cvPoint(tree[a].x+200,tree[a].y+200),cvScalar(0,0,255));
+		cvLine(image,cvPoint(tree[b].x+500,tree[b].y+500),cvPoint(tree[a].x+500,tree[a].y+500),cvScalar(0,0,255));
 		a=b;
 		b=tree.returnPathPoint(b);
 	}
 	path_completed_flag=true;
 	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
 	{
-		cvCircle(image, cvPoint(obstacle[i].x + 200, obstacle[i].y+200), obstacle[i].obstacle_radius, cvScalar(255,0,0));
+		cvCircle(image, cvPoint(obstacle[i].x + 500, obstacle[i].y+500), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}
-	cvCircle(image, cvPoint(start.x + 200, start.y + 200), 2, cvScalar(0,255,0));
-	cvCircle(image, cvPoint(ball.x+200, ball.y+200), 2, cvScalar(255,0,255));
-	cvCircle(image, cvPoint(goal.x+200, goal.y+200), 10, cvScalar(255,0,255));
-	cvLine(image,cvPoint(tree[0].x+200,tree[0].y+200),cvPoint(tree[a].x+200,tree[a].y+200),cvScalar(0,0,255));
+	cvCircle(image, cvPoint(start.x + 500, start.y + 500), 2, cvScalar(0,255,0));
+	cvCircle(image, cvPoint(ball.x+500, ball.y+500), 2, cvScalar(255,0,255));
+	cvCircle(image, cvPoint(goal.x+500, goal.y+500), 10, cvScalar(255,0,255));
+	cvLine(image,cvPoint(tree[0].x+500,tree[0].y+500),cvPoint(tree[a].x+500,tree[a].y+500),cvScalar(0,0,255));
 	cvShowImage("Field", image);
 	//--->> calculating the next points r and theta.
 	if(tree.is_onCircle(0, a))
@@ -826,12 +826,12 @@ PathReturns Path::path_return(PathStructure ps)
 
 	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
 	{
-		cvCircle(image, cvPoint(obstacle[i].x + 200, obstacle[i].y+200), obstacle[i].obstacle_radius, cvScalar(255,0,0));
+		cvCircle(image, cvPoint(obstacle[i].x + 500, obstacle[i].y+500), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}
-	cvCircle(image, cvPoint(start.x + 200, start.y + 200), 2, cvScalar(0,255,0));
-	cvCircle(image, cvPoint(ball.x+200, ball.y+200), 2, cvScalar(255,0,255));
-	cvCircle(image, cvPoint(goal.x+200, goal.y+200), 10, cvScalar(255,0,255));
-	cvLine(image,cvPoint(tree[0].x+200,tree[0].y+200),cvPoint(tree[a].x+200,tree[a].y+200),cvScalar(0,0,255));
+	cvCircle(image, cvPoint(start.x + 500, start.y + 500), 2, cvScalar(0,255,0));
+	cvCircle(image, cvPoint(ball.x+500, ball.y+500), 2, cvScalar(255,0,255));
+	cvCircle(image, cvPoint(goal.x+500, goal.y+500), 10, cvScalar(255,0,255));
+	cvLine(image,cvPoint(tree[0].x+500,tree[0].y+500),cvPoint(tree[a].x+500,tree[a].y+500),cvScalar(0,0,255));
 	cvShowImage("Field", image);
 	if(tree.no_path_flag==-1)
 	{
@@ -845,7 +845,7 @@ PathReturns Path::path_return(PathStructure ps)
 
 void Path::updatePathPacket()
 {
-	if(1)
+	if(1) //because pranet likes a perfect code.ffffffff
 	{
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
@@ -871,4 +871,6 @@ void Path::updatePathPacket()
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
 		}
 	}
+	
+
 }
