@@ -106,7 +106,7 @@ void FeatureDetection::findReal(int X,int Y, float &objdis, float &objangdeg, He
     objdis=(((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
     float perpend= - (x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx; //NEGATiVE VALUE!!
     objdis=entry.pix2cmy*(objdis) + entry.s_view_compensation;
-    objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
+    objangdeg=rad2deg(thetaY) + rad2deg(atan2(perpend,objdis));
     // objangdeg = 0.0 + rad2deg(atan2(perpend,objdis));
     objdis=sqrt(objdis*objdis+perpend*perpend);
 
@@ -185,6 +185,7 @@ void FeatureDetection::getBlobs(CamCapture &cam)
     // cvFilterByArea(blobs_yellow, 100, 1000000);
     // cvFilterByArea(blobs_blue, 100, 1000000);
     cvFilterByArea(blobs_red, 10, 1000000);
+    // printf("After filter\n");
     //minimum obstacle area defined here
     // cvFilterByArea(blobs_black, 50, 10000);
     int i = 0;
@@ -280,8 +281,7 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     cvDilate(seg_yellow,seg_yellow);
     cvLabel(seg_yellow, labelImg, blobs_yellow);
     cvFilterByArea(blobs_yellow, 200, 1000000);
-    cvShowImage("yellow",seg_yellow);
-
+    cout<<"height = "<<seg_yellow->height<<"\n\n\n \n\n";
     CvPoint gp = cvPoint(0,0);
 
     for (CvBlobs::const_iterator it=blobs_yellow.begin(); it!=blobs_yellow.end(); ++it)
@@ -1029,6 +1029,7 @@ void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
     //Select blob of largest area
     for (CvBlobs::const_iterator it=blobs_red.begin(); it!=blobs_red.end(); ++it)
     {
+        if((it->second->maxx - it->second->minx) == 0) continue;
         if((it->second->maxy - it->second->miny)/(it->second->maxx - it->second->minx)>=2) continue;
         if(it->second->area > area)
         {
@@ -1065,6 +1066,8 @@ void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
     cvCircle(cam.rgbimg, cvPoint(ballX_var,ballY_var), 2, cvScalar(255,255,0), 2);
     cvPutText(cam.rgbimg,A,cvPoint(ballX_var,ballY_var),&font,cvScalar(255,255,255));
     cvPutText(cam.rgbimg,B,cvPoint(ballX_var,ballY_var + 10),&font,cvScalar(255,255,255));
+
+
     /* Simple Begin */
     // int bx = 0, by = 0, count = 0;
     // for(int x = 0; x < IMAGE_WIDTH; x++)

@@ -63,7 +63,7 @@ void BasicBehaviorUpdate::execute()
         printf("localization updated to %lf\n",p.conf);
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
-        cvWaitKey(5);
+        cvWaitKey(50);
         #endif
 
         #ifndef IP_IS_ON
@@ -76,7 +76,7 @@ void BasicBehaviorLocalize::execute()
         
         #ifdef IP_IS_ON
         printf("Confidence %lf, localizing\n",p.conf);
-        int i=50000000;
+        int i=500000;
         while(i--)
         {
         
@@ -91,14 +91,17 @@ void BasicBehaviorLocalize::execute()
         //     printf("worked\n");
         //     continue;
         // }
+            // printf("After capture\n");
 
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
+        // printf("After getLandmarks\n");
         // p.camcont->search(p.hdmtr);
         p.loc.doLocalize(*p.fd, p.mm, p.capture, getImuAngle()); 
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
     
         p.conf = p.loc.confidence();
+        // printf("%lf\n, %d", p.conf, i);
         cvWaitKey(5);
         }
         #endif
@@ -129,7 +132,7 @@ void BasicBehaviorMakePath::execute()
         // p.pathstr.absObstacles[1].y=100;
         // p.pathstr.absObstacles[2].x=-40;
         // p.pathstr.absObstacles[2].y=-80;
-
+    // printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     //     for(int i=0;i<fd.o.size();i++)//assuming right positive and left neagative for theta
     // {
     //     p.pathstr.absObstacles[i].x=(p.fd->o[i].distance)*cos(deg2rad(p.fd->o[i].angle));
