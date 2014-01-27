@@ -79,8 +79,8 @@ void start()
         
         while(1)
             {
-                printf("started with GC");
-            
+                // printf("started with GC");
+                
                 pthread_mutex_lock(&mutex_GCData);
                     ACYUT.GCData=GCData;
                 pthread_mutex_unlock(&mutex_GCData);

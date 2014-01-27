@@ -64,14 +64,14 @@ bool Path::side_check(struct Point n1,struct Point n2, struct Point n1a, struct 
 
 bool Path::side_check_orientation(Point a,Point b) // a is the parent point , b is the child point
 {
-	cout<<" the coordinates for the parent points are "<<a.x<<" "<<a.y<<endl;
-	cout<<" the coordinates for the child points are "<<b.x<<" "<<b.y<<endl;
+	//cout<<" the coordinates for the parent points are "<<a.x<<" "<<a.y<<endl;
+	//cout<<" the coordinates for the child points are "<<b.x<<" "<<b.y<<endl;
 	double m = (a.y-ball.y)/(a.x-ball.x);
-	cout<<"m "<<m<<endl;
+	//cout<<"m "<<m<<endl;
 	double c = ball.y-(m*ball.x);
-	cout<<"c "<<c<<endl;
-	cout<<"the coordinates of the ball are "<<ball.x<<" "<<ball.y<<endl;
-	cout<<"the equation of the line joining ball and the parent point is y="<<m<<"x+"<<c<<endl;
+	//cout<<"c "<<c<<endl;
+	//cout<<"the coordinates of the ball are "<<ball.x<<" "<<ball.y<<endl;
+	//cout<<"the equation of the line joining ball and the parent point is y="<<m<<"x+"<<c<<endl;
 	if(((goal.y-(m*goal.x)-c)*(b.y-(m*b.x)-c))<0) // other side of the line...point to be kept
 
 		return true;
@@ -125,7 +125,7 @@ Intersecting_Cases Path::main_function(Point n1, Point n2)
 	int k=closest_intersecting_obstacle(n1,n2);
 	if(k==-1)
 	{
-		////////cout<<"\t\tNo Intersection\n";
+		//////////cout<<"\t\tNo Intersection\n";
 		return no_intersection;
 	}
 
@@ -134,7 +134,7 @@ Intersecting_Cases Path::main_function(Point n1, Point n2)
 		calculate_points(n1,obstacle[k],n1a,n1b);
 		n1a.obstacle_id=k;
 		n1b.obstacle_id=k;
-		////////cout<<"\t\tFinal Orientation Intersection\n";
+		//////////cout<<"\t\tFinal Orientation Intersection\n";
 		return final_orientation_intersection;
 	}
 
@@ -184,7 +184,7 @@ Intersecting_Cases Path::main_function(Point n1, Point n2)
 		{
 			midpoint_flag=true;
 		}
-		////////cout<<"\t\tSpecial Intersection\n";
+		//////////cout<<"\t\tSpecial Intersection\n";
 		return special_intersection;
 	}
 	temp_global_k = k;
@@ -195,7 +195,7 @@ Intersecting_Cases Path::main_function(Point n1, Point n2)
 	n2a.obstacle_id=k;
 	n2b.obstacle_id=k;
 	same_side_flag=side_check(n1,n2,n1a,n2a); //same_side_flag is true if and only if they are on the same side
-	////////cout<<"\t\tNormal Intersection\n";
+	//////////cout<<"\t\tNormal Intersection\n";
 	return normal_intersection;
 }
 
@@ -223,7 +223,8 @@ double Path::cost_calculation(std::size_t source,std::size_t target, Graph <Poin
 
 PathReturns Path::path_return(PathStructure ps)
 {
-	cout<<".....................................................PATH CALLED.......................................................";
+	// printf("PR line 226\n");
+	//cout<<".....................................................PATH CALLED.......................................................";
 	srand(time(NULL));
 	IplImage* image= cvCreateImage(cvSize(SIZEX*5, SIZEY*5), 8, 3); //displaying the results. beacuse pranet had a problem.
 	cvZero(image);
@@ -238,12 +239,12 @@ PathReturns Path::path_return(PathStructure ps)
 	ball.y=ps.ball.y;
 	ball.obstacle_id=-1;
 	ball.parent_id=0;
-	//////cout<<"Ball Position:\n"<<ball.x<<" "<<ball.y<<endl;
+	////////cout<<"Ball Position:\n"<<ball.x<<" "<<ball.y<<endl;
 	cvCircle(image, cvPoint(ball.x+500, ball.y+500), 2, cvScalar(255,0,255)); //Initialising the ball point and painting it.
 	goal.x=ps.goal.x;
 	goal.y=ps.goal.y;
 	goal.obstacle_id=-1;
-	//////cout<<"Goal Position\n"<<goal.x<<" "<<goal.y<<endl;
+	////////cout<<"Goal Position\n"<<goal.x<<" "<<goal.y<<endl;
 	cvCircle(image, cvPoint(goal.x+500, goal.y+500), 10, cvScalar(255,0,255)); //Initialising the goal point and painting it.
 	tree.cleartree(); //Clearing all previous data from the graphs....i.e. initialises the graph for a fresh start.
 	for(int i = 0; i < NO_OF_OBSTACLES; i++)
@@ -252,7 +253,7 @@ PathReturns Path::path_return(PathStructure ps)
 		obstacle[i].y = ps.absObstacles[i].y;
 		obstacle[i].obstacle_radius=OBSTACLE_RADIUS;
 		obstacle[i].type= CIRCLE;
-		//////cout<<"Obstacle Position(s)\n"<<obstacle[i].x<<" "<<obstacle[i].y<<endl;
+		////////cout<<"Obstacle Position(s)\n"<<obstacle[i].x<<" "<<obstacle[i].y<<endl;
 		cvCircle(image, cvPoint(obstacle[i].x+500,obstacle[i].y+500), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	} //Initialising the obstacles and painting them.
 	cvCircle(image, cvPoint(ball.x+500, ball.y+500), ENCIRCLE_THRESHOLD , cvScalar(0,130,70));
@@ -339,14 +340,14 @@ PathReturns Path::path_return(PathStructure ps)
 
 	if(car2pol(ball.x,ball.y) <= KICKDIST)
 	{
-		cout<<"\npath returning \n\nDOKICK\n\n " ;
+		//cout<<"\npath returning \n\nDOKICK\n\n " ;
 
 		return DOKICK;
 	}
 	//ENCIRCLE_THRES is always > KICKDIST
 	else if(car2pol(ball.x,ball.y) <= ENCIRCLE_THRESHOLD)
 	{
-		cout<<"\n\nless than encircel threshold......\n\n";
+		//cout<<"\n\nless than encircel threshold......\n\n";
 		//ballgoalangle=>angle made by line joining acyut and ball with line joining ball and goal
 		tolerance_angle=rad2deg(atan(BADANGLEDIST/sqrt(pow(ball.x,2)+pow(ball.y,2)))); //dyanmically generating tolerance angle for orientation purposes(i.e facing the ball before orienting)
 		double ballangle=rad2deg(atan2(ball.y,ball.x));
@@ -356,14 +357,14 @@ PathReturns Path::path_return(PathStructure ps)
 			{
 				next.theta=(abs(ballangle)-tolerance_angle)*-1; //-1 is due to the ip convention and walk convention
 				next.r=0;
-				cout<<"\npath returning \n\nDOWALK\n\n  theta "<<next.theta<< " distance "<<next.r<<endl;
+				//cout<<"\npath returning \n\nDOWALK\n\n  theta "<<next.theta<< " distance "<<next.r<<endl;
 				return DOWALK;
 			}
 			else
 			{
 				next.theta=(-(abs(ballangle)-tolerance_angle))*-1;
 				next.r=0;
-				cout<<"\npath returning \n\nDOWALK\n\n  theta "<<next.theta<< " distance "<<next.r<<endl;
+				//cout<<"\npath returning \n\nDOWALK\n\n  theta "<<next.theta<< " distance "<<next.r<<endl;
 				return DOWALK;
 			}
 		} // acyut is now facing the ball .... ready to encircle
@@ -372,17 +373,17 @@ PathReturns Path::path_return(PathStructure ps)
 		double c=car2pol(goal.x,goal.y);
 		double ballgoalangle=180- rad2deg(acos((a*a+b*b-c*c)/(2*a*b))); //using cosine rule to get angle required to encircle ( for understanding refer encircleangleidea.jpg in source)
 		NextEncircleAngle=ballgoalangle*-1; // the -1 is due to ip convention and walk convention.
-		cout<<"\npath returning \n\nDOENCIRCLE\n\n  theta "<<NextEncircleAngle<<endl;
+		//cout<<"\npath returning \n\nDOENCIRCLE\n\n  theta "<<NextEncircleAngle<<endl;
 		return DOENCIRCLE; //encircle
 	}
 	else if(car2pol(ball.x,ball.y) <= 2*ORIENTATION_RADIUS) //if i am inside the orientation circle while on the path then follow straight till u get to the encircle radius
 	{
 		//cvWaitKey();
-		cout<<"\n\ninside 2*orientaion radius\n\n";
+		//cout<<"\n\ninside 2*orientaion radius\n\n";
 		double ballangle=rad2deg(atan2(ball.y,ball.x));
 		next.r=car2pol(ball.x,ball.y);
 		next.theta=ballangle;
-		cout<<"\npath returning \n\nDOWALK\n\n  theta "<<next.theta<< " distance "<<next.r<<endl;
+		//cout<<"\npath returning \n\nDOWALK\n\n  theta "<<next.theta<< " distance "<<next.r<<endl;
 		return DOWALK;
 	}
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -401,7 +402,7 @@ PathReturns Path::path_return(PathStructure ps)
 			{
 				if(tree.is_edge(n1_index, n2_index))
 				{
-					cout<<"\nanalysing edges "<<n1_index<<" "<<n2_index<<endl;
+					//cout<<"\nanalysing edges "<<n1_index<<" "<<n2_index<<endl;
 					Point n1 = tree[n1_index];
 					Point n2 = tree[n2_index];
 
@@ -582,30 +583,33 @@ PathReturns Path::path_return(PathStructure ps)
 	{
 		if(tree.is_edge(i,1)) //i is the point connected to 1
 		{
-			cout<<"\n\n\n\n\n\n\n\n\n";
-			cout<<" node "<<i<<" is connected to 1\n";
+			//cout<<"\n\n\n\n\n\n\n\n\n";
+			//cout<<" node "<<i<<" is connected to 1\n";
 			for(std::size_t j =0 ; j < tree.size() ; j++)
 			{
 				if(tree.is_edge(j,i)) //j is the point connected to i
 				{
-					cout<<"node "<<j<< " is further connected to this "<<i<<endl;
-					cout<<"increasing the connected count \n";
+					//cout<<"node "<<j<< " is further connected to this "<<i<<endl;
+					//cout<<"increasing the connected count \n";
 					to_be_removed[i].connected_count+=1;
 					if(!side_check_orientation(tree[j],tree[i]))
 					{
-						cout<<"side check orientation passed increasing the remove conunt\n";
+						//cout<<"side check orientation passed increasing the remove conunt\n";
 						to_be_removed[i].remove_count+=1;
 					}
 					else
-						cout<<"oops side check orientaion failed for the nodes "<<i<<" and "<<j<<endl;
+					{
+						//cout<<"oops side check orientaion failed for the nodes "<<i<<" and "<<j<<endl;
+					}
+						
 				}
 
 			}
 		}
 	}
-	cout<<"\nto be removed remove count "<<to_be_removed[11].remove_count<<" "<<"to be removed connected count "<<to_be_removed[11].connected_count<<endl;
+	//cout<<"\nto be removed remove count "<<to_be_removed[11].remove_count<<" "<<"to be removed connected count "<<to_be_removed[11].connected_count<<endl;
 #endif
-
+	// printf("PR line 612\n");
 #ifdef NEWDELETION
 	for(std::size_t i=2;i<tree.size();i++) //code for final orientation i.e deleting the node from whose side we do not orient.
 	{
@@ -625,7 +629,7 @@ PathReturns Path::path_return(PathStructure ps)
 		if(to_be_removed[i].remove_count==to_be_removed[i].connected_count && to_be_removed[i].remove_count!=0)
 		{
 			tree.remove_edge(i,1);
-			cout<<"\nremoving edge  "<<i<<endl;;
+			//cout<<"\nremoving edge  "<<i<<endl;;
 		}
 	}
 	for(size_t n1_index=0;n1_index<tree.size(); n1_index++)
@@ -640,11 +644,14 @@ PathReturns Path::path_return(PathStructure ps)
 			}
 		}
 	}
-	//////cout<<"\nCalling Dijkstras\n";
+
+	////////cout<<"\nCalling Dijkstras\n";
 	tree.dijkstra();
+	
 	std::size_t a,b;
 	a=1;
-	//////cout<<"Before return path point 1";
+	////////cout<<"Before return path point 1";
+	
 	b=tree.returnPathPoint(1);
 	while(b!=0)
 	{
@@ -669,16 +676,17 @@ PathReturns Path::path_return(PathStructure ps)
 		double m_prime= (tree[a].y - obstacle[tree[a].obstacle_id].y)/(tree[a].x - obstacle[tree[a].obstacle_id].x);
 		double m=-1/m_prime;
 		next.theta=rad2deg(atan(m));
-		//////cout<<"\nnext.r "<<next.r;
-		//////cout<<"\nnext.theta "<<next.theta;
+		////////cout<<"\nnext.r "<<next.r;
+		////////cout<<"\nnext.theta "<<next.theta;
 	}
 	else
 	{
 		next.r = sqrt(pow((tree[a].x-tree[0].x),2)+pow((tree[a].y-tree[0].y),2));
 		next.theta=rad2deg((atan2((tree[a].y-tree[0].y),(tree[a].x-tree[0].x))));
-		//////cout<<"\nnext.r "<<next.r;
-		//////cout<<"\nnext.theta "<<next.theta;
+		////////cout<<"\nnext.r "<<next.r;
+		////////cout<<"\nnext.theta "<<next.theta;
 	}
+	
 	// std::size_t init=1;
 	// curvearray_index[0]=init;
 	// len_curvearray_index=1;
@@ -690,7 +698,7 @@ PathReturns Path::path_return(PathStructure ps)
 	// len_curvearray_index++;
 	// for(int i=0;i<len_curvearray_index;i++)
 	// {
-	// 	cout<<"curvearray_index "<<curvearray_index[i]<<"\n";
+	// 	//cout<<"curvearray_index "<<curvearray_index[i]<<"\n";
 	// }
 
 
@@ -712,20 +720,20 @@ PathReturns Path::path_return(PathStructure ps)
 	std::size_t c,d;
 	d=1;
 	curve[0]=1;
-	cout<<curve[0]<<"\t\t";
+	//cout<<curve[0]<<"\t\t";
 	for(int i=0;i<tree.size();i++)
 	{
 		curve[i+1]=tree.returnPathPoint(d);
 		d=curve[i+1];
-		cout<<curve[i+1]<<"\t\t";
+		//cout<<curve[i+1]<<"\t\t";
 		if(d==0)
 		{
 			len_curve=i+2;
 			break;
 		}
 	}
-	//cout<<"\nlen_curve: "<<len_curve<<"\n";
-	cout<<endl;
+	////cout<<"\nlen_curve: "<<len_curve<<"\n";
+	//cout<<endl;
 	std::size_t tmp=0;
 	len_curvenext=0;
 	for(int i=0,j=len_curve-1;i<len_curve/2,j>=len_curve/2;i++,j--)
@@ -737,61 +745,61 @@ PathReturns Path::path_return(PathStructure ps)
 
 	for(int i=0,j=0;i<len_curve-1;i++)
 	{
-		cout<<"\n.............................\nanalysing "<<curve[i]<<" "<<curve[i+1]<<endl<<"...\n";
+		//cout<<"\n.............................\nanalysing "<<curve[i]<<" "<<curve[i+1]<<endl<<"...\n";
 		if(!tree.is_onCircle(curve[i],curve[i+1]))
 		{
-			cout<<"straight line\n";
+			//cout<<"straight line\n";
 			curvenext[j].r=sqrt(pow((tree[curve[i+1]].x-tree[curve[i]].x),2)+pow((tree[curve[i+1]].y-tree[curve[i]].y),2));
 			curvenext[j].theta=rad2deg((atan2((tree[curve[i+1]].y-tree[curve[i]].y),(tree[curve[i+1]].x-tree[curve[i]].x))));
-			cout<<"curvenext["<<j<<"].r "<<curvenext[j].r<<endl;
-			cout<<"curvenext["<<j<<"].theta "<<curvenext[j].theta<<endl;
+			//cout<<"curvenext["<<j<<"].r "<<curvenext[j].r<<endl;
+			//cout<<"curvenext["<<j<<"].theta "<<curvenext[j].theta<<endl;
 			j++;
 
-			//cout<<"\nlen_curvenext "<<len_curvenext++;
+			////cout<<"\nlen_curvenext "<<len_curvenext++;
 		}
 
 		else
 		{
-			cout<<"on curve \n";
+			//cout<<"on curve \n";
 			sticks_r=STEPLENGTH;
-			cout<<"\nsticks_r "<<sticks_r<<endl;
+			//cout<<"\nsticks_r "<<sticks_r<<endl;
 			sticks_theta=2*asin(STEPLENGTH/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));
-			cout<<"\nsticks_theta "<<sticks_theta<<endl;
+			//cout<<"\nsticks_theta "<<sticks_theta<<endl;
 			b=sqrt(pow((tree[curve[i+1]].x-tree[curve[i]].x),2)+pow((tree[curve[i+1]].y-tree[curve[i]].y),2));
 			no_of_sticks=(int)2/sticks_theta*asin(b/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));
-			cout<<"\nno_of_sticks "<<no_of_sticks<<endl;
+			//cout<<"\nno_of_sticks "<<no_of_sticks<<endl;
 			while(no_of_sticks--)
 			{
 				curvenext[j].r=sticks_r;
-				cout<<"curvenext["<<j<<"].r "<<curvenext[j].r<<endl;
+				//cout<<"curvenext["<<j<<"].r "<<curvenext[j].r<<endl;
 				if(((atan2((tree[curve[i+1]].y-tree[curve[i]].y),(tree[curve[i+1]].x-tree[curve[i]].x))))>0)
 				{
 					curvenext[j].theta=rad2deg(sticks_theta);
-					cout<<"\ncurvenext[j].theta "<<curvenext[j].theta<<endl;;
+					//cout<<"\ncurvenext[j].theta "<<curvenext[j].theta<<endl;;
 				}
 				else
 				{
 					curvenext[j].theta=rad2deg(-sticks_theta);
-					cout<<"\ncurvenext[j].theta "<<curvenext[j].theta<<endl;;
+					//cout<<"\ncurvenext[j].theta "<<curvenext[j].theta<<endl;;
 				}
-				cout<<"curvenext["<<j<<"].theta "<<curvenext[j].theta<<endl;
+				//cout<<"curvenext["<<j<<"].theta "<<curvenext[j].theta<<endl;
 				j++;
 				len_curvenext++;
 			}
 		}
 	 }
-	cout<<"\nlen_curvenext "<<len_curvenext;
-	cout<<"\ncurvenext.r\n";
+	//cout<<"\nlen_curvenext "<<len_curvenext;
+	//cout<<"\ncurvenext.r\n";
 	for(int i=0;i<len_curvenext;i++)
 	{
-		cout<<curvenext[i].r<<"\t";
+		//cout<<curvenext[i].r<<"\t";
 	}
-	cout<<"\ncurvenext.theta\n";
+	//cout<<"\ncurvenext.theta\n";
 	for(int i=0;i<len_curvenext;i++)
 	{
-		cout<<curvenext[i].theta<<"\t";
+		//cout<<curvenext[i].theta<<"\t";
 	}
-	//cout<<"\ncurvearray normally..\n";
+	////cout<<"\ncurvearray normally..\n";
 
 
 #ifdef NEWENCIRCLING
@@ -803,20 +811,20 @@ PathReturns Path::path_return(PathStructure ps)
 		{
 			curvearray[i].r=curvenext[i].r*10;
 			curvearray[i].theta=rad2deg(curvenext[i].theta);
-			cout<<curvearray[i].r<<"\t"<<curvearray[i].theta<<"\n";
+			//cout<<curvearray[i].r<<"\t"<<curvearray[i].theta<<"\n";
 		}
 
 	}
 	if(car2pol(ball.x,ball.y)<2*ORIENTATION_RADIUS)
 	{
 		//usleep(5000000);
-		cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n..............calling DOORIENT........................\n\n\n\n\n\n\n\n\n\n\n\n\n";
-		cout<<"\ncurvearray that is passed \n";
+		//cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n..............calling DOORIENT........................\n\n\n\n\n\n\n\n\n\n\n\n\n";
+		//cout<<"\ncurvearray that is passed \n";
 		for(int i=0;i<len_curvearray;i++)
 		{
-			cout<<curvearray[i].r<<"\t"<<curvearray[i].theta<<"\n";
+			//cout<<curvearray[i].r<<"\t"<<curvearray[i].theta<<"\n";
 		}
-		cout<<"\n\n\n\n\n\n\n\n";
+		//cout<<"\n\n\n\n\n\n\n\n";
 		//cvWaitKey();
 		return DOORIENT;
 	}
@@ -838,15 +846,14 @@ PathReturns Path::path_return(PathStructure ps)
 		tree.no_path_flag=0;
 		return NOPATH;
 	}
-	cout<<"\npath returning \n\nDOWALK\n\n  theta "<<next.theta<< " distance "<<next.r<<endl;
+	//cout<<"\npath returning \n\nDOWALK\n\n  theta "<<next.theta<< " distance "<<next.r<<endl;
 	cvReleaseImage(&image);
     return DOWALK;
 }
 
 void Path::updatePathPacket()
 {
-	if(1) //because pranet likes a perfect code.ffffffff
-	{
+	
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
@@ -864,13 +871,13 @@ void Path::updatePathPacket()
 			b=tree.returnPathPoint(b);
 			pathpackvar.no_of_points=i;
 		}
-		////////cout<<"after for in update path packet\n";
+		//////////cout<<"after for in update path packet\n";
 		if(pathpackvar.no_of_points<29)
 		{
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].x=-1;
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
 		}
-	}
+	
 	
 
 }

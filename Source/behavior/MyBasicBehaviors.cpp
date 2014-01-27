@@ -30,10 +30,10 @@ void BasicBehaviorInitialize::execute()
 }
 void BasicBehaviorUpdate::execute()
 {
-     
+        
         #ifdef IP_IS_ON
         // p.hdmtr.update();
-        printf("Entered update\n");
+        // printf("Entered update\n");
         int i=0;
         // int e=1;
         // while(e)
@@ -60,7 +60,7 @@ void BasicBehaviorUpdate::execute()
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
         p.loc.doLocalize(*p.fd, p.mm, p.capture, getImuAngle());  
         p.conf = p.loc.confidence();
-        printf("localization updated to %lf\n",p.conf);
+        // printf("localization updated to %lf\n",p.conf);
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
         cvWaitKey(50);
@@ -76,7 +76,7 @@ void BasicBehaviorLocalize::execute()
         
         #ifdef IP_IS_ON
         printf("Confidence %lf, localizing\n",p.conf);
-        int i=50;
+        int i=10;
         while(i--)
         {
         
@@ -143,31 +143,35 @@ void BasicBehaviorMakePath::execute()
     // {
     //     printf("Passed-->> obstacle %d : %lf %lf\n", i, p.pathstr.absObstacles[i].x, p.pathstr.absObstacles[i].y);
     // }
+    
     #ifdef IP_IS_ON
     AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
     double tempx=goalcoords.x-p.loc.selfX;
     double tempy=goalcoords.y-p.loc.selfY;
     p.pathstr.goal.x= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
     p.pathstr.goal.y= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
-    printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
+    // printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
 
     //printf("goal coords y:%lf\n",pathstr.goal.x);
     p.pathstr.ball.x=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));
     p.pathstr.ball.y=p.fd->ball.r*sin(deg2rad(p.fd->ball.theta));
     
-    printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
-    printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
+    // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
+    // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
+
     p.pathreturn=p.path.path_return(p.pathstr);
     
-    printf("Path Made\n");
+    // printf("Path Made\n");
     #endif
 }
 
 void BasicBehaviorPathToWalk::execute()
 {
         #ifdef IP_IS_ON
+    
         p.path.updatePathPacket();
-        printf("Path updated\n");
+        
+        // printf("Path updated\n");
         #endif
 
     #ifndef IP_IS_ON
@@ -188,7 +192,7 @@ void BasicBehaviorPathToWalk::execute()
 void BasicBehaviorFindBall::execute()
 {    
     #ifdef IP_IS_ON    
-    printf("FINDING THE FUCKING BALL\n");
+    // printf("FINDING THE FUCKING BALL\n");
     p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);    
     #endif
 

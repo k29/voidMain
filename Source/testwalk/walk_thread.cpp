@@ -77,33 +77,40 @@ WalkPacket convertPathPacket(PathPacket p)
 	return w;
 }
 
-
+void doquitWalk()
+{
+	// walk.move(0.00,0.00);
+	// printf("Walk stopped");
+	// exit(0);
+};
 
 void* walk_thread(void*)
 {
 	
-	
-
 	Communication comm;
 	testBot bot(&comm);
-	Walk walk(&bot);
+	Walk walk(&bot);	
+
 	
+	
+	// (void) signal(SIGINT,doquitWalk);
+
+
 	PathPacket pathpackvarlocal;
 	WalkPacket walkpacket;
 	Coords coords;
 	walkpacket.no_of_points=30;
 	int fps=30.0;
-	int executed=0;
+	int executed=1;
 	while (1)
 	{
 			// printf("Size is %d\n",pathpackvar.no_of_points);
-
 			pthread_mutex_lock(&mutex_pathpacket);
 					if(pathpackvar.updated==1)
 						{
 							walkpacket=convertPathPacket(pathpackvar);
 							pathpackvar.updated=0;
-							executed=1;
+							executed=0;
 						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
 
@@ -117,12 +124,15 @@ void* walk_thread(void*)
 							walkpacket=convertPathPacket(pathpackvar);
 							i=0;
 							pathpackvar.updated=0;
-							executed=1;
+							executed=0;
 						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
 			// #ifndef ALL_PRINTING_OFF
+			if(walkpacket.finalPath[i].r>0.05)
+			{
 			printf("Size is %d\n",pathpackvar.no_of_points);
 			printf("Path sent signal %f %f\n",walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
+			}
 			// #endif
 			if(!executed)
 				{
@@ -130,6 +140,7 @@ void* walk_thread(void*)
 					executed=1;
 				}
 			
+
 		}
 
 	}

@@ -19,3 +19,4 @@
 
 void* walk_thread(void*);
 WalkPacket convertPathPacket(PathPacket p);
+void doquitWalk();

@@ -33,9 +33,16 @@ WalkStructure walkstr;
 RoboCupGameControlData GCData;
 PathPacket pathpackvar;
 
+void doquit(int para)
+{
+	doquitWalk();
+	printf("Ctrl+cpressed\n");
+	exit(0);
+};
+
 int main(void)
 {	
-	
+	// (void) signal(SIGINT,doquit);
 
 	#ifdef SWITCH_IS_ON
         pthread_create(&thread_id_switch,NULL,switchupdate,NULL);

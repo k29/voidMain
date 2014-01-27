@@ -72,7 +72,7 @@ void Walk::move(float walkr,float walktheta)
 		}
 		
 		
-
+		if(deltaR>0.00001)
 		this->sync_write_data_motor(tbBACKWARD,512);
 		
 		usleep((int)(deltaR));

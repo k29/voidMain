@@ -19,7 +19,7 @@ int main()
 	// while(1)
 	// {
 	double pi=acos(-1);
-		walk.move(100.0,-pi/4);
+		walk.move(10000.0,-pi/4);
 
 	// 	cvNamedWindow("w");
 	// 	char c= cvWaitKey(10);

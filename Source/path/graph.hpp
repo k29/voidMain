@@ -283,11 +283,11 @@ namespace graph_implementation
 	template <class Item>
 	void Graph<Item> :: printPath(std::size_t node)
 	{
-		std::cout<<"1\n";
+		// std::cout<<"1\n";
 		while(node!=0)
 		{
 			//////////std::cout<<"genorai\n";
-			std::cout<<""<<predecessor[node]<<"\n";
+			// std::cout<<""<<predecessor[node]<<"\n";
 			////////std::cout<<"\n";	
 			node=predecessor[node];
 		}
