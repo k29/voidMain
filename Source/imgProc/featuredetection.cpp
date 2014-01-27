@@ -716,15 +716,17 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     int rowsum[IMAGE_HEIGHT/4];
     IplImage* binary_image = cvCreateImage(cvSize(IMAGE_WIDTH/4, IMAGE_HEIGHT/4), 8, 1);
     IplImage* prob_image = cvCreateImage(cvSize(IMAGE_WIDTH/4, IMAGE_HEIGHT/4), 8, 1);
-    
+    cvZero(binary_image);
+    cvZero(prob_image);
+
     cvZero(seg_white);
     cvZero(seg_black);
     cvZero(seg_green);
     cvZero(seg_white_count);
  //New Begin
-    const int tmin = 22;
-    const int trow = IMAGE_WIDTH*20/4;
-    const int tsum = 16*18;//30*18;//36*18;
+    const int tmin = 30;
+    const int trow = IMAGE_WIDTH*4.5;
+    const int tsum = 36*18;//30*18;//36*18;
     for(int y = 0; y < IMAGE_HEIGHT/4; y++)
     {
         rowsum[y] = 0;
@@ -741,14 +743,14 @@ void FeatureDetection::getInGreen(CamCapture &cam)
                 int ty = y*4 + yy;
                 if(cam.isGreen_small(tx, ty))
                     gcount++;
-                // if(cam.isWhite_small(tx, ty))
-                //  wcount++;
-                // if(cam.isBlack_small(tx, ty))
-                //  bcount++;
-                // if(cam.isRed_small(tx, ty))
-                //  rcount++;
+                if(cam.isWhite_small(tx, ty))
+                 wcount++;
+                if(cam.isBlack_small(tx, ty))
+                 bcount++;
+                if(cam.isRed_small(tx, ty))
+                 rcount++;
             }
-            returnPixel1C(prob_image, x, y) = wcount + bcount; //+ rcount*8;
+            returnPixel1C(prob_image, x, y) = wcount + bcount + rcount*16 + gcount*8;
             if(gcount > 4)
                 returnPixel1C(prob_image, x, y) += gcount*2;
             if(wcount)
@@ -757,19 +759,20 @@ void FeatureDetection::getInGreen(CamCapture &cam)
                     returnPixel1C(seg_white_count, x, y) = 255;
                 else    
                     returnPixel1C(seg_white_count, x, y) = (wcount*16)%256;
-                returnPixel1C(seg_white, x, y) = 255;
+                if(wcount>4)
+                    returnPixel1C(seg_white, x, y) = 255;
             }
-            else if(gcount>4)
+            if(gcount>4)
             {
                 returnPixel1C(seg_green, x, y) = 255;
             }
-            else if(bcount > 4)
+            if(bcount > 4)
             {
                 returnPixel1C(seg_black, x, y) = 255;
             }
-            else if(rcount)
+            if(rcount)
             {
-            
+                returnPixel1C(seg_red, x, y) = 255;
             }
             else
             {
@@ -784,6 +787,9 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     {
         for(int x = 0; x < IMAGE_WIDTH/4; x++)
         {
+            //check if point inside fisheye image
+            if((x-IMAGE_WIDTH/8)*(x-IMAGE_WIDTH/8) + (-y+IMAGE_HEIGHT/8)*(-y+IMAGE_HEIGHT/8) > 120*120/16)  //radius of image is 120 pixels
+                continue;
             //for each pixel, first check tmin
             if(pixelColor1C(prob_image, x, y) < tmin)
             {
@@ -802,9 +808,9 @@ void FeatureDetection::getInGreen(CamCapture &cam)
             int sum = 0;
             for(int i = -4; i <5; i++)
             {
-                for(int j = -8; j < -4; j++)
+                for(int j = -4; j < 5; j++)
                 {
-                    if((x + i > 0)&&(y + j > 0)&&(x + i < IMAGE_WIDTH/4))
+                    if((x + i > 0)&&(y + j > 0)&&(x + i < IMAGE_WIDTH/4)&&(y + j < IMAGE_HEIGHT/4))
                     {
                         sum = sum + pixelColor1C(prob_image, x +i, y+j);
                     }
@@ -825,47 +831,57 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     }
 
 
-
     IplImage* histogram = cvCreateImage(cvSize(IMAGE_WIDTH/4, 1), 8, 1);
 
     for(int x = 0; x < IMAGE_WIDTH/4; x++)
     {
-        int y;
+        int y=0, count = 0;
         for(y = 0; y < IMAGE_HEIGHT/4; y++)
         {
             if(pixelColor1C(binary_image, x, y))
-                break;
+            {
+                count++;
+                if(count == 4)
+                    break;
+            }
+            else
+                count = 0;
         }
-        returnPixel1C(histogram, x, 0) = y;
+        if(count == 4)
+            returnPixel1C(histogram, x, 0) = y;
+        else
+            returnPixel1C(histogram, x, 0) = IMAGE_HEIGHT/4 - 1;
     }
 
 
-//  cvSmooth(histogram, histogram, CV_GAUSSIAN, 3);
+    cvSmooth(histogram, histogram, CV_GAUSSIAN, 3);
     cvSmooth(histogram, histogram, CV_MEDIAN, 15);
 
-    for(int x = 0; x < IMAGE_WIDTH/4; x++)
-    {
-        // for(int y = 0; y < returnPixel1C(histogram, x, 0); y++)
-        // {
-            // returnPixel1C(seg_white, x, y) = 0;
-            // returnPixel1C(seg_black, x, y) = 0;
-            // returnPixel1C(seg_white_count, x, y) = 0;
+    // for(int x = 0; x < IMAGE_WIDTH/4; x++)
+    // {
+    //     // for(int y = 0; y < returnPixel1C(histogram, x, 0); y++)
+    //     // {
+    //         // returnPixel1C(seg_white, x, y) = 0;
+    //         // returnPixel1C(seg_black, x, y) = 0;
+    //         // returnPixel1C(seg_white_count, x, y) = 0;
             
-        // }
+    //     // }
 
       
-        // Uncomment this to see histogram boundary in seg_black
-        // Caution: uncommenting this will cause segmentation faults in some cases! Uncomment only when testing
-        int temp =  returnPixel1C(histogram, x, 0);
-        if(temp > 1)
-          returnPixel1C(seg_black, x,(int) (temp-1)) = 127;
-    }
+    //     // Uncomment this to see histogram boundary in seg_black
+    //     // Caution: uncommenting this will cause segmentation faults in some cases! Uncomment only when testing
+    //     int temp =  returnPixel1C(histogram, x, 0);
+    //     if(temp > 1)
+    //       returnPixel1C(seg_black, x,(int) (temp-1)) = 127;
+    // }
 
+    // cvShowImage("boundary", seg_black);
+    
     for(int x = 0; x < IMAGE_WIDTH; x++)
     {
         for(int y = 0; y < returnPixel1C(histogram, x/4, 0)*4; y++)
         {
-            // returnPixel1C(seg_red, x, y) = 0;
+            returnPixel1C(seg_red, x, y) = 0;
         }
     }
 

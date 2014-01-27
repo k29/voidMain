@@ -93,6 +93,7 @@ void* walk_thread(void*)
 	Coords coords;
 	walkpacket.no_of_points=30;
 	int fps=30.0;
+	int executed=0;
 	while (1)
 	{
 			// printf("Size is %d\n",pathpackvar.no_of_points);
@@ -102,6 +103,7 @@ void* walk_thread(void*)
 						{
 							walkpacket=convertPathPacket(pathpackvar);
 							pathpackvar.updated=0;
+							executed=1;
 						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
 
@@ -115,13 +117,18 @@ void* walk_thread(void*)
 							walkpacket=convertPathPacket(pathpackvar);
 							i=0;
 							pathpackvar.updated=0;
+							executed=1;
 						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
 			// #ifndef ALL_PRINTING_OFF
 			printf("Size is %d\n",pathpackvar.no_of_points);
 			printf("Path sent signal %f %f\n",walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 			// #endif
-			walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
+			if(!executed)
+				{
+					walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
+					executed=1;
+				}
 			
 		}
 
