@@ -716,7 +716,9 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     int rowsum[IMAGE_HEIGHT/4];
     IplImage* binary_image = cvCreateImage(cvSize(IMAGE_WIDTH/4, IMAGE_HEIGHT/4), 8, 1);
     IplImage* prob_image = cvCreateImage(cvSize(IMAGE_WIDTH/4, IMAGE_HEIGHT/4), 8, 1);
-    
+    cvZero(binary_image);
+    cvZero(prob_image);
+
     cvZero(seg_white);
     cvZero(seg_black);
     cvZero(seg_green);
@@ -829,7 +831,6 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     }
 
 
-
     IplImage* histogram = cvCreateImage(cvSize(IMAGE_WIDTH/4, 1), 8, 1);
 
     for(int x = 0; x < IMAGE_WIDTH/4; x++)
@@ -854,7 +855,7 @@ void FeatureDetection::getInGreen(CamCapture &cam)
 
 
     cvSmooth(histogram, histogram, CV_GAUSSIAN, 3);
-    cvSmooth(histogram, histogram, CV_MEDIAN, 3);
+    cvSmooth(histogram, histogram, CV_MEDIAN, 15);
 
     // for(int x = 0; x < IMAGE_WIDTH/4; x++)
     // {
@@ -874,6 +875,8 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     //       returnPixel1C(seg_black, x,(int) (temp-1)) = 127;
     // }
 
+    // cvShowImage("boundary", seg_black);
+    
     for(int x = 0; x < IMAGE_WIDTH; x++)
     {
         for(int y = 0; y < returnPixel1C(histogram, x/4, 0)*4; y++)
