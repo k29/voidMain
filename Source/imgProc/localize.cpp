@@ -553,12 +553,12 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam
 
 	CvFont font;
     cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
-    char A[100] = "  POSITION : ";
-    char B[100] = "  ANGLE : ";
+    char A[100] = "POSITION : ";
+    char B[100] = "ANGLE : ";
     char C[100];
     char D[100];
     sprintf(D,"CONFIDENCE : %lf",confidence());
-    sprintf(C, "       Y : %lf", selfY);
+    sprintf(C, "       Y: %lf", selfY);
     ostringstream s1;
     s1<< "X: " << selfX;
     const std::string tmp1 = s1.str();
