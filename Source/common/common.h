@@ -2,12 +2,19 @@
 #define COMMONN_H
 
 #include <pthread.h>
-#include "../walk/commondefswalk.h"
 #include "../xsens/imu.h" 
 #include "../gameController/gamecontrollerfunc.h"
 #include "../gameController/gamecontrollerobj.h"
 #include "opencv2/opencv.hpp"
 #include "modes.h"
+
+#ifdef SEGWAY_MODE
+#include "../testwalk/commondefswalk.h"
+#endif
+#ifndef SEGWAY_MODE
+#include "../walk/commondefswalk.h"
+#endif
+
 #define MYPORT "3838"
 
 int getImuAngle();
@@ -41,6 +48,7 @@ extern PathPacket pathpackvar;
 
 extern Imu imu; 
 
-extern int IMU_INITIAL_ANGLE;
+extern double IMU_INITIAL_ANGLE;
 
+extern int FACE_FOUND;
 #endif

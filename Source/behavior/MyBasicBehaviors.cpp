@@ -30,10 +30,10 @@ void BasicBehaviorInitialize::execute()
 }
 void BasicBehaviorUpdate::execute()
 {
-     
+        
         #ifdef IP_IS_ON
         // p.hdmtr.update();
-        printf("Entered update\n");
+        // printf("Entered update\n");
         int i=0;
         // int e=1;
         // while(e)
@@ -58,12 +58,12 @@ void BasicBehaviorUpdate::execute()
         p.capture.getImage();
         // usleep(500000);    
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
-        p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
+        p.loc.doLocalize(*p.fd, p.mm, p.capture, getImuAngle());  
         p.conf = p.loc.confidence();
-        printf("localization updated to %lf\n",p.conf);
+        // printf("localization updated to %lf\n",p.conf);
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
-        cvWaitKey(5);
+        cvWaitKey(50);
         #endif
 
         #ifndef IP_IS_ON
@@ -76,7 +76,7 @@ void BasicBehaviorLocalize::execute()
         
         #ifdef IP_IS_ON
         printf("Confidence %lf, localizing\n",p.conf);
-        int i=50000000;
+        int i=10;
         while(i--)
         {
         
@@ -91,14 +91,17 @@ void BasicBehaviorLocalize::execute()
         //     printf("worked\n");
         //     continue;
         // }
+            // printf("After capture\n");
 
         p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
-        p.camcont->search(p.hdmtr);
-        p.loc.doLocalize(*p.fd, p.mm, getImuAngle()); 
+        // printf("After getLandmarks\n");
+        // p.camcont->search(p.hdmtr);
+        p.loc.doLocalize(*p.fd, p.mm, p.capture, getImuAngle()); 
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
     
         p.conf = p.loc.confidence();
+        // printf("%lf\n, %d", p.conf, i);
         cvWaitKey(5);
         }
         #endif
@@ -129,7 +132,7 @@ void BasicBehaviorMakePath::execute()
         // p.pathstr.absObstacles[1].y=100;
         // p.pathstr.absObstacles[2].x=-40;
         // p.pathstr.absObstacles[2].y=-80;
-
+    // printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     //     for(int i=0;i<fd.o.size();i++)//assuming right positive and left neagative for theta
     // {
     //     p.pathstr.absObstacles[i].x=(p.fd->o[i].distance)*cos(deg2rad(p.fd->o[i].angle));
@@ -140,33 +143,35 @@ void BasicBehaviorMakePath::execute()
     // {
     //     printf("Passed-->> obstacle %d : %lf %lf\n", i, p.pathstr.absObstacles[i].x, p.pathstr.absObstacles[i].y);
     // }
+    
     #ifdef IP_IS_ON
     AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
     double tempx=goalcoords.x-p.loc.selfX;
     double tempy=goalcoords.y-p.loc.selfY;
     p.pathstr.goal.x= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
     p.pathstr.goal.y= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
-    printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
+    // printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
 
     //printf("goal coords y:%lf\n",pathstr.goal.x);
     p.pathstr.ball.x=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));
     p.pathstr.ball.y=p.fd->ball.r*sin(deg2rad(p.fd->ball.theta));
     
-    printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
-    printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
+    // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
+    // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
+
     p.pathreturn=p.path.path_return(p.pathstr);
     
-    printf("Path Made\n");
+    // printf("Path Made\n");
     #endif
-
-   
 }
 
 void BasicBehaviorPathToWalk::execute()
 {
         #ifdef IP_IS_ON
+    
         p.path.updatePathPacket();
-        printf("Path updated\n");
+        
+        // printf("Path updated\n");
         #endif
 
     #ifndef IP_IS_ON
@@ -187,8 +192,8 @@ void BasicBehaviorPathToWalk::execute()
 void BasicBehaviorFindBall::execute()
 {    
     #ifdef IP_IS_ON    
-    printf("FINDING THE FUCKING BALL\n");
-    p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);       
+    // printf("FINDING THE FUCKING BALL\n");
+    p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);    
     #endif
 
     #ifndef IP_IS_ON

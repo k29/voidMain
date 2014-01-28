@@ -2,9 +2,15 @@
 #include <time.h>
 #include <cstdio>
 #include "./Source/common/common.h"
-#include "./Source/walk/walk_thread.h"
 #include "./Source/gameController/gamecontrollerfunc.h"
 #include "./Source/switch/acyut_gpio.h"
+
+#ifdef SEGWAY_MODE
+#include "./Source/testwalk/walk_thread.h"
+#endif
+#ifndef SEGWAY_MODE
+#include "./Source/walk/walk_thread.h"
+#endif
 
 using namespace std;
 
@@ -20,21 +26,30 @@ pthread_mutex_t mutex_pathpacket=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_switch=PTHREAD_MUTEX_INITIALIZER;
 
 Imu imu;
-int IMU_INITIAL_ANGLE;
+double IMU_INITIAL_ANGLE;
+int FACE_FOUND; // BGM Haar
 WalkStructure prevwalkstr;
 WalkStructure walkstr;
 RoboCupGameControlData GCData;
 PathPacket pathpackvar;
 
+void doquit(int para)
+{
+	doquitWalk();
+	printf("Ctrl+cpressed\n");
+	exit(0);
+};
+
 int main(void)
 {	
-	
+	// (void) signal(SIGINT,doquit);
 
 	#ifdef SWITCH_IS_ON
         pthread_create(&thread_id_switch,NULL,switchupdate,NULL);
     #endif
 
 			#ifdef WALK_IS_ON
+        		pathpackvar.updated=0;
 				pthread_create (&thread_id_walk, NULL, walk_thread, NULL);
 			#endif
 		
@@ -46,7 +61,7 @@ int main(void)
 	    		imu.init();
 
 	    		fstream f1;
-	        	f1.open("cpp-src/xsens/imuyaw.angle", ios::in);
+	        	f1.open("Source/xsens/imuyaw.angle", ios::in);
 	        	f1>>IMU_INITIAL_ANGLE;
 	        	f1.close();
 	    	#endif
