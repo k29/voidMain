@@ -317,13 +317,13 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam
 		for(int k=0; k<NO_OF_PARTICLES; k++)
 		{
 			// Adding a bit of randomness, plus replacing 2% of total points by completely random points
-			// if((rand()%(2000)==0))
-			// {
-			// 	p[k].x = rand()%(MAX_X);	//Assigns a random number between 0 and MAX_X INCLUSIVE
-			// 	p[k].y = rand()%(MAX_Y);	//Assigns a random number between 0 and MAX_Y INCLUSIVE
-			// 	p[k].angle = ((double)((rand()%(360))))*PI/180.0;	//Assigns a random angle with given resolution
-			// 	continue;
-			// }
+			if((rand()%(2000)==0))
+			{
+				p[k].x = rand()%(MAX_X);	//Assigns a random number between 0 and MAX_X INCLUSIVE
+				p[k].y = rand()%(MAX_Y);	//Assigns a random number between 0 and MAX_Y INCLUSIVE
+				p[k].angle = ((double)((rand()%(360))))*PI/180.0;	//Assigns a random angle with given resolution
+				continue;
+			}
 		}
 	}
 
