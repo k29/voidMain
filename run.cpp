@@ -33,12 +33,12 @@ WalkStructure walkstr;
 RoboCupGameControlData GCData;
 PathPacket pathpackvar;
 
-void doquit(int para)
-{
-	doquitWalk();
-	printf("Ctrl+cpressed\n");
-	exit(0);
-};
+// void doquit(int para)
+// {
+// 	doquitWalk();
+// 	printf("Ctrl+cpressed\n");
+// 	exit(0);
+// };
 
 int main(void)
 {	
