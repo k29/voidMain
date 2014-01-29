@@ -38,4 +38,8 @@ namespace myBasicBehaviors("My Behaviors")
 		behavior doReset
 			{
 			}
+		/**  */
+		behavior doMakePathFromMotionModel
+			{
+			}
 	}

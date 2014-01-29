@@ -19,11 +19,18 @@ BasicBehaviormoveAcYuttemp basicBehaviormoveAcYuttemp(myErrorHandler,ACYUT);
 BasicBehaviorLocalize basicBehaviorLocalize(myErrorHandler,ACYUT);
 BasicBehaviorPathToWalk basicBehaviorPathToWalk(myErrorHandler,ACYUT);
 BasicBehaviorMakePath basicBehaviorMakePath(myErrorHandler,ACYUT);
-BasicBehaviorFindBall basicBehaviorFindBall(myErrorHandler,ACYUT);
+// BasicBehaviorFindBall basicBehaviorFindBall(myErrorHandler,ACYUT);
 BasicBehaviorReset basicBehaviorReset(myErrorHandler,ACYUT);
+BasicBehaviorMakePathFromMotionModel basicBehaviorMakePathFromMotionModel(myErrorHandler,ACYUT);
 
 void registerXABSL()
 {
+    engine->registerEnumeratedInputSymbol("localizationState", "LocalizationState", (int*)&ACYUT.localizationState);
+    engine->registerEnumElement("LocalizationState", "LocalizationState.CRITICAL",CRITICAL);
+    engine->registerEnumElement("LocalizationState", "LocalizationState.LOCALIZED",LOCALIZED);
+    engine->registerEnumElement("LocalizationState", "LocalizationState.MOTIONMODEL",MOTIONMODEL);
+
+
     engine->registerEnumeratedInputSymbol("ballreturn", "BallReturns", (int*)&ACYUT.ballreturn);
     engine->registerEnumElement("BallReturns", "BallReturns.BALLFOUND",BALLFOUND);
     engine->registerEnumElement("BallReturns", "BallReturns.BALLFINDING",BALLFINDING);
@@ -49,8 +56,9 @@ void registerXABSL()
     engine->registerBasicBehavior(basicBehaviorUpdate);
     engine->registerBasicBehavior(basicBehaviormoveAcYuttemp);
     engine->registerBasicBehavior(basicBehaviorMakePath);
-    engine->registerBasicBehavior(basicBehaviorFindBall);
+    // engine->registerBasicBehavior(basicBehaviorFindBall);
     engine->registerBasicBehavior(basicBehaviorReset);
+    engine->registerBasicBehavior(basicBehaviorMakePathFromMotionModel);
 
     MyFileInputSource input("intermediate-code.dat");
     engine->createOptionGraph(input);   

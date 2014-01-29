@@ -33,7 +33,7 @@ typedef struct
 	char instr;
 	Coords orientArray[100];
 	int len_orientArray;
-	MotionModel mm;
+	// MotionModel mm;
 	//WalkCommands command;
 	bool isFresh;
 } WalkStructure;

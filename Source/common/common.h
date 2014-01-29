@@ -9,10 +9,13 @@
 #include "modes.h"
 
 #ifdef SEGWAY_MODE
-#include "../testwalk/commondefswalk.h"
+#include "../testwalk/bot1.h"
+// #include "../testwalk/commondefswalk.h"
+
 #endif
 #ifndef SEGWAY_MODE
-#include "../walk/commondefswalk.h"
+#include "../testwalk/bot1.h"
+// #include "../walk/commondefswalk.h"
 #endif
 
 #define MYPORT "3838"

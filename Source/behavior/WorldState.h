@@ -11,6 +11,7 @@
 #include "../path/path.hpp"
 #include "../common/common.h"
 #include "../common/commondefs.h"
+#include "motionmodel.h"
 
 #ifdef SEGWAY_MODE
 #include "../testwalk/commondefswalk.h"
@@ -40,13 +41,13 @@ class playerstate
                         playerstate();
                 
                         BallReturns ballreturn;
-                        
+                        LocalizationState localizationState;
                         
                         double ACTIVE_GOAL;
 		       
 
                         Flags globalflags;
-		        MotionModel mm;
+		        MotionModel motionModel;
 		        //InitState initstate;
         
                         /* Image */ 
@@ -60,8 +61,7 @@ class playerstate
         Localize loc;
         float bwt,lmwt;
         int ballnotinframe;
-        MotionModel localmm;
-        double conf;
+        
         
         float prevballr,velocity;
         
@@ -79,8 +79,8 @@ class playerstate
         RoboCupGameControlData GCData;
 
         
-
-
+        double localizationConfidence;
+        double confidence;
                         
                        
                         

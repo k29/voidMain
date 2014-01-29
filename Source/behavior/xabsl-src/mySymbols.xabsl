@@ -21,7 +21,14 @@ namespace mySymbols("My Symbols")
 	/** Path's instruction to Walk */
 	enum PathReturns input pathreturn;	
 
-	
+
+
+	/** State of current localization */
+	enum LocalizationState
+		{
+			CRITICAL,LOCALIZED,MOTIONMODEL
+		};
+	enum LocalizationState input localizationState;	
 
 
 	/**Current state of the game as specified by the referee box */

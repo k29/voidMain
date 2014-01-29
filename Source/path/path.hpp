@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include "graph.hpp"
 #include "../common/common.h"
+#include "../common/defines.h"
 enum Intersecting_Cases
 	{
 		no_intersection,normal_intersection,special_intersection,final_orientation_intersection

@@ -23,7 +23,7 @@ double playerstate::getTheta()
 
 double playerstate::getConfidence()
 	{
-		return (double)theInstance->conf;
+		return (double)theInstance->confidence;
 	}
 
 double playerstate::getReset()

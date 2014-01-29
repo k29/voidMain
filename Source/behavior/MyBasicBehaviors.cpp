@@ -1,5 +1,7 @@
 #include "MyBasicBehaviors.h"
 
+
+
 void BasicBehaviorPrint::execute()
 {
     #ifdef XABSL_PRINTING_IS_ON
@@ -23,8 +25,10 @@ void BasicBehaviorInitialize::execute()
                 continue;
             }
     p.globalflags.reset();
-    p.conf=0;
-    
+
+    p.confidence=0;
+    p.motionModel.confidence=0;
+
     printf("Initialized\n");
     #endif
 }
@@ -32,34 +36,39 @@ void BasicBehaviorUpdate::execute()
 {
         
         #ifdef IP_IS_ON
-        // p.hdmtr.update();
-        // printf("Entered update\n");
-        int i=0;
-        // int e=1;
-        // while(e)
-        //         {
 
-        //             printf("lol\n");
-        //             printf("received error %d from camcapture\n",i++);
-        //             usleep(500000);
-        //             e=!p.capture.getImage();
-        //             printf("e is %d\n",e);     
-        //                 if(e==11)
-        //                     while(!p.capture.init())
-        //     {
-        //         usleep(500000);
-        //         continue;
-        //     }
+        // printf("Entered update\n");       
+        // p.hdmtr.update();
+        p.capture.getImage();    
+        p.fd->getLandmarks(p.capture, p.hdmtr, p.motionModel);
+        p.loc.doLocalize(*p.fd, p.motionModel, p.capture, getImuAngle());
+
+
+
+        /* Set flags for XABSL */
+
+
+        /* localizationState flag */
+        p.localizationConfidence=p.loc.confidence();
+        p.motionModel.decay();
+
+        if(p.motionModel.confidence < p.localizationConfidence)
+            p.motionModel.confidence=p.localizationConfidence;
+
+        p.confidence=max( p.motionModel.confidence , p.localizationConfidence);
+
+        
+        if(p.confidence < 0.6)
+            p.localizationState=CRITICAL;
+        else if(p.motionModel.confidence > p.localizationConfidence)
+            p.localizationState=MOTIONMODEL;
+        else
+            p.localizationState=LOCALIZED;
+
                 
-//                }
-                // {
-                //     continue;
-                // }
-        p.capture.getImage();
-        // usleep(500000);    
-        p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
-        p.loc.doLocalize(*p.fd, p.mm, p.capture, getImuAngle());  
-        p.conf = p.loc.confidence();
+        /* ball found flag */     
+        p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);    
+          
         // printf("localization updated to %lf\n",p.conf);
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
@@ -68,47 +77,48 @@ void BasicBehaviorUpdate::execute()
 
         #ifndef IP_IS_ON
         p.conf=1;
+        p.ballreturn=BALLFOUND;
         #endif
 }
 
 void BasicBehaviorLocalize::execute()
 {   
         
-        #ifdef IP_IS_ON
-        printf("Confidence %lf, localizing\n",p.conf);
-        int i=10;
-        while(i--)
-        {
-        
-        
-        // p.hdmtr.update();
-        
-        while(!p.capture.getImage())
-            {
-                continue;
-            }
+        // #ifdef IP_IS_ON
+        // printf("Confidence %lf, localizing\n",p.confidence);
+        // int i=10;
+        // while(i--)
         // {
-        //     printf("worked\n");
-        //     continue;
-        // }
-            // printf("After capture\n");
+        
+        
+        // // p.hdmtr.update();
+        
+        // while(!p.capture.getImage())
+        //     {
+        //         continue;
+        //     }
+        // // {
+        // //     printf("worked\n");
+        // //     continue;
+        // // }
+        //     // printf("After capture\n");
 
-        p.fd->getLandmarks(p.capture, p.hdmtr, walkstr.mm);
-        // printf("After getLandmarks\n");
-        // p.camcont->search(p.hdmtr);
-        p.loc.doLocalize(*p.fd, p.mm, p.capture, getImuAngle()); 
-        cvShowImage("aa", p.capture.rgbimg);
-        cvShowImage("Localization", p.loc.dispImage);
+        // p.fd->getLandmarks(p.capture, p.hdmtr, p.motionModel);
+        // // printf("After getLandmarks\n");
+        // // p.camcont->search(p.hdmtr);
+        // p.loc.doLocalize(*p.fd, p.motionModel, p.capture, getImuAngle()); 
+        // cvShowImage("aa", p.capture.rgbimg);
+        // cvShowImage("Localization", p.loc.dispImage);
     
-        p.conf = p.loc.confidence();
-        // printf("%lf\n, %d", p.conf, i);
-        cvWaitKey(5);
-        }
-        #endif
+        // p.confidence = p.loc.confidence();
+        // // printf("%lf\n, %d", p.conf, i);
+        // cvWaitKey(5);
+        // }
+        // #endif
 
-        #ifndef IP_IS_ON
-        p.conf=1;
-        #endif
+        // #ifndef IP_IS_ON
+        // p.conf=1;
+        // #endif
 }
 
 void BasicBehaviormoveAcYuttemp::execute()
@@ -165,6 +175,39 @@ void BasicBehaviorMakePath::execute()
     #endif
 }
 
+
+void BasicBehaviorMakePathFromMotionModel::execute()
+{
+        
+    
+    #ifdef IP_IS_ON
+    
+    AbsCoords self;
+    AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
+    self=p.motionModel.read();
+
+    double tempx=goalcoords.x-self.x;
+    double tempy=goalcoords.y-self.y;
+    double theta=imu.yaw; // add headmotor considerations too eventually
+
+    p.pathstr.goal.x= (tempx*cos(deg2rad(theta))) - (tempy* sin(deg2rad(theta)));//Rotating coordinate system.
+    p.pathstr.goal.y= (tempx*sin(deg2rad(theta))) + (tempy* cos(deg2rad(theta)));
+    // printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
+
+    //printf("goal coords y:%lf\n",pathstr.goal.x);
+    p.pathstr.ball.x=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));
+    p.pathstr.ball.y=p.fd->ball.r*sin(deg2rad(p.fd->ball.theta));
+    
+    // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
+    // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
+
+    p.pathreturn=p.path.path_return(p.pathstr);
+    
+    // printf("Path Made\n");
+    #endif
+}
+
+
 void BasicBehaviorPathToWalk::execute()
 {
         #ifdef IP_IS_ON
@@ -189,20 +232,13 @@ void BasicBehaviorPathToWalk::execute()
     #endif
 }
 
-void BasicBehaviorFindBall::execute()
-{    
-    #ifdef IP_IS_ON    
-    // printf("FINDING THE FUCKING BALL\n");
-    p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);    
-    #endif
-
-    #ifndef IP_IS_ON
-    p.ballreturn=BALLFOUND;
-    #endif 
-}
+// void BasicBehaviorFindBall::execute()
+// {    
+   
+// }
 
 void BasicBehaviorReset::execute()
 {
-    p.conf=0;        
+    p.confidence=0;        
 }
 

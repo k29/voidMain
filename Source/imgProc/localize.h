@@ -14,6 +14,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include "../xsens/imu.h"
+#include "../behavior/motionmodel.h"
 
 //#define SHOW_FANCY_LOCALIZATION
 

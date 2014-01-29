@@ -139,4 +139,17 @@ private:
 		playerstate &p;
 
 };
+
+class BasicBehaviorMakePathFromMotionModel: public xabsl::BasicBehavior
+{
+	public:
+	BasicBehaviorMakePathFromMotionModel(xabsl::ErrorHandler& errorHandler,playerstate &p):xabsl::BasicBehavior("doMakePathFromMotionModel",errorHandler),p(p)
+		{
+
+		}
+	virtual void execute();
+private:
+		playerstate &p;
+
+};
 #endif

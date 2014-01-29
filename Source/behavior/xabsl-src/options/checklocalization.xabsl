@@ -1,45 +1,55 @@
 option checklocalize
-	{
-	
-	initial state localize
+{
+	initial state critical
 		{
 			decision
 				{
-					/**Sufficient confidence and ball not found*/
-					if(confidence > TH)
-						goto findball;
-					else 
+					if(localizationState==CRITICAL)
 						stay;
+					else if(localizationState==LOCALIZED)
+						goto localized;
+					else
+						goto motionmodel;
 				}
-
 			action
 				{
-					
 					doLocalize();
 				}
-		}
 
-	state findball
+		}
+	state localized
 		{
 			decision
 				{
-					/**Insufficient confidence */
-					if(confidence < TH)
-						goto localize;
-					
-					else 
+					if(localizationState==LOCALIZED)
 						stay;
+					else if(localizationState==MOTIONMODEL)
+						goto motionmodel;
+					else
+						goto critical;
+
 				}
 			action
-				{					
-					
-					doFindBall();
-					ballfound();
+				{
+					doMakePath();
+					checkpath();
 				}
 		}
-	
-	
-	
-		
-
-	}
+	state motionmodel
+		{
+			decision
+				{
+					if(localizationState==MOTIONMODEL)
+						stay;
+					else if(localizationState==LOCALIZED)
+						goto localized;
+					else	
+						goto critical;
+				}
+			action
+				{
+					doMakePathFromMotionModel();
+					checkpath();
+				}
+		}
+}

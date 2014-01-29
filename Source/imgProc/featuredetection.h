@@ -12,6 +12,7 @@
 #include "tbb/blocked_range2d.h"
 #include <fstream>
 #include <stdio.h>
+#include "../behavior/motionmodel.h"
 
 using namespace std;
 #define SYMMETRIC_LANDMARKS
