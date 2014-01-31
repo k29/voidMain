@@ -850,7 +850,7 @@ PathReturns Path::path_return(PathStructure ps)
 			//cout<<curvearray[i].r<<"\t"<<curvearray[i].theta<<"\n";
 		}
 		//cout<<"\n\n\n\n\n\n\n\n";
-		//cvWaitKey();
+		cvWaitKey();
 		return DOORIENT;
 	}
 
