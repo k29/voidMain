@@ -10,6 +10,7 @@ using namespace std;
 
 playerstate ACYUT;
 MyErrorHandler myErrorHandler;
+MotionModel motionModel;
 xabsl::Engine* engine = new xabsl::Engine(myErrorHandler,&getCurrentSystemTime);
 
 BasicBehaviorInitialize basicBehaviorInitialize(myErrorHandler,ACYUT);

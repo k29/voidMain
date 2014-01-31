@@ -1,5 +1,6 @@
 #include "../common/common.h" 
 #include "walk.h"
+#include "../behavior/motionmodel.h"
 
 #include <signal.h>
 #include <fstream>

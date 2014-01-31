@@ -446,9 +446,11 @@ PathReturns Path::path_return(PathStructure ps)
 					    sprintf(B,"Goal Position:  %lf, %lf",goal.x,goal.y);
 					    cvPutText(image,A,cvPoint(10,25),&font,cvScalar(255,255,255));
 					    cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
+					    cvNamedWindow("Field");
+    					cvMoveWindow("Field",950,400);
 						cvShowImage("Field", image);
 						cvZero(image);
-					 	cvWaitKey();
+					 	cvWaitKey(5);
 					//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 					#endif
 					if(tree.is_onCircle(n1_index, n2_index)==false)

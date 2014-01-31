@@ -47,7 +47,7 @@ class playerstate
 		       
 
                         Flags globalflags;
-		        MotionModel motionModel;
+		        // MotionModel motionModel; //shifted to global so walkthread can access it. 
 		        //InitState initstate;
         
                         /* Image */ 

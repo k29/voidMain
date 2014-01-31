@@ -2,7 +2,7 @@
 
 #define distance(x1,y1,x2,y2)	sqrt(pow(y2-y1,2) + pow(x2-x1,2))
 #define convdegrad(p)	p*acos(-1)/180
- 
+
 const double pi = acos(-1);
 //	c1, c2... are constants for equations which are outlined below 	
 //	vd = Current velocity, vf = Final velocity, delta_y = Step length of the foot when it moves from back to front
@@ -87,9 +87,12 @@ void doquitWalk()
 void* walk_thread(void*)
 {
 	
+	// printf("in walkthread\n"); //----> DONT REMOVE THIS OR WALKTHREAD WONT WORK
 	Communication comm;
 	testBot bot(&comm);
-	Walk walk(&bot);	
+	Walk walk(&bot);
+	// double pi=acos(-1);
+	// walk.move(100.0,0);	
 
 	
 	
@@ -137,7 +140,13 @@ void* walk_thread(void*)
 						printf("Size is %d\n",pathpackvar.no_of_points);
 						printf("Path sent signal %f %f\n",walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					}
+
+					
+
 					walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
+					pthread_mutex_lock(&mutex_motionModel);
+					motionModel.update(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
+					pthread_mutex_unlock(&mutex_motionModel);
 					executed[i]=1;
 				}
 			

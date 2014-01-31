@@ -24,6 +24,7 @@ pthread_mutex_t mutex_changewalkflag=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_GCData=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_pathpacket=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_switch=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex_motionModel=PTHREAD_MUTEX_INITIALIZER;
 
 Imu imu;
 double IMU_INITIAL_ANGLE;

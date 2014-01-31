@@ -40,6 +40,7 @@ extern pthread_mutex_t mutex_changewalkflag;
 extern pthread_mutex_t mutex_GCData;
 extern pthread_mutex_t mutex_pathpacket;
 extern pthread_mutex_t mutex_switch;
+extern pthread_mutex_t mutex_motionModel;
 
 extern WalkStructure walkstr;
 extern WalkStructure prevwalkstr;
@@ -48,7 +49,6 @@ extern RoboCupGameControlData GCData;
 
 /* Direct interface between path and walk. Updating this variable is controlled by behavior */ 
 extern PathPacket pathpackvar;
-
 extern Imu imu; 
 
 extern double IMU_INITIAL_ANGLE;

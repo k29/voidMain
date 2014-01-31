@@ -25,7 +25,7 @@ AbsCoords MotionModel::read()
 void MotionModel::update(float r,float theta)
 {
 	
-	double thetaWorld=theta+imu.yaw;
+	double thetaWorld=double(theta+getImuAngle()); //imu.yaw is in degrress change it if needed
 
 	double displacementX= r*cos(thetaWorld);
 	double displacementY= r*sin(thetaWorld);

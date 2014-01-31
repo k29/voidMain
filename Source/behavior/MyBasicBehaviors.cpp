@@ -27,7 +27,7 @@ void BasicBehaviorInitialize::execute()
     p.globalflags.reset();
 
     p.confidence=0;
-    p.motionModel.confidence=0;
+    motionModel.confidence=0;
 
     printf("Initialized\n");
     #endif
@@ -40,8 +40,8 @@ void BasicBehaviorUpdate::execute()
         // printf("Entered update\n");       
         // p.hdmtr.update();
         p.capture.getImage();    
-        p.fd->getLandmarks(p.capture, p.hdmtr, p.motionModel);
-        p.loc.doLocalize(*p.fd, p.motionModel, p.capture, getImuAngle());
+        p.fd->getLandmarks(p.capture, p.hdmtr, motionModel);
+        p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle());
 
 
 
@@ -50,29 +50,63 @@ void BasicBehaviorUpdate::execute()
 
         /* localizationState flag */
         p.localizationConfidence=p.loc.confidence();
-        p.motionModel.decay();
+        // motionModel.decay();
 
-        if(p.motionModel.confidence < p.localizationConfidence)
-            p.motionModel.confidence=p.localizationConfidence;
+        pthread_mutex_lock(&mutex_motionModel);
+                    
+        if(motionModel.confidence < p.localizationConfidence && p.localizationConfidence<5.0)
+            motionModel.refresh(p.loc.selfX,p.loc.selfY,p.localizationConfidence);
 
-        p.confidence=max( p.motionModel.confidence , p.localizationConfidence);
+        p.confidence=max( motionModel.confidence , p.localizationConfidence);
 
         
-        if(p.confidence < 0.6)
+        if(p.confidence < 0.1)
             p.localizationState=CRITICAL;
-        else if(p.motionModel.confidence > p.localizationConfidence)
+        else if(motionModel.confidence > p.localizationConfidence)
             p.localizationState=MOTIONMODEL;
+            // p.localizationState=LOCALIZED;
         else
             p.localizationState=LOCALIZED;
 
-                
+        pthread_mutex_unlock(&mutex_motionModel);
+
+    
         /* ball found flag */     
-        p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);    
+        p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);   
+        IplImage* flags = cvCreateImage(cvSize(220,60),8,1);
+        cvZero(flags);
+        CvFont font;
+
+        double theta=getImuAngle();
+        
+        cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.35, 0.35, 0, 1.5, 8);
+        char A[100],B[100],C[100];
+        if(p.localizationState == CRITICAL)
+            sprintf(A,"LOCALISATION STATE : CRITICAL");
+        if(p.localizationState == MOTIONMODEL)
+            sprintf(A,"LOCALISATION STATE : MOTIONMODEL");
+        if(p.localizationState == LOCALIZED)
+            sprintf(A,"LOCALISATION STATE : LOCALIZED");
+        sprintf(B,"CONFIDENCE : %lf",p.confidence);
+
+        sprintf(C,"IMU ANGLE : %lf",theta);
+        
+        cvPutText(flags,A,cvPoint(10,15),&font,cvScalar(255,255,255));
+        cvPutText(flags,B,cvPoint(10,30),&font,cvScalar(255,255,255));
+        cvPutText(flags,C,cvPoint(10,45),&font,cvScalar(255,255,255));
           
         // printf("localization updated to %lf\n",p.conf);
+        cvNamedWindow("flags");
+        cvNamedWindow("aa");
+        cvNamedWindow("Localization");
+        cvMoveWindow("flags",50,50);
+        cvMoveWindow("aa",300,50);
+        cvMoveWindow("Localization",950,50);
+        cvShowImage("flags",flags);
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
-        cvWaitKey(50);
+        // cvWaitKey(50);
+        cvReleaseImage(&flags);
         #endif
 
         #ifndef IP_IS_ON
@@ -84,41 +118,41 @@ void BasicBehaviorUpdate::execute()
 void BasicBehaviorLocalize::execute()
 {   
         
-        // #ifdef IP_IS_ON
+        #ifdef IP_IS_ON
         // printf("Confidence %lf, localizing\n",p.confidence);
-        // int i=10;
-        // while(i--)
-        // {
+        int i=50;
+        while(i--)
+        {
         
         
-        // // p.hdmtr.update();
+        // p.hdmtr.update();
         
         // while(!p.capture.getImage())
         //     {
         //         continue;
         //     }
-        // // {
-        // //     printf("worked\n");
-        // //     continue;
-        // // }
-        //     // printf("After capture\n");
-
-        // p.fd->getLandmarks(p.capture, p.hdmtr, p.motionModel);
-        // // printf("After getLandmarks\n");
-        // // p.camcont->search(p.hdmtr);
-        // p.loc.doLocalize(*p.fd, p.motionModel, p.capture, getImuAngle()); 
-        // cvShowImage("aa", p.capture.rgbimg);
-        // cvShowImage("Localization", p.loc.dispImage);
-    
-        // p.confidence = p.loc.confidence();
-        // // printf("%lf\n, %d", p.conf, i);
-        // cvWaitKey(5);
+        // {
+        //     printf("worked\n");
+        //     continue;
         // }
-        // #endif
+            // printf("After capture\n");
+        p.capture.getImage();
+        p.fd->getLandmarks(p.capture, p.hdmtr, motionModel);
+        // printf("After getLandmarks\n");
+        // p.camcont->search(p.hdmtr);
+        p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle()); 
+        cvShowImage("aa", p.capture.rgbimg);
+        cvShowImage("Localization", p.loc.dispImage);
+    
+        p.confidence = p.loc.confidence();
+        // printf("%lf\n, %d", p.conf, i);
+        // cvWaitKey(5);
+        }
+        #endif
 
-        // #ifndef IP_IS_ON
-        // p.conf=1;
-        // #endif
+        #ifndef IP_IS_ON
+        p.conf=1;
+        #endif
 }
 
 void BasicBehaviormoveAcYuttemp::execute()
@@ -184,11 +218,12 @@ void BasicBehaviorMakePathFromMotionModel::execute()
     
     AbsCoords self;
     AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
-    self=p.motionModel.read();
+    self=motionModel.read();
 
     double tempx=goalcoords.x-self.x;
     double tempy=goalcoords.y-self.y;
-    double theta=imu.yaw; // add headmotor considerations too eventually
+    double theta=getImuAngle(); // add headmotor considerations too eventually
+    // double theta=p.loc.selfAngle;
 
     p.pathstr.goal.x= (tempx*cos(deg2rad(theta))) - (tempy* sin(deg2rad(theta)));//Rotating coordinate system.
     p.pathstr.goal.y= (tempx*sin(deg2rad(theta))) + (tempy* cos(deg2rad(theta)));

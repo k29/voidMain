@@ -41,4 +41,5 @@ class MotionModel
 		// double theta2;
 
 };
+extern MotionModel motionModel;
 #endif
