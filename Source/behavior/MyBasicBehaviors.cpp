@@ -96,14 +96,14 @@ void BasicBehaviorUpdate::execute()
         cvPutText(flags,C,cvPoint(10,45),&font,cvScalar(255,255,255));
           
         // printf("localization updated to %lf\n",p.conf);
-        cvNamedWindow("flags");
-        cvNamedWindow("aa");
+        cvNamedWindow("Flags");
+        cvNamedWindow("Real Time Feed");
         cvNamedWindow("Localization");
-        cvMoveWindow("flags",50,50);
-        cvMoveWindow("aa",300,50);
+        cvMoveWindow("Flags",50,50);
+        cvMoveWindow("Real Time Feed",300,50);
         cvMoveWindow("Localization",950,50);
-        cvShowImage("flags",flags);
-        cvShowImage("aa", p.capture.rgbimg);
+        cvShowImage("Flags",flags);
+        cvShowImage("Real Time Feed", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
         cvWaitKey(25);
         cvReleaseImage(&flags);
@@ -141,7 +141,7 @@ void BasicBehaviorLocalize::execute()
         // printf("After getLandmarks\n");
         // p.camcont->search(p.hdmtr);
         p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle()); 
-        cvShowImage("aa", p.capture.rgbimg);
+        cvShowImage("Real Time Feed", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
     
         p.confidence = p.loc.confidence();
