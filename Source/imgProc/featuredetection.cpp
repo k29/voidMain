@@ -25,7 +25,8 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
     o.clear();
     l.clear();
     constants.open("Source/lut/constants.dat",ios::binary);
-
+    cvZero(seg_yellow);
+    cvZero(seg_red);
 }
 
 
@@ -879,13 +880,13 @@ void FeatureDetection::getInGreen(CamCapture &cam)
 
     // cvShowImage("boundary", seg_black);
     
-    // for(int x = 0; x < IMAGE_WIDTH; x++)
-    // {
-    //     for(int y = 0; y < returnPixel1C(histogram, x/4, 0)*4; y++)
-    //     {
-    //         returnPixel1C(seg_red, x, y) = 0;
-    //     }
-    // }
+    for(int x = 0; x < IMAGE_WIDTH; x++)
+    {
+        for(int y = 0; y < returnPixel1C(histogram, x/4, 0)*4; y++)
+        {
+            returnPixel1C(seg_red, x, y) = 0;
+        }
+    }
     cvNamedWindow("RED");
     cvMoveWindow("RED",50,600);
     cvShowImage("RED", seg_red);
