@@ -49,20 +49,20 @@ void BasicBehaviorUpdate::execute()
 
 
         /* localizationState flag */
-        p.localizationConfidence=p.loc.confidence();
+        // p.localizationConfidence=p.loc.confidence;
         // motionModel.decay();
 
         pthread_mutex_lock(&mutex_motionModel);
                     
-        if(motionModel.confidence < p.localizationConfidence && p.localizationConfidence<5.0)
-            motionModel.refresh(p.loc.selfX,p.loc.selfY,p.localizationConfidence);
+        if(motionModel.confidence < p.loc.confidence && p.loc.confidence<5.0)
+            motionModel.refresh(p.loc.selfX,p.loc.selfY,p.loc.confidence);
 
-        p.confidence=max( motionModel.confidence , p.localizationConfidence);
+        p.confidence=max( motionModel.confidence , p.loc.confidence);
 
         
         if(p.confidence < 0.1)
             p.localizationState=CRITICAL;
-        else if(motionModel.confidence > p.localizationConfidence)
+        else if(motionModel.confidence > p.loc.confidence)
             p.localizationState=MOTIONMODEL;
             // p.localizationState=LOCALIZED;
         else
@@ -144,7 +144,7 @@ void BasicBehaviorLocalize::execute()
         cvShowImage("Real Time Feed", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
     
-        p.confidence = p.loc.confidence();
+        p.confidence = p.loc.confidence;
         // printf("%lf\n, %d", p.conf, i);
         cvWaitKey(5);
         }
