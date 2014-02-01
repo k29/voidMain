@@ -644,14 +644,17 @@ double Localize::confidence()
 	varAngle /= NO_OF_PARTICLES;
 
 	varAngle *= (180.0*180.0)/(PI*PI);
+	double conf=125.0/(varX + varY + varAngle);
 
+	if(conf > 4.0)
+		conf=0;
 	// printf("Confidence: X: %lf Y: %lf Angle: %lf\n", varX, varY, varAngle);
 	#ifndef ALL_PRINTING_OFF
-		printf("Confidence: %lf\n", 125.0/(varX + varY + varAngle));
+		// printf("Confidence: %lf\n", 125.0/(varX + varY + varAngle));
 	#endif
 	if(nFrames < 5)
 		return 0.0;
-	return 125.0/(varX + varY + varAngle);
+	return conf;
 }
 
 

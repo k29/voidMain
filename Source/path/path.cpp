@@ -871,6 +871,7 @@ PathReturns Path::path_return(PathStructure ps)
     cvPutText(image,A,cvPoint(10,25),&font,cvScalar(255,255,255));
     cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
 	cvShowImage("Field", image);
+	cvWaitKey();
 	if(tree.no_path_flag==-1)
 	{
 		tree.no_path_flag=0;
