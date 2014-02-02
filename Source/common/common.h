@@ -9,10 +9,13 @@
 #include "modes.h"
 
 #ifdef SEGWAY_MODE
-#include "../testwalk/commondefswalk.h"
+#include "../testwalk/bot1.h"
+// #include "../testwalk/commondefswalk.h"
+
 #endif
 #ifndef SEGWAY_MODE
-#include "../walk/commondefswalk.h"
+#include "../testwalk/bot1.h"
+// #include "../walk/commondefswalk.h"
 #endif
 
 #define MYPORT "3838"
@@ -37,6 +40,7 @@ extern pthread_mutex_t mutex_changewalkflag;
 extern pthread_mutex_t mutex_GCData;
 extern pthread_mutex_t mutex_pathpacket;
 extern pthread_mutex_t mutex_switch;
+extern pthread_mutex_t mutex_motionModel;
 
 extern WalkStructure walkstr;
 extern WalkStructure prevwalkstr;
@@ -45,7 +49,6 @@ extern RoboCupGameControlData GCData;
 
 /* Direct interface between path and walk. Updating this variable is controlled by behavior */ 
 extern PathPacket pathpackvar;
-
 extern Imu imu; 
 
 extern double IMU_INITIAL_ANGLE;

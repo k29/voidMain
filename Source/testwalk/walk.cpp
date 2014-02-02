@@ -33,7 +33,7 @@ void Walk::move(float walkr,float walktheta)
 {
 
 
-	printf("Move called\n");
+	printf("Move called with instructions %lf %lf\n",walkr,walktheta);
 	double deltaR;
 	double deltaTheta;
 	double arclen;

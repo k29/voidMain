@@ -256,74 +256,74 @@ void Localize::randomize()
 
 void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam, int imuangle)
 {
-	if(mm.updated==1)
-	{	
-		#ifndef ALL_PRINTING_OFF
-			printf("Confidence before %lf\n", confidence());
-			printf("[localize] Angle changed %f \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.theta);
-			printf("[localize] Moved ahead %f cm\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.r/10.0);
-			printf("[localize] Angle2 changed %f \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.theta2);
-		#endif
+	// if(mm.updated==1)
+	// {	
+	// 	#ifndef ALL_PRINTING_OFF
+	// 		printf("Confidence before %lf\n", confidence());
+	// 		printf("[localize] Angle changed %f \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.theta);
+	// 		printf("[localize] Moved ahead %f cm\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.r/10.0);
+	// 		printf("[localize] Angle2 changed %f \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", mm.theta2);
+	// 	#endif
 
-		for(int k=0; k<NO_OF_PARTICLES; k++)
-		{
-			if((rand()%(200)==0))
-			{
-				p[k].x = rand()%(MAX_X);	//Assigns a random number between 0 and MAX_X INCLUSIVE
-				p[k].y = rand()%(MAX_Y);	//Assigns a random number between 0 and MAX_Y INCLUSIVE
-				//p[k].angle = ((double)((rand()%(360))))*PI/180.0;	//Assigns a random angle with given resolution
-				p[k].angle = (double)imuangle + (rand()%(10) - 5);
-				continue;
-			}
-			p[k].angle = p[k].angle + ((float)(rand()%4 - 2 - mm.theta))*PI/180.0;
-			while(p[k].angle < 0)
-				p[k].angle += 2*PI;
+	// 	for(int k=0; k<NO_OF_PARTICLES; k++)
+	// 	{
+	// 		if((rand()%(200)==0))
+	// 		{
+	// 			p[k].x = rand()%(MAX_X);	//Assigns a random number between 0 and MAX_X INCLUSIVE
+	// 			p[k].y = rand()%(MAX_Y);	//Assigns a random number between 0 and MAX_Y INCLUSIVE
+	// 			//p[k].angle = ((double)((rand()%(360))))*PI/180.0;	//Assigns a random angle with given resolution
+	// 			p[k].angle = (double)imuangle + (rand()%(10) - 5);
+	// 			continue;
+	// 		}
+	// 		p[k].angle = p[k].angle + ((float)(rand()%4 - 2 - mm.theta))*PI/180.0;
+	// 		while(p[k].angle < 0)
+	// 			p[k].angle += 2*PI;
 
-			while(p[k].angle > 2*PI)
-				p[k].angle -= 2*PI;
+	// 		while(p[k].angle > 2*PI)
+	// 			p[k].angle -= 2*PI;
 
-			if(mm.r > 0.0)
-			{
-				double addx = (mm.r*cos(p[k].angle))/10.0;
-				double addy = (mm.r*sin(p[k].angle))/10.0;
-				p[k].x = p[k].x + addx + rand()%4 - 2;
-				//following code for taking care of particles outside the field is probably wrong!
-				// if(p[k].x >= MAX_X)
-				// 	p[k].x = p[k].x - MAX_X - 1;
-				// if(p[k].x < 0)
-				// 	p[k].x = MAX_X + p[k].x;
+	// 		if(mm.r > 0.0)
+	// 		{
+	// 			double addx = (mm.r*cos(p[k].angle))/10.0;
+	// 			double addy = (mm.r*sin(p[k].angle))/10.0;
+	// 			p[k].x = p[k].x + addx + rand()%4 - 2;
+	// 			//following code for taking care of particles outside the field is probably wrong!
+	// 			// if(p[k].x >= MAX_X)
+	// 			// 	p[k].x = p[k].x - MAX_X - 1;
+	// 			// if(p[k].x < 0)
+	// 			// 	p[k].x = MAX_X + p[k].x;
 
-				p[k].y = p[k].y + addy + rand()%4 - 2;
-				// following code for taking care of particles outside the field is probably wrong!
-				// if(p[k].y >= MAX_Y)
-				// 	p[k].y = p[k].y - MAX_Y - 1;
-				// if(p[k].y < 0)
-				// 	p[k].y = MAX_Y + p[k].y;
-			}
-			p[k].angle = p[k].angle + ((float)(rand()%4 - 2 - mm.theta2))*PI/180.0;
-			while(p[k].angle < 0)
-				p[k].angle += 2*PI;
+	// 			p[k].y = p[k].y + addy + rand()%4 - 2;
+	// 			// following code for taking care of particles outside the field is probably wrong!
+	// 			// if(p[k].y >= MAX_Y)
+	// 			// 	p[k].y = p[k].y - MAX_Y - 1;
+	// 			// if(p[k].y < 0)
+	// 			// 	p[k].y = MAX_Y + p[k].y;
+	// 		}
+	// 		p[k].angle = p[k].angle + ((float)(rand()%4 - 2 - mm.theta2))*PI/180.0;
+	// 		while(p[k].angle < 0)
+	// 			p[k].angle += 2*PI;
 
-			while(p[k].angle > 2*PI)
-				p[k].angle -= 2*PI;
-		}
-		updatePosition();
-		#ifndef ALL_PRINTING_OFF
-			printf("Confidence after %lf\n", confidence());
-		#endif
-	}
-	else
+	// 		while(p[k].angle > 2*PI)
+	// 			p[k].angle -= 2*PI;
+	// 	}
+	// 	updatePosition();
+	// 	#ifndef ALL_PRINTING_OFF
+	// 		printf("Confidence after %lf\n", confidence());
+	// 	#endif
+	// }
+	// else
 	{
 		for(int k=0; k<NO_OF_PARTICLES; k++)
 		{
 			// Adding a bit of randomness, plus replacing 2% of total points by completely random points
-			// if((rand()%(2000)==0))
-			// {
-			// 	p[k].x = rand()%(MAX_X);	//Assigns a random number between 0 and MAX_X INCLUSIVE
-			// 	p[k].y = rand()%(MAX_Y);	//Assigns a random number between 0 and MAX_Y INCLUSIVE
-			// 	p[k].angle = ((double)((rand()%(360))))*PI/180.0;	//Assigns a random angle with given resolution
-			// 	continue;
-			// }
+			if((rand()%(2000)==0))
+			{
+				p[k].x = rand()%(MAX_X);	//Assigns a random number between 0 and MAX_X INCLUSIVE
+				p[k].y = rand()%(MAX_Y);	//Assigns a random number between 0 and MAX_Y INCLUSIVE
+				p[k].angle = ((double)((rand()%(360))))*PI/180.0;	//Assigns a random angle with given resolution
+				continue;
+			}
 		}
 	}
 
@@ -347,13 +347,19 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam
 
 	printPosition();
 	if(fd.l.size()<=1)
-		return;
+		{
+			confidence=0.0;
+		}
+
+	else
+	{
 	#ifndef ALL_PRINTING_OFF
 	printf("NO OF LANDMARKS = %d !!!!!!!!!!!!!!!!!", fd.l.size());
 	#endif
 	nFrames++;
 	//If no motion model but at least 2 landmark spotted, randomize a bit
-	if(mm.updated==0)
+	// if(mm.updated==0)
+	if(1)//---^
 	{
 		for(int k = 0; k < NO_OF_PARTICLES; k++)
 		{
@@ -550,14 +556,16 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam
 	for(int k = 0; k < NO_OF_PARTICLES; k++)
 		p[k] = p_temp[k];
 	updatePosition();
+	calcConfidence();
 
+	}
 	CvFont font;
     cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
     char A[100] = "POSITION : ";
     char B[100] = "ANGLE : ";
     char C[100];
     char D[100];
-    sprintf(D,"CONFIDENCE : %lf",confidence());
+    sprintf(D,"CONFIDENCE : %lf",confidence);
     sprintf(C, "       Y: %lf", selfY);
     ostringstream s1;
     s1<< "X: " << selfX;
@@ -603,8 +611,11 @@ void Localize::updatePosition()
 
 
 
-double Localize::confidence()
+void Localize::calcConfidence()
 {
+	
+	
+
 	meanX = 0;
 	meanY = 0;
 	meanAngle = 0;
@@ -643,14 +654,17 @@ double Localize::confidence()
 	varAngle /= NO_OF_PARTICLES;
 
 	varAngle *= (180.0*180.0)/(PI*PI);
+	confidence=125.0/(varX + varY + varAngle);
 
+	if(confidence > 4.0)
+		confidence=0.0;
 	// printf("Confidence: X: %lf Y: %lf Angle: %lf\n", varX, varY, varAngle);
 	#ifndef ALL_PRINTING_OFF
-		printf("Confidence: %lf\n", 125.0/(varX + varY + varAngle));
+		// printf("Confidence: %lf\n", 125.0/(varX + varY + varAngle));
 	#endif
 	if(nFrames < 5)
-		return 0.0;
-	return 125.0/(varX + varY + varAngle);
+		confidence=0.0;
+	
 }
 
 

@@ -2,11 +2,11 @@
 #define COMMONDEFS_H
 
 #define SYMMETRIC_LANDMARKS
-
 //enum Goal{BLUE,YELLOW};
 enum BallReturns{BALLFOUND=0,BALLFINDING=1,TURNRIGHT,TURNLEFT};
 enum GoalReturns{GOALFINDING,ENCIRCLER,ENCIRCLEL,GOALFOUND};
 enum PathReturns{DOWALK,DOENCIRCLE,DOKICK,NOPATH,DOORIENT};
+enum LocalizationState{CRITICAL,LOCALIZED,MOTIONMODEL};
 
 //Behaviour Local IMP--------------------------------------------------------------------
 enum Ball{NOTFOUND,FOUND};
@@ -35,13 +35,13 @@ typedef struct
 }Flags;
 
 //---------------------------------------------------------------------------------------
-typedef struct 
-{
-	float r;
-	float theta;
-	float theta2;
-	int updated;
-}MotionModel;
+// typedef struct 
+// {
+// 	float r;
+// 	float theta;
+// 	float theta2;
+// 	int updated;
+// }MotionModel;
 
 typedef struct 
 {	float theta;

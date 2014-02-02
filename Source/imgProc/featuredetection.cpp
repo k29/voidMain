@@ -226,7 +226,9 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
 
     cvLabel(seg_yellow, labelImg, blobs_yellow);
     cvFilterByArea(blobs_yellow, 100, 1000000);
-    cvShowImage("yellow",seg_yellow);
+    cvNamedWindow("YELLOW");
+    cvMoveWindow("YELLOW",400,600);
+    cvShowImage("YELLOW",seg_yellow);
     int max = IMAGE_HEIGHT;
     for (CvBlobs::const_iterator it=blobs_yellow.begin(); it!=blobs_yellow.end(); ++it)
     {
@@ -884,7 +886,8 @@ void FeatureDetection::getInGreen(CamCapture &cam)
             returnPixel1C(seg_red, x, y) = 0;
         }
     }
-
+    cvNamedWindow("RED");
+    cvMoveWindow("RED",50,600);
     cvShowImage("RED", seg_red);
 
     cvReleaseImage(&histogram);

@@ -2,7 +2,7 @@
 #include "path.hpp"
 #define car2pol(x,y) sqrt((x)*(x)+(y)*(y))
 #define dist(x1,y1,x2,y2) sqrt(pow(((x1)-(x2)),2)+pow(((y1)-(y2)),2))
-// #define FRAMEPAINTING
+#define FRAMEPAINTING
 //#define OLDENCIRCLING
 //#define NEWENCIRCLING
 //#define NEWNEWENCIRCLING
@@ -233,19 +233,19 @@ PathReturns Path::path_return(PathStructure ps)
 	start.y=0;
 	start.obstacle_id=-1;
 	start.parent_id=0;
-	cvCircle(image, cvPoint(start.x + 500, start.y + 500), 2, cvScalar(0,255,0)); //Initialising the start point and painting it.
+	cvCircle(image, cvPoint(start.x+250, start.y+250), 2, cvScalar(0,255,0)); //Initialising the start point and painting it.
 	NO_OF_OBSTACLES = ps.n_obstacles;
 	ball.x=ps.ball.x;
 	ball.y=ps.ball.y;
 	ball.obstacle_id=-1;
 	ball.parent_id=0;
 	////////cout<<"Ball Position:\n"<<ball.x<<" "<<ball.y<<endl;
-	cvCircle(image, cvPoint(ball.x+500, ball.y+500), 2, cvScalar(255,0,255)); //Initialising the ball point and painting it.
+	cvCircle(image, cvPoint(ball.x+250, ball.y+250), 2, cvScalar(255,0,255)); //Initialising the ball point and painting it.
 	goal.x=ps.goal.x;
 	goal.y=ps.goal.y;
 	goal.obstacle_id=-1;
 	////////cout<<"Goal Position\n"<<goal.x<<" "<<goal.y<<endl;
-	cvCircle(image, cvPoint(goal.x+500, goal.y+500), 10, cvScalar(255,0,255)); //Initialising the goal point and painting it.
+	cvCircle(image, cvPoint(goal.x+250, goal.y+250), 10, cvScalar(255,0,255)); //Initialising the goal point and painting it.
 	tree.cleartree(); //Clearing all previous data from the graphs....i.e. initialises the graph for a fresh start.
 	for(int i = 0; i < NO_OF_OBSTACLES; i++)
 	{
@@ -254,9 +254,9 @@ PathReturns Path::path_return(PathStructure ps)
 		obstacle[i].obstacle_radius=OBSTACLE_RADIUS;
 		obstacle[i].type= CIRCLE;
 		////////cout<<"Obstacle Position(s)\n"<<obstacle[i].x<<" "<<obstacle[i].y<<endl;
-		cvCircle(image, cvPoint(obstacle[i].x+500,obstacle[i].y+500), obstacle[i].obstacle_radius, cvScalar(255,0,0));
+		cvCircle(image, cvPoint(obstacle[i].x+250,obstacle[i].y+250), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	} //Initialising the obstacles and painting them.
-	cvCircle(image, cvPoint(ball.x+500, ball.y+500), ENCIRCLE_THRESHOLD , cvScalar(0,130,70));
+	cvCircle(image, cvPoint(ball.x+250, ball.y+250), ENCIRCLE_THRESHOLD , cvScalar(0,130,70));
 	//Making the two orientation markers near the ball  ---->
 	double m=(goal.y-ball.y)/(goal.x-ball.x);
 	double m_prime=-1/m;
@@ -275,13 +275,13 @@ PathReturns Path::path_return(PathStructure ps)
 	obstacle[NO_OF_OBSTACLES].y=ball.y - ( ORIENTATION_RADIUS*sin_prime);
 	obstacle[NO_OF_OBSTACLES].obstacle_id=-2;
 	obstacle[NO_OF_OBSTACLES].type= CIRCLE;
-	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES].x+500, obstacle[NO_OF_OBSTACLES].y+500),  ORIENTATION_RADIUS, cvScalar(255,0,0));
+	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES].x+250, obstacle[NO_OF_OBSTACLES].y+250),  ORIENTATION_RADIUS, cvScalar(255,0,0));
 	obstacle[NO_OF_OBSTACLES+1].obstacle_radius= ORIENTATION_RADIUS;
 	obstacle[NO_OF_OBSTACLES+1].x=ball.x + ( ORIENTATION_RADIUS*cos_prime);
 	obstacle[NO_OF_OBSTACLES+1].y=ball.y + ( ORIENTATION_RADIUS*sin_prime);
 	obstacle[NO_OF_OBSTACLES+1].obstacle_id=-2;
 	obstacle[NO_OF_OBSTACLES+1].type= CIRCLE;
-	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+1].x+500, obstacle[NO_OF_OBSTACLES+1].y+500),  ORIENTATION_RADIUS, cvScalar(255,0,0));
+	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES+1].x+250, obstacle[NO_OF_OBSTACLES+1].y+250),  ORIENTATION_RADIUS, cvScalar(255,0,0));
 	for(int i=0;i< NO_OF_OBSTACLES;i++)
 	{
 		for(int j=NO_OF_OBSTACLES;j<NO_OF_OBSTACLES+2;j++)
@@ -335,7 +335,14 @@ PathReturns Path::path_return(PathStructure ps)
 #ifdef OLDENCIRCLING
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	//Encircling, Walking, Kicking decision ----->
-
+	CvFont font;
+    cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 0, 1, 8);
+    char A[100];
+    char B[100];					
+    sprintf(A,"Ball Position:  %lf, %lf",ball.x,ball.y);
+    sprintf(B,"Goal Position:  %lf, %lf",goal.x,goal.y);
+    cvPutText(image,A,cvPoint(10,25),&font,cvScalar(255,255,255));
+    cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
 	cvShowImage("Field", image);
 
 	if(car2pol(ball.x,ball.y) <= KICKDIST)
@@ -391,7 +398,7 @@ PathReturns Path::path_return(PathStructure ps)
 	tree.add_vertex(start);
 	tree.add_vertex(ball);
 	tree.add_edge(0,1,cost_calculation(0,1,tree));
-	cvLine(image,cvPoint(500,500),cvPoint(ball.x+500,ball.y+500),cvScalar(255,255,0)); // creates the nodes for start and ball point and paints a line.
+	cvLine(image,cvPoint(250,250),cvPoint(ball.x+250,ball.y+250),cvScalar(255,255,0)); // creates the nodes for start and ball point and paints a line.
 
 	while(flag) // iterates over the entire tree.
 	{
@@ -417,23 +424,33 @@ PathReturns Path::path_return(PathStructure ps)
 								{
 									Point n1 = tree[ni_index];
 									Point n2 = tree[nj_index];
-									cvLine(image,cvPoint(n1.x+500,n1.y+500),cvPoint(n2.x+500,n2.y+500),cvScalar(255,255,0));
+									cvLine(image,cvPoint(n1.x+250,n1.y+250),cvPoint(n2.x+250,n2.y+250),cvScalar(255,255,0));
 								}
 							}
 						}
 						for(int j=0;j<NO_OF_OBSTACLES+2;j++)
 						{
-							cvCircle(image, cvPoint(obstacle[j].x+500, obstacle[j].y+500), 2, cvScalar(255,0,0));
-							cvCircle(image, cvPoint(obstacle[j].x+500, obstacle[j].y+500), obstacle[j].obstacle_radius , cvScalar(255,0,0));
+							cvCircle(image, cvPoint(obstacle[j].x+250, obstacle[j].y+250), 2, cvScalar(255,0,0));
+							cvCircle(image, cvPoint(obstacle[j].x+250, obstacle[j].y+250), obstacle[j].obstacle_radius , cvScalar(255,0,0));
 						}
-						cvCircle(image, cvPoint(n1.x+500, n1.y+500), 2, cvScalar(255,255,255), 2);
-						cvCircle(image, cvPoint(n2.x+500, n2.y+500), 2, cvScalar(0,0,255), 2);
-						cvCircle(image, cvPoint(start.x + 500, start.y + 500), 2, cvScalar(0,255,0));
-						cvCircle(image, cvPoint(ball.x+500, ball.y+500), 2, cvScalar(255,0,255));
-						cvCircle(image, cvPoint(goal.x+500, goal.y+500), 10, cvScalar(255,0,255));
+						cvCircle(image, cvPoint(n1.x+250, n1.y+250), 2, cvScalar(255,255,255), 2);
+						cvCircle(image, cvPoint(n2.x+250, n2.y+250), 2, cvScalar(0,0,255), 2);
+						cvCircle(image, cvPoint(start.x+250, start.y+250), 2, cvScalar(0,255,0));
+						cvCircle(image, cvPoint(ball.x+250, ball.y+250), 2, cvScalar(255,0,255));
+						cvCircle(image, cvPoint(goal.x+250, goal.y+250), 10, cvScalar(255,0,255));
+						CvFont font;
+					    cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 0, 1, 8);
+					    char A[100];
+					    char B[100];					
+					    sprintf(A,"Ball Position:  %lf, %lf",ball.x,ball.y);
+					    sprintf(B,"Goal Position:  %lf, %lf",goal.x,goal.y);
+					    cvPutText(image,A,cvPoint(10,25),&font,cvScalar(255,255,255));
+					    cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
+					    cvNamedWindow("Field");
+    					cvMoveWindow("Field",950,400);
 						cvShowImage("Field", image);
 						cvZero(image);
-					 	cvWaitKey();
+					 	cvWaitKey(5);
 					//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 					#endif
 					if(tree.is_onCircle(n1_index, n2_index)==false)
@@ -640,7 +657,7 @@ PathReturns Path::path_return(PathStructure ps)
 			{
 				Point n1 = tree[n1_index];
 				Point n2 = tree[n2_index];
-				cvLine(image,cvPoint(n1.x+500,n1.y+500),cvPoint(n2.x+500,n2.y+500),cvScalar(255,255,0));
+				cvLine(image,cvPoint(n1.x+250,n1.y+250),cvPoint(n2.x+250,n2.y+250),cvScalar(255,255,0));
 			}
 		}
 	}
@@ -655,19 +672,27 @@ PathReturns Path::path_return(PathStructure ps)
 	b=tree.returnPathPoint(1);
 	while(b!=0)
 	{
-		cvLine(image,cvPoint(tree[b].x+500,tree[b].y+500),cvPoint(tree[a].x+500,tree[a].y+500),cvScalar(0,0,255));
+		cvLine(image,cvPoint(tree[b].x+250,tree[b].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
 		a=b;
 		b=tree.returnPathPoint(b);
 	}
 	path_completed_flag=true;
 	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
 	{
-		cvCircle(image, cvPoint(obstacle[i].x + 500, obstacle[i].y+500), obstacle[i].obstacle_radius, cvScalar(255,0,0));
+		cvCircle(image, cvPoint(obstacle[i].x+250, obstacle[i].y+250), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}
-	cvCircle(image, cvPoint(start.x + 500, start.y + 500), 2, cvScalar(0,255,0));
-	cvCircle(image, cvPoint(ball.x+500, ball.y+500), 2, cvScalar(255,0,255));
-	cvCircle(image, cvPoint(goal.x+500, goal.y+500), 10, cvScalar(255,0,255));
-	cvLine(image,cvPoint(tree[0].x+500,tree[0].y+500),cvPoint(tree[a].x+500,tree[a].y+500),cvScalar(0,0,255));
+	cvCircle(image, cvPoint(start.x+250, start.y+250), 2, cvScalar(0,255,0));
+	cvCircle(image, cvPoint(ball.x+250, ball.y+250), 2, cvScalar(255,0,255));
+	cvCircle(image, cvPoint(goal.x+250, goal.y+250), 10, cvScalar(255,0,255));
+	cvLine(image,cvPoint(tree[0].x+250,tree[0].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
+	CvFont font;
+    cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 0, 1, 8);
+    char A[100];
+    char B[100];					
+    sprintf(A,"Ball Position:  %lf, %lf",ball.x,ball.y);
+    sprintf(B,"Goal Position:  %lf, %lf",goal.x,goal.y);
+    cvPutText(image,A,cvPoint(10,25),&font,cvScalar(255,255,255));
+    cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
 	cvShowImage("Field", image);
 	//--->> calculating the next points r and theta.
 	if(tree.is_onCircle(0, a))
@@ -825,7 +850,7 @@ PathReturns Path::path_return(PathStructure ps)
 			//cout<<curvearray[i].r<<"\t"<<curvearray[i].theta<<"\n";
 		}
 		//cout<<"\n\n\n\n\n\n\n\n";
-		//cvWaitKey();
+		cvWaitKey();
 		return DOORIENT;
 	}
 
@@ -834,13 +859,19 @@ PathReturns Path::path_return(PathStructure ps)
 
 	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
 	{
-		cvCircle(image, cvPoint(obstacle[i].x + 500, obstacle[i].y+500), obstacle[i].obstacle_radius, cvScalar(255,0,0));
+		cvCircle(image, cvPoint(obstacle[i].x+250, obstacle[i].y+250), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}
-	cvCircle(image, cvPoint(start.x + 500, start.y + 500), 2, cvScalar(0,255,0));
-	cvCircle(image, cvPoint(ball.x+500, ball.y+500), 2, cvScalar(255,0,255));
-	cvCircle(image, cvPoint(goal.x+500, goal.y+500), 10, cvScalar(255,0,255));
-	cvLine(image,cvPoint(tree[0].x+500,tree[0].y+500),cvPoint(tree[a].x+500,tree[a].y+500),cvScalar(0,0,255));
+	cvCircle(image, cvPoint(start.x+250, start.y+250), 2, cvScalar(0,255,0));
+	cvCircle(image, cvPoint(ball.x+250, ball.y+250), 2, cvScalar(255,0,255));
+	cvCircle(image, cvPoint(goal.x+250, goal.y+250), 10, cvScalar(255,0,255));
+	cvLine(image,cvPoint(tree[0].x+250,tree[0].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
+
+    sprintf(A,"Ball Position:  %lf, %lf",ball.x,ball.y);
+    sprintf(B,"Goal Position:  %lf, %lf",goal.x,goal.y);
+    cvPutText(image,A,cvPoint(10,25),&font,cvScalar(255,255,255));
+    cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
 	cvShowImage("Field", image);
+	cvWaitKey();
 	if(tree.no_path_flag==-1)
 	{
 		tree.no_path_flag=0;

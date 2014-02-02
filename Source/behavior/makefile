@@ -2,10 +2,10 @@ XABSLFILES=$(shell echo `ls ../../Xabsl/XabslEngine/ -c1 | grep .cpp` | sed "s%X
 
 all: ../Build/behavior.a
 
-../Build/behavior.a: ../Build/WorldState.o ../Build/MyBasicBehaviors.o ../Build/main.o $(XABSLFILES) ../common/common.h
+../Build/behavior.a: ../Build/WorldState.o ../Build/MyBasicBehaviors.o ../Build/main.o ../Build/motionmodel.o $(XABSLFILES) ../common/common.h 
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
-	@ar rc $@ $(XABSLFILES) ../Build/WorldState.o ../Build/MyBasicBehaviors.o ../Build/main.o
+	@ar rc $@ $(XABSLFILES) ../Build/WorldState.o ../Build/MyBasicBehaviors.o ../Build/main.o ../Build/motionmodel.o
 	@ranlib $@
 
 intermediate: xabsl-src/*.xabsl xabsl-src/options/*.xabsl
@@ -29,8 +29,13 @@ intermediate: xabsl-src/*.xabsl xabsl-src/options/*.xabsl
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c MyBasicBehaviors.cpp -o $@
 
+
 ../Build/main.o: main.cpp WorldState.h MyBasicBehaviors.h Tools.h intermediate ../common/common.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c main.cpp -o $@
  
+../Build/motionmodel.o: motionmodel.cpp motionmodel.h
+	@echo $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c motionmodel.cpp -o $@	

@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include "graph.hpp"
 #include "../common/common.h"
+#include "../common/defines.h"
 enum Intersecting_Cases
 	{
 		no_intersection,normal_intersection,special_intersection,final_orientation_intersection
@@ -21,8 +22,8 @@ class Path
 private:
 	//member variables
 	static const std::size_t MAXIMUM=300;
-	static const int SIZEX=500;
-	static const int SIZEY=500;
+	static const int SIZEX=150;
+	static const int SIZEY=150;
 	int NO_OF_OBSTACLES;
 	static const int OBSTACLE_RADIUS=25;
 	static const int ENCIRCLE_THRESHOLD=25;

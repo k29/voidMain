@@ -40,12 +40,17 @@ int main()
 	imu.init();
 	int i=500000;
 	double value;
+	fstream f1;
+	f1.open("Source/xsens/imuyaw.angle",ios::out);
+	if(f1.is_open())
+		printf("FILE OPENED SUCCESSFULLY\n");
+	usleep(2000000);
 	while(i--)
-	{
-		
+	{		
 		value=imu.yaw;
-		printf("%lf\n",value);
-		
+		printf("%lf\n",value);		
 	}
+	f1<<imu.yaw;
+	f1.close();
 	return 0;
 }
