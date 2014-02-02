@@ -99,19 +99,26 @@ void doquitWalk()
 void* walk_thread(void*)
 {
 	
-	printf("in walkthread\n"); //----> DONT REMOVE THIS OR WALKTHREAD WONT WORK
+	// printf("in walkthread\n"); //----> DONT REMOVE THIS OR WALKTHREAD WONT WORK
 	Communication comm;
 	testBot bot(&comm);
 	Walk walk(&bot);
+
+	// usleep(500000);
 	// double pi=acos(-1);
 	// walk.move(100.0,0);	
 
 	
-	
-	// (void) signal(SIGINT,doquitWalk);
+	// // while(1)
+	// // {
+	// 	// printf("in WT\n");
+	// 	printf("WT started\n");
+	// 	walk.move(100,0);
+	// // }
+	// // (void) signal(SIGINT,doquitWalk);
 
 
-	// PathPacket pathpackvarlocal;
+	PathPacket pathpackvarlocal;
 	WalkPacket walkpacket;
 	Coords coords;
 	walkpacket.no_of_points=30;

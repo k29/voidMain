@@ -75,8 +75,10 @@ void Walk::move(double walkr,double walktheta)
 		
 		
 		if(deltaR>0.00001)
+		{
 		sync_write_data_motor(tbBACKWARD,512);
-		
+		// printf("%lf\n",deltaR);
+		}
 		usleep((int)(deltaR));
 
 		usleep(500000);
@@ -151,14 +153,14 @@ int Walk::sync_write_data_motor(int mode, int speed)
 		
 		data[0]=mot1_lowdata;
 		data[1]=mot1_highdata;
-		this->bot->comm->addSyncWrite(0x20,2,data,0);
+		bot->comm->addSyncWrite(0x20,2,data,0);
 		
 		data[0]=mot2_lowdata;
 		data[1]=mot2_highdata;
-		this->bot->comm->addSyncWrite(0x20,2,data,1);
+		bot->comm->addSyncWrite(0x20,2,data,1);
 
-
-	this->bot->comm->syncFlush();
+		// printf("Calling flush\n");
+	bot->comm->syncFlush();
 
 
 }
