@@ -125,7 +125,7 @@ void BasicBehaviorRotate::execute()
         pathpackvar.no_of_points=1;
         pathpackvar.updated=1;
         pathpackvar.pathType=1;
-        pathpackvar.finalpath[0].x=0.005; /* customary */
+        pathpackvar.finalpath[0].x=0.0;
         pathpackvar.finalpath[0].y=deg2rad(5);
         pthread_mutex_unlock(&mutex_pathpacket);
 
