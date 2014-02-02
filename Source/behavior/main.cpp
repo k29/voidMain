@@ -107,7 +107,7 @@ void start()
 int getImuAngle()
 {        
         #ifdef IMU_IS_ON
-            return imu.yaw-IMU_INITIAL_ANGLE;
+            return -(imu.yaw-IMU_INITIAL_ANGLE);
         #endif
 
         #ifndef IMU_IS_ON
