@@ -44,6 +44,18 @@ WalkPacket convertPathPacket(PathPacket p)
 	w.id=p.id;
 	w.no_of_points=p.no_of_points;
 
+	if(p.pathType==1) /* if it is in r-theta form : note that x,y represent r-theta here directly*/
+		{
+
+		for(int i=0;i<w.no_of_points;++i)
+		{
+			w.finalPath[i].r=p.finalpath[i].x;
+
+			w.finalPath[i].theta=p.finalpath[i].y;	
+		}	
+
+		return w;
+		}
 	// for(int i=0;i<p.no_of_points;++i)
 		// printf("Packet before conversion is %f %f\n",p.finalpath[i].x,p.finalpath[i].y);
 
@@ -135,7 +147,7 @@ void* walk_thread(void*)
 			// #endif
 			if(!executed[i])
 				{
-					if(walkpacket.finalPath[i].r>0.05)
+					if(walkpacket.finalPath[i].r>0.00005)
 					{
 						printf("Size is %d\n",pathpackvar.no_of_points);
 						printf("Path sent signal %f %f\n",walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);

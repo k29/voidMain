@@ -885,6 +885,9 @@ PathReturns Path::path_return(PathStructure ps)
 void Path::updatePathPacket()
 {
 	
+		pthread_mutex_lock(&mutex_pathpacket);
+
+		pathpackvar.pathType=0;
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
@@ -910,5 +913,5 @@ void Path::updatePathPacket()
 		}
 	
 	
-
+		pthread_mutex_unlock(&mutex_pathpacket);
 }

@@ -49,9 +49,6 @@ void BasicBehaviorUpdate::execute()
 
 
         /* localizationState flag */
-        // p.localizationConfidence=p.loc.confidence;
-        // motionModel.decay();
-
         pthread_mutex_lock(&mutex_motionModel);
                     
         if(motionModel.confidence < p.loc.confidence && p.loc.confidence<5.0)
@@ -70,9 +67,15 @@ void BasicBehaviorUpdate::execute()
 
         pthread_mutex_unlock(&mutex_motionModel);
 
+        /* localizationState flag end */
     
+
+
         /* ball found flag */     
         p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);   
+        /* ball found flag end */
+
+
         IplImage* flags = cvCreateImage(cvSize(220,60),8,1);
         cvZero(flags);
         CvFont font;
@@ -115,46 +118,66 @@ void BasicBehaviorUpdate::execute()
         #endif
 }
 
+void BasicBehaviorRotate::execute()
+{   
+        
+        pthread_mutex_lock(&mutex_pathpacket);
+        pathpackvar.no_of_points=1;
+        pathpackvar.updated=1;
+        pathpackvar.pathType=1;
+        pathpackvar.finalpath[0].x=0.005; /* customary */
+        pathpackvar.finalpath[0].y=deg2rad(5);
+        pthread_mutex_unlock(&mutex_pathpacket);
+
+}
 void BasicBehaviorLocalize::execute()
 {   
         
-        #ifdef IP_IS_ON
-        // printf("Confidence %lf, localizing\n",p.confidence);
-        int i=50;
-        while(i--)
-        {
-        
-        
-        // p.hdmtr.update();
-        
-        // while(!p.capture.getImage())
-        //     {
-        //         continue;
-        //     }
+        // #ifdef IP_IS_ON
+        // // printf("Confidence %lf, localizing\n",p.confidence);
+        // int i=50;
+        // while(i--)
         // {
-        //     printf("worked\n");
-        //     continue;
-        // }
-            // printf("After capture\n");
-        p.capture.getImage();
-        p.fd->getLandmarks(p.capture, p.hdmtr, motionModel);
-        // printf("After getLandmarks\n");
-        // p.camcont->search(p.hdmtr);
-        p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle()); 
-        cvShowImage("Real Time Feed", p.capture.rgbimg);
-        cvShowImage("Localization", p.loc.dispImage);
+        
+        
+        // // p.hdmtr.update();
+        
+        // // while(!p.capture.getImage())
+        // //     {
+        // //         continue;
+        // //     }
+        // // {
+        // //     printf("worked\n");
+        // //     continue;
+        // // }
+        //     // printf("After capture\n");
+        // p.capture.getImage();
+        // p.fd->getLandmarks(p.capture, p.hdmtr, motionModel);
+        // // printf("After getLandmarks\n");
+        // // p.camcont->search(p.hdmtr);
+        // p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle()); 
+        // cvShowImage("Real Time Feed", p.capture.rgbimg);
+        // cvShowImage("Localization", p.loc.dispImage);
     
-        p.confidence = p.loc.confidence;
-        // printf("%lf\n, %d", p.conf, i);
-        cvWaitKey(5);
-        }
-        #endif
+        // p.confidence = p.loc.confidence;
+        // // printf("%lf\n, %d", p.conf, i);
+        // cvWaitKey(5);
+        // }
+        // #endif
 
-        #ifndef IP_IS_ON
-        p.conf=1;
-        #endif
+        // #ifndef IP_IS_ON
+        // p.conf=1;
+        // #endif
+    
+        // pthread_mutex_lock(&mutex_pathpacket);
+        // pathpackvar.no_of_points=1;
+        // pathpackvar.updated=1;
+        // pathpackvar.pathType=1;
+        // pathpackvar.finalpath[0].x=0.005; /* customary */
+        // pathpackvar.finalpath[0].y=deg2rad(5);
+        // pthread_mutex_unlock(&mutex_pathpacket);
+
 }
-
 void BasicBehaviormoveAcYuttemp::execute()
 {
     unsigned int _x=int(x);

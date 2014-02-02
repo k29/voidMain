@@ -129,6 +129,7 @@ typedef struct
 
 typedef struct 
 {
+	int pathType; //0 is x-y (for updating by path) and 1 is r-theta (for directly controlling from behavior)
 	int updated;
 	int id;
 	int no_of_points;
