@@ -111,7 +111,7 @@ void* walk_thread(void*)
 	// (void) signal(SIGINT,doquitWalk);
 
 
-	PathPacket pathpackvarlocal;
+	// PathPacket pathpackvarlocal;
 	WalkPacket walkpacket;
 	Coords coords;
 	walkpacket.no_of_points=30;
@@ -154,7 +154,7 @@ void* walk_thread(void*)
 					}
 
 					
-
+					// walk.move(0,0.08);
 					walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					pthread_mutex_lock(&mutex_motionModel);
 					motionModel.update(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
