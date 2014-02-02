@@ -29,16 +29,17 @@ Walk::Walk(testBot* bot)
 };
 
 /* theta is in radians , not degrees*/
-void Walk::move(float walkr,float walktheta)
+void Walk::move(double walkr,double walktheta)
 {
 
 
 	printf("Move called with instructions %lf %lf\n",walkr,walktheta);
+	
 	double deltaR;
 	double deltaTheta;
 	double arclen;
 	//printf("[walkthread]   walk cmd received angle=%f",enAngle);
-		deltaR = (2*walkr/WHEELDIAmm/omega)*1000000;
+		deltaR = (2.0*walkr/WHEELDIAmm/omega)*1000000.0;
 	
 		if(walktheta<0)
 		{
@@ -46,8 +47,8 @@ void Walk::move(float walkr,float walktheta)
 			arclen=(walktheta)*WHEELDIST/2;
 
 			// delta=(arclen/(2*3.1415*WHEELDIAmm*MSPEED/360))*1000000;
-			deltaTheta = (2*arclen/WHEELDIAmm/omega)*1000000;
-			this->sync_write_data_motor(tbLEFT,512);
+			deltaTheta = (2.0*arclen/WHEELDIAmm/omega)*1000000.0;
+			sync_write_data_motor(tbLEFT,512);
 			// testBotWalk1(tbLEFT,512);
 			usleep((int)deltaTheta);
 			// testBotWalk1(tbSTOP);
@@ -64,8 +65,9 @@ void Walk::move(float walkr,float walktheta)
 			// delta=(arclen/(2*3.1415*WHEELDIAmm*MSPEED/360))*1000000;
 			arclen=(walktheta)*WHEELDIST/2;
 		
-			deltaTheta = (2*arclen/WHEELDIAmm/omega)*1000000;
-			this->sync_write_data_motor(tbRIGHT,512);
+			deltaTheta = (2.0*arclen/WHEELDIAmm/omega)*1000000.0;
+			// printf("Value of delta theta is %lf\n",deltaTheta);
+			sync_write_data_motor(tbRIGHT,512);
 			// testBotWalk1(tbRIGHT,512);
 			usleep((int)deltaTheta);
 			// testBotWalk1(tbSTOP);
@@ -73,12 +75,12 @@ void Walk::move(float walkr,float walktheta)
 		
 		
 		if(deltaR>0.00001)
-		this->sync_write_data_motor(tbBACKWARD,512);
+		sync_write_data_motor(tbBACKWARD,512);
 		
 		usleep((int)(deltaR));
 
 		usleep(500000);
-		this->sync_write_data_motor(tbSTOP);
+		sync_write_data_motor(tbSTOP);
 
 		
 		// pthread_mutex_lock(&mutex_walkstr);

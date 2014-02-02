@@ -44,8 +44,8 @@ typedef struct
 // }MotionModel;
 
 typedef struct 
-{	float theta;
-	float r;
+{	double theta;
+	double r;
 }Coords;
 
 typedef struct
@@ -88,16 +88,16 @@ namespace LOCALIZE_INTERNALS
 
 	struct Landmark
 	{
-		float distance;
-		float angle;
+		double distance;
+		double angle;
 		LandmarkType type;
 		int counter;
 	};
 
 	struct Obstacle
 	{
-		float distance;
-		float angle;
+		double distance;
+		double angle;
 		int counter;
 	};
 

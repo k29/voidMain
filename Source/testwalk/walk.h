@@ -39,7 +39,7 @@ class Walk
 	// float turnright(float theta);
 
 
-	void move(float r,float theta);
+	void move(double r,double theta);
 	int sync_write_data_motor(int mode, int speed);
 	
 

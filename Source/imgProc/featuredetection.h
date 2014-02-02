@@ -28,11 +28,11 @@ using namespace std;
 struct parameters
 {
 	int motor_pos;
-	float angle;
-	float focal;
-	float pix2cmx;
-	float pix2cmy;
-	float s_view_compensation;
+	double angle;
+	double focal;
+	double pix2cmx;
+	double pix2cmy;
+	double s_view_compensation;
 };
 
 class FeatureDetection
@@ -40,9 +40,9 @@ class FeatureDetection
 private:
 	const int IMAGE_HEIGHT;
 	const int IMAGE_WIDTH;
-	static const float pix2cm = 0.28;	//WARNING: need to change this whenever changing size of image
-	static const float s_height=93.0;//86.0;
-	static const float neck_len=7.0; //constanty=4.5,rangey=10.0,constantx=8.0,rangex=16.0,rminx=70.0;
+	static const double pix2cm = 0.28;	//WARNING: need to change this whenever changing size of image
+	static const double s_height=93.0;//86.0;
+	static const double neck_len=7.0; //constanty=4.5,rangey=10.0,constantx=8.0,rangex=16.0,rminx=70.0;
 	static const double forwardTiltCorrection = -3.3;	//correction in degrees
 	//No of frames to persist
 	static const int LANDMARK_PERSISTENCE = 30;
@@ -62,7 +62,7 @@ private:
 	IplImage* seg_green;
 	IplImage* seg_white_count;
 	void undistort(int xd, int yd, int* xu, int* yu);
-	void findReal(int x,int y, float &objdis, float &objangdeg, HeadMotor &hm);
+	void findReal(int x,int y, double &objdis, double &objangdeg, HeadMotor &hm);
 	void getGoals(CamCapture &cam, HeadMotor &hm);
 	void getBlobs(CamCapture &cam);
 	void getLPs(CamCapture &cam, HeadMotor &hm);

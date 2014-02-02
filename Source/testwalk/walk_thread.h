@@ -19,5 +19,5 @@
 #include <termios.h>
 
 void* walk_thread(void*);
-WalkPacket convertPathPacket(PathPacket p);
+WalkPacket convertPathPacket();
 void doquitWalk();
