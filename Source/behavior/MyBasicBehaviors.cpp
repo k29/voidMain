@@ -76,14 +76,14 @@ void BasicBehaviorUpdate::execute()
         /* ball found flag end */
 
 
-        IplImage* flags = cvCreateImage(cvSize(220,60),8,1);
+        IplImage* flags = cvCreateImage(cvSize(220,75),8,1);
         cvZero(flags);
         CvFont font;
 
         double theta=getImuAngle();
         
         cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.35, 0.35, 0, 1.5, 8);
-        char A[100],B[100],C[100];
+        char A[100],B[100],C[100],D[100];
         if(p.localizationState == CRITICAL)
             sprintf(A,"LOCALISATION STATE : CRITICAL");
         if(p.localizationState == MOTIONMODEL)
@@ -93,10 +93,13 @@ void BasicBehaviorUpdate::execute()
         sprintf(B,"CONFIDENCE : %lf",p.confidence);
 
         sprintf(C,"IMU ANGLE : %lf",theta);
+
+        sprintf(D,"BALL: %s",p.ballreturn==BALLFOUND?"FOUND":"NOT FOUND");
         
         cvPutText(flags,A,cvPoint(10,15),&font,cvScalar(255,255,255));
         cvPutText(flags,B,cvPoint(10,30),&font,cvScalar(255,255,255));
         cvPutText(flags,C,cvPoint(10,45),&font,cvScalar(255,255,255));
+        cvPutText(flags,D,cvPoint(10,60),&font,cvScalar(255,255,255));
           
         // printf("localization updated to %lf\n",p.conf);
         cvNamedWindow("Flags");
