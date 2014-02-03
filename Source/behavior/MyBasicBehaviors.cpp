@@ -116,7 +116,7 @@ void BasicBehaviorUpdate::execute()
         #endif
 
         #ifndef IP_IS_ON
-        p.conf=1;
+        p.confidence=1;
         p.ballreturn=BALLFOUND;
         #endif
 }
