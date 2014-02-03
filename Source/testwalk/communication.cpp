@@ -98,6 +98,7 @@ int Communication::addSyncWrite(int location, int dataLength, byte data[], int i
 			}
 		}
 	}
+
 	return EXIT_SUCCESS;
 }
 

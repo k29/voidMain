@@ -45,6 +45,7 @@ int main(void)
 {	
 	// (void) signal(SIGINT,doquit);
 
+// pthread_create (&thread_id_walk, NULL, walk_thread, NULL);
 	#ifdef SWITCH_IS_ON
         pthread_create(&thread_id_switch,NULL,switchupdate,NULL);
     #endif
@@ -68,7 +69,7 @@ int main(void)
 	    	#endif
 
 	        registerXABSL();
-	  		start();
+	  		start();	
 			
 	    	#ifdef GC_IS_ON
 				pthread_join(thread_id_gc,NULL);
@@ -82,5 +83,5 @@ int main(void)
 		pthread_join(thread_id_switch,NULL);
 	#endif
 	
-	return 0;
+	// return 0;
 }

@@ -30,7 +30,7 @@ class MotionModel
 
 		AbsCoords read();
 
-		void update(float r,float theta);
+		void update(double r,double theta);
 
 		void decay();
 

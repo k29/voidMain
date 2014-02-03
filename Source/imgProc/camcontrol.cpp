@@ -4,8 +4,8 @@
 CamControl::CamControl(CamCapture &cam) : IMAGE_WIDTH(cam.width()), IMAGE_HEIGHT(cam.height()), 
 CENTRE_RECT_X1(IMAGE_WIDTH/4),	
 CENTRE_RECT_Y1 (IMAGE_HEIGHT/4),
-CENTRE_RECT_X2 ((IMAGE_WIDTH*3)/4),
-CENTRE_RECT_Y2 ((IMAGE_HEIGHT*3)/4)
+CENTRE_RECT_X2 ((IMAGE_WIDTH*4)/4),
+CENTRE_RECT_Y2 ((IMAGE_HEIGHT*4)/4)
 {
 	pass_counter = 0;	
 	state_of_motion = 0;

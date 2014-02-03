@@ -22,7 +22,7 @@ AbsCoords MotionModel::read()
 	return position;
 }
 
-void MotionModel::update(float r,float theta)
+void MotionModel::update(double r,double theta)
 {
 	decayMultiplier=exp(-r/decayConstant);
 	double thetaWorld=double(theta+getImuAngle()); //imu.yaw is in degrress change it if needed

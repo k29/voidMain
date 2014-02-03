@@ -18,6 +18,7 @@ BasicBehaviorPrint basicBehaviorPrint(myErrorHandler,ACYUT);
 BasicBehaviorUpdate basicBehaviorUpdate(myErrorHandler,ACYUT);
 BasicBehaviormoveAcYuttemp basicBehaviormoveAcYuttemp(myErrorHandler,ACYUT);
 BasicBehaviorLocalize basicBehaviorLocalize(myErrorHandler,ACYUT);
+BasicBehaviorRotate basicBehaviorRotate(myErrorHandler,ACYUT);
 BasicBehaviorPathToWalk basicBehaviorPathToWalk(myErrorHandler,ACYUT);
 BasicBehaviorMakePath basicBehaviorMakePath(myErrorHandler,ACYUT);
 // BasicBehaviorFindBall basicBehaviorFindBall(myErrorHandler,ACYUT);
@@ -52,6 +53,7 @@ void registerXABSL()
 
     engine->registerBasicBehavior(basicBehaviorInitialize);
     engine->registerBasicBehavior(basicBehaviorLocalize);
+    engine->registerBasicBehavior(basicBehaviorRotate);
     engine->registerBasicBehavior(basicBehaviorPathToWalk);
     engine->registerBasicBehavior(basicBehaviorPrint);
     engine->registerBasicBehavior(basicBehaviorUpdate);
@@ -105,7 +107,7 @@ void start()
 int getImuAngle()
 {        
         #ifdef IMU_IS_ON
-            return imu.yaw-IMU_INITIAL_ANGLE;
+            return -(imu.yaw-IMU_INITIAL_ANGLE);
         #endif
 
         #ifndef IMU_IS_ON
