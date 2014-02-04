@@ -105,7 +105,7 @@ void BasicBehaviorUpdate::execute()
         cvShowImage("flags",flags);
         cvShowImage("aa", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
-        // cvWaitKey(50);
+        cvWaitKey(25);
         cvReleaseImage(&flags);
         #endif
 
@@ -146,7 +146,7 @@ void BasicBehaviorLocalize::execute()
     
         p.confidence = p.loc.confidence();
         // printf("%lf\n, %d", p.conf, i);
-        // cvWaitKey(5);
+        cvWaitKey(5);
         }
         #endif
 
@@ -169,13 +169,13 @@ void BasicBehaviormoveAcYuttemp::execute()
 
 void BasicBehaviorMakePath::execute()
 {
-         // p.pathstr.n_obstacles = 2;
-        // p.pathstr.absObstacles[0].x=20; 
-        // p.pathstr.absObstacles[0].y=31;
-        // p.pathstr.absObstacles[1].x=60 ;
-        // p.pathstr.absObstacles[1].y=100;
-        // p.pathstr.absObstacles[2].x=-40;
-        // p.pathstr.absObstacles[2].y=-80;
+    //      p.pathstr.n_obstacles = 2;
+    //     p.pathstr.absObstacles[0].x=20; 
+    //     p.pathstr.absObstacles[0].y=31;
+    //     p.pathstr.absObstacles[1].x=60 ;
+    //     p.pathstr.absObstacles[1].y=100;
+    //     p.pathstr.absObstacles[2].x=-40;
+    //     p.pathstr.absObstacles[2].y=-80;
     // printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     //     for(int i=0;i<fd.o.size();i++)//assuming right positive and left neagative for theta
     // {
@@ -205,7 +205,7 @@ void BasicBehaviorMakePath::execute()
 
     p.pathreturn=p.path.path_return(p.pathstr);
     
-    // printf("Path Made\n");
+    printf("Path Made\n");
     #endif
 }
 
@@ -267,10 +267,10 @@ void BasicBehaviorPathToWalk::execute()
     #endif
 }
 
-// void BasicBehaviorFindBall::execute()
-// {    
+void BasicBehaviorFindBall::execute()
+{    
    
-// }
+}
 
 void BasicBehaviorReset::execute()
 {

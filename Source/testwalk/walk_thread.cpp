@@ -145,7 +145,7 @@ void* walk_thread(void*)
 
 					walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					pthread_mutex_lock(&mutex_motionModel);
-					// motionModel.update(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
+					motionModel.update(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					pthread_mutex_unlock(&mutex_motionModel);
 					executed[i]=1;
 				}

@@ -94,18 +94,18 @@ void FeatureDetection::findReal(int X,int Y, float &objdis, float &objangdeg, He
     //         break;
     //     }
     // }
-    entry.angle = 35.0;
-    entry.focal = 76.1;
-    entry.pix2cmy = 40.0/24.0;
-    entry.pix2cmx = 40.0/32.0;
-    entry.s_view_compensation = 46.0;
+    entry.angle = 37.5;
+    entry.focal = 198.74;
+    entry.pix2cmy = 1.25;
+    entry.pix2cmx = 1.09589;
+    entry.s_view_compensation = 187.0;
 
     //correct    // objdis=(((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
         // float perpend= - (x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx; //NEGATiVE VALUE!!
         // objdis=entry.pix2cmy*(objdis) + entry.s_view_compensation;
 
-    objdis=(((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
-    float perpend= - (x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx; //NEGATiVE VALUE!!
+    objdis= (((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
+    float perpend= (x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx; //NEGATiVE VALUE!!(removed)
     objdis=entry.pix2cmy*(objdis) + entry.s_view_compensation;
     objangdeg=rad2deg(thetaY) + rad2deg(atan2(perpend,objdis));
     // objangdeg = 0.0 + rad2deg(atan2(perpend,objdis));
@@ -880,13 +880,13 @@ void FeatureDetection::getInGreen(CamCapture &cam)
 
     // cvShowImage("boundary", seg_black);
     
-    for(int x = 0; x < IMAGE_WIDTH; x++)
-    {
-        for(int y = 0; y < returnPixel1C(histogram, x/4, 0)*4; y++)
-        {
-            returnPixel1C(seg_red, x, y) = 0;
-        }
-    }
+    // for(int x = 0; x < IMAGE_WIDTH; x++)
+    // {
+    //     for(int y = 0; y < returnPixel1C(histogram, x/4, 0)*4; y++)
+    //     {
+    //         returnPixel1C(seg_red, x, y) = 0;
+    //     }
+    // }
     cvNamedWindow("RED");
     cvMoveWindow("RED",50,600);
     cvShowImage("RED", seg_red);
@@ -1067,7 +1067,7 @@ void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
         ballY_var = it2->second->centroid.y*2;
         ballFound_var = true;
         findReal(it2->second->centroid.x, it2->second->centroid.y, ball.r, ball.theta, hm);
-        ball.theta +=10;
+        // ball.theta +=10;
     }
     CvFont font;
     cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
