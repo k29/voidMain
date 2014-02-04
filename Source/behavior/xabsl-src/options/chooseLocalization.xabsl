@@ -1,0 +1,34 @@
+option chooseLocalization
+{
+	initial	state localized
+		{
+			decision
+				{
+					if(localizationState==LOCALIZED)
+						stay;
+					else 
+						goto motionmodel;
+
+				}
+			action
+				{
+					doMakePath();
+					checkpath();
+				}
+		}
+	state motionmodel
+		{
+			decision
+				{
+					if(localizationState==MOTIONMODEL)
+						stay;
+					else 
+						goto localized;
+				}
+			action
+				{
+					doMakePathFromMotionModel();
+					checkpath();
+				}
+		}
+}

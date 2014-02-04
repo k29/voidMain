@@ -86,7 +86,18 @@ class BasicBehaviorLocalize: public xabsl::BasicBehavior
     private:
             playerstate &p;
 };
+class BasicBehaviorRotate: public xabsl::BasicBehavior
+{
 
+	public:
+	BasicBehaviorRotate(xabsl::ErrorHandler& errorHandler,playerstate &p):xabsl::BasicBehavior("doRotate",errorHandler),p(p)
+		{
+		}
+
+	virtual void execute();
+    private:
+            playerstate &p;
+};
 class BasicBehaviorPathToWalk: public xabsl::BasicBehavior
 {
 	public:

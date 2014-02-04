@@ -49,20 +49,17 @@ void BasicBehaviorUpdate::execute()
 
 
         /* localizationState flag */
-        p.localizationConfidence=p.loc.confidence();
-        // motionModel.decay();
-
         pthread_mutex_lock(&mutex_motionModel);
                     
-        if(motionModel.confidence < p.localizationConfidence && p.localizationConfidence<5.0)
-            motionModel.refresh(p.loc.selfX,p.loc.selfY,p.localizationConfidence);
+        if(motionModel.confidence < p.loc.confidence && p.loc.confidence<5.0)
+            motionModel.refresh(p.loc.selfX,p.loc.selfY,p.loc.confidence);
 
-        p.confidence=max( motionModel.confidence , p.localizationConfidence);
+        p.confidence=max( motionModel.confidence , p.loc.confidence);
 
         
         if(p.confidence < 0.1)
             p.localizationState=CRITICAL;
-        else if(motionModel.confidence > p.localizationConfidence)
+        else if(motionModel.confidence > p.loc.confidence)
             p.localizationState=MOTIONMODEL;
             // p.localizationState=LOCALIZED;
         else
@@ -70,17 +67,23 @@ void BasicBehaviorUpdate::execute()
 
         pthread_mutex_unlock(&mutex_motionModel);
 
+        /* localizationState flag end */
     
+
+
         /* ball found flag */     
         p.ballreturn=p.camcont->findBall(*(p.fd),p.hdmtr);   
-        IplImage* flags = cvCreateImage(cvSize(220,60),8,1);
+        /* ball found flag end */
+
+
+        IplImage* flags = cvCreateImage(cvSize(220,75),8,1);
         cvZero(flags);
         CvFont font;
 
         double theta=getImuAngle();
         
         cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.35, 0.35, 0, 1.5, 8);
-        char A[100],B[100],C[100];
+        char A[100],B[100],C[100],D[100];
         if(p.localizationState == CRITICAL)
             sprintf(A,"LOCALISATION STATE : CRITICAL");
         if(p.localizationState == MOTIONMODEL)
@@ -90,71 +93,94 @@ void BasicBehaviorUpdate::execute()
         sprintf(B,"CONFIDENCE : %lf",p.confidence);
 
         sprintf(C,"IMU ANGLE : %lf",theta);
+
+        sprintf(D,"BALL: %s",p.ballreturn==BALLFOUND?"FOUND":"NOT FOUND");
         
         cvPutText(flags,A,cvPoint(10,15),&font,cvScalar(255,255,255));
         cvPutText(flags,B,cvPoint(10,30),&font,cvScalar(255,255,255));
         cvPutText(flags,C,cvPoint(10,45),&font,cvScalar(255,255,255));
+        cvPutText(flags,D,cvPoint(10,60),&font,cvScalar(255,255,255));
           
         // printf("localization updated to %lf\n",p.conf);
-        cvNamedWindow("flags");
-        cvNamedWindow("aa");
+        cvNamedWindow("Flags");
+        cvNamedWindow("Real Time Feed");
         cvNamedWindow("Localization");
-        cvMoveWindow("flags",50,50);
-        cvMoveWindow("aa",300,50);
+        cvMoveWindow("Flags",50,50);
+        cvMoveWindow("Real Time Feed",300,50);
         cvMoveWindow("Localization",950,50);
-        cvShowImage("flags",flags);
-        cvShowImage("aa", p.capture.rgbimg);
+        cvShowImage("Flags",flags);
+        cvShowImage("Real Time Feed", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
         cvWaitKey(25);
         cvReleaseImage(&flags);
         #endif
 
         #ifndef IP_IS_ON
-        p.conf=1;
+        p.confidence=1;
         p.ballreturn=BALLFOUND;
         #endif
 }
 
+void BasicBehaviorRotate::execute()
+{   
+        
+        pthread_mutex_lock(&mutex_pathpacket);
+        pathpackvar.no_of_points=1;
+        pathpackvar.updated=1;
+        pathpackvar.pathType=1;
+        pathpackvar.finalpath[0].x=0.0;
+        pathpackvar.finalpath[0].y=deg2rad(5);
+        pthread_mutex_unlock(&mutex_pathpacket);
+
+}
 void BasicBehaviorLocalize::execute()
 {   
         
-        #ifdef IP_IS_ON
-        // printf("Confidence %lf, localizing\n",p.confidence);
-        int i=50;
-        while(i--)
-        {
-        
-        
-        // p.hdmtr.update();
-        
-        // while(!p.capture.getImage())
-        //     {
-        //         continue;
-        //     }
+        // #ifdef IP_IS_ON
+        // // printf("Confidence %lf, localizing\n",p.confidence);
+        // int i=50;
+        // while(i--)
         // {
-        //     printf("worked\n");
-        //     continue;
-        // }
-            // printf("After capture\n");
-        p.capture.getImage();
-        p.fd->getLandmarks(p.capture, p.hdmtr, motionModel);
-        // printf("After getLandmarks\n");
-        // p.camcont->search(p.hdmtr);
-        p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle()); 
-        cvShowImage("aa", p.capture.rgbimg);
-        cvShowImage("Localization", p.loc.dispImage);
+        
+        
+        // // p.hdmtr.update();
+        
+        // // while(!p.capture.getImage())
+        // //     {
+        // //         continue;
+        // //     }
+        // // {
+        // //     printf("worked\n");
+        // //     continue;
+        // // }
+        //     // printf("After capture\n");
+        // p.capture.getImage();
+        // p.fd->getLandmarks(p.capture, p.hdmtr, motionModel);
+        // // printf("After getLandmarks\n");
+        // // p.camcont->search(p.hdmtr);
+        // p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle()); 
+        // cvShowImage("Real Time Feed", p.capture.rgbimg);
+        // cvShowImage("Localization", p.loc.dispImage);
     
-        p.confidence = p.loc.confidence();
-        // printf("%lf\n, %d", p.conf, i);
-        cvWaitKey(5);
-        }
-        #endif
+        // p.confidence = p.loc.confidence;
+        // // printf("%lf\n, %d", p.conf, i);
+        // cvWaitKey(5);
+        // }
+        // #endif
 
-        #ifndef IP_IS_ON
-        p.conf=1;
-        #endif
+        // #ifndef IP_IS_ON
+        // p.conf=1;
+        // #endif
+    
+        // pthread_mutex_lock(&mutex_pathpacket);
+        // pathpackvar.no_of_points=1;
+        // pathpackvar.updated=1;
+        // pathpackvar.pathType=1;
+        // pathpackvar.finalpath[0].x=0.005; /* customary */
+        // pathpackvar.finalpath[0].y=deg2rad(5);
+        // pthread_mutex_unlock(&mutex_pathpacket);
+
 }
-
 void BasicBehaviormoveAcYuttemp::execute()
 {
     unsigned int _x=int(x);

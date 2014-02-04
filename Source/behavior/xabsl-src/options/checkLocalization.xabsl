@@ -1,0 +1,76 @@
+option checkLocalization
+{
+		initial state critical_noBall
+			{
+				decision
+					{
+						if(localizationState==CRITICAL && ballreturn!=BALLFOUND)
+							stay;
+						else if(localizationState==CRITICAL && ballreturn==BALLFOUND)
+							goto critical_ball;
+						else if(localizationState!=CRITICAL && ballreturn!=BALLFOUND)
+							goto localized_noBall;
+						else 
+							goto localized_ball;
+					}
+				action
+					{
+						doRotate();
+					}
+			}
+
+		state critical_ball
+			{
+				decision
+					{
+						if(localizationState==CRITICAL && ballreturn==BALLFOUND)
+							stay;
+						else if(localizationState==CRITICAL && ballreturn!=BALLFOUND)
+							goto critical_noBall;
+						else if(localizationState!=CRITICAL && ballreturn!=BALLFOUND)
+							goto localized_noBall;
+						else 
+							goto localized_ball;
+					}
+				action
+					{
+						doRotate();
+					}
+			}
+		state localized_noBall
+			{
+				decision
+					{
+						if(localizationState!=CRITICAL && ballreturn!=BALLFOUND)
+							stay;
+						else if(localizationState==CRITICAL && ballreturn==BALLFOUND)
+							goto critical_ball;
+						else if(localizationState==CRITICAL && ballreturn!=BALLFOUND)
+							goto critical_noBall;
+						else 
+							goto localized_ball;
+					}
+				action
+					{
+						doRotate();
+					}
+			}
+		state localized_ball
+			{
+				decision
+					{
+						if(localizationState!=CRITICAL && ballreturn==BALLFOUND)
+							stay;
+						else if(localizationState==CRITICAL && ballreturn==BALLFOUND)
+							goto critical_ball;
+						else if(localizationState!=CRITICAL && ballreturn!=BALLFOUND)
+							goto localized_noBall;
+						else 
+							goto critical_noBall;
+					}
+				action
+					{
+						chooseLocalization();
+					}
+			}
+}

@@ -64,7 +64,7 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	this->comm = comm;
 	this->imu = imu;
 
-	offsets[0] = -10;			//Best tuned 1 -10
+	offsets[0] = 50;			//Best tuned 1 -10
 	offsets[1] = 0;
 	offsets[2] = 22;
 	offsets[3] = -22;//Dec= Fw torso

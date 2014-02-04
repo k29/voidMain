@@ -850,7 +850,7 @@ PathReturns Path::path_return(PathStructure ps)
 			//cout<<curvearray[i].r<<"\t"<<curvearray[i].theta<<"\n";
 		}
 		//cout<<"\n\n\n\n\n\n\n\n";
-		cvWaitKey();
+		// cvWaitKey();
 		return DOORIENT;
 	}
 
@@ -871,7 +871,7 @@ PathReturns Path::path_return(PathStructure ps)
     cvPutText(image,A,cvPoint(10,25),&font,cvScalar(255,255,255));
     cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
 	cvShowImage("Field", image);
-	cvWaitKey();
+	// cvWaitKey();
 	if(tree.no_path_flag==-1)
 	{
 		tree.no_path_flag=0;
@@ -885,6 +885,9 @@ PathReturns Path::path_return(PathStructure ps)
 void Path::updatePathPacket()
 {
 	
+		pthread_mutex_lock(&mutex_pathpacket);
+
+		pathpackvar.pathType=0;
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
@@ -910,5 +913,5 @@ void Path::updatePathPacket()
 		}
 	
 	
-
+		pthread_mutex_unlock(&mutex_pathpacket);
 }

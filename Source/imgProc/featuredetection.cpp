@@ -34,18 +34,18 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
 //TODO: re-write this function to make it readable and maybe more efficient.
 //TODO: document how it works (if documenting somewhere else, give a link)
 //returns angle in degrees
-// void FeatureDetection::findReal(int x,int y, float &objdis, float &objangdeg, HeadMotor &hm)
+// void FeatureDetection::findReal(int x,int y, double &objdis, double &objangdeg, HeadMotor &hm)
 // {
-//  float s=1,focal=533.33;
-//  float thetaX = hm.thetaX();
-//  float thetaY = hm.thetaY();
+//  double s=1,focal=533.33;
+//  double thetaX = hm.thetaX();
+//  double thetaY = hm.thetaY();
 //  thetaX += forwardTiltCorrection*(PI/180.);
 //  objdis=(((IMAGE_HEIGHT/2-y)+(focal/s)*tan(thetaX))/(1-(s/focal)*(IMAGE_HEIGHT/2-y)*tan(thetaX)));
-//  float perpend=(x-(IMAGE_WIDTH/2))*((s/focal)*(objdis)*sin(thetaX)+cos(thetaX))*pix2cm;
+//  double perpend=(x-(IMAGE_WIDTH/2))*((s/focal)*(objdis)*sin(thetaX)+cos(thetaX))*pix2cm;
 //  objdis=pix2cm*(objdis-(focal/s)*tan(thetaX)) + (s_height+(neck_len/sin(thetaX)))*tan(thetaX);
-//  //printf("%f %f %f %f\n",perpend,objdis,rad2deg(atan2(perpend,objdis)),rad2deg(thetaY));
-// //   printf("thetaX is %f\t",rad2deg(thetaY));
-// //   printf("x %f y %f\n", rad2deg(thetaX), rad2deg(thetaY));
+//  //printf("%lf %lf %lf %lf\n",perpend,objdis,rad2deg(atan2(perpend,objdis)),rad2deg(thetaY));
+// //   printf("thetaX is %lf\t",rad2deg(thetaY));
+// //   printf("x %lf y %lf\n", rad2deg(thetaX), rad2deg(thetaY));
 //  objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
 //  objdis=sqrt(objdis*objdis+perpend*perpend);
     
@@ -62,7 +62,7 @@ void FeatureDetection::undistort(int xd, int yd, int* xu, int* yu)
     #endif
 }
 
-void FeatureDetection::findReal(int X,int Y, float &objdis, float &objangdeg, HeadMotor &hm)
+void FeatureDetection::findReal(int X,int Y, double &objdis, double &objangdeg, HeadMotor &hm)
 {
     int x,y;
     X = X - IMAGE_WIDTH/2;
@@ -71,9 +71,9 @@ void FeatureDetection::findReal(int X,int Y, float &objdis, float &objangdeg, He
     x = x + IMAGE_WIDTH/2;
     y = IMAGE_HEIGHT/2 - y;
     double s = 1.0;
-    float motorX = hm.motorX();
-    float thetaX = hm.thetaX();
-    float thetaY = hm.thetaY();
+    double motorX = hm.motorX();
+    double thetaX = hm.thetaX();
+    double thetaY = hm.thetaY();
 
     parameters entry;
     // parameters temp;
@@ -101,7 +101,7 @@ void FeatureDetection::findReal(int X,int Y, float &objdis, float &objangdeg, He
     entry.s_view_compensation = 187.0;
 
     //correct    // objdis=(((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
-        // float perpend= - (x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx; //NEGATiVE VALUE!!
+        // double perpend= - (x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx; //NEGATiVE VALUE!!
         // objdis=entry.pix2cmy*(objdis) + entry.s_view_compensation;
 
     objdis= (((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
@@ -112,11 +112,11 @@ void FeatureDetection::findReal(int X,int Y, float &objdis, float &objangdeg, He
     objdis=sqrt(objdis*objdis+perpend*perpend);
 
     // objdis=(((IMAGE_HEIGHT/2-y)+(31.641/s)*tan(31.641))/(1-(s/98.44)*(IMAGE_HEIGHT/2-y)*tan(31.641)));
-    // float perpend=(x-(IMAGE_WIDTH/2))*((s/98.44)*(objdis)*sin(31.641)+cos(31.641))*0.66667;
+    // double perpend=(x-(IMAGE_WIDTH/2))*((s/98.44)*(objdis)*sin(31.641)+cos(31.641))*0.66667;
     // objdis=1.0211*(objdis) + 240;
     #ifndef ALL_PRINTING_OFF
-    printf("PERPEND : \t\t\t%f\n", perpend);
-    printf("OBJDIS: \t\t\t%f\n\n\n\n", objdis);
+    printf("PERPEND : \t\t\t%lf\n", perpend);
+    printf("OBJDIS: \t\t\t%lf\n\n\n\n", objdis);
     #endif
     // objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
     // objdis=sqrt(objdis*objdis+perpend*perpend);
@@ -1026,14 +1026,14 @@ void FeatureDetection::getLandmarks(CamCapture &cam, HeadMotor &hm, MotionModel 
     for(std::vector<Landmark>::iterator it = l.begin(); it != l.end(); ++it)
     {
         #ifndef ALL_PRINTING_OFF
-        printf("Type: %d Distance: %f Angle: %f Counter: %d\n",it->type, it->distance, it->angle, it->counter);
+        printf("Type: %d Distance: %lf Angle: %lf Counter: %d\n",it->type, it->distance, it->angle, it->counter);
         #endif    
     }
 
     for(std::vector<Obstacle>::iterator it = o.begin(); it != o.end(); ++it)
     {
         #ifndef ALL_PRINTING_OFF
-        printf("Obstacle Distance: %f Angle: %f Counter: %d\n",it->distance, it->angle, it->counter);
+        printf("Obstacle Distance: %lf Angle: %lf Counter: %d\n",it->distance, it->angle, it->counter);
         #endif
     }
     #endif
