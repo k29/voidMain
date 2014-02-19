@@ -79,7 +79,7 @@ private:
 public:
 	//note that this is in  radians
 	//When DOORIENT is returned by the code take the curvearray(which will give the entire curve till the ball) otherwise take next which just gives the next step.
-
+	
 	Coords next; 
 	Coords curvenext[100]; 
 	int len_curvenext;

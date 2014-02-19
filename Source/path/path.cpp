@@ -885,33 +885,33 @@ PathReturns Path::path_return(PathStructure ps)
 void Path::updatePathPacket()
 {
 	
-		pthread_mutex_lock(&mutex_pathpacket);
+// 		pthread_mutex_lock(&mutex_pathpacket);
 
-		pathpackvar.pathType=0;
-		pathpackvar.updated=1;
-		pathpackvar.id=com_id;
-		com_id=com_id+1;
-		std::size_t b;
-		b=tree.returnPathPoint(1);
-		pathpackvar.finalpath[0].x=ball.x;
-		pathpackvar.finalpath[0].y=ball.y;
-		assert(tree.size()<30);
-		for(int i=1;i<30;i++)
-		{
-			if(b==0)
-				break;
-			pathpackvar.finalpath[i].x=tree[b].x;
-			pathpackvar.finalpath[i].y=tree[b].y;
-			b=tree.returnPathPoint(b);
-			pathpackvar.no_of_points=i;
-		}
-		//////////cout<<"after for in update path packet\n";
-		if(pathpackvar.no_of_points<29)
-		{
-			pathpackvar.finalpath[pathpackvar.no_of_points+1].x=-1;
-			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
-		}
+// 		pathpackvar.pathType=0;
+// 		pathpackvar.updated=1;
+// 		pathpackvar.id=com_id;
+// 		com_id=com_id+1;
+// 		std::size_t b;
+// 		b=tree.returnPathPoint(1);
+// 		pathpackvar.finalpath[0].x=ball.x;
+// 		pathpackvar.finalpath[0].y=ball.y;
+// 		assert(tree.size()<30);
+// 		for(int i=1;i<30;i++)
+// 		{
+// 			if(b==0)
+// 				break;
+// 			pathpackvar.finalpath[i].x=tree[b].x;
+// 			pathpackvar.finalpath[i].y=tree[b].y;
+// 			b=tree.returnPathPoint(b);
+// 			pathpackvar.no_of_points=i;
+// 		}
+// 		//////////cout<<"after for in update path packet\n";
+// 		if(pathpackvar.no_of_points<29)
+// 		{
+// 			pathpackvar.finalpath[pathpackvar.no_of_points+1].x=-1;
+// 			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
+// 		}
 	
 	
-		pthread_mutex_unlock(&mutex_pathpacket);
+// 		pthread_mutex_unlock(&mutex_pathpacket);
 }
