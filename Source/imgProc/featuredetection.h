@@ -40,14 +40,14 @@ class FeatureDetection
 private:
 	const int IMAGE_HEIGHT;
 	const int IMAGE_WIDTH;
-	static const double pix2cm = 0.28;	//WARNING: need to change this whenever changing size of image
-	static const double s_height=93.0;//86.0;
-	static const double neck_len=7.0; //constanty=4.5,rangey=10.0,constantx=8.0,rangex=16.0,rminx=70.0;
-	static const double forwardTiltCorrection = -3.3;	//correction in degrees
+	static const double pix2cm = 1;	//WARNING: need to change this whenever changing size of image
+	static const double s_height=104.0;//86.0;
+	static const double neck_len=9.0; //constanty=4.5,rangey=10.0,constantx=8.0,rangex=16.0,rminx=70.0;
+	static const double forwardTiltCorrection = 0;//-3.3;	//correction in degrees
 	//No of frames to persist
 	static const int LANDMARK_PERSISTENCE = 30;
 	static const int OBSTACLE_PERSISTENCE = 30;
-	static const double ax = -7.1e-06;
+	//static const double ax = -7.1e-06;
 	cvb::CvBlobs blobs_red;
 	cvb::CvBlobs blobs_blue;
 	cvb::CvBlobs blobs_yellow;

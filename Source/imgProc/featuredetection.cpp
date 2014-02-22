@@ -51,14 +51,26 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
 // }
 void FeatureDetection::undistort(int xd, int yd, int* xu, int* yu)
 {
-    double ax = -7.1e-06;
-    double r2 = xd*xd +yd*yd;    
-    *xu = xd/(1+ax*r2);
-    *yu = yd/(1+ax*r2);
-    #ifndef ALL_PRINTING_OFF
-    printf("xd = %d \t\t\t yd = %d\n", xd, yd);
-    printf("xu = %d \t\t\t yu = %d\n", *xu, *yu);
-    #endif
+    // double ax = -7.1e-06;
+    // double r2 = xd*xd +yd*yd;    
+    // *xu = xd/(1+ax*r2);
+    // *yu = yd/(1+ax*r2);
+    // #ifndef ALL_PRINTING_OFF
+    // printf("xd = %d \t\t\t yd = %d\n", xd, yd);
+    // printf("xu = %d \t\t\t yu = %d\n", *xu, *yu);
+    // #endif
+
+    long double angd = atan2(yd, xd);
+    long double rd = sqrt(xd*xd + yd*yd);
+    
+    long double a0= 0 ,a1=0.9987, a2= 3.9523e-17, a3=5.2673e-04 , a4=-7.5649e-18, a5= -3.8569e-5;       //angles
+    long double b0= 0.0378 ,b1= 5.1859, b2=0.0056, b3=4.1804e-05, b4=-4.8267e-07, b5=2.8331e-09;        //r
+
+    long double angu = a0+ a1*angd + a2*angd*angd + a3*angd*angd*angd + a4*angd*angd*angd*angd + a5*angd*angd*angd*angd*angd;
+    long double ru = (b0 + b1*rd + b2*rd*rd + b3*rd*rd*rd + b4*rd*rd*rd*rd + rd*rd*b5*rd*rd*rd);
+
+    *xu = (int)(ru*cos(angu) + 0.5);
+    *yu = (int)(ru*sin(angu) + 0.5);
 }
 
 void FeatureDetection::findReal(int X,int Y, double &objdis, double &objangdeg, HeadMotor &hm)
@@ -66,60 +78,32 @@ void FeatureDetection::findReal(int X,int Y, double &objdis, double &objangdeg, 
     int x,y;
     X = X - IMAGE_WIDTH/2;
     Y = IMAGE_HEIGHT/2 - Y;
+    
     undistort(X,Y,&x,&y);
-    x = x + IMAGE_WIDTH/2;
-    y = IMAGE_HEIGHT/2 - y;
-    double s = 1.0;
-    double motorX = hm.motorX();
-    double thetaX = hm.thetaX();
-    double thetaY = hm.thetaY();
 
-    parameters entry;
-    // parameters temp;
-    // constants.seekg(0,ios::beg);
-    // while(1)
-    // {
-    //     if(constants.eof())
-    //     {
-    //         constants.close();
-    //         printf("MOTOR POS NOT FOUND\n");
-    //         break;
-    //     }
-    //     constants.read((char*)&temp,sizeof(temp));
-    //     if(temp.motor_pos == motorX)
-    //     {
-    //         entry = temp;
-    //         printf("FOUND\n");
-    //         break;
-    //     }
-    // }
-    entry.angle = 35.0;
-    entry.focal = 76.1;
-    entry.pix2cmy = 40.0/24.0;
-    entry.pix2cmx = 40.0/32.0;
-    entry.s_view_compensation = 46.0;
+    double focal= 0.176, s=0.0006;
+    double thetaX = 30*PI/180;
+    double thetaY = 0*PI/180;
+    
+    //conversion to top view
+    objdis=((y+(focal/s)*tan(thetaX))/(1-(s/focal)*y*tan(thetaX)));
+    double perpend=x*((s/focal)*(objdis)*sin(thetaX)+cos(thetaX));
 
-    //correct    // objdis=(((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
-        // double perpend= - (x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx; //NEGATiVE VALUE!!
-        // objdis=entry.pix2cmy*(objdis) + entry.s_view_compensation;
+    //top view to world coordinates
+    objdis = s_height*tan(thetaX) + objdis * s_height *s/focal + 12;    // +12 for correction (no known reason)
+    perpend = perpend * s_height * s/focal * 2/3 + 10;                  // *2/3 + 10 correction (no known reason)
 
-    objdis=(((IMAGE_HEIGHT/2-y)+(entry.focal/s)*tan(entry.angle))/(1-(s/entry.focal)*(IMAGE_HEIGHT/2-y)*tan(entry.angle)));
-    double perpend= - (x-(IMAGE_WIDTH/2))*((s/entry.focal)*(objdis)*sin(entry.angle)+cos(entry.angle))*entry.pix2cmx; //NEGATiVE VALUE!!
-    objdis=entry.pix2cmy*(objdis) + entry.s_view_compensation;
-    objangdeg=rad2deg(thetaY) + rad2deg(atan2(perpend,objdis));
-    // objangdeg = 0.0 + rad2deg(atan2(perpend,objdis));
-    objdis=sqrt(objdis*objdis+perpend*perpend);
+    //objdis=pix2cm*(objdis-(focal/s)*tan(thetaX)) + (s_height+(neck_len*sin(thetaX)))*tan(thetaX);
 
-    // objdis=(((IMAGE_HEIGHT/2-y)+(31.641/s)*tan(31.641))/(1-(s/98.44)*(IMAGE_HEIGHT/2-y)*tan(31.641)));
-    // double perpend=(x-(IMAGE_WIDTH/2))*((s/98.44)*(objdis)*sin(31.641)+cos(31.641))*0.66667;
-    // objdis=1.0211*(objdis) + 240;
-    #ifndef ALL_PRINTING_OFF
+    //#ifndef ALL_PRINTING_OFF
     printf("PERPEND : \t\t\t%lf\n", perpend);
     printf("OBJDIS: \t\t\t%lf\n\n\n\n", objdis);
-    #endif
-    // objangdeg=rad2deg(thetaY) - 150 + rad2deg(atan2(perpend,objdis));
-    // objdis=sqrt(objdis*objdis+perpend*perpend);
-    
+
+    //#endif
+
+    objdis = sqrt(objdis*objdis+perpend*perpend);
+    objangdeg = rad2deg(atan2(perpend, objdis)) + rad2deg(thetaY);
+
 }
 
 
@@ -879,13 +863,13 @@ void FeatureDetection::getInGreen(CamCapture &cam)
 
     // cvShowImage("boundary", seg_black);
     
-    for(int x = 0; x < IMAGE_WIDTH; x++)
-    {
-        for(int y = 0; y < returnPixel1C(histogram, x/4, 0)*4; y++)
-        {
-            returnPixel1C(seg_red, x, y) = 0;
-        }
-    }
+    // for(int x = 0; x < IMAGE_WIDTH; x++)
+    // {
+    //     for(int y = 0; y < returnPixel1C(histogram, x/4, 0)*4; y++)
+    //     {
+    //         returnPixel1C(seg_red, x, y) = 0;
+    //     }
+    // }
     cvNamedWindow("RED");
     cvMoveWindow("RED",50,600);
     cvShowImage("RED", seg_red);
@@ -1066,7 +1050,7 @@ void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
         ballY_var = it2->second->centroid.y*2;
         ballFound_var = true;
         findReal(it2->second->centroid.x, it2->second->centroid.y, ball.r, ball.theta, hm);
-        ball.theta +=10;
+        //ball.theta +=10;
     }
     CvFont font;
     cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
