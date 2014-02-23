@@ -53,7 +53,7 @@ void BasicBehaviorUpdate::execute()
                     
         if(motionModel.confidence < p.loc.confidence && p.loc.confidence<5.0)
             motionModel.refresh(p.loc.selfX,p.loc.selfY,p.loc.confidence);
-
+        
         p.confidence=max( motionModel.confidence , p.loc.confidence);
 
         

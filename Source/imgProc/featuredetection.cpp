@@ -95,11 +95,10 @@ void FeatureDetection::findReal(int X,int Y, double &objdis, double &objangdeg, 
 
     //objdis=pix2cm*(objdis-(focal/s)*tan(thetaX)) + (s_height+(neck_len*sin(thetaX)))*tan(thetaX);
 
-    //#ifndef ALL_PRINTING_OFF
+    #ifndef ALL_PRINTING_OFF
     printf("PERPEND : \t\t\t%lf\n", perpend);
     printf("OBJDIS: \t\t\t%lf\n\n\n\n", objdis);
-
-    //#endif
+    #endif
 
     objdis = sqrt(objdis*objdis+perpend*perpend);
     objangdeg = rad2deg(atan2(perpend, objdis)) + rad2deg(thetaY);
