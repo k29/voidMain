@@ -59,11 +59,11 @@ class playerstate
        
 
         Localize loc;
-        float bwt,lmwt;
+        // float bwt,lmwt;
         int ballnotinframe;
         
         
-        float prevballr,velocity;
+        // float prevballr,velocity;
         
         
 

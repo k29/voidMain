@@ -55,6 +55,7 @@ SOLUTION: Added 2% random points each iteration
 class Localize
 {
 private:
+	void calcConfidence();
 	static const int NO_OF_PARTICLES = 200;
 	//NOTE: Field is defined to be within white lines (as done previously). Green outside white lines is not used in calculations
 	static const int MIN_DISTANCE = 5;	//Minimum resolution of distance in cms
@@ -102,11 +103,12 @@ private:
 
 public:
 	double selfX, selfY, selfAngle;
+	double confidence;
 	IplImage* dispImage;
 	Localize();
 	void printPosition();
 	void doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam, int imuangle = -9999);
-	double confidence();
+	
 	AbsCoords getGoalCoords(int g);
 	void randomize();
 };

@@ -22,6 +22,10 @@ namespace myBasicBehaviors("My Behaviors")
 		behavior doLocalize
 			{				
 			}
+		/** Behavior gets direct access to walk */
+		behavior doRotate
+			{
+			}
 		/**Send the made path to walk*/
 		behavior doPathToWalk
 			{				

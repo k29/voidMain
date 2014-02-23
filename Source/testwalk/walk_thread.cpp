@@ -38,12 +38,24 @@ bool quit = false;
 
 
 
-WalkPacket convertPathPacket(PathPacket p)
+WalkPacket convertPathPacket()
 {
 	WalkPacket w;
-	w.id=p.id;
-	w.no_of_points=p.no_of_points;
+	w.id=pathpackvar.id;
+	w.no_of_points=pathpackvar.no_of_points;
 
+	if(pathpackvar.pathType==1) /* if it is in r-theta form : note that x,y represent r-theta here directly*/
+		{
+
+		for(int i=0;i<w.no_of_points;++i)
+		{
+			w.finalPath[i].r=pathpackvar.finalpath[i].x;
+
+			w.finalPath[i].theta=pathpackvar.finalpath[i].y;	
+		}	
+
+		return w;
+		}
 	// for(int i=0;i<p.no_of_points;++i)
 		// printf("Packet before conversion is %f %f\n",p.finalpath[i].x,p.finalpath[i].y);
 
@@ -51,8 +63,8 @@ WalkPacket convertPathPacket(PathPacket p)
 	double theta;
 	for(int i=0;i<w.no_of_points;++i)
 		{
-			x=p.finalpath[i].x;
-			y=p.finalpath[i].y;
+			x=pathpackvar.finalpath[i].x;
+			y=pathpackvar.finalpath[i].y;
 			w.finalPath[i].r     = sqrt(x*x+y*y);
 
 			if(fabs(x)<0.0001)
@@ -91,12 +103,19 @@ void* walk_thread(void*)
 	Communication comm;
 	testBot bot(&comm);
 	Walk walk(&bot);
+
+	// usleep(500000);
 	// double pi=acos(-1);
 	// walk.move(100.0,0);	
 
 	
-	
-	// (void) signal(SIGINT,doquitWalk);
+	// // while(1)
+	// // {
+	// 	// printf("in WT\n");
+	// 	printf("WT started\n");
+	// 	walk.move(100,0);
+	// // }
+	// // (void) signal(SIGINT,doquitWalk);
 
 
 	PathPacket pathpackvarlocal;
@@ -111,7 +130,7 @@ void* walk_thread(void*)
 			pthread_mutex_lock(&mutex_pathpacket);
 					if(pathpackvar.updated==1)
 						{
-							walkpacket=convertPathPacket(pathpackvar);
+							walkpacket=convertPathPacket();
 							pathpackvar.updated=0;
 							executed.assign(30,0);
 						}		
@@ -124,7 +143,7 @@ void* walk_thread(void*)
 			pthread_mutex_lock(&mutex_pathpacket);
 					if(pathpackvar.updated==1)
 						{
-							walkpacket=convertPathPacket(pathpackvar);
+							walkpacket=convertPathPacket();
 							i=0;
 							pathpackvar.updated=0;
 							executed.assign(30,0);
@@ -135,14 +154,17 @@ void* walk_thread(void*)
 			// #endif
 			if(!executed[i])
 				{
-					if(walkpacket.finalPath[i].r>0.05)
+					if(walkpacket.finalPath[i].r>0.00005)
 					{
-						printf("Size is %d\n",pathpackvar.no_of_points);
+						printf("Size is %d\n",walkpacket.no_of_points);
 						printf("Path sent signal %f %f\n",walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					}
-
 					
-
+					// double a=walkpacket.finalPath[i].r;
+					// double b=walkpacket.finalPath[i].theta;
+					
+					// walk.move(a,b);
+					// walk.move(0.005,0.08);
 					walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					pthread_mutex_lock(&mutex_motionModel);
 					motionModel.update(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);

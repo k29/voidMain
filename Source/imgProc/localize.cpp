@@ -347,7 +347,12 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam
 
 	printPosition();
 	if(fd.l.size()<=1)
-		return;
+		{
+			confidence=0.0;
+		}
+
+	else
+	{
 	#ifndef ALL_PRINTING_OFF
 	printf("NO OF LANDMARKS = %d !!!!!!!!!!!!!!!!!", fd.l.size());
 	#endif
@@ -551,14 +556,16 @@ void Localize::doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam
 	for(int k = 0; k < NO_OF_PARTICLES; k++)
 		p[k] = p_temp[k];
 	updatePosition();
+	calcConfidence();
 
+	}
 	CvFont font;
     cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
     char A[100] = "POSITION : ";
     char B[100] = "ANGLE : ";
     char C[100];
     char D[100];
-    sprintf(D,"CONFIDENCE : %lf",confidence());
+    sprintf(D,"CONFIDENCE : %lf",confidence);
     sprintf(C, "       Y: %lf", selfY);
     ostringstream s1;
     s1<< "X: " << selfX;
@@ -604,8 +611,11 @@ void Localize::updatePosition()
 
 
 
-double Localize::confidence()
+void Localize::calcConfidence()
 {
+	
+	
+
 	meanX = 0;
 	meanY = 0;
 	meanAngle = 0;
@@ -644,14 +654,17 @@ double Localize::confidence()
 	varAngle /= NO_OF_PARTICLES;
 
 	varAngle *= (180.0*180.0)/(PI*PI);
+	confidence=125.0/(varX + varY + varAngle);
 
+	if(confidence > 4.0)
+		confidence=0.0;
 	// printf("Confidence: X: %lf Y: %lf Angle: %lf\n", varX, varY, varAngle);
 	#ifndef ALL_PRINTING_OFF
-		printf("Confidence: %lf\n", 125.0/(varX + varY + varAngle));
+		// printf("Confidence: %lf\n", 125.0/(varX + varY + varAngle));
 	#endif
 	if(nFrames < 5)
-		return 0.0;
-	return 125.0/(varX + varY + varAngle);
+		confidence=0.0;
+	
 }
 
 
