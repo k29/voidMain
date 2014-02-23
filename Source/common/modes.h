@@ -6,3 +6,4 @@
 #define IP_IS_ON
 #define ALL_PRINTING_OFF
 #define SEGWAY_MODE
+#define INTEL_BOARD_DISPLAY

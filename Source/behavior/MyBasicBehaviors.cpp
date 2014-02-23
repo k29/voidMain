@@ -105,6 +105,11 @@ void BasicBehaviorUpdate::execute()
         cvNamedWindow("Flags");
         cvNamedWindow("Real Time Feed");
         cvNamedWindow("Localization");
+        #ifdef INTEL_BOARD_DISPLAY
+        cvMoveWindow("Flags",20,30);
+        cvMoveWindow("Real Time Feed",240,30);
+        cvMoveWindow("Localization",850,30);
+        #endif
         cvMoveWindow("Flags",50,50);
         cvMoveWindow("Real Time Feed",300,50);
         cvMoveWindow("Localization",950,50);
