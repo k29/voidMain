@@ -1,7 +1,6 @@
 #ifndef _BOTPROPS_H_
 #define _BOTPROPS_H_
 
-#include "../common/commondefs.h"
 enum LEG{LEFT=0,RIGHT=1};
 enum AXIS{X,Y,Z};
 
@@ -25,18 +24,6 @@ const double legHeight = LengthLink1+LengthLink2+LengthLink3;
 
 enum handMotors{SHOULDER, HAND_MOTOR_COUNT};
 
-typedef struct
-{
-	float r;
-	float theta;
-	float encircleAngle;
-	char instr;
-	Coords orientArray[100];
-	int len_orientArray;
-	// MotionModel mm;
-	//WalkCommands command;
-	bool isFresh;
-} WalkStructure;
 
 
 

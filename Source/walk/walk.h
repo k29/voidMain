@@ -2,7 +2,7 @@
 #define _WALK_H_
 
 #include "AcYut.h"
-#include "../xsens/imu.h"
+#include "xsens/imu.h"
 #include <stdlib.h>
 
 
@@ -20,7 +20,7 @@ class Walk
 	double supLegYin;
 	double veloYin;
 	double veloYfi;
-	double veloYfi_d;
+	
 	// Z Data //
 	double legZin;
 	double supLegZin;
@@ -41,13 +41,11 @@ class Walk
 	Walk(AcYut* bot);
 	int kick();
 	int dribble();
-	int dribble_new(double dy, double dx,double t1,double t2);
-	int dribble(double dy, double dx,double t1,double t2);
+	int backdribble();
 	int start();
 	int start2();
 	float accelerate();
 	float velocity();
-	float velocity2();
 	float decelerate();
 	float turnleft(float theta);
 	float turnright(float theta);

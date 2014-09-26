@@ -1,12 +1,10 @@
 #include "AcYut.h"
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-
+#include<iostream>
+#include<fstream>
+#include<iomanip>
 using namespace std;
 
-
-
+// float initval[14] = {4096-2048, 4096-1100, 2048, 4096-3000, 2048, 1100, 2048, 3000, 390, 0, 0, 390, 0, 0};
 
 void AcYut::initialize()
 {
@@ -23,8 +21,31 @@ void AcYut::initialize()
 	left_hand->init();
 	right_hand->init();
 	comm->syncFlush();
-	
-	sleep(3);
+
+	 init_val[0] =	4096-2048;
+	 init_val[1] =	4096-1100;
+	 init_val[2] =	4096-2048;
+	 init_val[3] =	4096-3000;
+	 init_val[4] =	2048;
+	 init_val[5] =	1100;
+	 init_val[6] =	2048;
+	 init_val[7] =	3000;
+	 init_val[8] =	390;
+	 init_val[9] =	0;
+	 init_val[10] =	0;
+	 init_val[11] = 0;
+	 init_val[12] =	390;
+	 init_val[13] =	0;
+	 init_val[14] =	0;
+	 init_val[15] = 0;
+
+
+	int arr_l[]={init_val[0], init_val[1], init_val[2],init_val[3]};
+	int arr_r[]={init_val[4], init_val[5], init_val[6],init_val[7]};
+	left_hand->setGoalPositionSync(arr_l);
+	right_hand->setGoalPositionSync(arr_r);
+	comm->syncFlush();
+	sleep(4);
 	
 	left_leg->setSpeed(0);
 	right_leg->setSpeed(0);
@@ -33,29 +54,34 @@ void AcYut::initialize()
 	comm->syncFlush();
 	
 	//left_leg->getLoad();
-	//right_leg->getLoad();	// left_leg->setSpeed(50);
-	// right_leg->setSpeed(50);
-	// left_hand->setSpeed(50);
-	// right_hand->setSpeed(50);
-	// comm->syncFlush();
+	//right_leg->getLoad();
 	
-	// left_leg->runIK(legHeight,0,0,0);
-	// left_leg->setGoalPositionSync();
-	// right_leg->runIK(legHeight,0,0,0);
-	// right_leg->setGoalPositionSync();
-	// left_hand->init();
-	// right_hand->init();
-	// comm->syncFlush();
+	printf("Initialized Bot\n");
+}
+
+int AcYut::reachSlow(double left_x,double left_y,double left_z,double right_x,double right_y,double right_z)
+{
+	left_leg->setSpeed(50);
+	right_leg->setSpeed(50);
+	left_hand->setSpeed(50);
+	right_hand->setSpeed(50);
+	comm->syncFlush();
 	
-	// sleep(3);
+	left_leg->runIK(left_x,left_y,left_z,0);
+	left_leg->setGoalPositionSync();
+	right_leg->runIK(right_x,right_y,right_z,0);
+	right_leg->setGoalPositionSync();
+	left_hand->init();
+	right_hand->init();
+	comm->syncFlush();
 	
-	// left_leg->setSpeed(0);
-	// right_leg->setSpeed(0);
-	// left_hand->setSpeed(0);
-	// right_hand->setSpeed(0);
-	// comm->syncFlush();
+	sleep(3);
 	
-	// printf("Initialized Bot\n");
+	left_leg->setSpeed(0);
+	right_leg->setSpeed(0);
+	left_hand->setSpeed(0);
+	right_hand->setSpeed(0);
+	comm->syncFlush();
 }
 
 AcYut::AcYut(Communication* comm, Imu* imu)
@@ -63,76 +89,22 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	polyPoints=0;
 	this->comm = comm;
 	this->imu = imu;
-
-	offsets[0] = 50;			//Best tuned 1 -10
+	offsets[0] = -120;
 	offsets[1] = 0;
-	offsets[2] = 22;
-	offsets[3] = -22;//Dec= Fw torso
+	offsets[2] = 32;
+	offsets[3] = -32;
 	offsets[4] = 0;
-	offsets[5] = -90;			//Making outward results in marginal improvement//Best Tuned 1 -90
+	offsets[5] = 0;
 	offsets[6] = 280;
 
-	offsets[20] = -5;			//Best tuned 1 -5
+	offsets[20] = 20;
 	offsets[21] = 0;
-	offsets[22] = 22;
-	offsets[23] = -22;//Dec= Fw torso
+	offsets[22] = 32;
+	offsets[23] = -32;
 	offsets[24] = 0;
-	offsets[25] = 10;			//Making outward results in improvement//Best Tuned 1 10
+	offsets[25] = -20;
 	offsets[26] = -256;
-	// offsets[0] = -100;
-	// offsets[1] = 0;
-	// offsets[2] = 32;
-	// offsets[3] = -32;
-	// offsets[4] = 0;
-	// offsets[5] = 0;
-	// offsets[6] = 280;
 
-	// offsets[20] = 20;
-	// offsets[21] = 0;
-	// offsets[22] = 32;
-	// offsets[23] = -32;
-	// offsets[24] = 0;
-	// offsets[25] = -20;
-// 	// offsets[26] = -256;
-// =======
-// 	offsets[25] = 20;				//Decreasing = Outward
-// 	offsets[26] = -256;				
-// >>>>>>> walkmod
-	
-	
-
-	// offsets[0] = 0;
-	// offsets[1] = 0;
-	// offsets[2] = 64;
-	// offsets[3] = 48;
-	// offsets[4] = 0;
-	// offsets[5] = 0;
-	// offsets[6] = 280;
-
-	// offsets[20] = -0;
-	// offsets[21] = 0;
-	// offsets[22] = 64;
-	// offsets[23] = 64;
-	// offsets[24] = 0;
-	// offsets[25] = 0;
-	// offsets[26] = -256;
-
-	// offsets[0] = 0;
-	// offsets[1] = 0;
-	// offsets[2] = 0;
-	// offsets[3] = 0;
-	// offsets[4] = 0;
-	// offsets[5] = 0;
-	// offsets[6] = 300;
-
-
-	// offsets[20] = -0;
-	// offsets[21] = 0;
-	// offsets[22] = 0;
-	// offsets[23] = 0;
-	// offsets[24] = 0;
-	// offsets[25] = 0;
-	// offsets[26] = -256;
 
 	//int ids[], int offsets[], int driveMode[], int zeros[]);
 	printf("Initializing motors ...\n");
@@ -189,31 +161,6 @@ int AcYut::getFeetCoods(int leg)
 		printf("\n");
 	}
 	return EXIT_SUCCESS;
-}
-
-int AcYut::reachSlow(double left_x,double left_y,double left_z,double right_x,double right_y,double right_z)
-{
-	left_leg->setSpeed(50);
-	right_leg->setSpeed(50);
-	left_hand->setSpeed(50);
-	right_hand->setSpeed(50);
-	comm->syncFlush();
-	
-	left_leg->runIK(left_x,left_y,left_z,0);
-	left_leg->setGoalPositionSync();
-	right_leg->runIK(right_x,right_y,right_z,0);
-	right_leg->setGoalPositionSync();
-	left_hand->init();
-	right_hand->init();
-	comm->syncFlush();
-	
-	sleep(3);
-	
-	left_leg->setSpeed(0);
-	right_leg->setSpeed(0);
-	left_hand->setSpeed(0);
-	right_hand->setSpeed(0);
-	comm->syncFlush();
 }
 
 const supportPolygon AcYut::calcSupportPolygon()
@@ -411,3 +358,13 @@ int AcYut::storeCOM2(int n)
 	cout<<endl; 
 	return(0);
 }
+
+int AcYut::storevalues(int n)
+{
+	std::cout<<n<<endl;
+	left_leg->getLoad();
+	right_leg->getLoad();
+	
+	return(0);
+}
+

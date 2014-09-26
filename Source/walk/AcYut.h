@@ -1,12 +1,15 @@
 #ifndef _ACYUT_H_
 #define _ACYUT_H_
 
+#include "commondefswalk.h"
+#include "communication.h"
 #include "leg.h"
+#include "motor.h"
 #include "hand.h"
 #include <time.h>
 #include <stdio.h>
 #include <iostream>
-#include "../xsens/imu.h"
+#include "xsens/imu.h"
 
 #define ACYUT_MOTOR 31
 
@@ -45,11 +48,14 @@ public:
 	const double (&(getRotCOM()))[AXES];
 	const supportPolygon calcSupportPolygon();
 	int clearPoS();
-	int storeCOM2(int n);
 	int printCOM();
 	int printRotCOM();
 	int writeSensedCurrent(FILE *&fp);
+	int storeCOM2(int n);
+	int storevalues(int n);
 	int reachSlow(double left_x,double left_y,double left_z,double right_x,double right_y,double right_z);
+
+	float init_val[16];
 };
 
 

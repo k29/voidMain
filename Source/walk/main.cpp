@@ -1,8 +1,7 @@
-#include "../common/common.h" 
 #include "AcYut.h"
 #include "communication.h"
 #include "walk.h"
-#include "../xsens/imu.h"
+#include "xsens/imu.h"
 #include <signal.h>
 
 bool quit = false;
@@ -164,16 +163,35 @@ int main()
 	Imu imu;
 	imu.init();
 	
-	(void) signal(SIGINT,doquit);	
+//	(void) signal(SIGINT,doquit);	
 	Communication comm;
 	AcYut bot(&comm,&imu);
+/*	bot.left_leg->runIK(390,0,0,0);
+	bot.right_leg->runIK(390,0,0,0);
+	for(int i=0;i<100;i++)
+	{
+	bot.left_leg->runIK(linear(390,100,i,100),0,0,0);
+	bot.right_leg->runIK(linear(390,100,i,100),0,0,0);
+	bot.updateBot();
+	usleep(50000);
+	printf("%d\n",i);
+	}	
+	for(int i=0;i<100;i++)
+	{
+	bot.left_leg->runIK(linear(100,390,i,100),0,0,0);
+	bot.right_leg->runIK(linear(100,390,i,100),0,0,0);
+	bot.updateBot();
+	usleep(50000);
+	printf("%d\n",i);
+	}	
+*/	
 	Walk walk(&bot);
 	
 	while(walk.velocity()*1.5<=90)
-		{
-			walk.accelerate();
-			walk.dribble();
-		}
+	{
+		walk.accelerate();
+		walk.dribble();
+	}
 	while(1)
 	{
 		walk.dribble();
