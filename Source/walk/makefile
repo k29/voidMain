@@ -1,22 +1,47 @@
-all: main move motor.o communication.o leg.o AcYut.o hand.o walk.o commondefswalk.o
-main: main.cpp communication.o motor.o leg.o hand.o AcYut.o walk.o xsens/imu.o xsens/totalxsens.o commondefswalk.o
-	g++ commondefswalk.o motor.o communication.o hand.o leg.o AcYut.o walk.o xsens/imu.o xsens/totalxsens.o -o main main.cpp -lftdi -lm -lrt -lpthread
+all: ../Build/walk.a
+main: main.cpp ../Build/walk.a ../Build/imu.a
+	g++ main.cpp ../Build/walk.a ../Build/imu.a -o main -lftdi -lm -lrt -lpthread
 move: move.cpp communication.o motor.o leg.o hand.o AcYut.o xsens/imu.o commondefswalk.o
 	g++ commondefswalk.o motor.o communication.o hand.o leg.o AcYut.o xsens/imu.o xsens/totalxsens.o -o move move.cpp -lftdi -lm -lrt -lpthread
-motor.o: motor.cpp motor.h commondefswalk.o
-	g++ -c motor.cpp 
-communication.o: communication.cpp communication.h commondefswalk.o
-	g++ -c communication.cpp
-leg.o: leg.cpp leg.h commondefswalk.o communication.o motor.o
-	g++ -c leg.cpp
-AcYut.o : motor.o communication.o leg.o AcYut.cpp AcYut.h hand.o commondefswalk.o
-	g++ -c AcYut.cpp
-hand.o : hand.h hand.cpp motor.o communication.o commondefswalk.o
-	g++ -c hand.cpp
-walk.o : walk.h walk.cpp commondefswalk.o AcYut.o xsens/imu.o xsens/totalxsens.o
-	g++ -c walk.cpp
-commondefswalk.o : bot1.h commondefswalk.h commondefswalk.cpp
-	g++ -c commondefswalk.cpp
+../Build/walk.a: ../Build/commondefswalk.o ../Build/hand.o ../Build/leg.o ../Build/walk_thread.o ../Build/walk.o ../Build/AcYut.o ../Build/communication.o ../Build/motor.o
+	@echo $@
+	@ar rc $@ ../Build/commondefswalk.o ../Build/hand.o ../Build/leg.o ../Build/walk_thread.o ../Build/walk.o ../Build/AcYut.o ../Build/communication.o ../Build/motor.o
+	@echo $@
+	@ranlib $@
+
+../Build/commondefswalk.o: commondefswalk.cpp commondefswalk.h
+	@echo $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c commondefswalk.cpp -o $@
+../Build/hand.o: hand.cpp hand.h
+	@echo $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c hand.cpp -o $@
+../Build/leg.o: leg.cpp leg.h
+	@echo $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c leg.cpp -o $@
+../Build/walk_thread.o: walk_thread.cpp walk_thread.h
+	@echo $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c walk_thread.cpp -fpermissive -o $@
+../Build/walk.o: walk.cpp walk.h
+	@echo $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c walk.cpp -fpermissive -o $@	
+../Build/AcYut.o: AcYut.cpp AcYut.h
+	@echo $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c AcYut.cpp -o $@
+../Build/communication.o: communication.cpp communication.h
+	@echo $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c communication.cpp -o $@
+../Build/motor.o: motor.cpp motor.h
+	@echo $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c motor.cpp -o $@
+
 clean: 
 	rm motor.o 
 	rm communication.o
