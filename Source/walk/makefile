@@ -8,8 +8,8 @@ all: ../Build/walk.a
 	@ar rc $@ ../Build/commondefswalk.o ../Build/hand.o ../Build/leg.o ../Build/walk_thread.o ../Build/walk.o ../Build/AcYut.o ../Build/communication.o ../Build/motor.o
 	@echo $@
 	@ranlib $@
-
-../Build/commondefswalk.o: commondefswalk.cpp commondefswalk.h
+#To avoid clean-compile repeatedly, add ../common/*.h to end of every object file, as below: 
+../Build/commondefswalk.o: commondefswalk.cpp commondefswalk.h ../common/*.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c commondefswalk.cpp -o $@
