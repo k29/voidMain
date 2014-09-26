@@ -1,8 +1,8 @@
 all: ../Build/walk.a
-main: main.cpp ../Build/walk.a ../Build/imu.a
-	g++ main.cpp ../Build/walk.a ../Build/imu.a -o main -lftdi -lm -lrt -lpthread
-move: move.cpp communication.o motor.o leg.o hand.o AcYut.o xsens/imu.o commondefswalk.o
-	g++ commondefswalk.o motor.o communication.o hand.o leg.o AcYut.o xsens/imu.o xsens/totalxsens.o -o move move.cpp -lftdi -lm -lrt -lpthread
+# main: main.cpp ../Build/walk.a ../Build/imu.a
+# 	g++ main.cpp ../Build/walk.a ../Build/imu.a -o main -lftdi -lm -lrt -lpthread
+# move: move.cpp communication.o motor.o leg.o hand.o AcYut.o xsens/imu.o commondefswalk.o
+# 	g++ commondefswalk.o motor.o communication.o hand.o leg.o AcYut.o xsens/imu.o xsens/totalxsens.o -o move move.cpp -lftdi -lm -lrt -lpthread
 ../Build/walk.a: ../Build/commondefswalk.o ../Build/hand.o ../Build/leg.o ../Build/walk_thread.o ../Build/walk.o ../Build/AcYut.o ../Build/communication.o ../Build/motor.o
 	@echo $@
 	@ar rc $@ ../Build/commondefswalk.o ../Build/hand.o ../Build/leg.o ../Build/walk_thread.o ../Build/walk.o ../Build/AcYut.o ../Build/communication.o ../Build/motor.o
@@ -43,11 +43,12 @@ move: move.cpp communication.o motor.o leg.o hand.o AcYut.o xsens/imu.o commonde
 	@g++ -c motor.cpp -o $@
 
 clean: 
-	rm motor.o 
-	rm communication.o
-	rm leg.o
-	rm AcYut.o
-	rm hand.o
-	rm walk.o
-	rm commondefswalk.o 
-	rm move
+	rm -rf motor.o 
+	rm -rf communication.o
+	rm -rf leg.o
+	rm -rf AcYut.o
+	rm -rf hand.o
+	rm -rf walk.o
+	rm -rf commondefswalk.o 
+	rm -rf move
+	rm -rf main
