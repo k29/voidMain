@@ -89,7 +89,24 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	polyPoints=0;
 	this->comm = comm;
 	this->imu = imu;
-	offsets[0] = -120;
+	offsets[0] = 40;
+	offsets[1] = 0;
+	offsets[2] = 0;
+	offsets[3] = 0;
+	offsets[4] = 0;
+	offsets[5] = -40;
+	offsets[6] = 260;
+
+	offsets[20] = 15;
+	offsets[21] = 0;
+	offsets[22] = 0;
+	offsets[23] = 0;
+	offsets[24] = 0;
+	offsets[25] = -15;
+	offsets[26] = -256;
+
+
+/*	offsets[0] = -40;
 	offsets[1] = 0;
 	offsets[2] = 32;
 	offsets[3] = -32;
@@ -104,7 +121,22 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	offsets[24] = 0;
 	offsets[25] = -20;
 	offsets[26] = -256;
+*/
+/*	offsets[0] = 0;
+	offsets[1] = 0;
+	offsets[2] = 0;
+	offsets[3] = 0;
+	offsets[4] = 0;
+	offsets[5] = 0;
+	offsets[6] = 280;
 
+	offsets[20] = 0;
+	offsets[21] = 0;
+	offsets[22] = 0;
+	offsets[23] = 0;
+	offsets[24] = 0;
+	offsets[25] = 0;
+	offsets[26] = -256;*/
 
 	//int ids[], int offsets[], int driveMode[], int zeros[]);
 	printf("Initializing motors ...\n");

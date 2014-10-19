@@ -12,14 +12,14 @@ Walk::Walk(AcYut* bot)
 	supLegZin=25.155276;
 	veloZin=-170;
 	veloZfi=170;
-	zMax=60;
-	lift=30;
+	zMax=70;
+	lift=60;
 	legRotin=0;
 	legRotfi=0;
 	supLegRotin=0;
 	supLegRotfi=0;
 	
-	start2();
+	start();
 	printf("START completed\n\n\n");
 };
 
@@ -328,7 +328,7 @@ int Walk::dribble()
 	leg=(LEG)(1-(int)leg);	
 //	printf("%d\t",leg);
 	// if (leg==1)
-		// legRotfi-=5;
+		// legRotfi-=1;
 //	printf("VYin\t%lf\tVyfi\t%lf\n",veloYin,veloYfi);
 	int fps = 200;
 	int sleep = 1000000.0/(double)fps;
@@ -484,8 +484,8 @@ int Walk::dribble()
 		else if (walkTime >= dsp1Time && walkTime <= dsp1Time + sspTime)
 		{
 			fraction=2*(walkTime-startX)/(stopX-startX);
-			//x  = height - lift * (sin(xfreq*((walkTime-startX)/(stopX-startX))+xPhase) + displacement)/(1+displacement);
-			x = height- lift*fraction*(2-fraction);
+			x  = height - lift * (sin(xfreq*((walkTime-startX)/(stopX-startX))+xPhase) + displacement)/(1+displacement);
+			// x = height- lift*fraction*(2-fraction);
 			xr = height;
 			y=a*pow(walkTime-dsp1Time,3)+b*pow(walkTime-dsp1Time,2)+c*(walkTime-dsp1Time)+d;
 			//y  = linear(-sspYin,-sspYfi, ((walkTime-dsp1Time)/sspTime);

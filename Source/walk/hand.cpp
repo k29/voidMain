@@ -5,7 +5,21 @@ Hand::Hand(int hand, Communication* comm)
 	this->comm = comm;
 	for (int i = 0; i < HAND_MOTORS_COUNT; ++i)
 	{
-		m[i] = new Motor(MX64, hand*20+7+i, this->comm);
+		if (hand == LEFT)
+		{
+			if (i==2||i==3)
+				m[i] = new Motor(MX106, hand*20+7+i, this->comm);
+			if (i==1||i==0)
+				m[i] = new Motor(MX64, hand*20+7+i, this->comm);
+		}
+		if (hand == RIGHT)
+		{
+			if (i==2)
+				m[i] = new Motor(MX106, hand*20+7+i, this->comm);
+			if (i==1||i==0||i==3)
+				m[i] = new Motor(MX64, hand*20+7+i, this->comm);
+		}
+
 	}
 	this->hand = hand;
 }

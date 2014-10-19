@@ -1,8 +1,8 @@
 #include "communication.h"
 #include <stdio.h>
 
-const char Communication::ftdiID1[] = "A4007rXO";//"A800d2dg";//"AD025JOE";//"A800d2dg";//"AD025JOH";"A900fDp;//;//"A900fDpz";
-const char Communication::ftdiID2[] = "AD025KMG";
+const char Communication::ftdiID1[] = "AD025KMG";//"A4007rXO";//"A800d2dg";//"AD025JOE";//"A800d2dg";//"AD025JOH";"A900fDp;//;//"A900fDpz";
+const char Communication::ftdiID2[] = "A800d2dg";//"A4007rXO";
 int Communication::checksum(byte packet[])
 {
 	int i = 0;

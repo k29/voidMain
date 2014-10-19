@@ -13,31 +13,31 @@ all: ../Build/walk.a
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c commondefswalk.cpp -o $@
-../Build/hand.o: hand.cpp hand.h
+../Build/hand.o: hand.cpp hand.h ../common/*.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c hand.cpp -o $@
-../Build/leg.o: leg.cpp leg.h
+../Build/leg.o: leg.cpp leg.h ../common/*.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c leg.cpp -o $@
-../Build/walk_thread.o: walk_thread.cpp walk_thread.h
+../Build/walk_thread.o: walk_thread.cpp walk_thread.h ../common/*.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c walk_thread.cpp -fpermissive -o $@
-../Build/walk.o: walk.cpp walk.h
+../Build/walk.o: walk.cpp walk.h ../common/*.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c walk.cpp -fpermissive -o $@	
-../Build/AcYut.o: AcYut.cpp AcYut.h
+../Build/AcYut.o: AcYut.cpp AcYut.h ../common/*.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c AcYut.cpp -o $@
-../Build/communication.o: communication.cpp communication.h
+../Build/communication.o: communication.cpp communication.h ../common/*.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c communication.cpp -o $@
-../Build/motor.o: motor.cpp motor.h
+../Build/motor.o: motor.cpp motor.h ../common/*.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c motor.cpp -o $@
