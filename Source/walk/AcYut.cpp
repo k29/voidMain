@@ -1,7 +1,7 @@
 #include "AcYut.h"
-#include<iostream>
-#include<fstream>
-#include<iomanip>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
 using namespace std;
 
 // float initval[14] = {4096-2048, 4096-1100, 2048, 4096-3000, 2048, 1100, 2048, 3000, 390, 0, 0, 390, 0, 0};
