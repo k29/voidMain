@@ -13,7 +13,7 @@ Walk::Walk(AcYut* bot)
 	veloZin=-170;
 	veloZfi=170;
 	zMax=65;
-	lift=60;
+	lift=30;
 	legRotin=0;
 	legRotfi=0;
 	supLegRotin=0;
@@ -245,7 +245,6 @@ int Walk::kick()
 	
 
 
-
 }
 
 int Walk::start()
@@ -258,6 +257,7 @@ int Walk::start()
 	dribble();
 	lift=30;
 	dribble();
+	lift=40;
 	
 }
 
@@ -330,10 +330,10 @@ int Walk::dribble()
 	// if (leg==1)
 		// legRotfi-=1;
 //	printf("VYin\t%lf\tVyfi\t%lf\n",veloYin,veloYfi);
-	int fps = 200;
+	int fps = 120;
 	int sleep = 1000000.0/(double)fps;
 	double timeInc =1.0/(double)fps;
-	double feetSeperation = 20;
+	double feetSeperation = 30;
 	double hipLength = 130;
 	
 	double y_offset = 0;
@@ -521,9 +521,10 @@ int Walk::dribble()
 		///////printf("Z\t%lf\tZR\t%lf\n",z,zr);
 //		printf("W phi\t%lf\tphiR\t%lf\tZ\t%lf\tZR\t%lf\tY\t%lf\tYR\t%lf",phi,phiR,z,zr,y,yr);
 		const double (&COM)[AXES] = bot->getRotCOM();
-		bot->printRotCOM(); 
-		bot->leg[leg]->runIK(x,y+y_offset-(COM[1] - 12),z+feetSeperation - COM[2],phi);
-		bot->leg[1-leg]->runIK(xr,yr +y_offset- (COM[1] - 12),zr+feetSeperation+ COM[2] ,phiR);
+		// bot->printRotCOM(); 
+		bot->leg[leg]->runIK(x,y+y_offset-(COM[1] - 12),z+feetSeperation ,phi);
+		bot->leg[1-leg]->runIK(xr,yr +y_offset- (COM[1] - 12),zr+feetSeperation,phiR);
+		printf("x = %f y = %f z = %f \n", COM[0], COM[1], COM[2]);
 		// bot->leg[leg]->runIK(x,0,z+feetSeperation +COM[2],phi);
 		// bot->leg[1-leg]->runIK(xr,0,zr+feetSeperation-COM[2] ,phiR);
 		// bot->leg[leg]->runIK(x,COM[1] - 15,z+feetSeperation-2*COM[2],phi);
