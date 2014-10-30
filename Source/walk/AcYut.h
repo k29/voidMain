@@ -23,7 +23,7 @@ private:
 	Communication* comm;
 	double COM[AXES];
 	double rotCOM[AXES];
-	static const double legHeight = 390;
+	static const double legHeight = 400;
 	supportPolygon poly;
 	int polyPoints;
 	double feetCoods[2][4][AXES];
