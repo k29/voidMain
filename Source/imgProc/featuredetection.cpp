@@ -82,7 +82,7 @@ void FeatureDetection::findReal(int X,int Y, double &objdis, double &objangdeg, 
     undistort(X,Y,&x,&y);
 
     double focal= 0.176, s=0.0006;
-    double thetaX = 30*PI/180;
+    double thetaX = 30*PI/180;										//MOTOR ANGLE ON AcYut 597
     double thetaY = 0*PI/180;
     
     //conversion to top view
