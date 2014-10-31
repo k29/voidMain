@@ -186,12 +186,13 @@ int main()
 	}	
 */	
 	Walk walk(&bot);
-	
+	// walk.turnright(90);
 	while(walk.velocity()*1.5<=160)
 	{
 		walk.accelerate();
 		walk.dribble();
 	}
+	// walk.turnright(90);	
 	while(1)
 	{
 		walk.dribble();

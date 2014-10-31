@@ -78,7 +78,7 @@ void FeatureDetection::findReal(int X,int Y, double &objdis, double &objangdeg, 
     int x,y;
     X = X - IMAGE_WIDTH/2;
     Y = IMAGE_HEIGHT/2 - Y;
-    
+
     undistort(X,Y,&x,&y);
 
     double focal= 0.176, s=0.0006;
@@ -90,8 +90,8 @@ void FeatureDetection::findReal(int X,int Y, double &objdis, double &objangdeg, 
     double perpend=x*((s/focal)*(objdis)*sin(thetaX)+cos(thetaX));
 
     //top view to world coordinates
-    objdis = s_height*tan(thetaX) + objdis * s_height *s/focal + 12;    // +12 for correction (no known reason)
-    perpend = perpend * s_height * s/focal * 2/3 + 10;                  // *2/3 + 10 correction (no known reason)
+    objdis = s_height*tan(thetaX) + objdis * s_height *s/focal /*+ 12*/;    // +12 for correction (no known reason)
+    perpend = perpend * s_height * s/focal ;/** 2/3 + 10; */                 // *2/3 + 10 correction (no known reason)
 
     //objdis=pix2cm*(objdis-(focal/s)*tan(thetaX)) + (s_height+(neck_len*sin(thetaX)))*tan(thetaX);
 
