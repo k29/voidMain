@@ -13,10 +13,10 @@ const double pi = acos(-1);
 													//	vd is taken as velocity at the beginning of the step and vf as vlocity at the end of the step
 
 											//	vf_max = c1*vd			Maximum possible velocity at the end of the step
-const double c1=1.981991;							// For zmax = 65 ,  1.8367262
+const double c1=1.836726;							// For zmax = 65 ,  1.8367262
 const double c2=(c1 - pow(pow(c1,2)-1,0.5));		//	vf_min = c2*vd			Minimum possible velocity at the beginning of the step
 // const double c5=7.853317745/2;						// 	vf + vd = c5*delta_y 	Generalised equation which connects the above equations
-const double c5=3.523127;						//	For zMax = 65 , 7.445192041/2
+const double c5=3.7225963;						//	For zMax = 65 , 7.445192041/2
 const double c3=(c1+1)/c5;				//	delta_y_max = c3*vd		Maximum step length possible, this corresponds to equation 1
 const double c4=(c2+1)/c5;				//	delta_y_min	= c4*vd		Minimum step length possible, this corresponds to equation 2
 const double v_initial = 10;				 //	Velocity when bot begins to move
@@ -414,13 +414,13 @@ float scurve2(float in,float fi,float t, float tot)
 
 void* walk_thread(void*)
 {
-	//Imu imu;
+	Imu imu;
 	// printf("GENORAI");
-	//imu.init();
+	imu.init();
 	foot foot1[1000];
 
 	Communication comm;
-	AcYut bot(&comm,NULL);
+	AcYut bot(&comm,&imu);
 	Walk walk(&bot);
 	int j=0,i=0;
 	PathPacket pathpackvarlocal;
@@ -443,6 +443,7 @@ void* walk_thread(void*)
 		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvarlocal = pathpackvar;
 		pthread_mutex_unlock(&mutex_pathpacket);
+		// printf("%f\n" ,pathpackvarlocal.no_of_points);
 		footstepmain(walk.velocity2() , foot1[j].delta_y , j%2 ,  foot1 , i , pathpackvarlocal);
 	}
 
