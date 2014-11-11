@@ -114,11 +114,27 @@ void convert_values (PathPacket pathpackvarlocal	,	double dist_circstart[],	doub
 }
 
 
-void imagepaint(foot step[] , int count)
+void imagepaint(foot step[] , int count, int footlr[])
 {
 	double yl = 200 - foot_separation/20 , xl = 200 , thetal = 0;
 	double yr = 200 + foot_separation/20 , xr = 200, thetar = 0;
 	IplImage* footimage=cvCreateImage(cvSize(752,480),8,3);
+	
+	cvLine(footimage,cvPoint(xl,(yl+yr)/2),cvPoint(xl + 100 , (yl+yr)/2),cvScalar(255,0,0)); 
+	cvCircle(footimage, cvPoint(300,200+40),40, cvScalar(255,0,0));
+	
+	float y1 = 240 - 40*cos(deg2rad(70));
+	float x1 = 300 + 40*sin(deg2rad(70));
+
+	float y2 = y1 + 100*sin(deg2rad(70));
+	float x2 = x1 + 100*cos(deg2rad(70));
+	
+	cvLine(footimage,cvPoint(x1, y1), cvPoint(x2, y2), cvScalar(255,0,0) );
+	
+	float x3 = x2 + 40*sin(deg2rad(70));
+	float y3 = y2 - 40*cos(deg2rad(70));
+	cvCircle(footimage, cvPoint(x3, y3), 40, cvScalar(255,0,0));
+
 	for (int i = 0 ; i<(count-1) ; i++)
 	{
 		if (i%2 == 0)		
@@ -130,11 +146,11 @@ void imagepaint(foot step[] , int count)
 			}
 			else
 			{
-				xl += (step[i].delta_y*cos(deg2rad(thetal)) + (step[i].delta_x)*sin(deg2rad(thetal)))/10;
-				yl += (step[i].delta_y*sin(deg2rad(thetal)) + (step[i].delta_x)*cos(deg2rad(thetal)))/10;
+				xl += ((step[i].delta_y )*cos(deg2rad(thetal)) + (step[i].delta_x)*sin(deg2rad(thetal)))/10;
+				yl += ((step[i].delta_y )*sin(deg2rad(thetal)) + (step[i].delta_x)*cos(deg2rad(thetal)))/10;
 			}
 			thetal += step[i].delta_theta;
-			cvLine(footimage,cvPoint(xl,yl),cvPoint(xl + 0.1*cos(deg2rad(thetal)) , yl + 0.1*sin(deg2rad(thetal)) ),cvScalar(255,255,0)); 
+			cvLine(footimage,cvPoint(xl,yl),cvPoint(xl + 0.1*cos(deg2rad(thetal)) , yl + 0.1*sin(deg2rad(thetal)) ),cvScalar(255,0,0)); 
 		}
 		else
 		{
@@ -145,8 +161,8 @@ void imagepaint(foot step[] , int count)
 			}
 			else
 			{
-				xr += (step[i].delta_y*cos(deg2rad(thetar)) + step[i].delta_x*sin(deg2rad(thetar)))/10;
-				yr += (step[i].delta_y*sin(deg2rad(thetar)) + step[i].delta_x*cos(deg2rad(thetar)))/10;
+				xr += ((step[i].delta_y)*cos(deg2rad(thetar)) + step[i].delta_x*sin(deg2rad(thetar)))/10;
+				yr += ((step[i].delta_y)*sin(deg2rad(thetar)) + step[i].delta_x*cos(deg2rad(thetar)))/10;
 			}
 			thetar += -step[i].delta_theta;
 			cvLine(footimage,cvPoint(xr,yr),cvPoint(xr + 0.1*cos(deg2rad(thetar)) , yr + 0.1*sin(deg2rad(thetar)) ),cvScalar(255,255,0)); 
@@ -192,10 +208,21 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	int footlr[30]; 
 	double dist_circstart[30];				//	This is the distance to the beginning of the circle from the beginning of motion.
 	
-	convert_values (pathpackvarlocal,	dist_circstart,	theta_arc,	radius,	footlr);
+	// convert_values (pathpackvarlocal,	dist_circstart,	theta_arc,	radius,	footlr);
 	// count =	0;									//	Counts number of footsteps
 	int i=0;	
-	int no_obstacles = pathpackvarlocal.no_of_points/2;
+	// int no_obstacles = pathpackvarlocal.no_of_points/2;
+	int no_obstacles = 1;
+/*	theta_arc[0] = 70;
+	radius[0] = 400;
+	footlr[0] = 1;	
+	dist_circstart[0] = 1000;
+
+	theta_arc[1] = 80;
+	radius[1] = 400;
+	footlr[1] = 0;
+	dist_circstart[1] = 1000;
+*/
 	int fmscheck = 0;
 	int first_circ_foot[4] , last_circ_foot[4]; //FSPMOD CODE
 	for (int i=0;i<=no_obstacles;i++)	
@@ -345,11 +372,11 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 		}
 		last_circ_foot[i] = count;		//FSPMOD CODE
 	}
-	// for (int i=0;i<count-1;i++)
-	// {
-	// 	printf ("Delta_y = %f\tDelta_x = %f\tDelta_theta = %f\n",step[i].delta_y,step[i].delta_x,step[i].delta_theta);
-	// }
-	//FSPMOD CODE
+	for (int i=0;i<count-1;i++)
+	{
+		printf ("Delta_y = %f\tDelta_x = %f\tDelta_theta = %f\n",step[i].delta_y,step[i].delta_x,step[i].delta_theta);
+	}
+/*	//FSPMOD CODE
 	for (int i=0; i<no_obstacles; i++)
 	{	
 		double outer_foot_dist = 0, inner_foot_dist = 0;
@@ -373,14 +400,14 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 				else
 					outer_foot_dist += step[j].delta_y;
 			}
-			printf("\n\nOuter Foot Distance = %f\n" , outer_foot_dist);
-			printf("Inner Foot Distance = %f\n\n" , inner_foot_dist);
+			// printf("\n\nOuter Foot Distance = %f\n" , outer_foot_dist);
+			// printf("Inner Foot Distance = %f\n\n" , inner_foot_dist);
 		}
 	}
-	//FSPMOD CODE
+	//FSPMOD CODE*/
 	// printf("COUNT = %d",count);
 	stepcount = count ;
-	// imagepaint(step , count);
+	// imagepaint(step , count, footlr);
 	return 0;
 }
 
@@ -433,10 +460,10 @@ void* walk_thread(void*)
 	{
 		printf("in walk thread\n");
 		j = 0;
-		while (j<i-1 && j<10)
+		while (j<i-1 && j<15)
 		{
 			walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
-			printf("theta = %f delta_x = %f \n" , foot1[j].delta_theta , foot1[j].delta_x);
+			// printf("theta = %f delta_x = %f \n" , foot1[j].delta_theta , foot1[j].delta_x);
 			j++;
 		}
 		j--;

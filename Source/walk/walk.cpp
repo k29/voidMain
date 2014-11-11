@@ -524,7 +524,7 @@ int Walk::dribble()
 		// bot->printRotCOM(); 
 		bot->leg[leg]->runIK(x,y+y_offset-(COM[1] - 12),z+feetSeperation ,phi);
 		bot->leg[1-leg]->runIK(xr,yr +y_offset- (COM[1] - 12),zr+feetSeperation,phiR);
-		printf("x = %f y = %f z = %f \n", COM[0], COM[1], COM[2]);
+		// printf("x = %f y = %f z = %f \n", COM[0], COM[1], COM[2]);
 		// bot->leg[leg]->runIK(x,0,z+feetSeperation +COM[2],phi);
 		// bot->leg[1-leg]->runIK(xr,0,zr+feetSeperation-COM[2] ,phiR);
 		// bot->leg[leg]->runIK(x,COM[1] - 15,z+feetSeperation-2*COM[2],phi);
@@ -570,7 +570,7 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 	double Tc = sqrt(600.00/9810.0);
 	legZin += hipLength/2;
 	supLegZin += hipLength/2;
-	
+	double y_offset = 0;
 	
 	legRotfi=t1;
 	supLegRotfi=t2;
@@ -765,8 +765,9 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 		///////printf("Z\t%lf\tZR\t%lf\n",z,zr);
 		// printf("phi\t%lf\tphiR\t%lf\tZ\t%lf\tZR\t%lf\tY\t%lf\tYR\t%lf\n",phi,phiR,z,zr,y,yr); Uncommented for behavior testing
 		
-		bot->leg[leg]->runIK(x,y,z+feetSeperation,phi);
-		bot->leg[1-leg]->runIK(xr,yr,zr+feetSeperation,phiR);
+		const double (&COM)[AXES] = bot->getRotCOM();
+		bot->leg[leg]->runIK(x,y+y_offset-(COM[1] - 12),z+feetSeperation ,phi);
+		bot->leg[1-leg]->runIK(xr,yr +y_offset- (COM[1] - 12),zr+feetSeperation,phiR);
 		//printf("%d %d\n\n\n",leg,1-leg);
 		bot->updateBot();
 		//printf("Sent Values\n");

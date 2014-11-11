@@ -11,7 +11,7 @@ void BasicBehaviorPrint::execute()
 
 void BasicBehaviorInitialize::execute()
 {
-    
+    // printf("BasicBehaviorInitialize\n");
     #ifdef IP_IS_ON
     printf("Initializing\n");
     
@@ -34,7 +34,7 @@ void BasicBehaviorInitialize::execute()
 }
 void BasicBehaviorUpdate::execute()
 {
-        
+        // printf("BasicBehaviorUpdate\n");
         #ifdef IP_IS_ON
 
         // printf("Entered update\n");       
@@ -42,7 +42,6 @@ void BasicBehaviorUpdate::execute()
         p.capture.getImage();    
         p.fd->getLandmarks(p.capture, p.hdmtr, motionModel);
         p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle());
-
 
 
         /* Set flags for XABSL */
@@ -59,8 +58,8 @@ void BasicBehaviorUpdate::execute()
         
         if(p.confidence < 0.1)
             p.localizationState=CRITICAL;
-        else if(motionModel.confidence > p.loc.confidence)
-            p.localizationState=MOTIONMODEL;
+        // else if(motionModel.confidence > p.loc.confidence)
+        //     p.localizationState=MOTIONMODEL;
             // p.localizationState=LOCALIZED;
         else
             p.localizationState=LOCALIZED;
@@ -116,7 +115,10 @@ void BasicBehaviorUpdate::execute()
         cvShowImage("Flags",flags);
         cvShowImage("Real Time Feed", p.capture.rgbimg);
         cvShowImage("Localization", p.loc.dispImage);
-        cvWaitKey(25);
+        int c = cvWaitKey(25);
+        if(c == 'S' || c == 's')
+            if(cvSaveImage("image.bmp", p.capture.rgbimg))
+                printf("saved\n");
         cvReleaseImage(&flags);
         #endif
 
@@ -128,7 +130,7 @@ void BasicBehaviorUpdate::execute()
 
 void BasicBehaviorRotate::execute()
 {   
-        
+        // printf("BasicBehaviorRotate\n");
         pthread_mutex_lock(&mutex_pathpacket);
         pathpackvar.no_of_points=1;
         pathpackvar.updated=1;
@@ -189,7 +191,7 @@ void BasicBehaviorLocalize::execute()
 void BasicBehaviormoveAcYuttemp::execute()
 {
     unsigned int _x=int(x);
-    
+    // printf("BasicBehaviormoveAcYuttemp\n");
     pthread_mutex_lock(&mutex_walkstr);    
         printf("to walk %c\n",_x);
         walkstr.instr = _x;
@@ -218,8 +220,9 @@ void BasicBehaviorMakePath::execute()
     // {
     //     printf("Passed-->> obstacle %d : %lf %lf\n", i, p.pathstr.absObstacles[i].x, p.pathstr.absObstacles[i].y);
     // }
-    
+    // printf("BasicBehaviorMakePath\n");
     #ifdef IP_IS_ON
+    
     AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
     double tempx=goalcoords.x-p.loc.selfX;
     double tempy=goalcoords.y-p.loc.selfY;
@@ -236,7 +239,7 @@ void BasicBehaviorMakePath::execute()
 
     p.pathreturn=p.path.path_return(p.pathstr);
     
-    printf("Path Made\n");
+    // printf("Path Made\n");
     #endif
 }
 
@@ -244,7 +247,7 @@ void BasicBehaviorMakePath::execute()
 void BasicBehaviorMakePathFromMotionModel::execute()
 {
         
-    
+    // printf("BasicBehaviorMakePathFromMotionModel\n");
     #ifdef IP_IS_ON
     
     AbsCoords self;
@@ -276,6 +279,7 @@ void BasicBehaviorMakePathFromMotionModel::execute()
 
 void BasicBehaviorPathToWalk::execute()
 {
+    // printf("BasicBehaviorPathToWalk\n");
         #ifdef IP_IS_ON
     
         p.path.updatePathPacket();
@@ -290,7 +294,7 @@ void BasicBehaviorPathToWalk::execute()
     
 
     fstream fil1;
-    fil1.open("Source/path/paths1.data", ios::in|ios::binary);
+    fil1.open("Source/path/path.data", ios::in|ios::binary);
     fil1.read((char*)&pathpackvar,sizeof(pathpackvar));
     fil1.close();
     
@@ -305,6 +309,7 @@ void BasicBehaviorFindBall::execute()
 
 void BasicBehaviorReset::execute()
 {
+    // printf("BasicBehaviorReset\n");
     p.confidence=0;        
 }
 

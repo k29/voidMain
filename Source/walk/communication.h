@@ -10,12 +10,10 @@ class Communication
 {
 private:
 	static const int BROADCAST = 0xfe;
-	static const char ftdiID1[];
-	static const char ftdiID2[];
+	static const char ftdiID[];
 	static const int BAUD = 1000000;
 	static const int SYNCPACKET_MAXSIZE = 2000;
-	struct ftdi_context bodyFTDI1;
-	struct ftdi_context bodyFTDI2;
+	struct ftdi_context bodyFTDI;
 	byte syncPacket[SYNCPACKET_MAXSIZE];
 	int syncPacketSize;
 public:
