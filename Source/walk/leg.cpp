@@ -6,7 +6,10 @@ Leg::Leg(int leg, Communication* comm, int ids[], int offsets[], int driveMode[]
 	for (int i = 0; i < LEG_MOTOR_COUNT; ++i)
 	{
 		printf("ID\t%2d\tOffset\t%5d\tDriveMode\t%1d\tZero\t%4d\t\n",ids[i],offsets[i],driveMode[i],zeros[i]);
-		m[i] = new Motor(MX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);
+		if (i == 6)
+			m[i] = new Motor(MX64, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);
+		else
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);
 	}
 	for (int i = 0; i <LEG_SLAVE_COUNT; ++i)
 	{
@@ -79,9 +82,10 @@ int Leg::setMotorSpeed(int id, int speed)
 
 int Leg::getLoad()
 {
+	m[0]->getPresentLoad();
 	for (int i = 0; i < LEG_MOTOR_COUNT; ++i)
 	{
-		m[i]->getPresentLoad();
+	//	m[i]->getPresentLoad();
 	}
 }
 

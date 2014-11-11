@@ -9,12 +9,14 @@
 #include <unistd.h>
 #include <iostream>
 #include "bot1.h"
-#include "../common/defines.h"
 //#include <ncurses.h>
 //#include <cstdlib>
 
 #define byte uint8_t
-
+#define PI 3.14159265359
+#define rad2deg(x) ((x)*180.0/(PI))
+#define deg2rad(x) (((x)*(PI))/180.0)
+#define sgn( a ) ( ((a) > 0) ? (1) : ( ((a) < 0) ? -1 : 0 ) )
 #define AXES 3
 //#define DEBUG
 

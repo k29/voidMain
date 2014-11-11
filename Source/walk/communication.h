@@ -3,7 +3,6 @@
 
 #include <ftdi.h>
 #include "commondefswalk.h"
-#include <stdio.h>
 
 //TODO: implement sleep/timing after or before writing/reading data
 

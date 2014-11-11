@@ -1,7 +1,7 @@
 #include "communication.h"
+#include <stdio.h>
 
-const char Communication::ftdiID[] = "AD025KMG";//"AD025KMG";//"A800d2dg";//"AD025JOE";"A900fDpz";//;//"A900fDpz";
-
+const char Communication::ftdiID[] = "AD025KMD";//"A4007rXO";//"A800d2dg";//"AD025JOE";//"A800d2dg";//"AD025JOH";"A900fDp;//;//"A900fDpz";//"A4007rXO";
 int Communication::checksum(byte packet[])
 {
 	int i = 0;
@@ -26,7 +26,7 @@ int Communication::motorSend(int instruction, int dataLength, byte data[], int i
 	
 	packet[5+dataLength] = checksum(packet);
 	
-	if(ftdi_write_data(&bodyFTDI, packet, packet[3]+4)>0)
+	if((ftdi_write_data(&bodyFTDI, packet, packet[3]+4)>0))
 		return EXIT_SUCCESS;
 	else 
 		return EXIT_FAILURE;
@@ -122,7 +122,7 @@ int Communication::syncFlush()
 		syncPacket[3] = syncPacketSize - 3;
 		syncPacket[syncPacketSize] = checksum(syncPacket);
 		syncPacketSize = 0;	//Resetting size to 0 regardless of whether flush was successful or not
-		if(ftdi_write_data(&bodyFTDI, syncPacket, syncPacket[3]+4)>0)
+		if((ftdi_write_data(&bodyFTDI, syncPacket, syncPacket[3]+4)>0))
 			return EXIT_SUCCESS;
 		else 
 			return EXIT_FAILURE;
@@ -143,7 +143,7 @@ int Communication::motorReceive(byte data[] ,int tries)
 	while(tries)
 	{
 		// printf("val = %d\n", dataRec);
-		if(ftdi_read_data(&bodyFTDI,&dataRec,1) > 0)
+		if((ftdi_read_data(&bodyFTDI,&dataRec,1) > 0))
 		{
 			if(dataRec==0xff && dataCount<2)
 			{
@@ -228,7 +228,10 @@ Communication::Communication()
 			return;
 		}	
 		printf("%s ftdi successfully opened.\n", ftdiID);
-	}	
+	}
+
+/////////////////////////////
+
 }
 
 Communication::~Communication()

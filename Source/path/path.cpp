@@ -448,7 +448,7 @@ PathReturns Path::path_return(PathStructure ps)
 					    cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
 					    cvNamedWindow("Field");
 					    #ifndef INTEL_BOARD_DISPLAY
-    					cvMoveWindow("Field",950,400);
+    					// cvMoveWindow("Field",950,400);
     					#endif
 						cvShowImage("Field", image);
 						cvZero(image);
