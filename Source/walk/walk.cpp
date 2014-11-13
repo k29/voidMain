@@ -559,9 +559,9 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 	leg=(LEG)(1-(int)leg);	
 	printf("%d\t",leg);
 	
-	printf("X:%lf Y:%lf T1:%lf T2:  %lf\n\n",dx,dy,t1,t2);
+	// printf("X:%lf Y:%lf T1:%lf T2:  %lf\n\n",dx,dy,t1,t2);
 	
-	printf("VYin\t%lf\tVyfi\t%lf\n",veloYin,veloYfi);
+	// printf("VYin\t%lf\tVyfi\t%lf\n",veloYin,veloYfi);
 	int fps = 60;
 	int sleep = 1000000.0/(double)fps;
 	double timeInc =1.0/(double)fps;
@@ -636,7 +636,7 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 	double sspYAmp   = veloYin * sqrt(pow(Tc,2) - pow(sspYSupin/veloYin,2));
 	double sspYPhs   = asinh((sspYSupin/veloYin)/sqrt(pow(Tc,2) - pow(sspYSupin/veloYin,2)));
 	double veloYfi_d   = sspYAmp/Tc * cosh (sspTime/Tc + sspYPhs);
-	printf("VYD-%lf\n",veloYfi_d);
+	// printf("VYD-%lf\n",veloYfi_d);
 	//////printf("**************%lf******************\n",sspYAmp/Tc * cosh (sspTime/Tc + sspYPhs));
 	//double P_sspYAmp = sgn(veloYin) * Tc * sqrt((2*cosh(P_sspZTime/Tc)*veloYfi_d*veloYfi - pow(veloYfi_d,2) - pow(veloYfi,2))/(pow(sinh(P_sspZTime/Tc),2)));
 	//double P_sspYPhs = -acosh(veloYfi_d*Tc/P_sspYAmp);

@@ -447,7 +447,7 @@ PathReturns Path::path_return(PathStructure ps)
 					    cvPutText(image,A,cvPoint(10,25),&font,cvScalar(255,255,255));
 					    cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
 					    cvNamedWindow("Field");
-    					cvMoveWindow("Field",950,400);
+    					// cvMoveWindow("Field",950,400);
 						cvShowImage("Field", image);
 						cvZero(image);
 					 	cvWaitKey(5);
@@ -883,7 +883,7 @@ PathReturns Path::path_return(PathStructure ps)
 
 void Path::updatePathPacket()
 {
-	
+		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
@@ -894,35 +894,25 @@ void Path::updatePathPacket()
 		assert(tree.size()<30);
 		
 		//commented original
-		// for(int i=1;i<30;i++)
-		// {
-		// 	if(b==0)
-		// 		break;
-		// 	pathpackvar.finalpath[i].x=tree[b].x;
-		// 	pathpackvar.finalpath[i].y=tree[b].y;
-		// 	// printf("path %d x: %lf y: %lf\n", i, tree[b].x, tree[b].y);
-		// 	b=tree.returnPathPoint(b);
-		// 	pathpackvar.no_of_points=i;
-		// }
-		
-		// printf("tree size %d\n", tree.size());
-		//changed code to fix error
-		for (int i = 1; i <= tree.size(); ++i)
+		for(int i=1;i<30;i++)
 		{
-			// printf("x %lf y %lf\n", tree[i].x, tree[i].y);
-			pathpackvar.finalpath[i].x = tree[tree.size() - i].x;
-			pathpackvar.finalpath[i].y = tree[tree.size() - i].y;
+			// cout<<"the value of b is :"<<b<<endl;
+			if(b==0)
+				break;
+			pathpackvar.finalpath[i].x=tree[b].x;
+			pathpackvar.finalpath[i].y=tree[b].y;
+			// printf("path %d x: %lf y: %lf\n", i, tree[b].x, tree[b].y);
+			b=tree.returnPathPoint(b);
+			pathpackvar.no_of_points=i;
 		}
-		pathpackvar.no_of_points = tree.size() + 1;
-		//changed code to fix error[END]
-		//////////cout<<"after for in update path packet\n";
+		
 		if(pathpackvar.no_of_points<29)
 		{
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].x=-1;
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
 		}
 	
-	
+		pthread_mutex_unlock(&mutex_pathpacket);
 
 }
 

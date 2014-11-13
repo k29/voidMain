@@ -8,9 +8,9 @@ void call_main() //Function made to replicate path calling from the cognition mo
 	
 
 	ps.n_obstacles = 2;
-	ps.absObstacles[0].x=31; 
+	ps.absObstacles[0].x=35; 
 	ps.absObstacles[0].y=-75;
-	ps.absObstacles[1].x=7;
+	ps.absObstacles[1].x=15;
 	ps.absObstacles[1].y=67;
 	ps.absObstacles[2].x=-40;
 	ps.absObstacles[2].y=-80;

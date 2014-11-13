@@ -80,7 +80,7 @@ double calc_delta_theta(double inner_radius , foot step)
 
 int constraint_check(foot step , double vf , int loop_num)
 {
-	if (loop_num == 1 && step.delta_y>max_delta_y/2)
+	if (loop_num == 1 && step.delta_y>2*max_delta_y/3)
 		return 2;
 	else if (loop_num ==2 && step.delta_y<min_delta_y)
 		return 3;
@@ -461,8 +461,8 @@ void* walk_thread(void*)
 		j = 0;
 		while (j<i-1 && j<100)
 		{
-			walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
-			printf("theta = %f delta_x = %f \n" , 4*foot1[j].delta_theta , 4*foot1[j].delta_x);
+			walk.dribble(foot1[j].delta_y/2,4*foot1[j].delta_x,foot1[j].delta_theta,0);
+			printf("theta = %f delta_x = %f delta_y = %f\n" , foot1[j].delta_theta , 4*foot1[j].delta_x, foot1[j].delta_y);
 			j++;
 		}
 		j--;
