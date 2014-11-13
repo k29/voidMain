@@ -329,7 +329,7 @@ int Walk::dribble()
 //	printf("%d\t",leg);
 	// if (leg==1)
 		// legRotfi-=1;
-//	printf("VYin\t%lf\tVyfi\t%lf\n",veloYin,veloYfi);
+	printf("VYin\t%lf\tVyfi\t%lf\n",veloYin,veloYfi);
 	int fps = 120;
 	int sleep = 1000000.0/(double)fps;
 	double timeInc =1.0/(double)fps;
@@ -522,9 +522,10 @@ int Walk::dribble()
 //		printf("W phi\t%lf\tphiR\t%lf\tZ\t%lf\tZR\t%lf\tY\t%lf\tYR\t%lf",phi,phiR,z,zr,y,yr);
 		const double (&COM)[AXES] = bot->getRotCOM();
 		// bot->printRotCOM(); 
-		bot->leg[leg]->runIK(x,y+y_offset-(COM[1] - 12),z+feetSeperation ,phi);
-		bot->leg[1-leg]->runIK(xr,yr +y_offset- (COM[1] - 12),zr+feetSeperation,phiR);
-		// printf("x = %f y = %f z = %f \n", COM[0], COM[1], COM[2]);
+		// bot->leg[leg]->runIK(x,y+y_offset-(COM[1] - 12),z+feetSeperation ,phi);
+		// bot->leg[1-leg]->runIK(xr,yr +y_offset- (COM[1] - 12),zr+feetSeperation,phiR);
+		bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
+		bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation,phiR);		// printf("x = %f y = %f z = %f \n", COM[0], COM[1], COM[2]);
 		// bot->leg[leg]->runIK(x,0,z+feetSeperation +COM[2],phi);
 		// bot->leg[1-leg]->runIK(xr,0,zr+feetSeperation-COM[2] ,phiR);
 		// bot->leg[leg]->runIK(x,COM[1] - 15,z+feetSeperation-2*COM[2],phi);
@@ -564,7 +565,7 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 	int fps = 60;
 	int sleep = 1000000.0/(double)fps;
 	double timeInc =1.0/(double)fps;
-	double feetSeperation = 0;
+	double feetSeperation = 30;
 	double hipLength = 130;
 	
 	double Tc = sqrt(600.00/9810.0);
@@ -681,7 +682,7 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 	double d = -sspYin;
 	// printf("abcd = %f\t%f\t%f\t%f\n " , a , b , c , d);
 	// printf("sspTime = %f\n" , sspTime);
-	double height = 390;
+	double height = 400;
 	//double lift   = 30;
 	double xfreq  = 2*3.14;
 	double displacement = 1;
@@ -727,8 +728,8 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 		else if (walkTime >= dsp1Time && walkTime <= dsp1Time + sspTime)
 		{
 			fraction=2*(walkTime-startX)/(stopX-startX);
-			//x  = height - lift * (sin(xfreq*((walkTime-startX)/(stopX-startX))+xPhase) + displacement)/(1+displacement);
-			x = height- lift*fraction*(2-fraction);
+			x  = height - lift * (sin(xfreq*((walkTime-startX)/(stopX-startX))+xPhase) + displacement)/(1+displacement);
+			// x = height- lift*fraction*(2-fraction);
 			xr = height;
 			y=a*pow(walkTime-dsp1Time,3)+b*pow(walkTime-dsp1Time,2)+c*(walkTime-dsp1Time)+d;
 			//y  = linear(-sspYin,-sspYfi, ((walkTime-dsp1Time)/sspTime);
@@ -766,8 +767,10 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 		// printf("phi\t%lf\tphiR\t%lf\tZ\t%lf\tZR\t%lf\tY\t%lf\tYR\t%lf\n",phi,phiR,z,zr,y,yr); Uncommented for behavior testing
 		
 		const double (&COM)[AXES] = bot->getRotCOM();
-		bot->leg[leg]->runIK(x,y+y_offset-(COM[1] - 12),z+feetSeperation ,phi);
-		bot->leg[1-leg]->runIK(xr,yr +y_offset- (COM[1] - 12),zr+feetSeperation,phiR);
+		// bot->leg[leg]->runIK(x,y+y_offset-(COM[1] - 12),z+feetSeperation ,phi);
+		// bot->leg[1-leg]->runIK(xr,yr +y_offset- (COM[1] - 12),zr+feetSeperation,phiR);
+		bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
+		bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation,phiR);
 		//printf("%d %d\n\n\n",leg,1-leg);
 		bot->updateBot();
 		//printf("Sent Values\n");

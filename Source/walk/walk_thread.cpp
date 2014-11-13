@@ -459,10 +459,10 @@ void* walk_thread(void*)
 	{
 		// printf("in walk thread\n");
 		j = 0;
-		while (j<i-1 && j<50)
+		while (j<i-1 && j<100)
 		{
 			walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
-			printf("theta = %f delta_x = %f \n" , foot1[j].delta_theta , foot1[j].delta_x);
+			printf("theta = %f delta_x = %f \n" , 4*foot1[j].delta_theta , 4*foot1[j].delta_x);
 			j++;
 		}
 		j--;
