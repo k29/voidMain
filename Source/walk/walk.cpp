@@ -20,7 +20,7 @@ Walk::Walk(AcYut* bot)
 	supLegRotfi=0;
 	
 	start();
-	printf("START completed\n\n\n");
+	printf("START completed 1\n\n\n");
 };
 
 int Walk::start2()

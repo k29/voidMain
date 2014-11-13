@@ -96,7 +96,6 @@ int constraint_check(foot step , double vf , int loop_num)
 
 void convert_values (PathPacket pathpackvarlocal	,	double dist_circstart[],	double theta_arc[],	double radius[],	int footlr[])
 {
-		
 		// dist[0]	=	distance(pathpackvar.finalpath[0].x,pathpackvar.finalpath[0].y,pathpackvar.finalpath[k-1].x,pathpackvar.finalpath[k-1].y); IS THIS NEEDED?
 		for (int i = 0;	i<=pathpackvarlocal.no_of_points/2; i++)
 		{
@@ -208,7 +207,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	int footlr[30]; 
 	double dist_circstart[30];				//	This is the distance to the beginning of the circle from the beginning of motion.
 	
-	// convert_values (pathpackvarlocal,	dist_circstart,	theta_arc,	radius,	footlr);
+	convert_values (pathpackvarlocal,	dist_circstart,	theta_arc,	radius,	footlr);
 	// count =	0;									//	Counts number of footsteps
 	int i=0;	
 	// int no_obstacles = pathpackvarlocal.no_of_points/2;
@@ -442,7 +441,7 @@ float scurve2(float in,float fi,float t, float tot)
 void* walk_thread(void*)
 {
 	Imu imu;
-	// printf("GENORAI");
+	// printf("GENORAI\n");
 	imu.init();
 	foot foot1[1000];
 
@@ -458,12 +457,12 @@ void* walk_thread(void*)
 	footstepmain(10 , foot1[j].delta_y , j%2 ,  foot1 , i , pathpackvarlocal);
 	while (1)
 	{
-		printf("in walk thread\n");
+		// printf("in walk thread\n");
 		j = 0;
-		while (j<i-1 && j<15)
+		while (j<i-1 && j<50)
 		{
 			walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
-			// printf("theta = %f delta_x = %f \n" , foot1[j].delta_theta , foot1[j].delta_x);
+			printf("theta = %f delta_x = %f \n" , foot1[j].delta_theta , foot1[j].delta_x);
 			j++;
 		}
 		j--;

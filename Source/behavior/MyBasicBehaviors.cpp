@@ -228,7 +228,7 @@ void BasicBehaviorMakePath::execute()
     double tempy=goalcoords.y-p.loc.selfY;
     p.pathstr.goal.x= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
     p.pathstr.goal.y= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
-    printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
+    // printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
     //printf("goal coords y:%lf\n",pathstr.goal.x);
     p.pathstr.ball.x=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));
     p.pathstr.ball.y=p.fd->ball.r*sin(deg2rad(p.fd->ball.theta));

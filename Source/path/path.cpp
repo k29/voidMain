@@ -447,9 +447,7 @@ PathReturns Path::path_return(PathStructure ps)
 					    cvPutText(image,A,cvPoint(10,25),&font,cvScalar(255,255,255));
 					    cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
 					    cvNamedWindow("Field");
-					    #ifndef INTEL_BOARD_DISPLAY
-    					// cvMoveWindow("Field",950,400);
-    					#endif
+    					cvMoveWindow("Field",950,400);
 						cvShowImage("Field", image);
 						cvZero(image);
 					 	cvWaitKey(5);
@@ -852,7 +850,7 @@ PathReturns Path::path_return(PathStructure ps)
 			//cout<<curvearray[i].r<<"\t"<<curvearray[i].theta<<"\n";
 		}
 		//cout<<"\n\n\n\n\n\n\n\n";
-		// cvWaitKey();
+		//cvWaitKey();
 		return DOORIENT;
 	}
 
@@ -873,7 +871,6 @@ PathReturns Path::path_return(PathStructure ps)
     cvPutText(image,A,cvPoint(10,25),&font,cvScalar(255,255,255));
     cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
 	cvShowImage("Field", image);
-	// cvWaitKey();
 	if(tree.no_path_flag==-1)
 	{
 		tree.no_path_flag=0;
@@ -887,9 +884,6 @@ PathReturns Path::path_return(PathStructure ps)
 void Path::updatePathPacket()
 {
 	
-		pthread_mutex_lock(&mutex_pathpacket);
-
-		pathpackvar.pathType=0;
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
@@ -898,15 +892,29 @@ void Path::updatePathPacket()
 		pathpackvar.finalpath[0].x=ball.x;
 		pathpackvar.finalpath[0].y=ball.y;
 		assert(tree.size()<30);
-		for(int i=1;i<30;i++)
+		
+		//commented original
+		// for(int i=1;i<30;i++)
+		// {
+		// 	if(b==0)
+		// 		break;
+		// 	pathpackvar.finalpath[i].x=tree[b].x;
+		// 	pathpackvar.finalpath[i].y=tree[b].y;
+		// 	// printf("path %d x: %lf y: %lf\n", i, tree[b].x, tree[b].y);
+		// 	b=tree.returnPathPoint(b);
+		// 	pathpackvar.no_of_points=i;
+		// }
+		
+		// printf("tree size %d\n", tree.size());
+		//changed code to fix error
+		for (int i = 1; i <= tree.size(); ++i)
 		{
-			if(b==0)
-				break;
-			pathpackvar.finalpath[i].x=tree[b].x;
-			pathpackvar.finalpath[i].y=tree[b].y;
-			b=tree.returnPathPoint(b);
-			pathpackvar.no_of_points=i;
+			// printf("x %lf y %lf\n", tree[i].x, tree[i].y);
+			pathpackvar.finalpath[i].x = tree[tree.size() - i].x;
+			pathpackvar.finalpath[i].y = tree[tree.size() - i].y;
 		}
+		pathpackvar.no_of_points = tree.size() + 1;
+		//changed code to fix error[END]
 		//////////cout<<"after for in update path packet\n";
 		if(pathpackvar.no_of_points<29)
 		{
@@ -915,5 +923,6 @@ void Path::updatePathPacket()
 		}
 	
 	
-		pthread_mutex_unlock(&mutex_pathpacket);
+
 }
+
