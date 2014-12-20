@@ -15,6 +15,7 @@ class Walk
 	AcYut* bot;
 	LEG leg;
 	int hi ;
+	double sspTimeVar;
 	// Y Data //
 	double legYin;
 	double supLegYin;
@@ -27,6 +28,9 @@ class Walk
 	double veloZin;
 	double veloZfi;
 	double zMax;
+	double dz;
+	// double strafe;
+	// double sspZAmp;
 	
 	// Turn Data //
 	double legRotin;
@@ -37,12 +41,29 @@ class Walk
 	// X Data //
 	double lift;
 	
+	//PID Constants
+	double integ_const_z;
+	double deriv_const_z;
+	double prop_const_z;
+	double integ_max_z;	
+	double mean_z;
+
+	double integ_const_y;
+	double deriv_const_y;
+	double prop_const_y;
+	double integ_max_y;
+	double mean_y;
+
+	double prev_imu_yaw;
+
+	double prev_y;
 	public:
 	Walk(AcYut* bot);
 	int kick();
 	int dribble();
 	int dribble_new(double dy, double dx,double t1,double t2);
 	int dribble(double dy, double dx,double t1,double t2);
+	int pathdribble(double vel_y, double dx, double t1, double t2);
 	int start();
 	int start2();
 	float accelerate();
@@ -51,6 +72,7 @@ class Walk
 	float decelerate();
 	float turnleft(float theta);
 	float turnright(float theta);
+	// int setStrafe(double l_strafe);
 };
 
 

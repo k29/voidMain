@@ -45,7 +45,7 @@ bool quit = false;
 
 struct foot
 {
-	double delta_x,delta_y,delta_theta;				//	An array of this structure will store the final output of the following program, namely, delta_x, delta_y, delta_theta
+	double delta_x,delta_y,delta_theta,vel_y;				//	An array of this structure will store the final output of the following program, namely, delta_x, delta_y, delta_theta
 };
 
 
@@ -184,10 +184,12 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	//Linear motion is straightforward(haha) : The bot accelerates to its maximum step-length possible, and stays there until it arrives at a circle.
 	//Outlined below is the code for linear motion. Delta x and delta theta remain zero throughout the motion and the code is written thusly.
 	double vd = v_initial;						//	vd is initialized with initial velocity
-
+	step[0].vel_y = vd;
 	double vf;
 	if (initial_delta_y == 0)
+	{
 		step[0].delta_y = first_delta_y;
+	}
 	else
 		step[0].delta_y = initial_delta_y;			//	delta_length is initialized with initial step length	
 	if (step[0].delta_y >= max_delta_y - 0.01)
@@ -195,8 +197,9 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 		step[1].delta_y = (vd + c5*step[0].delta_y/2)/c5;
 		step[1].delta_x = 0;
 		step[1].delta_theta = 0;
+		vd  = c5*step[0].delta_y/2;
+		step[1].vel_y = vd;	
 		count++;
-		vd  = c5*step[0].delta_y/2;	
 	}
 
 	//printf("\n\n\n v_initial = %f\n\n\n",v_initial);
@@ -206,13 +209,19 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 														//	This measures the angle travelled along the circular arc, in order to determine when it has to end circular motion.
 	int footlr[30]; 
 	double dist_circstart[30];				//	This is the distance to the beginning of the circle from the beginning of motion.
-	
+
+		
+	int i=0;	
+	int no_obstacles;
+	#ifdef IP_IS_ON
 	convert_values (pathpackvarlocal,	dist_circstart,	theta_arc,	radius,	footlr);
 	// count =	0;									//	Counts number of footsteps
-	int i=0;	
-	// int no_obstacles = pathpackvarlocal.no_of_points/2;
-	int no_obstacles = 1;
-/*	theta_arc[0] = 70;
+	no_obstacles = pathpackvarlocal.no_of_points/2;
+	#endif
+	//Comment this portion for normal walk path - Currently this is conditioned on IP being off
+	#ifndef IP_IS_ON
+	no_obstacles = 1;
+	theta_arc[0] = 70;
 	radius[0] = 400;
 	footlr[0] = 1;	
 	dist_circstart[0] = 1000;
@@ -221,7 +230,8 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	radius[1] = 400;
 	footlr[1] = 0;
 	dist_circstart[1] = 1000;
-*/
+	#endif
+	//till here
 	int fmscheck = 0;
 	int first_circ_foot[4] , last_circ_foot[4]; //FSPMOD CODE
 	for (int i=0;i<=no_obstacles;i++)	
@@ -257,6 +267,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 													//  the circle, where vf will be necessary. It will also be useful for later modifications.
 			step[count + 1].delta_x = 0;
 			step[count + 1].delta_theta = 0;
+			step[count + 1].vel_y = vd;
 			count++;
 			dist_covered = calc_dist_covered(count,count_ref,step);
 			// printf(" I was here %d\n",count);
@@ -274,12 +285,15 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 			step[count+1].delta_theta = 0;
 			vf = c5*step[count+1].delta_y - vd;
 			vd = vf;
+			step[count + 1].vel_y = vd;
 			count++;
+			
 			step[count+1].delta_y = c4 * vd + 0.01;
 			step[count+1].delta_x = 0;
 			step[count+1].delta_theta = 0;
 			vf = c5*step[count+1].delta_y - vd;
 			vd = vf;
+			step[count + 1].vel_y = vd;
 			count++;	
 		}
 		if (theta_arc[i]>=365 || theta_arc[i]<=-5 )
@@ -308,9 +322,9 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 						theta_current += step[count].delta_theta;
 					if (theta_current<theta_arc[i])
 						{
-							count++;
 							vd=vf;
-
+							step[count + 1].vel_y = vd;
+							count++;
 						}
 					else
 						check=2;
@@ -348,8 +362,9 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 						theta_current += step[count].delta_theta;
 					if (theta_current<theta_arc[i])
 					{
-						count++;
 						vd = vf;
+						step[count + 1].vel_y = vd;
+						count++;
 					}
 					else
 						check=2;
@@ -373,7 +388,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	}
 	for (int i=0;i<count-1;i++)
 	{
-		printf ("Delta_y = %f\tDelta_x = %f\tDelta_theta = %f\n",step[i].delta_y,step[i].delta_x,step[i].delta_theta);
+		printf ("Delta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
 	}
 /*	//FSPMOD CODE
 	for (int i=0; i<no_obstacles; i++)
@@ -455,22 +470,47 @@ void* walk_thread(void*)
 	pathpackvarlocal = pathpackvar;
 	pthread_mutex_unlock(&mutex_pathpacket);
 	footstepmain(10 , foot1[j].delta_y , j%2 ,  foot1 , i , pathpackvarlocal);
+	double r = 0, x = 0, y = 0, theta = 0;
 	while (1)
 	{
 		// printf("in walk thread\n");
 		j = 0;
-		while (j<i-1 && j<100)
+		while (j<i-1 && j<50)
 		{
-			walk.dribble(foot1[j].delta_y/2,4*foot1[j].delta_x,foot1[j].delta_theta,0);
-			printf("theta = %f delta_x = %f delta_y = %f\n" , foot1[j].delta_theta , 4*foot1[j].delta_x, foot1[j].delta_y);
+			// walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
+			walk.pathdribble(foot1[j].vel_y, foot1[j].delta_x,foot1[j].delta_theta,0);
+			if (j%2 == 0)		
+				{
+					if (foot1[j].delta_x == 0 && j!=0)	
+					{
+						x += foot1[j].delta_y*cos(deg2rad(theta)) + (foot1[j-1].delta_x)*sin(deg2rad(theta));
+						y += foot1[j].delta_y*sin(deg2rad(theta))	+ (foot1[j-1].delta_x)*cos(deg2rad(theta));
+					}
+					else
+					{
+						x += (foot1[j].delta_y )*cos(deg2rad(theta)) + (foot1[j].delta_x)*sin(deg2rad(theta));
+						y += (foot1[j].delta_y )*sin(deg2rad(theta)) + (foot1[j].delta_x)*cos(deg2rad(theta));
+					}
+					theta += foot1[j].delta_theta;
+					r = sqrt(pow(x,2) + pow(y,2));
+				}
+			printf("step = %d theta = %f delta_x = %f delta_y = %f vel_y = %f\n" ,j, foot1[j].delta_theta , foot1[j].delta_x, foot1[j].delta_y, foot1[j].vel_y);
+			
+			pthread_mutex_lock(&mutex_motionModel);
+			motionModel.update(r,atan(y/x)*180/pi);
+			pthread_mutex_unlock(&mutex_motionModel);
 			j++;
 		}
 		j--;
 		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvarlocal = pathpackvar;
+		r = 0;
+		x = 0;
+		y = 0;
+		theta = 0;
 		pthread_mutex_unlock(&mutex_pathpacket);
 		// printf("%f\n" ,pathpackvarlocal.no_of_points);
-		footstepmain(walk.velocity2() , foot1[j].delta_y , j%2 ,  foot1 , i , pathpackvarlocal);
+		footstepmain(walk.velocity() , foot1[j].delta_y , j%2 ,  foot1 , i , pathpackvarlocal);
 	}
 
 
