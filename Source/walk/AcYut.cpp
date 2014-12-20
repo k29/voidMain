@@ -89,6 +89,23 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	polyPoints=0;
 	this->comm = comm;
 	this->imu = imu;
+
+	offsets[0] = -10;
+	offsets[1] = 10;
+	offsets[2] = -10;
+	offsets[3] = 20;
+	offsets[4] = -20;
+	offsets[5] = -10;
+	offsets[6] = 280;
+
+	offsets[20] = 20;
+	offsets[21] = -20;
+	offsets[22] = 20;
+	offsets[23] = 0;
+	offsets[24] = 0;
+	offsets[25] = -20;
+	offsets[26] = -256;
+/*
 	offsets[0] = -10;
 	offsets[1] = 10;
 	offsets[2] = -10;
@@ -104,72 +121,7 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	offsets[24] = 0;
 	offsets[25] = 0;
 	offsets[26] = -256;
-
-	/*offsets[0] = 45;
-	offsets[1] = -40 + 20;
-	offsets[2] =  40 - 20;
-	offsets[3] = -40;
-	offsets[4] = 40;
-	offsets[5] = -100;
-	offsets[6] = 280;
-
-	offsets[20] = 10;
-	offsets[21] = -40;
-	offsets[22] = 40;
-	offsets[23] = -40;
-	offsets[24] = 40;
-	offsets[25] = -10;
-	offsets[26] = -256;
 */
-/*	offsets[0] = -20;	//Recent
-	offsets[1] = -40 + 20;
-	offsets[2] =  40 - 20;
-	offsets[3] = -40;
-	offsets[4] = 40;
-	offsets[5] = -70;
-	offsets[6] = 280;
-
-	offsets[20] = 20;
-	offsets[21] = -40;
-	offsets[22] = 40;
-	offsets[23] = -40;
-	offsets[24] = 40;
-	offsets[25] = -20;
-	offsets[26] = -256;
-
-*/
-/*	offsets[0] = -40;
-	offsets[1] = 0;
-	offsets[2] = 32;
-	offsets[3] = -32;
-	offsets[4] = 0;
-	offsets[5] = 0;
-	offsets[6] = 280;
-
-	offsets[20] = 20;
-	offsets[21] = 0;
-	offsets[22] = 32;
-	offsets[23] = -32;
-	offsets[24] = 0;
-	offsets[25] = -20;
-	offsets[26] = -256;
-*/
-/*	offsets[0] = 0;
-	offsets[1] = 0;
-	offsets[2] = 0;
-	offsets[3] = 0;
-	offsets[4] = 0;
-	offsets[5] = 0;
-	offsets[6] = 280;
-
-	offsets[20] = 0;
-	offsets[21] = 0;
-	offsets[22] = 0;
-	offsets[23] = 0;
-	offsets[24] = 0;
-	offsets[25] = 0;
-	offsets[26] = -256;*/
-
 	//int ids[], int offsets[], int driveMode[], int zeros[]);
 	printf("Initializing motors ...\n");
 	this->left_leg = new Leg(LEFT,comm,(int*)legMotorIDs[0],&(offsets[0]),(int*)legDriveMode[0],(int*)legMotorZeros[0]);
@@ -432,3 +384,7 @@ int AcYut::storevalues(int n)
 	return(0);
 }
 
+double AcYut::getImuYaw()
+{
+	return imu->yaw;
+}

@@ -193,8 +193,14 @@ int main()
 		walk.dribble();
 	}
 	// walk.turnright(90);	
+	int i = 0;
 	while(1)
 	{
+		// i++;
+		// if (!(i%5)){
+			// walk.setStrafe(-8);
+		// }
+
 		walk.dribble();
 	}
 	return 0;
