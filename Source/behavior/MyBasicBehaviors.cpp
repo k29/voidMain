@@ -232,12 +232,19 @@ void BasicBehaviorMakePath::execute()
     //printf("goal coords y:%lf\n",pathstr.goal.x);
     p.pathstr.ball.x=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));
     p.pathstr.ball.y=p.fd->ball.r*sin(deg2rad(p.fd->ball.theta));
+
+    //OBSTACLE DETECTION
+    p.pathstr.n_obstacles = p.fd->o.size();
+    for (int i = 0; i < p.fd->o.size(); ++i)
+    {
+        p.pathstr.absObstacles[i].x = p.fd->o[i].distance*cos(deg2rad(p.fd->o[i].angle));
+        p.pathstr.absObstacles[i].y = p.fd->o[i].distance*sin(deg2rad(p.fd->o[i].angle));
+    }
     
     // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
     // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
 
     p.pathreturn=p.path.path_return(p.pathstr);
-    
     // printf("Path Made\n");
     #endif
 }

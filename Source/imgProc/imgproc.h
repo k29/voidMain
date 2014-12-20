@@ -13,6 +13,7 @@ typedef unsigned char uchar;
 #define BLACKC 16
 #define REDC 32
 #define WHITEC 64
+#define BACKGROUNDC 128
 
 #define returnPixel1C(image, x, y) ((uchar*)(image->imageData + image->widthStep*(y)))[x]
 #define returnPixel3C(image, x, y, color) ((uchar*)(image->imageData + image->widthStep*(y)))[(x)*3 + color]

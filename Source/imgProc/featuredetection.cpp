@@ -16,8 +16,9 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
     labelImg_small = cvCreateImage(cvSize(IMAGE_WIDTH/4, IMAGE_HEIGHT/4), IPL_DEPTH_LABEL, 1);
     seg_white_count = cvCreateImage(cvSize(IMAGE_WIDTH/4, IMAGE_HEIGHT/4), 8, 1);
     seg_white = cvCreateImage(cvSize(IMAGE_WIDTH/4, IMAGE_HEIGHT/4), 8, 1);
-    seg_black = cvCreateImage(cvSize(IMAGE_WIDTH/4, IMAGE_HEIGHT/4), 8, 1);
-    seg_green = cvCreateImage(cvSize(IMAGE_WIDTH/4, IMAGE_HEIGHT/4), 8, 1);
+    seg_black = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
+    seg_green = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
+    seg_background = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
     ballRatio=1.0;
     ballFound_var = false;
     tempnLand = 0;
@@ -25,7 +26,6 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
     o.clear();
     l.clear();
     constants.open("Source/lut/constants.dat",ios::binary);
-
 }
 
 
@@ -116,6 +116,8 @@ class SegmentImages {
     IplImage* my_seg_blue;
     IplImage* my_seg_red;
     IplImage* my_seg_green;
+    IplImage* my_seg_black;
+    IplImage* my_seg_background;
     CamCapture* my_cam;
 public:
     void operator()( const blocked_range2d<size_t>& r ) const {
@@ -128,26 +130,33 @@ public:
                 else
                     returnPixel1C(my_seg_yellow, x, y) = 0;
 
-                // if(my_cam->isGreen_small(x, y))
-                //     returnPixel1C(my_seg_green, x, y) = 255;
-                // else
-                //     returnPixel1C(my_seg_green, x, y) = 0;
+                if(my_cam->isGreen_small(x, y))
+                    returnPixel1C(my_seg_green, x, y) = 255;
+                else
+                    returnPixel1C(my_seg_green, x, y) = 0;
 
-
-                // if(my_cam->isBlue_small(x, y))
-                //  returnPixel1C(my_seg_blue, x, y) = 255;
-                // else
-                //  returnPixel1C(my_seg_blue, x, y) = 0;
+                if(my_cam->isBlue_small(x, y))
+                 returnPixel1C(my_seg_blue, x, y) = 255;
+                else
+                 returnPixel1C(my_seg_blue, x, y) = 0;
 
                 if(my_cam->isRed_small(x, y))
                     returnPixel1C(my_seg_red, x, y) = 255;
                 else
                     returnPixel1C(my_seg_red, x, y) = 0;
+                if(my_cam->isBlack_small(x, y))
+                 returnPixel1C(my_seg_black, x, y) = 255;
+                else
+                 returnPixel1C(my_seg_black, x, y) = 0;
+                if(my_cam->isBackground_small(x, y))
+                 returnPixel1C(my_seg_background, x, y) = 255;
+                else
+                 returnPixel1C(my_seg_background, x, y) = 0;
             }
         }
     }
-    SegmentImages(IplImage* &seg_yellow, IplImage* &seg_blue, IplImage* &seg_red,IplImage* &seg_green, CamCapture &cam) :
-        my_seg_yellow(seg_yellow), my_seg_blue(seg_blue), my_seg_red(seg_red), my_seg_green(seg_green), my_cam(&cam)
+    SegmentImages(IplImage* &seg_yellow, IplImage* &seg_blue, IplImage* &seg_red,IplImage* &seg_green, IplImage* &seg_black, IplImage* seg_background, CamCapture &cam) :
+        my_seg_yellow(seg_yellow), my_seg_blue(seg_blue), my_seg_red(seg_red), my_seg_green(seg_green), my_seg_black(seg_black), my_seg_background(seg_background), my_cam(&cam)
     {}
 };
 
@@ -158,22 +167,24 @@ public:
 void FeatureDetection::getBlobs(CamCapture &cam)
 {
     parallel_for( blocked_range2d<size_t>(0, IMAGE_WIDTH, 16, 0, IMAGE_HEIGHT, 32),     
-                  SegmentImages(seg_yellow,seg_blue,seg_red,seg_green,cam) );
+                  SegmentImages(seg_yellow,seg_blue,seg_red,seg_green,seg_black,seg_background,cam) );
     // IplConvKernel *morphkernel = cvCreateStructuringElementEx(3,3,0,0,CV_SHAPE_RECT);
     // cvMorphologyEx(seg_yellow, seg_yellow, NULL, morphkernel, CV_MOP_OPEN, 1);
 
     getInGreen(cam);
+    // cvErode(seg_black, seg_black);
+    // cvDilate(seg_black, seg_black);
     // cvLabel(seg_yellow, labelImg, blobs_yellow);
     // cvLabel(seg_blue, labelImg, blobs_blue);
     cvLabel(seg_red, labelImg, blobs_red);
     //getInGreen should have been called before this
-    // cvLabel(seg_black, labelImg_small, blobs_black);
+    cvLabel(seg_black, labelImg, blobs_black);
     // cvFilterByArea(blobs_yellow, 100, 1000000);
     // cvFilterByArea(blobs_blue, 100, 1000000);
     cvFilterByArea(blobs_red, 10, 1000000);
     // printf("After filter\n");
     //minimum obstacle area defined here
-    // cvFilterByArea(blobs_black, 50, 10000);
+    cvFilterByArea(blobs_black, 100, 1000000);
     int i = 0;
 
     // i= 0;
@@ -335,6 +346,7 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
         }
     }
     nGoals = 0;
+    ///////////////////////////////////COMMENTED SO THAT NO CHANGE TO SEG_BLUE////////////////////////////////////////////
     for (CvBlobs::const_iterator it=blobs_blue.begin(); it!=blobs_blue.end(); ++it)
     {
         if(((it->second->maxy - it->second->miny)/(it->second->maxx - it->second->minx)) >= 2)
@@ -369,6 +381,7 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
             if(nGoals>=2) break;
         }
     }
+    ////////////////////////////////////////////NO BLUE GOALS/////////////////////////////////////////////////////////
     cvReleaseImage(&histogram_y);
 }
 
@@ -459,25 +472,35 @@ void FeatureDetection::getLPs(CamCapture &cam, HeadMotor &hm)
 bool FeatureDetection::getObstacles(CamCapture &cam, HeadMotor &hm)
 {
     bool obstacleOnEdge = false;
-    for (CvBlobs::const_iterator it=blobs_black.begin(); it!=blobs_black.end(); ++it)
+    for (CvBlobs::const_iterator it=blobs_black.begin(); it != blobs_black.end(); ++it)
     {
         if(((it->second->maxy - it->second->miny)/(it->second->maxx - it->second->minx)) >= 1)
         {
-            
             //Check if on image edge
-            if(isOnImageEdgeObstacle((it->second->maxx + it->second->minx)*2, it->second->maxy*4)==true)
-              continue;
+            // if(isOnImageEdgeObstacle((it->second->maxx + it->second->minx)*2, it->second->maxy*4)==true)
+            //   continue;
+            if(isOnImageEdge((it->second->maxx + it->second->minx)/2, it->second->maxy)==true)
+                continue;
             #ifndef ALL_PRINTING_OFF
             printf("Found Obstacle\n");
             #endif
             #ifdef PLOT_LANDMARKS
                 CvScalar color = {255,255,255};
-                cvCircle(cam.rgbimg, cvPoint((it->second->maxx + it->second->minx)*4, it->second->maxy*8), 2, color, 2);
+                cvCircle(cam.rgbimg, cvPoint((it->second->maxx + it->second->minx), it->second->maxy*2), 2, color, 2);
+                CvFont font;
+                cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
+	            char A[100] = "	Obstacle";
+	            cvPutText(cam.rgbimg,A,cvPoint((it->second->maxx + it->second->minx), it->second->maxy*2),&font,cvScalar(255,255,255));
             #endif
-            findReal((it->second->maxx + it->second->minx)*2, it->second->maxy*4, tempo[tempnObstacle].distance, tempo[tempnObstacle].angle, hm);
+            findReal((it->second->maxx + it->second->minx)/2, it->second->maxy, tempo[tempnObstacle].distance, tempo[tempnObstacle].angle, hm);
             tempnObstacle++;
         }
     }
+    #ifndef INTEL_BOARD_DISPLAY
+    cvNamedWindow("BLACK");
+    cvMoveWindow("BLACK",750,600);
+    cvShowImage("BLACK",seg_black);
+    #endif
     return obstacleOnEdge;
 }
 
@@ -698,8 +721,6 @@ void FeatureDetection::getCorners(CamCapture &cam, HeadMotor &hm)
     cvReleaseImage(&show_image);
 }
 
-
-
 void FeatureDetection::getInGreen(CamCapture &cam)
 {
     // Make reduced image
@@ -710,8 +731,8 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     cvZero(prob_image);
 
     cvZero(seg_white);
-    cvZero(seg_black);
-    cvZero(seg_green);
+    // cvZero(seg_black);
+    // cvZero(seg_green);
     cvZero(seg_white_count);
  //New Begin
     const int tmin = 30;
@@ -754,7 +775,7 @@ void FeatureDetection::getInGreen(CamCapture &cam)
             }
             if(gcount>4)
             {
-                returnPixel1C(seg_green, x, y) = 255;
+                // returnPixel1C(seg_green, x, y) = 255;                //UNCOMMENT
             }
             if(bcount > 4)
             {
@@ -766,7 +787,7 @@ void FeatureDetection::getInGreen(CamCapture &cam)
             }
             else
             {
-    //          returnPixel1C(seg_black, x, y) = 255;
+                // returnPixel1C(seg_black, x, y) = 255;
             }
             rowsum[y] += pixelColor1C(prob_image, x, y);
         }
@@ -847,6 +868,12 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     cvSmooth(histogram, histogram, CV_GAUSSIAN, 3);
     cvSmooth(histogram, histogram, CV_MEDIAN, 15);
 
+    // IplImage* img = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
+    // cvResize(binary_image, img);
+    // cvShowImage("background_mask", img);
+    // cvNot(img, img);
+    // cvSub(seg_black, img, seg_black);
+
     // for(int x = 0; x < IMAGE_WIDTH/4; x++)
     // {
     //     // for(int y = 0; y < returnPixel1C(histogram, x, 0); y++)
@@ -915,6 +942,7 @@ void FeatureDetection::getLandmarks(CamCapture &cam, HeadMotor &hm, MotionModel 
     getBlobs(cam);
     //cam is passed for plotting
     getGoals(cam, hm);
+    getObstacles(cam, hm);
 
 #ifndef SYMMETRIC_LANDMARKS
     getLPs(cam, hm);

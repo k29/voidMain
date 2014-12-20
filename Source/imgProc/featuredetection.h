@@ -60,6 +60,7 @@ private:
 	IplImage* seg_white;
 	IplImage* seg_black;
 	IplImage* seg_green;
+	IplImage* seg_background;
 	IplImage* seg_white_count;
 	void undistort(int xd, int yd, int* xu, int* yu);
 	void findReal(int x,int y, double &objdis, double &objangdeg, HeadMotor &hm);

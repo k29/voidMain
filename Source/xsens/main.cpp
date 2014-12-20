@@ -37,8 +37,9 @@ using namespace std;
 int main()
 {
 	Imu imu;
-	imu.init();
-	int i=500000;
+	if(!imu.init())
+		return 0;
+	int i=100000;
 	double value;
 	fstream f1;
 	f1.open("Source/xsens/imuyaw.angle",ios::out);
