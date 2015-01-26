@@ -2,6 +2,7 @@
 #define CAMCAPTURE_H ////
 
 #include <opencv2/opencv.hpp>
+#include <opencv/highgui.h>
 #include "imgproc.h"
 #include <cstring>
 #include <cstdio>
