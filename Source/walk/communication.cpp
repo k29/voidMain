@@ -1,7 +1,7 @@
 #include "communication.h"
 #include <stdio.h>
 
-const char Communication::ftdiID[] = "AD025KMC";//"A4007rXO";//"A800d2dg";//"AD025JOE";//"A800d2dg";//"AD025JOH";"A900fDp;//;//"A900fDpz";//"A4007rXO";
+const char Communication::ftdiID[] = "A8006BKK";//"A4007rXO";//"A800d2dg";//"AD025JOE";//"A800d2dg";//"AD025JOH";"A900fDp;//;//"A900fDpz";//"A800d2dg";//"A4007rXO";
 int Communication::checksum(byte packet[])
 {
 	int i = 0;
@@ -26,7 +26,7 @@ int Communication::motorSend(int instruction, int dataLength, byte data[], int i
 	
 	packet[5+dataLength] = checksum(packet);
 	
-	if((ftdi_write_data(&bodyFTDI, packet, packet[3]+4)>0))
+	if((ftdi_write_data(&bodyFTDI, packet, packet[3]+4)>0)&&(ftdi_write_data(&bodyFTDI, packet, packet[3]+4)>0))
 		return EXIT_SUCCESS;
 	else 
 		return EXIT_FAILURE;
@@ -214,7 +214,7 @@ Communication::Communication()
 		fprintf(stderr, "ftdi_init failed.\n");
 		return;
 	}	
-	if(ftdi_usb_open_desc(&bodyFTDI,0x403,0x6001,NULL, ftdiID)<0)
+	if(ftdi_usb_open_desc(&bodyFTDI,0x403,0x6001,NULL,ftdiID )<0)
 	{
 		fprintf(stderr, "Unable to open ftdi device: (%s).\n", ftdi_get_error_string(&bodyFTDI));
       	printf("Unable to open ftdi.\n");
@@ -231,7 +231,7 @@ Communication::Communication()
 	}
 
 /////////////////////////////
-
+	
 }
 
 Communication::~Communication()
