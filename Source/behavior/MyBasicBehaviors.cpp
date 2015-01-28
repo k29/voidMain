@@ -99,7 +99,7 @@ void BasicBehaviorUpdate::execute()
         cvPutText(flags,B,cvPoint(10,30),&font,cvScalar(255,255,255));
         cvPutText(flags,C,cvPoint(10,45),&font,cvScalar(255,255,255));
         cvPutText(flags,D,cvPoint(10,60),&font,cvScalar(255,255,255));
-          
+
         // printf("localization updated to %lf\n",p.conf);
         cvNamedWindow("Flags");
         cvNamedWindow("Real Time Feed");
@@ -120,6 +120,8 @@ void BasicBehaviorUpdate::execute()
             if(cvSaveImage("image.bmp", p.capture.rgbimg))
                 printf("saved\n");
         cvReleaseImage(&flags);
+        if(c == 27)
+            exit(0);
         #endif
 
         #ifndef IP_IS_ON

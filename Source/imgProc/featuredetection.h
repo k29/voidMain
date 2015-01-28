@@ -70,6 +70,7 @@ private:
 	bool getObstacles(CamCapture &cam, HeadMotor &hm);
 	void getCorners(CamCapture &cam, HeadMotor &hm);
 	void getBall(CamCapture &cam, HeadMotor &hm);
+	void getRandomBall(CamCapture &cam, HeadMotor &hm);
 	bool ballFound_var;
 	int ballX_var;
 	int ballY_var;
