@@ -89,22 +89,84 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	polyPoints=0;
 	this->comm = comm;
 	this->imu = imu;
-
-	offsets[0] = 0;
+	offsets[0] = 50;
 	offsets[1] = 15;
 	offsets[2] = -15;
 	offsets[3] = 15;
 	offsets[4] = -15;
-	offsets[5] = -0;
+	offsets[5] = -70;
+ 	offsets[6] = 280;
+ 
+	offsets[20] = -20;
+	offsets[21] = 20;
+	offsets[22] = -20;
+	offsets[23] = -5;
+	offsets[24] = 5;
+	offsets[25] = 20;
+ 	offsets[26] = -256;
+
+ 	/*offsets[0] = 30;
+	offsets[1] = 15;
+	offsets[2] = -15;
+	offsets[3] = 15;
+	offsets[4] = -15;
+	offsets[5] = -50;
+ 	offsets[6] = 280;
+ 
+	offsets[20] = 0;
+	offsets[21] = 40;
+	offsets[22] = -40;
+	offsets[23] = -5;
+	offsets[24] = 5;
+	offsets[25] = -0;
+ 	offsets[26] = -256;*/
+/*	offsets[0] = 30;
+	offsets[1] = 15;
+	offsets[2] = -15;
+	offsets[3] = 15;
+	offsets[4] = -15;
+	offsets[5] = -50;
+ 	offsets[6] = 280;
+ 
+	offsets[20] = 0;
+ 	offsets[21] = -20;
+ 	offsets[22] = 20;
+	offsets[23] = -5;
+	offsets[24] = 5;
+	offsets[25] = -0;
+ 	offsets[26] = -256;
+*//*	
+	offsets[0] = 60;
+	offsets[1] = 15;
+	offsets[2] = -15;
+	offsets[3] = 15;
+	offsets[4] = -15;
+	offsets[5] = -20;
 	offsets[6] = 280;
 
 	offsets[20] = 0;
-	offsets[21] = -20;
-	offsets[22] = 20;
+	offsets[21] = 40;
+	offsets[22] = -40;
 	offsets[23] = -5;
 	offsets[24] = 5;
 	offsets[25] = -0;
 	offsets[26] = -256;
+*//*
+	// offsets[0] = 0;
+	// offsets[1] = 15;
+	// offsets[2] = -15;
+	// offsets[3] = 15;
+	// offsets[4] = -15;
+	// offsets[5] = -0;
+	// offsets[6] = 280;
+
+	// offsets[20] = 0;
+	// offsets[21] = -20;
+	// offsets[22] = 20;
+	// offsets[23] = -5;
+	// offsets[24] = 5;
+	// offsets[25] = -0;
+	// offsets[26] = -256;
 /*
 	offsets[0] = -10;
 	offsets[1] = 10;

@@ -166,7 +166,7 @@ int Walk::start2()
 	double c = -veloYin;
 	double d = -sspYin;
 	
-	double height = 400;
+	double height = 390;
 	//double lift   = 30;
 	double xfreq  = 2*3.14;
 	double displacement = 1;
@@ -512,7 +512,7 @@ int Walk::dribble()
 	double c = -veloYin;
 	double d = -sspYin;
 	
-	double height = 400;
+	double height = 390;
 	//double lift   = 30;
 	double xfreq  = 2*3.14;
 	double displacement = 1;

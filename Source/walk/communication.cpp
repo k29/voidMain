@@ -1,7 +1,8 @@
 #include "communication.h"
 #include <stdio.h>
 
-const char Communication::ftdiID[] = "A8006BKK";//"A4007rXO";//"A800d2dg";//"AD025JOE";//"A800d2dg";//"AD025JOH";"A900fDp;//;//"A900fDpz";//"A800d2dg";//"A4007rXO";
+const char Communication::ftdiID1[] = "A8006BKK";//"A4007rXO";//"A800d2dg";//"AD025JOE";//"A800d2dg";//"AD025JOH";"A900fDp;//;//"A900fDpz";
+const char Communication::ftdiID2[] = "AD025KM9";//"A800d2dg";//"A4007rXO";
 int Communication::checksum(byte packet[])
 {
 	int i = 0;
@@ -26,7 +27,7 @@ int Communication::motorSend(int instruction, int dataLength, byte data[], int i
 	
 	packet[5+dataLength] = checksum(packet);
 	
-	if((ftdi_write_data(&bodyFTDI, packet, packet[3]+4)>0)&&(ftdi_write_data(&bodyFTDI, packet, packet[3]+4)>0))
+	if((ftdi_write_data(&bodyFTDI1, packet, packet[3]+4)>0)&&(ftdi_write_data(&bodyFTDI1, packet, packet[3]+4)>0))
 		return EXIT_SUCCESS;
 	else 
 		return EXIT_FAILURE;
@@ -122,7 +123,7 @@ int Communication::syncFlush()
 		syncPacket[3] = syncPacketSize - 3;
 		syncPacket[syncPacketSize] = checksum(syncPacket);
 		syncPacketSize = 0;	//Resetting size to 0 regardless of whether flush was successful or not
-		if((ftdi_write_data(&bodyFTDI, syncPacket, syncPacket[3]+4)>0))
+		if((ftdi_write_data(&bodyFTDI1, syncPacket, syncPacket[3]+4)>0)&&(ftdi_write_data(&bodyFTDI2, syncPacket, syncPacket[3]+4)>0))
 			return EXIT_SUCCESS;
 		else 
 			return EXIT_FAILURE;
@@ -143,7 +144,7 @@ int Communication::motorReceive(byte data[] ,int tries)
 	while(tries)
 	{
 		// printf("val = %d\n", dataRec);
-		if((ftdi_read_data(&bodyFTDI,&dataRec,1) > 0))
+		if((ftdi_read_data(&bodyFTDI1,&dataRec,1) > 0)&&(ftdi_read_data(&bodyFTDI2,&dataRec,1) > 0))
 		{
 			if(dataRec==0xff && dataCount<2)
 			{
@@ -209,32 +210,53 @@ int Communication::getBaudrate()
 Communication::Communication()
 {
 	syncPacketSize = 0;
-	if(ftdi_init(&bodyFTDI)<0)
+	if(ftdi_init(&bodyFTDI1)<0)
 	{
 		fprintf(stderr, "ftdi_init failed.\n");
 		return;
 	}	
-	if(ftdi_usb_open_desc(&bodyFTDI,0x403,0x6001,NULL,ftdiID )<0)
+	if(ftdi_usb_open_desc(&bodyFTDI1,0x403,0x6001,NULL, ftdiID1)<0)
 	{
-		fprintf(stderr, "Unable to open ftdi device: (%s).\n", ftdi_get_error_string(&bodyFTDI));
+		fprintf(stderr, "Unable to open ftdi device: (%s).\n", ftdi_get_error_string(&bodyFTDI1));
       	printf("Unable to open ftdi.\n");
 		return;	
 	}
 	else
 	{
-		if(ftdi_set_baudrate(&bodyFTDI, BAUD)<0)
+		if(ftdi_set_baudrate(&bodyFTDI1, BAUD)<0)
 		{
 			printf("Unable to set baudrate.\n");
 			return;
 		}	
-		printf("%s ftdi successfully opened.\n", ftdiID);
+		printf("%s ftdi successfully opened.\n", ftdiID1);
 	}
 
 /////////////////////////////
-	
+
+		if(ftdi_init(&bodyFTDI2)<0)
+	{
+		fprintf(stderr, "ftdi_init failed.\n");
+		return;
+	}	
+	if(ftdi_usb_open_desc(&bodyFTDI2,0x403,0x6001,NULL, ftdiID2)<0)
+	{
+		fprintf(stderr, "Unable to open ftdi device: (%s).\n", ftdi_get_error_string(&bodyFTDI2));
+      	printf("Unable to open ftdi.\n");
+		return;	
+	}
+	else
+	{
+		if(ftdi_set_baudrate(&bodyFTDI2, BAUD)<0)
+		{
+			printf("Unable to set baudrate.\n");
+			return;
+		}	
+		printf("%s ftdi successfully opened.\n", ftdiID2);
+	}	
 }
 
 Communication::~Communication()
 {
-	printf("Communication through ftdi %s closing.\n", ftdiID);
+	printf("Communication through ftdi %s closing.\n", ftdiID1);
+	printf("Communication through ftdi %s closing.\n", ftdiID2);
 }
