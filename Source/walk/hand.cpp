@@ -51,10 +51,10 @@ int Hand::getLoad()
 
 int* Hand::pingHand()
 {
-	for (int i = 0; i < HAND_MOTORS_COUNT; ++i)
-	{
-		m[i]->ping();
-	}
+	// for (int i = 0; i < HAND_MOTORS_COUNT; ++i)
+	// {
+	// 	m[i]->ping();
+	// }
 }
 
 int Hand::getMotorLoad(int motor)
@@ -67,17 +67,17 @@ void Hand::init()
 	double pos[HAND_MOTORS_COUNT];
 	if(hand==LEFT)
 	{
-		pos[0]=2048;
-		pos[1]=4096 - 1100;
-		pos[2]=2048;
-		pos[3]=4096 - 3000;
+		pos[0]=4096-2068;
+		pos[1]=4096-1100;
+		pos[2]=4096-2148;
+		pos[3]=4096-3570;//4096 - 1800;
 	}
 	else
 	{
 		pos[0]=2048;
 		pos[1]=1100;
 		pos[2]=2048;
-		pos[3]=3000;
+		pos[3]=3470;//1700;
 	}
 	
 	

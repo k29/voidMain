@@ -22,14 +22,14 @@ void AcYut::initialize()
 	right_hand->init();
 	comm->syncFlush();
 
-	 init_val[0] =	4096-2048;
+	 init_val[0] =	4096-2068;
 	 init_val[1] =	4096-1100;
-	 init_val[2] =	4096-2048;
-	 init_val[3] =	4096-3000;
+	 init_val[2] =	4096-2148;
+	 init_val[3] =	4096-3570;
 	 init_val[4] =	2048;
 	 init_val[5] =	1100;
 	 init_val[6] =	2048;
-	 init_val[7] =	3000;
+	 init_val[7] =	3470;//1700;
 	 init_val[8] =	390;
 	 init_val[9] =	0;
 	 init_val[10] =	0;
@@ -88,40 +88,25 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 {
 	polyPoints=0;
 	this->comm = comm;
-	this->imu = imu;
+	this->imu = imu;	
 
-	offsets[0] = -10;
-	offsets[1] = 10;
-	offsets[2] = -10;
-	offsets[3] = 20;
-	offsets[4] = -20;
-	offsets[5] = -10;
+//Really good offsets
+	offsets[0] = 75;
+	offsets[1] = 30;
+	offsets[2] = -30;
+	offsets[3] = -50;
+	offsets[4] = 50;
+	offsets[5] = -95;
 	offsets[6] = 280;
 
-	offsets[20] = 20;
-	offsets[21] = -20;
-	offsets[22] = 20;
-	offsets[23] = 0;
-	offsets[24] = 0;
-	offsets[25] = -20;
+	offsets[20] = 40;
+	offsets[21] = -0;
+	offsets[22] = 0;
+	offsets[23] = -80;
+	offsets[24] = 80;
+	offsets[25] = -40;
 	offsets[26] = -256;
-/*
-	offsets[0] = -10;
-	offsets[1] = 10;
-	offsets[2] = -10;
-	offsets[3] = 20;
-	offsets[4] = -20;
-	offsets[5] = 0;
-	offsets[6] = 280;
 
-	offsets[20] = -10;
-	offsets[21] = -20;
-	offsets[22] = 20;
-	offsets[23] = 0;
-	offsets[24] = 0;
-	offsets[25] = 0;
-	offsets[26] = -256;
-*/
 	//int ids[], int offsets[], int driveMode[], int zeros[]);
 	printf("Initializing motors ...\n");
 	this->left_leg = new Leg(LEFT,comm,(int*)legMotorIDs[0],&(offsets[0]),(int*)legDriveMode[0],(int*)legMotorZeros[0]);
@@ -322,16 +307,16 @@ const double (&(AcYut::getRotCOM()))[AXES]
 int AcYut::printCOM()
 {
 	for(int i=0;i<AXES;i++)
-	printf("COM[%d]\t%4.2lf\n",i,COM[i]);
-	
+		printf("COM[%d]\t%4.2lf\t",i,COM[i]);
+	printf("\n");
 	return EXIT_SUCCESS;
 }
 
 int AcYut::printRotCOM()
 {
 	for(int i=0;i<AXES;i++)
-	printf("COM[%d]\t%4.2lf\n",i,rotCOM[i]);
-	
+		printf("COM[%d]\t%4.2lf\t",i,rotCOM[i]);
+	printf("\n");
 	return EXIT_SUCCESS;
 }
 
@@ -343,10 +328,11 @@ double* AcYut::getWorldFrameCoods(double coods[], double ans[])
 	ans[X] = cos(roll)*cos(pitch)*coods[X] + sin(roll)*coods[Y] - cos(roll)*sin(pitch)*coods[Z];
 	ans[Y] = -sin(roll)*cos(pitch)*coods[X] + cos(roll)*coods[Y] + sin(roll)*cos(pitch)*coods[Z];
 	ans[Z] = sin(pitch)*coods[X] + cos(pitch)*coods[Z];
-	#ifdef DEBUG
-	//printf("X\t%3.3lf\tY\t%3.3lf\tZ\t%3.3lf\n",coods[X],coods[Y],coods[Z]);
-	//printf("ROT X\t%3.3lf\tY\t%3.3lf\tZ\t%3.3lf\n",rotCoods[X],rotCoods[Y],rotCoods[Z]);
-	#endif
+	// #ifdef DEBUG
+	// printf("X\t%3.3lf\tY\t%3.3lf\tZ\t%3.3lf\n",coods[X],coods[Y],coods[Z]);
+	// printf("ROT X\t%3.3lf\tY\t%3.3lf\tZ\t%3.3lf\n",ans[X],ans[Y],ans[Z]);
+	// printf("IMU ROLL = %f PITCH = %f YAW = %f\n", imu->roll,imu->pitch,imu->yaw);
+	// #endif
 	
 	return ans;
 }

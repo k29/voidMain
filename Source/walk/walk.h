@@ -15,6 +15,7 @@ class Walk
 	AcYut* bot;
 	LEG leg;
 	int hi ;
+	int stepCount;
 	double sspTimeVar;
 	// Y Data //
 	double legYin;
@@ -46,14 +47,14 @@ class Walk
 	double deriv_const_z;
 	double prop_const_z;
 	double integ_max_z;	
-	double mean_z;
+	double prev_mean_z;
 
 	double integ_const_y;
 	double deriv_const_y;
 	double prop_const_y;
 	double integ_max_y;
 	double mean_y;
-
+	double prev_mean_y;
 	double prev_imu_yaw;
 
 	double prev_y;

@@ -1,6 +1,6 @@
 #include "walk.h"
 int k=1;
-
+double pi = acos(-1);
 Walk::Walk(AcYut* bot)
 {
 	this->bot = bot;
@@ -12,7 +12,7 @@ Walk::Walk(AcYut* bot)
 	supLegZin=25.155276;
 	veloZin=-170;
 	veloZfi=170;
-	zMax=65;
+	zMax=55;
 	dz = 0;
 	lift=40;
 	legRotin=0;
@@ -22,16 +22,19 @@ Walk::Walk(AcYut* bot)
 	sspTimeVar = 0.300999;
 	// strafe=0;
 	// sspZAmp=zMax;
-	integ_const_z = 1;
-	deriv_const_z = 0.005;
-	prop_const_z = 1;
+	stepCount = 0;
+
+	integ_const_z = 0.05;//2;
+	deriv_const_z = 0.01;//0.005;
+	prop_const_z = 0.8;//0.6;//1;
 	integ_max_z = 2;
-	
-	integ_const_y = 1;
-	deriv_const_y = 0.005;
-	prop_const_y = 1;
+	prev_mean_z = 0;
+
+	integ_const_y = 1;//1;
+	deriv_const_y = 0.005;//0.005;
+	prop_const_y = 1;//1;
 	integ_max_y = 2;
-	
+	prev_mean_y = 0;
 	prev_imu_yaw = 0;
 	start2();
 	printf("START completed\n\n\n");
@@ -168,17 +171,17 @@ int Walk::start2()
 	
 	double height = 400;
 	//double lift   = 30;
-	double xfreq  = 2*3.14;
+	double xfreq  = 2*pi;
 	double displacement = 1;
 	double startX = dsp1Time-1.0/60.0;
 	double stopX  = stepTime-dsp2Time + 1.0/60.0;
-	double xPhase =-3.14/2;
+	double xPhase =-pi/2;
 	
 	double dampLift = 0;
-	double dampFreq = 2*3.14;
+	double dampFreq = 2*pi;
 	double dampStart = dsp1Time + sspTime - 4.0/60.0;
 	double dampEnd   = stepTime;
-	double dampPhase = -3.14/2;
+	double dampPhase = -pi/2;
 	double dampDisplacement = 1;
 	
 	double fraction;
@@ -267,8 +270,7 @@ int Walk::start2()
 	legRotfi=0;
 	legRotin = supLegRotfi;
 	supLegRotfi=0;
-	return EXIT_SUCCESS;//endState;
-	
+	return EXIT_SUCCESS;//endState55	
 	
 }
 
@@ -365,6 +367,7 @@ int Walk::setStrafe(double l_strafe)
 }*/
 int Walk::dribble()
 {
+	stepCount++;
 	leg=(LEG)(1-(int)leg);	
 //	printf("%d\t",leg);
 	// if (leg==1)
@@ -517,17 +520,17 @@ int Walk::dribble()
 	
 	double height = 400;
 	//double lift   = 30;
-	double xfreq  = 2*3.14;
+	double xfreq  = 2*pi;
 	double displacement = 1;
 	double startX = dsp1Time-1.0/60.0;
 	double stopX  = stepTime-dsp2Time + 1.0/60.0;
-	double xPhase =-3.14/2;
+	double xPhase =-pi/2;
 	
-	double dampLift = 0;
-	double dampFreq = 2*3.14;
+	double dampLift = 3;
+	double dampFreq = 2*pi;
 	double dampStart = dsp1Time + sspTime - 4.0/60.0;
 	double dampEnd   = stepTime;
-	double dampPhase = -3.14/2;
+	double dampPhase = -pi/2;
 	double dampDisplacement = 1;
 	
 	double fraction;
@@ -561,7 +564,27 @@ int Walk::dribble()
 	}
 	prev_imu_yaw = curr_imu_yaw;
 */
-
+	double mean_y, mean_z;
+	if (prev_mean_y != 0)
+	{
+		prev_mean_y /= (double)stepCount;
+		// printf("Mean values = %f ",prev_mean_y);	
+		mean_y = prev_mean_y;
+		prev_mean_y *= (double)stepCount;
+	}
+	else
+	{
+		mean_y = 12;
+	}
+	if (prev_mean_z != 0)
+	{
+		prev_mean_z /= (double)stepCount;
+		// printf("%f \n",prev_mean_z);
+		mean_z = prev_mean_z;
+		prev_mean_z *= (double)stepCount;
+	}
+	else
+		mean_z = 0;
 //	////printf("*************************************** STEP **********************************************\n");	
 	for(walkTime = 0.0/fps; walkTime<=stepTime; walkTime +=timeInc)
 	{
@@ -583,7 +606,7 @@ int Walk::dribble()
 			fraction=2*(walkTime-startX)/(stopX-startX);
 			x  = height - lift * (sin(xfreq*((walkTime-startX)/(stopX-startX))+xPhase) + displacement)/(1+displacement);
 			// x = height- lift*fraction*(2-fraction);
-			xr = height;
+			xr = height ;//- 10*sin(pi*(walkTime - dsp1Time)/sspTime);
 			y=a*pow(walkTime-dsp1Time,3)+b*pow(walkTime-dsp1Time,2)+c*(walkTime-dsp1Time)+d;
 			//y  = linear(-sspYin,-sspYfi, ((walkTime-dsp1Time)/sspTime);
 			yr = -(Ay*cosh((walkTime-dsp1Time)/Tc) + By*sinh((walkTime-dsp1Time)/Tc));
@@ -598,8 +621,11 @@ int Walk::dribble()
 		else if (walkTime > dsp1Time+sspTime )//&& walkTime<=stepTime
 		{
 			state = DSP;
-			x  = height;// - dampLift* (sin(dampFreq*((walkTime-dampStart)/(dampEnd-dampStart))+dampPhase)+dampDisplacement)/(1+dampDisplacement);
+			x  = height - dampLift* (sin(dampFreq*((walkTime-dampStart)/(dampEnd-dampStart))+dampPhase)+dampDisplacement)/(1+dampDisplacement);
 			xr = height;
+/*			const double (&COM)[AXES] = bot->getRotCOM();
+			if (walkTime == (stepTime) && fabs(COM[2] - mean_z) > 0.5 )
+				walkTime--;*/
 			y  = -sspYfi - veloYfi_d*(walkTime-dsp1Time-sspTime);
 			yr = -sspYSupfi - veloYfi_d*(walkTime-dsp1Time-sspTime);
 			z  = sspZfi - veloZfi*(walkTime-dsp1Time-sspTime) -hipLength/2;
@@ -617,33 +643,56 @@ int Walk::dribble()
 		///////printf("Z\t%lf\tZR\t%lf\n",z,zr);
 //		printf("W phi\t%lf\tphiR\t%lf\tZ\t%lf\tZR\t%lf\tY\t%lf\tYR\t%lf",phi,phiR,z,zr,y,yr);
 		const double (&COM)[AXES] = bot->getRotCOM();
-		mean_z = 0;
+		// bot->printRotCOM();
+		// bot->printCOM();
+		prev_mean_y += COM[1]/(stepTime*(double)fps);
+		prev_mean_z += COM[2]/(stepTime*(double)fps);
+
 		double err_new_z = COM[2] - mean_z;
 		deriv_term_z = deriv_const_z*(err_new_z - err_z)/timeInc;
 		prop_term_z = prop_const_z*err_new_z;
+
+		// printf("Velocity_Z = %f\n", (err_new_z - err_z)/timeInc);
+
 		double integ_new_z = integ_term_z + integ_const_z*(err_z + err_new_z)*timeInc/2;
+		
+		// printf(" P = %f I = %f D = %f\n",err_new_z,integ_new_z,(err_new_z - err_z)/timeInc);
+
 		if (!(integ_new_z > integ_max_z || integ_new_z < -integ_max_z))
 			integ_term_z = integ_new_z;
 		
 		correction_z = deriv_term_z + integ_term_z + prop_term_z;
 		err_z = err_new_z;
-		
-		mean_y = 11;
-		double err_new_y = COM[2] - mean_y;
+		// printf("Mean Values %f %f \n", mean_y, mean_z);
+		double err_new_y = COM[1] - mean_y;
+
+		// bot->printRotCOM();
 		deriv_term_y = deriv_const_y*(err_new_y - err_y)/timeInc;
 		prop_term_y = prop_const_y*err_new_y;
 		double integ_new_y = integ_term_y + integ_const_y*(err_y + err_new_y)*timeInc/2;
 		if (!(integ_new_y > integ_max_y || integ_new_y < -integ_max_y))
 			integ_term_y = integ_new_y;
 		
-		// correction_y = deriv_term_y + integ_term_y + prop_term_y;
-		correction_y = prop_term_y;
+		correction_y = deriv_term_y + integ_term_y + prop_term_y;
+		// correction_y = prop_term_y;
 		err_y = err_new_y;
-		
 		// correction = 0;
-		bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation - correction_z,phi);
-		bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation + correction_z,phiR);
-			
+		//PROPER 
+		bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation + correction_z,phi);
+		bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation - correction_z,phiR);
+		
+		printf("Z correction : %f\n",COM[2]);
+		//NON IMU			
+		// bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
+		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation,phiR);
+		//Y IMU
+		// bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation ,phi);
+		// bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation,phiR);
+		//On spot
+		// bot->leg[leg]->runIK(x,0,z+feetSeperation - correction_z,phi);
+		// bot->leg[1-leg]->runIK(xr,0,zr+feetSeperation + correction_z,phiR);
+				
+
 		// printf("Z : Integral= %f\tDerivative = %f\tProportion = %f\tCorrection = %f\n",integ_term_z, deriv_term_z, prop_term_z, correction_z);
 		// printf("Y : Integral= %f\tDerivative = %f\tProportion = %f\tCorrection = %f\n\n",integ_term_y, deriv_term_y, prop_term_y, correction_y);
 
@@ -683,6 +732,7 @@ int Walk::dribble()
 		//getchar();
 		
 	}
+	// printf("%f\n",-sspYfi + sspYin );
 	supLegYin  = -legYfi;
 	legYin = -supLegYfi;
 	veloYin=veloYfi_d;
@@ -841,17 +891,17 @@ int Walk::dribble(double dy, double dx, double t1, double t2)
 	// printf("sspTime = %f\n" , sspTime);
 	double height = 400;
 	//double lift   = 30;
-	double xfreq  = 2*3.14;
+	double xfreq  = 2*pi;
 	double displacement = 1;
 	double startX = dsp1Time-1.0/60.0;
 	double stopX  = stepTime-dsp2Time + 1.0/60.0;
-	double xPhase =-3.14/2;
+	double xPhase =-pi/2;
 	
 	double dampLift = 0;
-	double dampFreq = 2*3.14;
+	double dampFreq = 2*pi;
 	double dampStart = dsp1Time + sspTime - 4.0/60.0;
 	double dampEnd   = stepTime;
-	double dampPhase = -3.14/2;
+	double dampPhase = -pi/2;
 	double dampDisplacement = 1;
 	
 	double fraction;

@@ -187,7 +187,7 @@ int main()
 */	
 	Walk walk(&bot);
 	// walk.turnright(90);
-	while(walk.velocity()*1.5<=160)
+	while(walk.velocity()*1.5<=100)
 	{
 		walk.accelerate();
 		walk.dribble();

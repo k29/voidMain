@@ -50,13 +50,13 @@ bool* Leg::pingLeg(bool pingStatus[])
 int Leg::pingLeg()
 {
 	bool pingStatus[LEG_MOTOR_COUNT];
-	pingLeg(pingStatus);
+	// pingLeg(pingStatus);
 	
-	for(int i=0; i<LEG_MOTOR_COUNT;i++)
-	{
-		if(pingStatus[i] == false)
-		return EXIT_FAILURE;
-	}
+	// for(int i=0; i<LEG_MOTOR_COUNT;i++)
+	// {
+	// 	if(pingStatus[i] == false)
+	// 	return EXIT_FAILURE;
+	// }
 	return EXIT_SUCCESS;
 }
 
