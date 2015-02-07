@@ -169,7 +169,7 @@ int Walk::start2()
 	double c = -veloYin;
 	double d = -sspYin;
 	
-	double height = 390;
+	double height = 400;
 	//double lift   = 30;
 	double xfreq  = 2*pi;
 	double displacement = 1;
