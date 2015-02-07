@@ -24,9 +24,9 @@ Walk::Walk(AcYut* bot)
 	// sspZAmp=zMax;
 	stepCount = 0;
 
-	integ_const_z = 0.05;//2;
-	deriv_const_z = 0.01;//0.005;
-	prop_const_z = 0.8;//0.6;//1;
+	integ_const_z = 0.05;//0.05;//2;
+	deriv_const_z = 0.01;//0.01;//0.005;
+	prop_const_z = 0.6;//0.6;//1;
 	integ_max_z = 2;
 	prev_mean_z = 0;
 
@@ -44,7 +44,7 @@ int Walk::start2()
 {
 //	leg=(LEG)(1-(int)leg);
 	printf("%d\t",leg);
-	printf("VYin\t%lf\tVyfi\t%lf\n",veloYin,veloYfi);
+	// printf("VYin\t%lf\tVyfi\t%lf\n",veloYin,veloYfi);
 	int fps = 120;
 	int sleep = 1000000.0/(double)fps;
 	double timeInc =1.0/(double)fps;
@@ -407,7 +407,7 @@ int Walk::dribble()
 	double sspZSupfi = sspZAmp * cosh(sspZTime/Tc + sspZPhs);
 	double veloZfi_d = sspZAmp*sinh(sspZTime/Tc + sspZPhs)/Tc;
 	
-	printf("VYin\t%lf\tVyfi_d\t%lf\n",veloYin,veloYfi);
+	// printf("VYin\t%lf\tVyfi_d\t%lf\n",veloYin,veloYfi);
 	double sspTime   = sspZTime;
 	double dsp1Time  = (supLegZin - sspZSupin)/(-veloZin);		
 	double dsp2Time  = D_dsp2Time;
@@ -681,7 +681,7 @@ int Walk::dribble()
 		bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation + correction_z,phi);
 		bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation - correction_z,phiR);
 		
-		printf("Z correction : %f\n",COM[2]);
+		printf("%f\n",COM[2]);
 		//NON IMU			
 		// bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation,phiR);
