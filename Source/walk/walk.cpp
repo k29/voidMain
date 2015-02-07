@@ -14,7 +14,7 @@ Walk::Walk(AcYut* bot)
 	veloZfi=170;
 	zMax=55;
 	dz = 0;
-	lift=30;
+	lift=40;
 	legRotin=0;
 	legRotfi=0;
 	supLegRotin=0;
@@ -201,7 +201,7 @@ int Walk::start2()
 	double zr_half_time=sspZAmp * cosh((sspTime/2.0)/Tc + sspZPhs) -hipLength/2;
 	
 	printf("Z %lf ZR %lf Y %lf YR %lf\n",z_half_time,zr_half_time,y_half_time,yr_half_time);
-	//bot->reachSlow(390,y_half_time,z_half_time,390,yr_half_time,zr_half_time);
+	//bot->reachSlow(400,y_half_time,z_half_time,400,yr_half_time,zr_half_time);
 	bot->reachSlow(400,y_half_time,z_half_time,400,yr_half_time,zr_half_time);
 	int state = DSP;
 //	////printf("*************************************** STEP **********************************************\n");	
@@ -515,7 +515,7 @@ int Walk::dribble()
 	double c = -veloYin;
 	double d = -sspYin;
 	
-	double height = 390;
+	double height = 400;
 	//double lift   = 30;
 	double xfreq  = 2*pi;
 	double displacement = 1;
