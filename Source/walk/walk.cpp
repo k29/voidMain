@@ -14,7 +14,7 @@ Walk::Walk(AcYut* bot)
 	veloZfi=170;
 	zMax=55;
 	dz = 0;
-	lift=40;
+	lift=30;
 	legRotin=0;
 	legRotfi=0;
 	supLegRotin=0;
@@ -169,7 +169,7 @@ int Walk::start2()
 	double c = -veloYin;
 	double d = -sspYin;
 	
-	double height = 400;
+	double height = 390;
 	//double lift   = 30;
 	double xfreq  = 2*pi;
 	double displacement = 1;
@@ -290,9 +290,6 @@ int Walk::start()
 	lift=20;
 	dribble();
 	lift=30;
-	dribble();
-	lift=40;
-	
 }
 
 float Walk::accelerate()
@@ -518,7 +515,7 @@ int Walk::dribble()
 	double c = -veloYin;
 	double d = -sspYin;
 	
-	double height = 400;
+	double height = 390;
 	//double lift   = 30;
 	double xfreq  = 2*pi;
 	double displacement = 1;
@@ -663,10 +660,16 @@ int Walk::dribble()
 		
 		correction_z = deriv_term_z + integ_term_z + prop_term_z;
 		err_z = err_new_z;
+<<<<<<< HEAD
 		// printf("Mean Values %f %f \n", mean_y, mean_z);
 		double err_new_y = COM[1] - mean_y;
 
 		// bot->printRotCOM();
+=======
+		
+		mean_y = 11;
+		double err_new_y = COM[1] - mean_y;
+>>>>>>> 83a2ca90a0601587b14b15ca70342bf75de1b1ce
 		deriv_term_y = deriv_const_y*(err_new_y - err_y)/timeInc;
 		prop_term_y = prop_const_y*err_new_y;
 		double integ_new_y = integ_term_y + integ_const_y*(err_y + err_new_y)*timeInc/2;
@@ -677,6 +680,7 @@ int Walk::dribble()
 		// correction_y = prop_term_y;
 		err_y = err_new_y;
 		// correction = 0;
+<<<<<<< HEAD
 		//PROPER 
 		bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation + correction_z,phi);
 		bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation - correction_z,phiR);
@@ -693,6 +697,17 @@ int Walk::dribble()
 		// bot->leg[1-leg]->runIK(xr,0,zr+feetSeperation + correction_z,phiR);
 				
 
+=======
+		//PROPER WALK IK WITH IMU
+		bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation - correction_z,phi);
+		bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation + correction_z,phiR);
+		//END PROPER WALK IK
+
+		//OFFSET TUNING IK
+		// bot->leg[leg]->runIK(x,0,z+feetSeperation ,phi);
+		// bot->leg[1-leg]->runIK(xr,0,zr+feetSeperation,phiR);
+		//END OFFSET TUNING IK
+>>>>>>> 83a2ca90a0601587b14b15ca70342bf75de1b1ce
 		// printf("Z : Integral= %f\tDerivative = %f\tProportion = %f\tCorrection = %f\n",integ_term_z, deriv_term_z, prop_term_z, correction_z);
 		// printf("Y : Integral= %f\tDerivative = %f\tProportion = %f\tCorrection = %f\n\n",integ_term_y, deriv_term_y, prop_term_y, correction_y);
 

@@ -193,7 +193,7 @@ int main()
 		walk.dribble();
 	}
 	// walk.turnright(90);	
-	int i = 0;
+	// int i = 0;
 	while(1)
 	{
 		// i++;

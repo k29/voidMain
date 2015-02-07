@@ -46,7 +46,7 @@ CamError CamCapture::init()
     if(doLUT == true)
     {
         printf("Loading lookup tables...");
-        if(loadLUT(REDC)==false||loadLUT(BLUEC)==false||loadLUT(YELLOWC)==false||loadLUT(GREENC)==false||loadLUT(WHITEC)==false||loadLUT(BLACKC)==false)
+        if(loadLUT(REDC)==false||loadLUT(BLUEC)==false||loadLUT(YELLOWC)==false||loadLUT(GREENC)==false||loadLUT(WHITEC)==false||loadLUT(BLACKC)==false||loadLUT(BACKGROUNDC)==false)
         {
             printf("Unable to open LUT\n");
             return CAM_FAILURE;
@@ -240,8 +240,12 @@ bool CamCapture::loadLUT(int color)
         case BLACKC:
         lut_address = &lut_black;
         strcpy(file, "Source/lut/black.lut");
-        break;        
+        break;
 
+        case BACKGROUNDC:      
+        lut_address = &lut_background;
+        strcpy(file, "Source/lut/background.lut");
+        break;
     }
     fp = fopen(file,"rb");
     if(!fp)

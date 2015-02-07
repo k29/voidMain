@@ -2,6 +2,7 @@
 #define CAMCAPTURE_H ////
 
 #include <opencv2/opencv.hpp>
+#include <opencv/highgui.h>
 #include "imgproc.h"
 #include <cstring>
 #include <cstdio>
@@ -42,6 +43,7 @@ private:
     unsigned char* lut_green;
     unsigned char* lut_white;
     unsigned char* lut_black;
+    unsigned char* lut_background;
     int width_var;
     int height_var;
     int width_var_full;
@@ -122,8 +124,17 @@ public:
         else
             return false;
     }
+    inline bool isBackground(int i, int j)
+    {
+        if(lut_background[returnPixel3C(rgbimg, i, j, 2)
+            |(returnPixel3C(rgbimg, i, j, 1)<<8)
+            |(returnPixel3C(rgbimg, i, j, 0)<<16)])
+            return true;
+        else
+            return false;
+    }
 
-        inline bool isRed_small(int i, int j)
+    inline bool isRed_small(int i, int j)
     {
         if(lut_red[returnPixel3C(rgbimg_small, i, j, 2)
             |(returnPixel3C(rgbimg_small, i, j, 1)<<8)
@@ -180,6 +191,16 @@ public:
             return true;
         else
             return false;
+    }
+    inline bool isBackground_small(int i, int j)
+    {
+        if(lut_background[returnPixel3C(rgbimg_small, i, j, 2)
+            |(returnPixel3C(rgbimg_small, i, j, 1)<<8)
+            |(returnPixel3C(rgbimg_small, i, j, 0)<<16)])
+            return true;
+        else
+            return false;
+
     }
     CamCapture(bool param = true, int percent = 100, int percent2 = 50);
     ~CamCapture();

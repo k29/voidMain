@@ -99,7 +99,7 @@ void BasicBehaviorUpdate::execute()
         cvPutText(flags,B,cvPoint(10,30),&font,cvScalar(255,255,255));
         cvPutText(flags,C,cvPoint(10,45),&font,cvScalar(255,255,255));
         cvPutText(flags,D,cvPoint(10,60),&font,cvScalar(255,255,255));
-          
+
         // printf("localization updated to %lf\n",p.conf);
         cvNamedWindow("Flags");
         cvNamedWindow("Real Time Feed");
@@ -120,6 +120,8 @@ void BasicBehaviorUpdate::execute()
             if(cvSaveImage("image.bmp", p.capture.rgbimg))
                 printf("saved\n");
         cvReleaseImage(&flags);
+        if(c == 27)
+            exit(0);
         #endif
 
         #ifndef IP_IS_ON
@@ -232,12 +234,19 @@ void BasicBehaviorMakePath::execute()
     //printf("goal coords y:%lf\n",pathstr.goal.x);
     p.pathstr.ball.x=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));
     p.pathstr.ball.y=p.fd->ball.r*sin(deg2rad(p.fd->ball.theta));
+
+    //OBSTACLE DETECTION
+    p.pathstr.n_obstacles = p.fd->o.size();
+    for (int i = 0; i < p.fd->o.size(); ++i)
+    {
+        p.pathstr.absObstacles[i].x = p.fd->o[i].distance*cos(deg2rad(p.fd->o[i].angle));
+        p.pathstr.absObstacles[i].y = p.fd->o[i].distance*sin(deg2rad(p.fd->o[i].angle));
+    }
     
     // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
     // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
 
     p.pathreturn=p.path.path_return(p.pathstr);
-    
     // printf("Path Made\n");
     #endif
 }
