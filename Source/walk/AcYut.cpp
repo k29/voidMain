@@ -98,12 +98,12 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	offsets[5] = -95;
 	offsets[6] = 280;
 
-	offsets[20] = 40;
-	offsets[21] = 10;
-	offsets[22] = -10;
+	offsets[20] = 30;
+	offsets[21] = 20;
+	offsets[22] = -20;
 	offsets[23] = -60;
 	offsets[24] = 60;
-	offsets[25] = -290;
+	offsets[25] = -260;
 	offsets[26] = -256;
 //Really good offsets
 	// offsets[0] = 75;

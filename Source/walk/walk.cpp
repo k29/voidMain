@@ -24,9 +24,9 @@ Walk::Walk(AcYut* bot)
 	// sspZAmp=zMax;
 	stepCount = 0;
 
-	integ_const_z = 0.05;//0.05;//2;
+	integ_const_z = 0.1;//0.05;//2;
 	deriv_const_z = 0.01;//0.01;//0.005;
-	prop_const_z = 0.6;//0.6;//1;
+	prop_const_z = 1.5;//0.6;//1;
 	integ_max_z = 2;
 	prev_mean_z = 0;
 
@@ -491,9 +491,9 @@ int Walk::dribble()
 	
 /*	// printf("Yeh raha%f\n", sspZTime);
 	printf("\n\n\n");
-	printf("legYin\t\t%lf\n",legYin);
+	priLtf("legYin\-t\t%lf\n",legYin);
 	printf("supLegYin\t%lf\n",supLegYin);
-	printf("sspYin\t\t%lf\n",sspYin);
+	supLrintf("sspYn\t\t%lf\n",sspYin);
 	printf("sspYSupin\t%lf\n",sspYSupin);
 	printf("sspYAmp\t\t%lf\n",sspYAmp);
 	printf("sspYPhs\t\t%lf\n",sspYPhs);
@@ -547,20 +547,20 @@ int Walk::dribble()
 	//Experimental
 /*	double curr_imu_yaw = bot->getImuYaw();
 	//Imu yaw negative change if turned to the 'right'
-	printf("Imu change = %f\t\n", curr_imu_yaw - prev_imu_yaw);
+	printf("Imu change = %f\t\n", curr_imu_yaw-prev_imu_yaw );
 	if (fabs(curr_imu_yaw - prev_imu_yaw) < 5)
 	{
 		if (leg == RIGHT)
-			legRotfi = (curr_imu_yaw - prev_imu_yaw);
+			supLegRotfi = (curr_imu_yaw - prev_imu_yaw);
 		else
-			legRotfi = -(curr_imu_yaw - prev_imu_yaw);
+			supLegRotfi = -(curr_imu_yaw - prev_imu_yaw);
 	}
 	else
 	{
 		legRotfi = 0;
 	}
-	prev_imu_yaw = curr_imu_yaw;
-*/
+	prev_imu_yaw = curr_imu_yaw;*/
+
 	double mean_y, mean_z;
 	if (prev_mean_y != 0)
 	{
@@ -677,10 +677,11 @@ int Walk::dribble()
 		// correction = 0;
 
 		//PROPER 
-		bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation + correction_z,phi);
-		bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation - correction_z,phiR);
+		printf("leg = %d COM[2] = %f\n",leg,COM[2]);
+		bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation + 0*(leg==1?1:-1)*correction_z,phi);
+		bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation - (leg==1?1:-1)*correction_z,phiR);
 		
-		printf("%f\n",COM[2]);
+		// printf("%f\n",COM[2]);
 		//NON IMU			
 		// bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation,phiR);
