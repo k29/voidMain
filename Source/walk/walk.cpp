@@ -24,13 +24,13 @@ Walk::Walk(AcYut* bot)
 	// sspZAmp=zMax;
 	stepCount = 0;
 
-	integ_const_z = 0.1;//0.05;//2;
-	deriv_const_z = 0.01;//0.01;//0.005;
-	prop_const_z = 1.5;//0.6;//1;
+	integ_const_z =0.05;//0.05;//2;
+	deriv_const_z =1.2/120.0;//0.01;//0.005;
+	prop_const_z = 0.6;//1;
 	integ_max_z = 2;
 	prev_mean_z = 0;
 
-	integ_const_y = 1;//1;
+	integ_const_y = 1;//1;//1;
 	deriv_const_y = 0.005;//0.005;
 	prop_const_y = 1;//1;
 	integ_max_y = 2;
@@ -640,11 +640,12 @@ int Walk::dribble()
 		///////printf("Z\t%lf\tZR\t%lf\n",z,zr);
 //		printf("W phi\t%lf\tphiR\t%lf\tZ\t%lf\tZR\t%lf\tY\t%lf\tYR\t%lf",phi,phiR,z,zr,y,yr);
 		const double (&COM)[AXES] = bot->getRotCOM();
+		const double (&COM1)[AXES] = bot->getCOM();
 		// bot->printRotCOM();
 		// bot->printCOM();
 		prev_mean_y += COM[1]/(stepTime*(double)fps);
 		prev_mean_z += COM[2]/(stepTime*(double)fps);
-
+		// printf("%f\n",COM1[2]-COM[2]);
 		double err_new_z = COM[2] - mean_z;
 		deriv_term_z = deriv_const_z*(err_new_z - err_z)/timeInc;
 		prop_term_z = prop_const_z*err_new_z;
@@ -677,11 +678,11 @@ int Walk::dribble()
 		// correction = 0;
 
 		//PROPER 
-		printf("leg = %d COM[2] = %f\n",leg,COM[2]);
-		bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation + 0*(leg==1?1:-1)*correction_z,phi);
-		bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation - (leg==1?1:-1)*correction_z,phiR);
+		// printf("leg = %d COM[2] = %f zr = %f correction = %f\n",leg,COM[2], zr,(leg==1?1:-1)*correction_z);
+		bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation - 1*(leg==1?1:-1)*correction_z,phi);
+		bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation + 1*(leg==1?1:-1)*correction_z,phiR);
 		
-		// printf("%f\n",COM[2]);
+		printf("%f\n",COM[2]);
 		//NON IMU			
 		// bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation,phiR);
@@ -689,8 +690,8 @@ int Walk::dribble()
 		// bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation ,phi);
 		// bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation,phiR);
 		//On spot
-		// bot->leg[leg]->runIK(x,0,z+feetSeperation - correction_z,phi);
-		// bot->leg[1-leg]->runIK(xr,0,zr+feetSeperation + correction_z,phiR);
+		// bot->leg[leg]->runIK(x,0,z+feetSeperation ,phi);
+		// bot->leg[1-leg]->runIK(xr,0,zr+feetSeperation ,phiR);
 				
 		// printf("Z : Integral= %f\tDerivative = %f\tProportion = %f\tCorrection = %f\n",integ_term_z, deriv_term_z, prop_term_z, correction_z);
 		// printf("Y : Integral= %f\tDerivative = %f\tProportion = %f\tCorrection = %f\n\n",integ_term_y, deriv_term_y, prop_term_y, correction_y);

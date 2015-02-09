@@ -90,20 +90,20 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	this->comm = comm;
 	this->imu = imu;	
 
-	offsets[0] = 75;
+	offsets[0] = 85;
 	offsets[1] = 30;
 	offsets[2] = -30;
-	offsets[3] = -30;
-	offsets[4] = 30;
-	offsets[5] = -95;
+	offsets[3] = -40;
+	offsets[4] = 40;
+	offsets[5] = -105;
 	offsets[6] = 280;
 
-	offsets[20] = 30;
-	offsets[21] = 20;
-	offsets[22] = -20;
-	offsets[23] = -60;
-	offsets[24] = 60;
-	offsets[25] = -260;
+	offsets[20] = 40;
+	offsets[21] = 0;
+	offsets[22] = -0 + 20;
+	offsets[23] = -70;
+	offsets[24] = 70;
+	offsets[25] = -270;
 	offsets[26] = -256;
 //Really good offsets
 	// offsets[0] = 75;
