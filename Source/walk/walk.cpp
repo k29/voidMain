@@ -32,7 +32,7 @@ Walk::Walk(AcYut* bot)
 	integ_term_z = 0;
 
 	integ_const_y = 0;//1;//1;//1;
-	deriv_const_y = 0;//0.005;//0.005;
+	deriv_const_y = 0.01;//0.005;//0.005;
 	prop_const_y = 0;//1;//1;
 	integ_max_y = 2;
 	integ_term_y;
@@ -565,10 +565,12 @@ int Walk::dribble()
 	double mean_y, mean_z;
 	if (prev_mean_y != 0)
 	{
-		prev_mean_y /= (double)stepCount;
-		// printf("Mean values = %f ",prev_mean_y);	
-		mean_y = prev_mean_y;
-		prev_mean_y *= (double)stepCount;
+		mean_y = prev_mean_y/(double)(stepCount);
+		mean_y = (int)mean_y;
+		// mean_y = prev_mean_y/(double)stepCount;
+		// mean_y = (int)mean_y;
+		// printf("Mean values = %f ",mean_y);	
+		// mean_y = prev_mean_y;
 	}
 	else
 	{
@@ -576,10 +578,11 @@ int Walk::dribble()
 	}
 	if (prev_mean_z != 0)
 	{
-		prev_mean_z /= (double)stepCount;
-		// printf("%f \n",prev_mean_z);
-		mean_z = prev_mean_z;
-		prev_mean_z *= (double)stepCount;
+		mean_z = prev_mean_z/(double)(stepCount);
+		mean_z = (int)mean_z;
+		// printf("%f \n",mean_z);
+		// mean_z = prev_mean_z;
+		// prev_mean_z *= (double)stepCount;
 	}
 	else
 		mean_z = 0;
@@ -665,7 +668,7 @@ int Walk::dribble()
 		err_z = err_new_z;
 		// printf("Mean Values %f %f \n", mean_y, mean_z);
 		double err_new_y = COM[1] - mean_y;
-
+		// printf("%f\n",COM[1] - COM1[1]);
 		// bot->printRotCOM();
 
 		deriv_term_y = deriv_const_y*(err_new_y - err_y)/timeInc;
@@ -675,6 +678,7 @@ int Walk::dribble()
 			integ_term_y = integ_new_y;
 		
 		correction_y = deriv_term_y + integ_term_y + prop_term_y;
+		// printf("%d %f %f %f\n",leg,COM[1]-mean_y,yr,y);
 		// correction_y = prop_term_y;
 		err_y = err_new_y;
 		// correction = 0;
@@ -684,7 +688,7 @@ int Walk::dribble()
 		bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation - 1*(leg==1?1:-1)*correction_z,phi);
 		bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation + 1*(leg==1?1:-1)*correction_z,phiR);
 		
-		printf("%f\n",COM[2]);
+		// printf("%f\n",COM[2]);
 		//NON IMU			
 		// bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation,phiR);
