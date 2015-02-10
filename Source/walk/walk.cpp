@@ -32,7 +32,7 @@ Walk::Walk(AcYut* bot)
 	integ_term_z = 0;
 
 	integ_const_y = 0;//1;//1;//1;
-	deriv_const_y = 0.01;//0.005;//0.005;
+	deriv_const_y = 0;//0.005;//0.005;
 	prop_const_y = 0;//1;//1;
 	integ_max_y = 2;
 	integ_term_y;
@@ -675,7 +675,6 @@ int Walk::dribble()
 			integ_term_y = integ_new_y;
 		
 		correction_y = deriv_term_y + integ_term_y + prop_term_y;
-		printf("%f\n",correction_y);
 		// correction_y = prop_term_y;
 		err_y = err_new_y;
 		// correction = 0;
@@ -685,7 +684,7 @@ int Walk::dribble()
 		bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation - 1*(leg==1?1:-1)*correction_z,phi);
 		bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation + 1*(leg==1?1:-1)*correction_z,phiR);
 		
-		// printf("%f\n",COM[2]);
+		printf("%f\n",COM[2]);
 		//NON IMU			
 		// bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation,phiR);
