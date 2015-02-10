@@ -48,6 +48,7 @@ class Walk
 	double prop_const_z;
 	double integ_max_z;	
 	double prev_mean_z;
+	double integ_term_z;
 
 	double integ_const_y;
 	double deriv_const_y;
@@ -56,6 +57,7 @@ class Walk
 	double mean_y;
 	double prev_mean_y;
 	double prev_imu_yaw;
+	double integ_term_y;
 
 	double prev_y;
 	public:

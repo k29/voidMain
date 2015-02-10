@@ -8,10 +8,10 @@ Walk::Walk(AcYut* bot)
 	supLegYin=-4.571982;
 	veloYin=-0.611621;
 	veloYfi=10;
-	legZin=25.155276;
-	supLegZin=25.155276;
-	veloZin=-170;
-	veloZfi=170;
+	legZin=7.694539;//25.155276;
+	supLegZin=7.694539;//25.155276;
+	veloZin=-143.8459;
+	veloZfi=143.8459;
 	zMax=55;
 	dz = 0;
 	lift=40;
@@ -24,16 +24,18 @@ Walk::Walk(AcYut* bot)
 	// sspZAmp=zMax;
 	stepCount = 0;
 
-	integ_const_z =0.05;//0.05;//2;
-	deriv_const_z =1.2/120.0;//0.01;//0.005;
-	prop_const_z = 0.6;//1;
-	integ_max_z = 2;
+	integ_const_z =0;//0.05;//0.05;//2;
+	deriv_const_z =1.2/120;//1.2/120.0;//0.01;//0.005;
+	prop_const_z = 0;//0.6;//1;
+	integ_max_z = 10;
 	prev_mean_z = 0;
+	integ_term_z = 0;
 
-	integ_const_y = 1;//1;//1;
-	deriv_const_y = 0.005;//0.005;
-	prop_const_y = 1;//1;
+	integ_const_y = 0;//1;//1;//1;
+	deriv_const_y = 0;//0.005;//0.005;
+	prop_const_y = 0;//1;//1;
 	integ_max_y = 2;
+	integ_term_y;
 	prev_mean_y = 0;
 	prev_imu_yaw = 0;
 	start2();
@@ -380,7 +382,6 @@ int Walk::dribble()
 	double Tc = sqrt(600.00/9810.0);
 	legZin += hipLength/2;
 	supLegZin += hipLength/2;
-	
 	///// desired Values 
 	
 	double D_dsp1Time = 0.05 + dz/(veloZfi);		//changed from 0.03
@@ -539,8 +540,8 @@ int Walk::dribble()
 	int target_i = 0;
 	double *fval;
 	//compliance(leg,10,10);
-	double integ_term_z = 0, deriv_term_z = 0, prop_term_z = 0, err_z = 0, correction_z = 0;
-	double integ_term_y = 0, deriv_term_y = 0, prop_term_y = 0, err_y = 0, correction_y = 0; 
+	double deriv_term_z = 0, prop_term_z = 0, err_z = 0, correction_z = 0;
+	double deriv_term_y = 0, prop_term_y = 0, err_y = 0, correction_y = 0; 
 	
 	int state = DSP;
 
@@ -582,6 +583,7 @@ int Walk::dribble()
 	}
 	else
 		mean_z = 0;
+
 //	////printf("*************************************** STEP **********************************************\n");	
 	for(walkTime = 0.0/fps; walkTime<=stepTime; walkTime +=timeInc)
 	{
@@ -640,7 +642,7 @@ int Walk::dribble()
 		///////printf("Z\t%lf\tZR\t%lf\n",z,zr);
 //		printf("W phi\t%lf\tphiR\t%lf\tZ\t%lf\tZR\t%lf\tY\t%lf\tYR\t%lf",phi,phiR,z,zr,y,yr);
 		const double (&COM)[AXES] = bot->getRotCOM();
-		const double (&COM1)[AXES] = bot->getCOM();
+		// const double (&COM1)[AXES] = bot->getCOM();
 		// bot->printRotCOM();
 		// bot->printCOM();
 		prev_mean_y += COM[1]/(stepTime*(double)fps);
@@ -649,10 +651,10 @@ int Walk::dribble()
 		double err_new_z = COM[2] - mean_z;
 		deriv_term_z = deriv_const_z*(err_new_z - err_z)/timeInc;
 		prop_term_z = prop_const_z*err_new_z;
-
 		// printf("Velocity_Z = %f\n", (err_new_z - err_z)/timeInc);
 
 		double integ_new_z = integ_term_z + integ_const_z*(err_z + err_new_z)*timeInc/2;
+		// printf("integ = %f %f %f\n",integ_term_z,err_z,err_new_z);
 		
 		// printf(" P = %f I = %f D = %f\n",err_new_z,integ_new_z,(err_new_z - err_z)/timeInc);
 
