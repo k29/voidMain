@@ -5,6 +5,7 @@
 // #include <cstring>
 // #include <set>
 // #include <iostream>
+#define PATH_ASSERT_OFF
 
 
 //using ////////std::cout;
@@ -55,6 +56,7 @@ namespace graph_implementation
 		void cleartree();
 		void debug_filewrite();
 		int no_path_flag;//set to 0 initially,-1 if path cant be made.
+		bool path_crash;
 		
 	private:
 		Ad_matrix edges[MAXIMUM][MAXIMUM];
@@ -74,23 +76,24 @@ namespace graph_implementation
 	template <class Item>
 	void Graph<Item>::add_edge(std::size_t source,std::size_t target,double cost, bool isOnCircle)
 	{
+		#ifdef PATH_ASSERT_OFF
+		if(source >= size())
+		{
+			path_crash = true;
+			return;
+		}
+		if(target >= size())
+		{
+			path_crash = true;
+			return;
+		}
+		#endif
+
+		#ifndef PATH_ASSERT_OFF
 		 assert(source<size());
 		 assert(target<size());
-		// if(source>=size())
-		// {	
-		// 	no_path_flag=-1;
-			
-		// 	////////std::cout<<"\ncrashed\n";
-		// 	//sleep(1000);
-		// 		}
-		// if(target>=size())
-		// {	
-		// 	no_path_flag=-1;
-			
-		// 	////////std::cout<<"\ncrashed\n";
-		// 	//sleep(1000);
-	
-		// }
+		#endif
+		
 		edges[source][target].is_present=true;
 		onCircle[source][target] = isOnCircle;
 		edges[source][target].edge_cost=cost;
@@ -102,7 +105,16 @@ namespace graph_implementation
 		std::size_t new_vertex_number;
 		std::size_t other_number;
 		
+		#ifdef PATH_ASSERT_OFF
+		if(MAXIMUM <= size())
+		{
+			path_crash = true;
+			return 0;
+		}
+		#endif
+		#ifndef PATH_ASSERT_OFF
 		assert(size()<MAXIMUM);
+		#endif
 		new_vertex_number=many_vertices;
 		++many_vertices;
 		for(other_number=0;other_number<many_vertices;++other_number)
@@ -126,25 +138,23 @@ namespace graph_implementation
 	template <class Item>
 	bool Graph<Item>::is_edge(std::size_t source,std::size_t target)
 	{
-		assert(source<size());
-		assert(target<size());
-		// if(source>=size())
-		// {	
-		// 	no_path_flag=-1;
-			
-		// 	////////std::cout<<"\ncrashed\n";
-		// 	//sleep(1000);
-		// 	return edges[0][0].is_present;
-		// }
-		// if(source>=size())
-		// {	
-		// 	no_path_flag=-1;
-			
-		// 	////////std::cout<<"\ncrashed\n";
-		// 	//sleep(1000);
-		// 	return edges[0][0].is_present;
-
-		// }
+		#ifdef PATH_ASSERT_OFF
+		if(source >= size())
+		{
+			path_crash = true;
+			return false;
+		}
+		if(target >= size())
+		{
+			path_crash = true;
+			return false;
+		}
+		#endif
+		
+		#ifndef PATH_ASSERT_OFF
+		 assert(source<size());
+		 assert(target<size());
+		#endif
 		
 		return edges[source][target].is_present;
 	}
@@ -152,24 +162,24 @@ namespace graph_implementation
 	template <class Item>
 	bool Graph<Item>::is_onCircle(std::size_t source,std::size_t target)
 	{
-		assert(source<size());
-		assert(target<size());
-		// if(target>=size())
-		// {	
-		// 	no_path_flag=-1;
-			
-		// 	////////std::cout<<"\ncrashed\n";
-		// 	//sleep(1000);
-		// 	return onCircle[0][0];
-		// }
-		// if(source>=size())
-		// {	
-		// 	no_path_flag=-1;
-			
-		// 	////////std::cout<<"\ncrashed\n";
-		// 	//sleep(1000);
-		// 	return onCircle[0][0];
-		// }
+		#ifdef PATH_ASSERT_OFF
+		if(source >= size())
+		{
+			path_crash = true;
+			return false;
+		}
+		if(target >= size())
+		{
+			path_crash = true;
+			return false;
+		}
+		#endif
+		
+		#ifndef PATH_ASSERT_OFF
+		 assert(source<size());
+		 assert(target<size());
+		#endif
+
 		return onCircle[source][target];
 	}
 
@@ -177,39 +187,41 @@ namespace graph_implementation
 	template <class Item>
 	Item Graph<Item>::operator [] (std::size_t vertex)
 	{
+		#ifdef PATH_ASSERT_OFF
+		if(vertex >= size())
+		{
+			path_crash = true;
+			return labels[vertex];
+		}
+		#endif
+		#ifndef PATH_ASSERT_OFF
 		assert(vertex<size());
-		// if(vertex>=size())
-		// {	
-		// 	no_path_flag=-1;
-			
-		// 	////////std::cout<<"\ncrashed\n";
-		// 	//sleep(1000);
-		// 	return labels[0];
-		// }
+		#endif
+
 		return labels[vertex];
 	}
 
 	template <class Item>
 	void Graph<Item>::remove_edge(std::size_t source,std::size_t target)
 	{
-		assert(source<size());
-		assert(target<size());
-		// if(source>=size())
-		// {	
-		// 	no_path_flag=-1;
-			
-		// 	////////std::cout<<"\ncrashed\n";
-		// 	//sleep(1000);
-			
-		// }
-		// if(target>=size())
-		// {	
-		// 	no_path_flag=-1;
-			
-		// 	////////std::cout<<"\ncrashed\n";
-		// 	//sleep(1000);
-			
-		// }
+		#ifdef PATH_ASSERT_OFF
+		if(source >= size())
+		{
+			path_crash = true;
+			return;
+		}
+		if(target >= size())
+		{
+			path_crash = true;
+			return;
+		}
+		#endif
+		
+		#ifndef PATH_ASSERT_OFF
+		 assert(source<size());
+		 assert(target<size());
+		#endif
+
 		edges[source][target].is_present=false;
 		edges[source][target].edge_cost=0;
 	}

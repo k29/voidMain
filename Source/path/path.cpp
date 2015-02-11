@@ -206,10 +206,14 @@ double Path::cost_calculation(std::size_t source,std::size_t target, Graph <Poin
 	Point target_point=tree[target];
 	if(tree.is_onCircle(source,target)==false) //
 	{
+		if(tree.path_crash)
+			return -1.0;
 		cost=sqrt(pow((source_point.y - target_point.y),2)+pow((source_point.x - target_point.x),2));
 	}
 	else
 	{
+		if(tree.path_crash)
+			return -1.0;
 		assert(source_point.obstacle_id==target_point.obstacle_id);
 		Point obstacle_point=obstacle[source_point.obstacle_id];
 		double m1=(source_point.y - obstacle_point.y)/(source_point.x - obstacle_point.x);
@@ -396,7 +400,11 @@ PathReturns Path::path_return(PathStructure ps)
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #endif
 	tree.add_vertex(start);
+	if(tree.path_crash)
+		return NOPATH;
 	tree.add_vertex(ball);
+	if(tree.path_crash)
+		return NOPATH;
 	tree.add_edge(0,1,cost_calculation(0,1,tree));
 	cvLine(image,cvPoint(250,250),cvPoint(ball.x+250,ball.y+250),cvScalar(255,255,0)); // creates the nodes for start and ball point and paints a line.
 
@@ -409,6 +417,8 @@ PathReturns Path::path_return(PathStructure ps)
 			{
 				if(tree.is_edge(n1_index, n2_index))
 				{
+					if(tree.path_crash)
+						return NOPATH;
 					//cout<<"\nanalysing edges "<<n1_index<<" "<<n2_index<<endl;
 					Point n1 = tree[n1_index];
 					Point n2 = tree[n2_index];
@@ -422,6 +432,8 @@ PathReturns Path::path_return(PathStructure ps)
 							{
 								if(tree.is_edge(ni_index, nj_index))
 								{
+									if(tree.path_crash)
+										return NOPATH;
 									Point n1 = tree[ni_index];
 									Point n2 = tree[nj_index];
 									cvLine(image,cvPoint(n1.x+250,n1.y+250),cvPoint(n2.x+250,n2.y+250),cvScalar(255,255,0));
@@ -455,6 +467,8 @@ PathReturns Path::path_return(PathStructure ps)
 					#endif
 					if(tree.is_onCircle(n1_index, n2_index)==false)
 					{
+						if(tree.path_crash)
+							return NOPATH;
 						switch(main_function(n1,n2))
 						{
 
@@ -463,13 +477,21 @@ PathReturns Path::path_return(PathStructure ps)
 								flag = 1;
 								tree.remove_edge(n1_index, n2_index); //removing the edges for which there is an obstacle in b/w.
 								n1a.parent_id=n1_index;							//
-								size_t n1a_index = tree.add_vertex(n1a);			//
+								size_t n1a_index = tree.add_vertex(n1a);
+								if(tree.path_crash)
+									return NOPATH;			//
 								n1b.parent_id=n1_index;
-								size_t n1b_index = tree.add_vertex(n1b);			//
+								size_t n1b_index = tree.add_vertex(n1b);
+								if(tree.path_crash)
+									return NOPATH;			//
 								n2a.parent_id=n1_index;									//adding the four new nodes
-								size_t n2a_index = tree.add_vertex(n2a);			//
+								size_t n2a_index = tree.add_vertex(n2a);
+								if(tree.path_crash)
+									return NOPATH;			//
 								n2b.parent_id=n1_index;								//
-								size_t n2b_index = tree.add_vertex(n2b);			//
+								size_t n2b_index = tree.add_vertex(n2b);
+								if(tree.path_crash)
+									return NOPATH;			//
 								tree.add_edge(n1_index, n1a_index,cost_calculation(n1_index,n1a_index,tree));
 								if(closest_intersecting_obstacle(tree[n1.parent_id],tree[n1a_index])==-1)//check the obstacle intersection from n1's parent to the point n1a...n1b.....
 								{
@@ -522,16 +544,24 @@ PathReturns Path::path_return(PathStructure ps)
 									n1a.parent_id=n1_index;
 									n2a.parent_id=n1_index;
 									size_t n1a_index = tree.add_vertex(n1a);
+									if(tree.path_crash)
+										return NOPATH;
 									size_t n2a_index = tree.add_vertex(n2a);
+									if(tree.path_crash)
+										return NOPATH;
 									tree.add_edge(n1_index, n1a_index,cost_calculation(n1_index,n1a_index,tree), true);
 									for(std::size_t i=0; i<tree.size();i++)
 									{
 										if(tree.is_edge(n2_index,i))
 										{
+											if(tree.path_crash)
+												return NOPATH;
 											if(tree.is_onCircle(n2_index,i))
 												tree.add_edge(n2a_index, i,cost_calculation(n2a_index,i,tree), true);
 											else
 												tree.add_edge(n2a_index, i,cost_calculation(n2a_index,i,tree));
+											if(tree.path_crash)
+												return NOPATH;
 											tree.remove_edge(n2_index,i);
 										}
 									}
@@ -559,7 +589,11 @@ PathReturns Path::path_return(PathStructure ps)
 								flag=1;
 								tree.remove_edge(n1_index,n2_index);
 								size_t n1a_index = tree.add_vertex(n1a);
+								if(tree.path_crash)
+									return NOPATH;
 								size_t n1b_index = tree.add_vertex(n1b);
+								if(tree.path_crash)
+									return NOPATH;
 								tree.add_edge(n1_index, n1a_index,cost_calculation(n1_index,n1a_index,tree));
 								if(closest_intersecting_obstacle(tree[n1.parent_id],tree[n1a_index])==-1)//check the obstacle intersection from n1's parent to the point n1a...n1b.....
 								{
@@ -600,12 +634,16 @@ PathReturns Path::path_return(PathStructure ps)
 	{
 		if(tree.is_edge(i,1)) //i is the point connected to 1
 		{
+			if(tree.path_crash)
+				return NOPATH;
 			//cout<<"\n\n\n\n\n\n\n\n\n";
 			//cout<<" node "<<i<<" is connected to 1\n";
 			for(std::size_t j =0 ; j < tree.size() ; j++)
 			{
 				if(tree.is_edge(j,i)) //j is the point connected to i
 				{
+					if(tree.path_crash)
+						return NOPATH;
 					//cout<<"node "<<j<< " is further connected to this "<<i<<endl;
 					//cout<<"increasing the connected count \n";
 					to_be_removed[i].connected_count+=1;
@@ -632,6 +670,8 @@ PathReturns Path::path_return(PathStructure ps)
 	{
 		if(tree.is_edge(i,1)) //i is the point connected to 1
 		{
+			if(tree.path_crash)
+				return NOPATH;
 			if(!new_point_orientation(i))
 			{
 				tree.remove_edge(i,1);
@@ -655,6 +695,8 @@ PathReturns Path::path_return(PathStructure ps)
 		{
 			if(tree.is_edge(n1_index, n2_index))
 			{
+				if(tree.path_crash)
+					return NOPATH;
 				Point n1 = tree[n1_index];
 				Point n2 = tree[n2_index];
 				cvLine(image,cvPoint(n1.x+250,n1.y+250),cvPoint(n2.x+250,n2.y+250),cvScalar(255,255,0));
@@ -697,6 +739,8 @@ PathReturns Path::path_return(PathStructure ps)
 	//--->> calculating the next points r and theta.
 	if(tree.is_onCircle(0, a))
 	{
+		if(tree.path_crash)
+			return NOPATH;
 		next.r=(10*180/3.1415926)*obstacle[tree[a].obstacle_id].obstacle_radius;
 		double m_prime= (tree[a].y - obstacle[tree[a].obstacle_id].y)/(tree[a].x - obstacle[tree[a].obstacle_id].x);
 		double m=-1/m_prime;
@@ -706,6 +750,8 @@ PathReturns Path::path_return(PathStructure ps)
 	}
 	else
 	{
+		if(tree.path_crash)
+			return NOPATH;
 		next.r = sqrt(pow((tree[a].x-tree[0].x),2)+pow((tree[a].y-tree[0].y),2));
 		next.theta=rad2deg((atan2((tree[a].y-tree[0].y),(tree[a].x-tree[0].x))));
 		////////cout<<"\nnext.r "<<next.r;
@@ -773,6 +819,8 @@ PathReturns Path::path_return(PathStructure ps)
 		//cout<<"\n.............................\nanalysing "<<curve[i]<<" "<<curve[i+1]<<endl<<"...\n";
 		if(!tree.is_onCircle(curve[i],curve[i+1]))
 		{
+			if(tree.path_crash)
+				return NOPATH;
 			//cout<<"straight line\n";
 			curvenext[j].r=sqrt(pow((tree[curve[i+1]].x-tree[curve[i]].x),2)+pow((tree[curve[i+1]].y-tree[curve[i]].y),2));
 			curvenext[j].theta=rad2deg((atan2((tree[curve[i+1]].y-tree[curve[i]].y),(tree[curve[i+1]].x-tree[curve[i]].x))));
@@ -785,6 +833,8 @@ PathReturns Path::path_return(PathStructure ps)
 
 		else
 		{
+			if(tree.path_crash)
+				return NOPATH;
 			//cout<<"on curve \n";
 			sticks_r=STEPLENGTH;
 			//cout<<"\nsticks_r "<<sticks_r<<endl;

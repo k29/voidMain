@@ -1,4 +1,5 @@
 #include "localize.h"
+#include <cstdlib>
 //
 using namespace LOCALIZE_INTERNALS;
 
@@ -26,7 +27,6 @@ Localize::Localize()
 #endif
 	createLandmarkList();
 }
-
 
 
 //Origin is corner side of yellow goal along BYB line

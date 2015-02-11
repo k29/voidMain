@@ -43,6 +43,17 @@ void BasicBehaviorUpdate::execute()
         p.fd->getLandmarks(p.capture, p.hdmtr, motionModel);
         p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle());
 
+        ///////////////REFINE RELOCALISATION///////////////
+        AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
+        double tempx=goalcoords.x-p.loc.selfX;
+        double tempy=goalcoords.y-p.loc.selfY;
+        double x = (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
+        double y = (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
+        // printf("%d %d\n", tempx, tempy);
+        if(sqrt(x*x + y*y) > 200)
+        {
+            p.loc.randomize();
+        }
 
         /* Set flags for XABSL */
 
@@ -195,7 +206,7 @@ void BasicBehaviormoveAcYuttemp::execute()
     unsigned int _x=int(x);
     // printf("BasicBehaviormoveAcYuttemp\n");
     pthread_mutex_lock(&mutex_walkstr);    
-        printf("to walk %c\n",_x);
+        // printf("to walk %c\n",_x);
         walkstr.instr = _x;
         walkstr.isFresh = true;
     pthread_mutex_unlock(&mutex_walkstr);
@@ -247,6 +258,12 @@ void BasicBehaviorMakePath::execute()
     // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
 
     p.pathreturn=p.path.path_return(p.pathstr);
+    if(p.path.tree.path_crash)
+    {
+        // printf("path crashed\n");
+        p.path.tree.path_crash = false;
+        cvZero(p.path.image);
+    }
     // printf("Path Made\n");
     #endif
 }
@@ -289,10 +306,12 @@ void BasicBehaviorPathToWalk::execute()
 {
     // printf("BasicBehaviorPathToWalk\n");
         #ifdef IP_IS_ON
+        #ifdef WALK_IS_ON
     
         p.path.updatePathPacket();
         
         // printf("Path updated\n");
+        #endif
         #endif
 
     #ifndef IP_IS_ON

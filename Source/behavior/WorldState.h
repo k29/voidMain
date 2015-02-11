@@ -73,6 +73,7 @@ class playerstate
         Path path;
         PathStructure pathstr; 
         PathReturns pathreturn;
+        PathReturns pathreturnLast;
 
         /*Game Controller */
         GameControllerAcyut GC;

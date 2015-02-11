@@ -49,6 +49,7 @@ extern RoboCupGameControlData GCData;
 
 /* Direct interface between path and walk. Updating this variable is controlled by behavior */ 
 extern PathPacket pathpackvar;
+extern PathPacket pathpackvarLast;
 extern Imu imu; 
 
 extern double IMU_INITIAL_ANGLE;

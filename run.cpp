@@ -33,6 +33,7 @@ WalkStructure prevwalkstr;
 WalkStructure walkstr;
 RoboCupGameControlData GCData;
 PathPacket pathpackvar;
+PathPacket pathpackvarLast;
 
 // void doquit(int para)
 // {

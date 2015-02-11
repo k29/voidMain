@@ -498,7 +498,7 @@ bool FeatureDetection::getObstacles(CamCapture &cam, HeadMotor &hm)
     }
     #ifndef INTEL_BOARD_DISPLAY
     cvNamedWindow("BLACK");
-    cvMoveWindow("BLACK",750,600);
+    cvMoveWindow("BLACK",720,600);
     cvShowImage("BLACK",seg_black);
     #endif
     return obstacleOnEdge;

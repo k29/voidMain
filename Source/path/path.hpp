@@ -34,7 +34,6 @@ private:
 	static const int STEPLENGTH=5;
 	int com_id; //communication id
 	double tolerance_angle;//minimum angle for encircling
-	IplImage* image;
 	enum circle_type {DNE,CIRCLE}; // 0-> does not exsist 1-> circle 2-> ellipse
 	struct Point
 	{
@@ -50,7 +49,6 @@ private:
 	int temp_global_k;
 	bool same_side_flag;
 	bool midpoint_flag;
-	graph_implementation::Graph<Point> tree; //tree is the instance of the class Graph in the header file.
 	struct removed_index
 	{		
 		int connected_count; 
@@ -81,8 +79,11 @@ public:
 	//When DOORIENT is returned by the code take the curvearray(which will give the entire curve till the ball) otherwise take next which just gives the next step.
 
 	Coords next; 
-	Coords curvenext[100]; 
+	Coords curvenext[100];
+	PathPacket lastPath;
 	int len_curvenext;
+	graph_implementation::Graph<Point> tree; //tree is the instance of the class Graph in the header file.
+	IplImage* image;
 	//OBSOLETE->int path_return(PathStructure &ps); //main function to be called by behaviour // return values : 1: successful path   2: go at r,theta    3: encircle      4: path not found.
 	PathReturns path_return(PathStructure ps);
 	/*README - ABOUT RETURN VALUES
