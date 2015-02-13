@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=LUT Builder
+Exec=./lut_maker
+Terminal=true
