@@ -5,8 +5,9 @@
 #include "../xsens/imu.h"
 #include <stdlib.h>
 #include <cmath>
+#include <fstream>
 
-
+using namespace std;
 enum {SSP,DSP};
 
 class Walk
@@ -42,6 +43,7 @@ class Walk
 	// X Data //
 	double lift;
 	
+	double com_offset[100];
 	//PID Constants
 	double integ_const_z;
 	double deriv_const_z;
