@@ -406,17 +406,26 @@ int Walk::dribble()
 	double veloZfi_d = sspZAmp*sinh(sspZTime/Tc + sspZPhs)/Tc;
 
 	//exponential equations
+	// double C = 1.0/Tc;
 	double C = 1.0/Tc;
-	double c1 = (zMax*exp(sspZTime*sqrt(C)/2.0) + veloZin/sqrt(C))/(1.0 + exp(sqrt(C)*sspZTime));
-	double c2 = c1 - veloZin/sqrt(C);
+	double c1 = zMax*exp(-C*sspZTime/2.0)/2.0;
+	double c2 = zMax*exp(C*sspZTime/2.0)/2.0;
+	// double c1 = (zMax*exp(sspZTime*sqrt(C)/2.0) + veloZin/sqrt(C))/(1.0 + exp(sqrt(C)*sspZTime));
+	// double c2 = c1 - veloZin/sqrt(C);
+	// double c1 = (sspZSupin + veloZin/sqrt(C))/2.0;
+	// double c2 = (sspZSupin - veloZin/sqrt(C))/2.0;
 
-	double pos1 = c1 + c2;
-	double vel2 = c1*sqrt(C)*exp(sqrt(C)*sspZTime) - c2*sqrt(C)*exp(-sqrt(C)*sspZTime); 
+
+	// double pos1 = c1 + c2;
+	// double vel2 = c1*sqrt(C)*exp(sqrt(C)*sspZTime) - c2*sqrt(C)*exp(-sqrt(C)*sspZTime); 
+	// printf("c1 = %f \t c2 = %f \t C = %f\t Check = %f\n", c1,c2,C, c1*exp(sqrt(C*sspZTime/2.0)) + c2*exp(-sqrt(C*sspZTime/2.0)));
+	// int q =sspZTime*10000;
+	// printf("lim = %d\n",q);
+	// for (int i = 0 ; i < q ; i++)
+		// printf("val%d = %f\n",i,c1*exp(sqrt(C)*((double)i/10000.0)/2.0) +c2*exp(-sqrt(C)*((double)i/10000.0)/2.0));
 
 
-
-
-	printf("sspZSupin = %f sspZSupfi = %f pos1 = %f vel2 = %f\n",sspZSupin, sspZSupfi,pos1,vel2);
+	// printf("sspZSupin = %f sspZSupfi = %f pos1 = %f vel2 = %f\n",sspZSupin, sspZSupfi,pos1,vel2);
 	// printf("VYin\t%lf\tVyfi_d\t%lf\n",veloYin,veloYfi);
 	double sspTime   = sspZTime;
 	double dsp1Time  = (supLegZin - sspZSupin)/(-veloZin);		
@@ -627,7 +636,15 @@ int Walk::dribble()
 			// yr = -sspYAmp * sinh((walkTime-dsp1Time)/Tc +sspYPhs);
 			z  = scurve(sspZin,sspZfi, walkTime-dsp1Time,sspTime) - hipLength/2;
 			zr =  sspZAmp * cosh((walkTime-dsp1Time)/Tc + sspZPhs) -hipLength/2;
-			printf("leg = %d zr = %f\n",leg,sspZAmp * cosh((walkTime-dsp1Time)/Tc + sspZPhs));
+
+			double velz =  C*(c1*exp(C*(walkTime-dsp1Time)) - c2*exp(-C*(walkTime-dsp1Time)));
+			double z_traj = c1*exp(C*(walkTime-dsp1Time)) + c2*exp(-C*(walkTime-dsp1Time));
+			double energy =  (pow(velz,2.0) - pow(C,2.0)*pow(z_traj,2.0))/2.0;
+			double alpha = sqrt(-2*energy/pow(C,2.0));
+			printf("Energy = %f zr = %f velz = %f alpha = %f leg = %d\n", energy, z_traj, velz, alpha, leg);
+			// printf("leg = %d zr = %f ",leg,sspZAmp * cosh((walkTime-dsp1Time)/Tc + sspZPhs));
+			// printf("zrr = %f", c1*exp(C*(walkTime-dsp1Time)) +c2*exp(-C*(walkTime-dsp1Time)) );	
+			// printf(" velz = %f velzz = %f\n",sspZAmp*sinh((walkTime-dsp1Time)/Tc + sspZPhs)/Tc,C*(c1*exp(C*(walkTime-dsp1Time)) - c2*exp(-C*(walkTime-dsp1Time))));
 			phi= scurve(legRotin,legRotfi,walkTime-dsp1Time,sspTime);
 			phiR=scurve(supLegRotin,supLegRotfi,walkTime-dsp1Time,sspTime);
 			state = SSP;
