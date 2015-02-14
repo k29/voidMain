@@ -24,15 +24,15 @@ Walk::Walk(AcYut* bot)
 	// sspZAmp=zMax;
 	stepCount = 0;
 
-	integ_const_z =0;//0.05;//0.05;//2;
-	deriv_const_z =1.2/120;//1.2/120.0;//0.01;//0.005;
-	prop_const_z = 0;//0.6;//1;
+	integ_const_z =0.5;//0.05;//0.05;//2;
+	deriv_const_z =0.8/120;//1.2/120.0;//0.01;//0.005;
+	prop_const_z = 1;//0.6;//1;
 	integ_max_z = 10;
 	prev_mean_z = 0;
 	integ_term_z = 0;
 
 	integ_const_y = 0;//1;//1;//1;
-	deriv_const_y = 0.01;//0.005;//0.005;
+	deriv_const_y = 0;//0.005;//0.005;
 	prop_const_y = 0;//1;//1;
 	integ_max_y = 2;
 	integ_term_y;
