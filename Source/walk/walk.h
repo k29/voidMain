@@ -4,7 +4,7 @@
 #include "AcYut.h"
 #include "../xsens/imu.h"
 #include <stdlib.h>
-
+#include <cmath>
 
 
 enum {SSP,DSP};

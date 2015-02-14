@@ -404,7 +404,19 @@ int Walk::dribble()
 	double sspZSupin = sspZAmp * cosh(sspZPhs);
 	double sspZSupfi = sspZAmp * cosh(sspZTime/Tc + sspZPhs);
 	double veloZfi_d = sspZAmp*sinh(sspZTime/Tc + sspZPhs)/Tc;
-	
+
+	//exponential equations
+	double C = 1.0/Tc;
+	double c1 = (zMax*exp(sspZTime*sqrt(C)/2.0) + veloZin/sqrt(C))/(1.0 + exp(sqrt(C)*sspZTime));
+	double c2 = c1 - veloZin/sqrt(C);
+
+	double pos1 = c1 + c2;
+	double vel2 = c1*sqrt(C)*exp(sqrt(C)*sspZTime) - c2*sqrt(C)*exp(-sqrt(C)*sspZTime); 
+
+
+
+
+	printf("sspZSupin = %f sspZSupfi = %f pos1 = %f vel2 = %f\n",sspZSupin, sspZSupfi,pos1,vel2);
 	// printf("VYin\t%lf\tVyfi_d\t%lf\n",veloYin,veloYfi);
 	double sspTime   = sspZTime;
 	double dsp1Time  = (supLegZin - sspZSupin)/(-veloZin);		
@@ -615,6 +627,7 @@ int Walk::dribble()
 			// yr = -sspYAmp * sinh((walkTime-dsp1Time)/Tc +sspYPhs);
 			z  = scurve(sspZin,sspZfi, walkTime-dsp1Time,sspTime) - hipLength/2;
 			zr =  sspZAmp * cosh((walkTime-dsp1Time)/Tc + sspZPhs) -hipLength/2;
+			printf("leg = %d zr = %f\n",leg,sspZAmp * cosh((walkTime-dsp1Time)/Tc + sspZPhs));
 			phi= scurve(legRotin,legRotfi,walkTime-dsp1Time,sspTime);
 			phiR=scurve(supLegRotin,supLegRotfi,walkTime-dsp1Time,sspTime);
 			state = SSP;
