@@ -613,6 +613,7 @@ int Walk::dribble()
 
 	double rms = 0;
 	// printf("\nSTEP BEGINS\n");
+	printf("\n\n");
 //	////printf("*************************************** STEP **********************************************\n");	
 	for(walkTime = 0.0/fps; walkTime<=stepTime; walkTime +=timeInc)
 	{
@@ -723,18 +724,22 @@ int Walk::dribble()
 		// bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation + 1*(leg==1?1:-1)*correction_z,phiR);
 		// printf("%f\n",COM[2]);
 
-		// WALK check
-		// bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
-		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
 		const double (&COM)[AXES] = bot->getCOM();
-
 		// printf("old_com = %f correction = %f ",COM[2],3.125*(leg==1?1:-1)*COM[2]);
 		int fcount = walkTime*fps;
-		bot->leg[leg]->runIK(x,y,z+feetSeperation - com_offset[fcount],phi);
-		bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation + com_offset[fcount],phiR);
+		// WALK fix
+		// bot->leg[leg]->runIK(x,y,z+feetSeperation - com_offset[fcount],phi);
+		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation + com_offset[fcount],phiR);
 		// const double (&COM2)[AXES] = bot->getCOM();
-		// bot->getCOM();
-		// rms += pow(COM1[2],2);
+		//SWING LEG based correction
+		bot->leg[leg]->runIK(x,y,z+feetSeperation - 2.05*com_offset[fcount],phi);
+		bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
+		// bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
+		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
+
+		printf("%f\n",COM[2]);
+
+		rms += pow(COM[2],2);
 		// printf("oldzr = %f newzr = %f ",COM[2], zr+feetSeperation,  zr +feetSeperation + 3.125*(leg==1?1:-1)*COM[2] );
 		// bot->getCOM();
 		// rms += pow(COM[2],2);
@@ -766,7 +771,7 @@ int Walk::dribble()
 		//getchar();
 		
 	}
-	// rms = sqrt(rms/(stepTime*fps));
+	rms = sqrt(rms/(stepTime*fps));
 	// printf("rms = %f multiplier = %f\n",rms,stepCount*0.025);
 	// printf("%f\n",-sspYfi + sspYin );
 	supLegYin  = -legYfi;
