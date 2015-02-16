@@ -763,7 +763,7 @@ int Walk::dribble()
 
 		// printf("%f %f %f\n",z+feetSeperation,z+feetSeperation - 2.05*com_offset[fcount],zr+feetSeperation);
 		// printf("%f\n",COM[2]);
-		printf("%f\n",z_free_traj+feetSeperation);
+		printf("%f\n",z+feetSeperation);
 		rms += pow(COM[2],2);
 		// printf("oldzr = %f newzr = %f ",COM[2], zr+feetSeperation,  zr +feetSeperation + 3.125*(leg==1?1:-1)*COM[2] );
 		// bot->getCOM();
