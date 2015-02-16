@@ -753,7 +753,7 @@ int Walk::dribble()
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
 
 		// printf("%f %f\n", zr+feetSeperation, z+feetSeperation - 2.05*com_offset[fcount]);
-		bot->leg[leg]->runIK(x,y,z_free_traj+feetSeperation ,phi);
+		bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
 		bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
 
 		// bot->leg[leg]->runIK(x,y,zr+feetSeperation,phi);
