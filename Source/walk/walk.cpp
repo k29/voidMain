@@ -475,30 +475,40 @@ int Walk::dribble()
 	double legZfi    = sspZfi - veloZfi_d*dsp2Time;
 	double supLegZfi = sspZSupfi + veloZfi_d*dsp2Time;
 	
+	// double c1_swing = (sspZin - sspZfi*exp(-C*sspTimeVar))/(exp(C*sspTimeVar) - exp(-C*sspTimeVar));
+	// double c2_swing = sspZin - c1_swing;
+
+	double z_c_free = legZin;
+	double z_a_free = (2*(legZfi + legZin) - 4*(zMax))/pow(sspTimeVar+dsp1Time+dsp2Time,2);
+	double z_b_free = 2*((legZfi- legZin)/2 - z_a_free*pow(sspTimeVar+dsp1Time+dsp2Time,2)/2)/(sspTimeVar+dsp1Time+dsp2Time);
+	// cout<<z_a_free*pow(sspTimeVar/2,2) + z_b_free*sspTimeVar/2 + z_c_free<<endl;
+
+	// printf("%f %f\n",c1_swing,c2_swing);
+	// printf("%f %f %f %f \n", sspZin, c1_swing + c2_swing, sspZfi, c1_swing*exp(C*sspTimeVar) + c2_swing*exp(-C*sspTimeVar));
 	//TODO add case in which dsp1Time becomes negative 
 	//TODO add case where dsp2Time needs to be modified (if required)
 	//TODO calculation of sspZfi for next step based on predicted change in velocity for the next step 
-	/*printf("legZin\t\t%lf\n",legZin);
-	printf("supLegZin\t\t%lf\n",supLegZin);
-	printf("zMax\t\t%lf\n",zMax);
-	printf("sspZPhs\t\t%lf\n",sspZPhs);
-	printf("sspZTime\t%lf\n",sspZTime);
-	printf("sspZin\t\t%lf\n",sspZin);
-	printf("sspZSupin\t%lf\n",sspZSupin);
-	printf("sspZfi\t\t%lf\n",sspZfi);
-	printf("sspZSupfi\t%lf\n",sspZSupfi);
-	printf("dsp1Time\t%lf\n",dsp1Time);
-	printf("stepTime\t%lf\n",stepTime);
-	printf("LegZfi\t\t%lf\n",legZfi);
-	printf("supLegZfi\t%lf\n",supLegZfi);
-	printf("VeloZin\t%lf\n", veloZin);
-	printf("VeloZfi\t%lf\n", P_veloZfi);
-	printf("VeloZfi_d\t%lf\n", veloZfi_d);
+	// printf("legZin\t\t%lf\n",legZin);
+	// printf("supLegZin\t\t%lf\n",supLegZin);
+	// printf("zMax\t\t%lf\n",zMax);
+	// printf("sspZPhs\t\t%lf\n",sspZPhs);
+	// printf("sspZTime\t%lf\n",sspZTime);
+	// printf("sspZin\t\t%lf\n",sspZin);
+	// printf("sspZSupin\t%lf\n",sspZSupin);
+	// printf("sspZfi\t\t%lf\n",sspZfi);
+	// printf("sspZSupfi\t%lf\n",sspZSupfi);
+	// printf("dsp1Time\t%lf\n",dsp1Time);
+	// printf("stepTime\t%lf\n",stepTime);
+	// printf("LegZfi\t\t%lf\n",legZfi);
+	// printf("supLegZfi\t%lf\n",supLegZfi);
+	// printf("VeloZin\t%lf\n", veloZin);
+	// printf("VeloZfi\t%lf\n", P_veloZfi);
+	// printf("VeloZfi_d\t%lf\n", veloZfi_d);
 
-	printf("P_sspZPhs\t\t%lf\n",P_sspZPhs);
-	printf("P_sspZAmp\t\t%lf\n",P_sspZAmp);
-	printf("P_sspZin\t\t%lf\n", P_sspZin);
-*/	// Y Control 
+	// printf("P_sspZPhs\t\t%lf\n",P_sspZPhs);
+	// printf("P_sspZAmp\t\t%lf\n",P_sspZAmp);
+	// printf("P_sspZin\t\t%lf\n", P_sspZin);
+	// Y Control 
 	
 	legYin    = -legYin;
 	supLegYin = -supLegYin;
@@ -615,6 +625,7 @@ int Walk::dribble()
 	// printf("\nSTEP BEGINS\n");
 	printf("\n\n");
 //	////printf("*************************************** STEP **********************************************\n");	
+	double z_free_traj;
 	for(walkTime = 0.0/fps; walkTime<=stepTime; walkTime +=timeInc)
 	{
 		if(walkTime < dsp1Time)
@@ -623,7 +634,8 @@ int Walk::dribble()
 			xr = height;
 			y  = -legYin - veloYin*walkTime;
 			yr = -supLegYin - veloYin*walkTime;
-			z  = legZin - veloZin*walkTime - hipLength/2;
+			// z  = legZin - veloZin*walkTime - hipLength/2;
+			z = z_a_free*pow(walkTime,2) + z_b_free*(walkTime) + z_c_free -hipLength/2;
 			zr = supLegZin + veloZin*walkTime - hipLength/2;
 			phi= legRotin; 
 			phiR= supLegRotin;
@@ -640,13 +652,17 @@ int Walk::dribble()
 			//y  = linear(-sspYin,-sspYfi, ((walkTime-dsp1Time)/sspTime);
 			yr = -(Ay*cosh((walkTime-dsp1Time)/Tc) + By*sinh((walkTime-dsp1Time)/Tc));
 			// yr = -sspYAmp * sinh((walkTime-dsp1Time)/Tc +sspYPhs);
-			z  = scurve(sspZin,sspZfi, walkTime-dsp1Time,sspTime) - hipLength/2;
-			zr =  sspZAmp * cosh((walkTime-dsp1Time)/Tc + sspZPhs) -hipLength/2;
-
+			// z  = scurve(sspZin,sspZfi, walkTime-dsp1Time,sspTime) - hipLength/2;
+			// zr =  sspZAmp * cosh((walkTime-dsp1Time)/Tc + sspZPhs) -hipLength/2;
+			zr = c1*exp(C*(walkTime-dsp1Time)) + c2*exp(-C*(walkTime-dsp1Time)) -hipLength/2;
 			double velz =  C*(c1*exp(C*(walkTime-dsp1Time)) - c2*exp(-C*(walkTime-dsp1Time)));
-			double z_traj = c1*exp(C*(walkTime-dsp1Time)) + c2*exp(-C*(walkTime-dsp1Time));
+
+			double z_traj = c1*exp(C*(walkTime-dsp1Time)) + c2*exp(-C*(walkTime-dsp1Time)) -hipLength/2;
+			z = z_a_free*pow(walkTime,2) + z_b_free*(walkTime) + z_c_free -hipLength/2;
+			// printf("%f %f\n",z_free_traj ,zr);
 			double energy =  (pow(velz,2.0) - pow(C,2.0)*pow(z_traj,2.0))/2.0;
 			double alpha = sqrt(-2*energy/pow(C,2.0));
+			// z = z_free_traj;
 			// printf("Energy = %f zr = %f velz = %f alpha = %f leg = %d\n", energy, z_traj, velz, alpha, leg);
 			// printf("leg = %d zr = %f ",leg,sspZAmp * cosh((walkTime-dsp1Time)/Tc + sspZPhs));
 			// printf("zrr = %f", c1*exp(C*(walkTime-dsp1Time)) +c2*exp(-C*(walkTime-dsp1Time)) );	
@@ -666,7 +682,8 @@ int Walk::dribble()
 				walkTime--;*/
 			y  = -sspYfi - veloYfi_d*(walkTime-dsp1Time-sspTime);
 			yr = -sspYSupfi - veloYfi_d*(walkTime-dsp1Time-sspTime);
-			z  = sspZfi - veloZfi*(walkTime-dsp1Time-sspTime) -hipLength/2;
+			// z  = sspZfi - veloZfi*(walkTime-dsp1Time-sspTime) -hipLength/2;
+			z = z_a_free*pow(walkTime,2) + z_b_free*(walkTime) + z_c_free -hipLength/2;
 			zr = sspZSupfi + veloZfi*(walkTime-dsp1Time-sspTime) - hipLength/2;
 			phi= legRotfi;
 			phiR= supLegRotfi;
@@ -731,14 +748,22 @@ int Walk::dribble()
 		// bot->leg[leg]->runIK(x,y,z+feetSeperation - com_offset[fcount],phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation + com_offset[fcount],phiR);
 		// const double (&COM2)[AXES] = bot->getCOM();
-		//SWING LEG based correction
-		bot->leg[leg]->runIK(x,y,z+feetSeperation - 2.05*com_offset[fcount],phi);
-		bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
-		// bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
+		//BEST SO FAR
+		// bot->leg[leg]->runIK(x,y,z+feetSeperation - 2.05*com_offset[fcount],phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
 
-		printf("%f\n",COM[2]);
+		// printf("%f %f\n", zr+feetSeperation, z+feetSeperation - 2.05*com_offset[fcount]);
+		bot->leg[leg]->runIK(x,y,z_free_traj+feetSeperation ,phi);
+		bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
 
+		// bot->leg[leg]->runIK(x,y,zr+feetSeperation,phi);
+		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
+		// bot->leg[leg]->runIK(x,y,z+feetSeperation,phi);
+		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
+
+		// printf("%f %f %f\n",z+feetSeperation,z+feetSeperation - 2.05*com_offset[fcount],zr+feetSeperation);
+		// printf("%f\n",COM[2]);
+		printf("%f\n",z_free_traj+feetSeperation);
 		rms += pow(COM[2],2);
 		// printf("oldzr = %f newzr = %f ",COM[2], zr+feetSeperation,  zr +feetSeperation + 3.125*(leg==1?1:-1)*COM[2] );
 		// bot->getCOM();
@@ -773,6 +798,7 @@ int Walk::dribble()
 	}
 	rms = sqrt(rms/(stepTime*fps));
 	// printf("rms = %f multiplier = %f\n",rms,stepCount*0.025);
+	// printf("rms = %f\n",rms);
 	// printf("%f\n",-sspYfi + sspYin );
 	supLegYin  = -legYfi;
 	legYin = -supLegYfi;
