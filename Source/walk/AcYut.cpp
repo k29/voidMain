@@ -339,10 +339,15 @@ double* AcYut::getWorldFrameCoods(double coods[], double ans[])
 {
 	double roll = -deg2rad(imu->roll);
 	double pitch = -deg2rad(imu->pitch);
-	
-	ans[X] = cos(roll)*cos(pitch)*coods[X] + sin(roll)*coods[Y] - cos(roll)*sin(pitch)*coods[Z];
-	ans[Y] = -sin(roll)*cos(pitch)*coods[X] + cos(roll)*coods[Y] + sin(roll)*cos(pitch)*coods[Z];
-	ans[Z] = sin(pitch)*coods[X] + cos(pitch)*coods[Z];
+	double floorcoods_x = 54.0;
+	double floorcoods_z = 0;
+	ans[X] = cos(roll)*cos(pitch)*floorcoods_x + sin(roll)*coods[Y] - cos(roll)*sin(pitch)*coods[Z];
+	ans[Y] = -sin(roll)*cos(pitch)*floorcoods_x + cos(roll)*coods[Y] + sin(roll)*sin(pitch)*coods[Z];
+	ans[Z] = sin(pitch)*floorcoods_x + cos(pitch)*floorcoods_z;
+
+/*	ans[X] = cos(roll)*cos(pitch)*coods[X] + sin(roll)*coods[Y] - cos(roll)*sin(pitch)*coods[Z];
+	ans[Y] = -sin(roll)*cos(pitch)*coods[X] + cos(roll)*coods[Y] + sin(roll)*sin(pitch)*coods[Z];
+	ans[Z] = sin(pitch)*coods[X] + cos(pitch)*coods[Z];*/
 	// #ifdef DEBUG
 	// printf("X\t%3.3lf\tY\t%3.3lf\tZ\t%3.3lf\n",coods[X],coods[Y],coods[Z]);
 	// printf("ROT X\t%3.3lf\tY\t%3.3lf\tZ\t%3.3lf\n",ans[X],ans[Y],ans[Z]);

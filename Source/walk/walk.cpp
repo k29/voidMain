@@ -20,6 +20,7 @@ Walk::Walk(AcYut* bot)
 	supLegRotin=0;
 	supLegRotfi=0;
 	sspTimeVar = 0.300999;
+	correction_factor = 0;
 	// strafe=0;
 	// sspZAmp=zMax;
 	stepCount = 0;
@@ -58,6 +59,22 @@ Walk::Walk(AcYut* bot)
 	else
 		cout<<"File not found\n";
 	fil.close();
+	
+	ifstream fil1;
+	
+	fil1.open("Source/walk/comoffsety.txt");
+	if (fil1.is_open())
+	{
+		int q = 0;
+		while (!fil1.eof()) 
+		{
+	    	fil1>>com_offsety[q++];
+	    	// cout<<com_offset[q-1]<<endl;
+		}
+	}
+	else
+		cout<<"File not found\n";
+	fil1.close();
 	
 	start2();
 	printf("START completed\n\n\n");
@@ -595,7 +612,7 @@ int Walk::dribble()
 		legRotfi = 0;
 	}
 	prev_imu_yaw = curr_imu_yaw;*/
-
+/*
 	double mean_y, mean_z;
 	if (prev_mean_y != 0)
 	{
@@ -619,19 +636,21 @@ int Walk::dribble()
 		// prev_mean_z *= (double)stepCount;
 	}
 	else
-		mean_z = 0;
+		mean_z = 0;*/
 
+	double avg = 0;
 	double rms = 0;
 	// printf("\nSTEP BEGINS\n");
 	printf("\n\n");
 //	////printf("*************************************** STEP **********************************************\n");	
 	double z_free_traj;
+	double prev_com_z = 0;
 	for(walkTime = 0.0/fps; walkTime<=stepTime; walkTime +=timeInc)
 	{
 		if(walkTime < dsp1Time)
 		{
 			x  = height;
-			xr = height;
+			xr = height - correction_factor;
 			y  = -legYin - veloYin*walkTime;
 			yr = -supLegYin - veloYin*walkTime;
 			// z  = legZin - veloZin*walkTime - hipLength/2;
@@ -647,7 +666,7 @@ int Walk::dribble()
 			fraction=2*(walkTime-startX)/(stopX-startX);
 			x  = height - lift * (sin(xfreq*((walkTime-startX)/(stopX-startX))+xPhase) + displacement)/(1+displacement);
 			// x = height- lift*fraction*(2-fraction);
-			xr = height ;//- 10*sin(pi*(walkTime - dsp1Time)/sspTime);
+			xr = height - correction_factor;//- 10*sin(pi*(walkTime - dsp1Time)/sspTime);
 			y=a*pow(walkTime-dsp1Time,3)+b*pow(walkTime-dsp1Time,2)+c*(walkTime-dsp1Time)+d;
 			//y  = linear(-sspYin,-sspYfi, ((walkTime-dsp1Time)/sspTime);
 			yr = -(Ay*cosh((walkTime-dsp1Time)/Tc) + By*sinh((walkTime-dsp1Time)/Tc));
@@ -657,13 +676,13 @@ int Walk::dribble()
 			zr = c1*exp(C*(walkTime-dsp1Time)) + c2*exp(-C*(walkTime-dsp1Time)) -hipLength/2;
 			double velz =  C*(c1*exp(C*(walkTime-dsp1Time)) - c2*exp(-C*(walkTime-dsp1Time)));
 
-			double z_traj = c1*exp(C*(walkTime-dsp1Time)) + c2*exp(-C*(walkTime-dsp1Time)) -hipLength/2;
+			// double z_traj = c1*exp(C*(walkTime-dsp1Time)) + c2*exp(-C*(walkTime-dsp1Time)) -hipLength/2;
 			z = z_a_free*pow(walkTime,2) + z_b_free*(walkTime) + z_c_free -hipLength/2;
 			// printf("%f %f\n",z_free_traj ,zr);
-			double energy =  (pow(velz,2.0) - pow(C,2.0)*pow(z_traj,2.0))/2.0;
+			double energy =  (pow(velz,2.0) - pow(C,2.0)*pow(zr+hipLength/2,2.0))/2.0;
 			double alpha = sqrt(-2*energy/pow(C,2.0));
 			// z = z_free_traj;
-			// printf("Energy = %f zr = %f velz = %f alpha = %f leg = %d\n", energy, z_traj, velz, alpha, leg);
+			// printf("Energy = %f supleg = %f velz = %f alpha = %f leg = %d\n", energy, zr+hipLength/2, velz, alpha, leg);
 			// printf("leg = %d zr = %f ",leg,sspZAmp * cosh((walkTime-dsp1Time)/Tc + sspZPhs));
 			// printf("zrr = %f", c1*exp(C*(walkTime-dsp1Time)) +c2*exp(-C*(walkTime-dsp1Time)) );	
 			// printf(" velz = %f velzz = %f\n",sspZAmp*sinh((walkTime-dsp1Time)/Tc + sspZPhs)/Tc,C*(c1*exp(C*(walkTime-dsp1Time)) - c2*exp(-C*(walkTime-dsp1Time))));
@@ -676,7 +695,7 @@ int Walk::dribble()
 		{
 			state = DSP;
 			x  = height - dampLift* (sin(dampFreq*((walkTime-dampStart)/(dampEnd-dampStart))+dampPhase)+dampDisplacement)/(1+dampDisplacement);
-			xr = height;
+			xr = height - correction_factor;
 /*			const double (&COM)[AXES] = bot->getRotCOM();
 			if (walkTime == (stepTime) && fabs(COM[2] - mean_z) > 0.5 )
 				walkTime--;*/
@@ -740,33 +759,70 @@ int Walk::dribble()
 		// bot->leg[leg]->runIK(x,y - correction_y,z+feetSeperation - 1*(leg==1?1:-1)*correction_z,phi);
 		// bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeperation + 1*(leg==1?1:-1)*correction_z,phiR);
 		// printf("%f\n",COM[2]);
-
-		const double (&COM)[AXES] = bot->getCOM();
+		const double (&COM)[AXES] = bot->getRotCOM();
 		// printf("old_com = %f correction = %f ",COM[2],3.125*(leg==1?1:-1)*COM[2]);
 		int fcount = walkTime*fps;
-		// WALK fix
-		// bot->leg[leg]->runIK(x,y,z+feetSeperation - com_offset[fcount],phi);
-		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation + com_offset[fcount],phiR);
+
+		bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
+		bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation,phiR);
+
+		// printf("%f %f\n",COM[2],(COM[2]-prev_com_z)/timeInc);
+		prev_com_z = COM[2];
+		// cout<<"WalkTime"<<walkTime<<endl;
+		if (walkTime >= dsp1Time +  sspTime/2 && walkTime <= dsp1Time + sspTime/2 + timeInc)
+		{
+			cout<<"At peak of step"<<endl;
+
+			// if (COM[2]>4)
+			{
+				// cout<<"Capture step required"<<endl;
+				cout<<"Present leg "<<leg<<endl;
+				double cap_sup_defpos = c1 + c2; 
+				double cap_deviation = zMax - 1*(leg==1?1:-1)*COM[2];
+				cout<<"Step deviation is "<<cap_deviation<<endl;
+				double cap_ideal_energy = (-pow(C,2)*pow(zMax,2))/2;
+				cout<<"Energy should be "<<cap_ideal_energy<<endl;
+				double cap_actual_energy = (-pow(C,2)*pow(cap_deviation,2))/2; 
+				cout<<"Energy is "<<cap_actual_energy<<endl;
+				double cap_sup_vel = sqrt(pow(0,2) + pow(C,2)*(pow(cap_sup_defpos,2) -pow(cap_deviation,2)));
+				cout<<"Velocity at support exchange should be "<<cap_sup_vel<<endl;
+				double cap_sup_pos = sqrt(pow(zMax,2) + pow(cap_sup_vel,2)/pow(C,2));
+				cout<<"Default position at support exchange "<<cap_sup_defpos<<endl;
+				cout<<"Position of next step at support exchange should be "<<cap_sup_pos<<endl;
+				if (fabs(cap_sup_pos - cap_sup_defpos) < 20)
+				{
+				cout<<"Generating corrective trajectory"<<endl;
+				double z_free_fi = cap_sup_pos + veloZfi*dsp2Time;
+				cout<<"z final "<<z_free_fi<<endl;
+				z_c_free = z_free_fi;
+				z_b_free = 4*(zMax - z_free_fi)/(sspTimeVar+dsp1Time+dsp2Time);
+				z_a_free = 4*(z_free_fi - zMax)/pow(sspTimeVar+dsp1Time+dsp2Time,2);
+				// correction_factor = fabs(cap_sup_pos - cap_sup_defpos);
+				// z_a_free = (2*(legZfi + legZin) - 4*(zMax))/pow(sspTimeVar+dsp1Time+dsp2Time,2);
+				// z_b_free = 2*((legZfi- legZin)/2 - z_a_free*pow(sspTimeVar+dsp1Time+dsp2Time,2)/2)/(sspTimeVar+dsp1Time+dsp2Time);
+
+				}
+			}
+		}
+		// bot->leg[leg]->runIK(x,y -6.3*(com_offsety[fcount]-13),z+feetSeperation,phi);
+		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
+
 		// const double (&COM2)[AXES] = bot->getCOM();
 		//BEST SO FAR
 		// bot->leg[leg]->runIK(x,y,z+feetSeperation - 2.05*com_offset[fcount],phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
 
 		// printf("%f %f\n", zr+feetSeperation, z+feetSeperation - 2.05*com_offset[fcount]);
-		bot->leg[leg]->runIK(x,y,z+feetSeperation ,phi);
-		bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
-
-		// bot->leg[leg]->runIK(x,y,zr+feetSeperation,phi);
-		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
-		// bot->leg[leg]->runIK(x,y,z+feetSeperation,phi);
-		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeperation ,phiR);
-
+		// cout<<COM[1]<<endl;
+		//6.3
 		// printf("%f %f %f\n",z+feetSeperation,z+feetSeperation - 2.05*com_offset[fcount],zr+feetSeperation);
-		// printf("%f\n",COM[2]);
-		printf("%f\n",z+feetSeperation);
-		rms += pow(COM[2],2);
-		// printf("oldzr = %f newzr = %f ",COM[2], zr+feetSeperation,  zr +feetSeperation + 3.125*(leg==1?1:-1)*COM[2] );
+		// printf("%f\n",COM[1]);
+		// printf("%f\n",z+feetSeperation);
+		// rms += pow(COM[2],2);
 		// bot->getCOM();
+		rms += pow(COM[1]-13,2);
+		avg += COM[1]; 
+		// printf("oldzr = %f newzr = %f ",COM[2], zr+feetSeperation,  zr +feetSeperation + 3.125*(leg==1?1:-1)*COM[2] );
 		// rms += pow(COM[2],2);
 		// cout<<zr + feetSeperation+com_offset[fcount]<<endl;
 		// cout<<"COM = "<<COM[2]<<" "<<zr + feetSeperation << " " << zr + feetSeperation + com_offset[fcount]<<endl;
@@ -797,6 +853,8 @@ int Walk::dribble()
 		
 	}
 	rms = sqrt(rms/(stepTime*fps));
+	avg /= (stepTime*fps);
+	// printf("Avg = %f\n",avg);
 	// printf("rms = %f multiplier = %f\n",rms,stepCount*0.025);
 	// printf("rms = %f\n",rms);
 	// printf("%f\n",-sspYfi + sspYin );

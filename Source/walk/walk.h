@@ -39,11 +39,12 @@ class Walk
 	double legRotfi;
 	double supLegRotin;
 	double supLegRotfi;
-	
+	double correction_factor;
 	// X Data //
 	double lift;
 	
 	double com_offset[100];
+	double com_offsety[100];
 	//PID Constants
 	double integ_const_z;
 	double deriv_const_z;
