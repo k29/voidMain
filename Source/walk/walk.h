@@ -42,7 +42,7 @@ class Walk
 	double correction_factor;
 	// X Data //
 	double lift;
-	
+	double feetSeparation;
 	double com_offset[100];
 	double com_offsety[100];
 	//PID Constants
@@ -63,15 +63,16 @@ class Walk
 	double integ_term_y;
 
 	double prev_y;
+	double height;
 	public:
 	Walk(AcYut* bot);
 	int kick();
-	int dribble();
-	int dribble_new(double dy, double dx,double t1,double t2);
-	int dribble(double dy, double dx,double t1,double t2);
+	int dribble(int flag = 0);
+	// int dribble_new(double dy, double dx,double t1,double t2);
+	// int dribble(double dy, double dx,double t1,double t2);
 	int pathdribble(double vel_y, double dx, double t1, double t2);
 	int start();
-	int start2();
+	// int start2();
 	float accelerate();
 	float velocity();
 	float velocity2();

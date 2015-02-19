@@ -13,37 +13,32 @@ void AcYut::initialize()
 	left_hand->setSpeed(50);
 	right_hand->setSpeed(50);
 	comm->syncFlush();
-	
-	left_leg->runIK(legHeight,0,0,0);
-	left_leg->setGoalPositionSync();
-	right_leg->runIK(legHeight,0,0,0);
-	right_leg->setGoalPositionSync();
-	left_hand->init();
-	right_hand->init();
-	comm->syncFlush();
-
-	 init_val[0] =	4096-2068;
-	 init_val[1] =	4096-1100;
-	 init_val[2] =	4096-2148;
-	 init_val[3] =	4096-3570;
-	 init_val[4] =	2048;
-	 init_val[5] =	1100;
-	 init_val[6] =	2048;
-	 init_val[7] =	3470;//1700;
-	 init_val[8] =	390;
-	 init_val[9] =	0;
-	 init_val[10] =	0;
-	 init_val[11] = 0;
-	 init_val[12] =	390;
-	 init_val[13] =	0;
-	 init_val[14] =	0;
-	 init_val[15] = 0;
-
+	init_val[0] =	4096-2068;
+	init_val[1] =	4096-1100;
+	init_val[2] =	4096-2148;
+	init_val[3] =	4096-3570;
+	init_val[4] =	2048;
+	init_val[5] =	1100;
+	init_val[6] =	2048;
+	init_val[7] =	3470;//1700;
+	init_val[8] =	390;
+	init_val[9] =	0;
+	init_val[10] =	0;
+	init_val[11] = 0;
+	init_val[12] =	390;
+	init_val[13] =	0;
+	init_val[14] =	0;
+	init_val[15] = 0;
 
 	int arr_l[]={init_val[0], init_val[1], init_val[2],init_val[3]};
 	int arr_r[]={init_val[4], init_val[5], init_val[6],init_val[7]};
-	left_hand->setGoalPositionSync(arr_l);
-	right_hand->setGoalPositionSync(arr_r);
+	
+	left_leg->runIK(legHeight,0,20,0);
+	left_leg->setGoalPositionSync();
+	right_leg->runIK(legHeight,0,20,0);
+	right_leg->setGoalPositionSync();
+	left_hand->init(arr_l);
+	right_hand->init(arr_r);
 	comm->syncFlush();
 	sleep(4);
 	
@@ -71,8 +66,12 @@ int AcYut::reachSlow(double left_x,double left_y,double left_z,double right_x,do
 	left_leg->setGoalPositionSync();
 	right_leg->runIK(right_x,right_y,right_z,0);
 	right_leg->setGoalPositionSync();
-	left_hand->init();
-	right_hand->init();
+
+	int arr_l[]={init_val[0], init_val[1], init_val[2],init_val[3]};
+	int arr_r[]={init_val[4], init_val[5], init_val[6],init_val[7]};
+
+	left_hand->init(arr_l);
+	right_hand->init(arr_r);
 	comm->syncFlush();
 	
 	sleep(3);
@@ -90,7 +89,7 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	this->comm = comm;
 	this->imu = imu;	
 
-	offsets[0] = 85;
+	offsets[0] = 45;
 	offsets[1] = 20;
 	offsets[2] = -20;
 	offsets[3] = -60;
@@ -98,10 +97,10 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	offsets[5] = -85;
 	offsets[6] = 280;
 
-	offsets[20] = 40;
+	offsets[20] = 40;//40
 	offsets[21] = 0;
 	offsets[22] = -0 + 20;
-	offsets[23] = -70;
+	offsets[23] = -70 - 150;
 	offsets[24] = 70;
 	offsets[25] = -270;
 	offsets[26] = -256;
@@ -243,6 +242,8 @@ int AcYut::updateBot()
 {
 	left_leg->setGoalPositionSync();
 	right_leg->setGoalPositionSync();
+	left_hand->setGoalPositionSync();
+	right_hand->setGoalPositionSync();
 	comm->syncFlush();
 }
 
@@ -278,7 +279,24 @@ int AcYut::writeSensedCurrent(FILE *&fp)
 	delete rightleg;
 	delete leftleg;
 }
+void AcYut::getArmTorsoCOM(double armTorsoCOM[AXES])
+{
+	//All calculations are made on the assumption that the hand is moving only by the first shoulder motor (roll motion)
+	const double (&lhandCOM)[AXES] = left_hand->getHandCOM();
+	const double (&rhandCOM)[AXES] = right_hand->getHandCOM();
 
+	const double torsoNoArm[] = {-183.8,22,0 };
+	const double torsoHeight = 270.5;
+	const double shoulderSpan = 198;
+
+	armTorsoCOM[X] = (torsoNoArm[X]*1.743 + (lhandCOM[X]-torsoHeight)*0.609 + (rhandCOM[X]-torsoHeight)*0.609)/(1.743 + 0.609 + 0.609);
+	armTorsoCOM[Y] = (torsoNoArm[Y]*1.743 + (lhandCOM[Y])*0.609 + (rhandCOM[Y])*0.609)/(1.743 + 0.609 + 0.609);
+	armTorsoCOM[Z] = (torsoNoArm[Z]*1.743 + (-lhandCOM[Z]-shoulderSpan/2)*0.609 + (rhandCOM[Z]+shoulderSpan/2)*0.609)/(1.743 + 0.609 + 0.609);
+	// cout<<"X: "<<armTorsoCOM[X]<<" Y: "<<armTorsoCOM[Y]<<" Z: "<<armTorsoCOM[Z]<<endl;
+
+}
+
+//0.616 kg - Hand - 0.087 kg thigharm, 0.04 + 0.05 + 0.013 forearm
 const double (&(AcYut::getCOM())) [AXES]
 {
 	const double (&leftLegCOM)[AXES] = left_leg->getLegCOM();
@@ -296,7 +314,11 @@ const double (&(AcYut::getCOM())) [AXES]
 	float torsoCOM[AXES];
 	torsoCOM[X] = -151.96 -61.5;
 	torsoCOM[Y] = torsoCOM[Z] = 0;
-	
+	double armTorsoCOM[AXES];
+	getArmTorsoCOM(armTorsoCOM);
+
+	torsoCOM[Y] = armTorsoCOM[Y];
+
 	COM[X] = leftLegCOM[X]*leftLegMass + rightLegCOM[X]*rightLegMass + torsoCOM[X]*bodyMass; 
 	COM[Y] = leftLegCOM[Y]*leftLegMass + rightLegCOM[Y]*rightLegMass + torsoCOM[Y]*bodyMass; 
 	COM[Z] = (-leftLegCOM[Z] -hipLength/2)*leftLegMass + (rightLegCOM[Z]+hipLength/2)*rightLegMass + torsoCOM[Z]*bodyMass; 
@@ -308,7 +330,7 @@ const double (&(AcYut::getCOM())) [AXES]
 		printf("COM[%d]\t%4.2lf\n",i,COM[i]);
 		#endif
 	}
-	
+	// cout<<COM[1]<<endl;	
 	return COM;
 }
 
@@ -339,8 +361,9 @@ double* AcYut::getWorldFrameCoods(double coods[], double ans[])
 {
 	double roll = -deg2rad(imu->roll);
 	double pitch = -deg2rad(imu->pitch);
-	double floorcoods_x = 54.0;
+	double floorcoods_x = 70.0;
 	double floorcoods_z = 0;
+	// cout<<"IMU pitch = "<<-(imu->pitch)<<endl;
 	ans[X] = cos(roll)*cos(pitch)*floorcoods_x + sin(roll)*coods[Y] - cos(roll)*sin(pitch)*coods[Z];
 	ans[Y] = -sin(roll)*cos(pitch)*floorcoods_x + cos(roll)*coods[Y] + sin(roll)*sin(pitch)*coods[Z];
 	ans[Z] = sin(pitch)*floorcoods_x + cos(pitch)*floorcoods_z;
