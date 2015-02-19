@@ -171,7 +171,7 @@ int Walk::dribble(int flag)
 //	printf("%d\t",leg);
 	// if (leg==1)
 		// legRotfi-=1;
-	int fps = 240;
+	int fps = 120;
 	int sleep = 1000000.0/(double)fps;
 	double timeInc =1.0/(double)fps;
 	// double feetSeparation = 30;
@@ -286,14 +286,14 @@ int Walk::dribble(int flag)
 	
 	// double Ay = sspYSupin;
 	// double By = veloYin*Tc;
-	double c1_y = (sspYSupin + veloYfi/C)/2;
-	double c2_y = (sspYSupin - veloYfi/C)/2;
+	double c1_y = (sspYSupin + veloYin/C)/2;
+	double c2_y = (sspYSupin - veloYin/C)/2;
 
 	// double veloYfi_d = Ay*sinh(sspTime/Tc)/Tc + By*cosh(sspTime/Tc)/Tc;
-	double veloYfi_d = c1_y*exp(C*sspTime) + c2_y*exp(-C*sspTime);
+	double veloYfi_d = C*(c1_y*exp(C*sspTime) - c2_y*exp(-C*sspTime));
 
 	// double P_By = veloYfi_d*Tc;
-	double P_Ay = (veloYfi - veloYfi_d*cosh(sspTime/Tc))*Tc/sinh(sspTime/Tc);
+	// double P_Ay = (veloYfi - veloYfi_d*cosh(sspTime/Tc))*Tc/sinh(sspTime/Tc);
 	double P_c1_y = (veloYfi - veloYfi_d*exp(-C*sspTime))/(C*(exp(C*sspTime) - exp(-C*sspTime)));
 	double P_c2_y = P_c1_y - veloYfi_d/C;
 
@@ -309,10 +309,10 @@ int Walk::dribble(int flag)
 	double P_legYin  = P_sspYin - veloYfi_d*D_dsp1Time;
 
 	double sspYfi    = P_legYin - veloYfi_d*dsp2Time;
-	double sspYSupfi = c1_y*exp(C*sspTime) + c2_y*exp(C*sspTime);
+	double sspYSupfi = c1_y*exp(C*sspTime) + c2_y*exp(-C*sspTime);
 	// double sspYSupfi = Ay*cosh(sspTime/Tc) + By*sinh(sspTime/Tc);
 	// double sspYSupfi = sspYAmp * sinh(sspTime/Tc + sspYPhs);
-	
+	// cout<<" see "<<	 Ay*cosh(sspTime/Tc) + By*sinh(sspTime/Tc) <<" "<<sspYSupfi<<endl;
 	double legYfi    = sspYfi + veloYfi_d*dsp2Time;
 	double supLegYfi = sspYSupfi + veloYfi_d*dsp2Time;
 	
@@ -557,6 +557,8 @@ int Walk::dribble(int flag)
 			bot->leg[leg]->runIK(height,y,z+feetSeparation ,phi);
 			bot->leg[1-leg]->runIK(height,yr ,zr+feetSeparation,phiR);		
 		}
+
+		// cout<<COM[1]<<endl;		
 		int arr_l[4], arr_r[4];
 		// cout<<"Hand Swing = "<<handSwing<<endl;
 		bot->left_hand->getGoalPositionSoft(arr_l);
@@ -596,9 +598,8 @@ int Walk::dribble(int flag)
 			}			
 		}*/
 		// printf("%f %f\n",COM[2],(COM[2]-prev_com_z)/timeInc);
-		prev_com_z = COM[2];
-		// cout<<COM[1]<<endl;
-		// cout<<"WalkTime"<<walkTime<<endl;
+		// prev_com_z = COM[2];
+				// cout<<"WalkTime"<<walkTime<<endl;
 		if (walkTime >= dsp1Time +  sspZTime/2 && walkTime <= dsp1Time + sspZTime/2 + timeInc)
 		{
 			cout<<"At peak of step"<<endl;

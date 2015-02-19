@@ -21,11 +21,11 @@ void AcYut::initialize()
 	init_val[5] =	1100;
 	init_val[6] =	2048;
 	init_val[7] =	3470;//1700;
-	init_val[8] =	390;
+	init_val[8] =	legHeight;
 	init_val[9] =	0;
 	init_val[10] =	0;
 	init_val[11] = 0;
-	init_val[12] =	390;
+	init_val[12] =	legHeight;
 	init_val[13] =	0;
 	init_val[14] =	0;
 	init_val[15] = 0;
@@ -317,7 +317,7 @@ const double (&(AcYut::getCOM())) [AXES]
 	double armTorsoCOM[AXES];
 	getArmTorsoCOM(armTorsoCOM);
 
-	torsoCOM[Y] = armTorsoCOM[Y];
+	// torsoCOM[Y] = armTorsoCOM[Y];
 
 	COM[X] = leftLegCOM[X]*leftLegMass + rightLegCOM[X]*rightLegMass + torsoCOM[X]*bodyMass; 
 	COM[Y] = leftLegCOM[Y]*leftLegMass + rightLegCOM[Y]*rightLegMass + torsoCOM[Y]*bodyMass; 
@@ -361,7 +361,7 @@ double* AcYut::getWorldFrameCoods(double coods[], double ans[])
 {
 	double roll = -deg2rad(imu->roll);
 	double pitch = -deg2rad(imu->pitch);
-	double floorcoods_x = 70.0;
+	double floorcoods_x = 100.0;
 	double floorcoods_z = 0;
 	// cout<<"IMU pitch = "<<-(imu->pitch)<<endl;
 	ans[X] = cos(roll)*cos(pitch)*floorcoods_x + sin(roll)*coods[Y] - cos(roll)*sin(pitch)*coods[Z];
