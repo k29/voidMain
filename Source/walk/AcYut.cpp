@@ -104,22 +104,6 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	offsets[24] = 70;
 	offsets[25] = -270;
 	offsets[26] = -256;
-//Really good offsets
-	// offsets[0] = 75;
-	// offsets[1] = 30;
-	// offsets[2] = -30;
-	// offsets[3] = -50;
-	// offsets[4] = 50;
-	// offsets[5] = -95;
-	// offsets[6] = 280;
-
-	// offsets[20] = 40;
-	// offsets[21] = -0;
-	// offsets[22] = 0;
-	// offsets[23] = -80;
-	// offsets[24] = 80;
-	// offsets[25] = -290;
-	// offsets[26] = -256;
 
 	//int ids[], int offsets[], int driveMode[], int zeros[]);
 	printf("Initializing motors ...\n");

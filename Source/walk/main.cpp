@@ -201,10 +201,10 @@ int main()
 			// walk.setStrafe(-8);
 		// }
 		// walk.pathdribble(-1,20,0,0);//Strafing
-		// if (i<230)
-			// i+=20;
+		if (i<120)
+			i+=20;
 		// cout<<i<<" "<<endl;
-		// walk.pathdribble(i,0,0,0);
+		walk.pathdribble(i,0,0,0);
 		walk.dribble();
 	}
 	return 0;
