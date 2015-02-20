@@ -12,7 +12,7 @@ Walk::Walk(AcYut* bot)
 	supLegZin=7.694539;//25.155276;
 	veloZin=-143.8459;
 	veloZfi=143.8459;
-	zMax=70;
+	zMax=65;
 	dz = 0;
 	lift=50;
 	legRotin=0;
@@ -24,7 +24,7 @@ Walk::Walk(AcYut* bot)
 	// strafe=0;
 	// sspZAmp=zMax;
 	stepCount = 0;
-	feetSeparation = 40;
+	feetSeparation = 35;
 	integ_const_z =0.5;//0.05;//0.05;//2;
 	deriv_const_z =0.8/120;//1.2/120.0;//0.01;//0.005;
 	prop_const_z = 1;//0.6;//1;
@@ -628,7 +628,7 @@ int Walk::dribble(int flag)
 		if (walkTime >= dsp1Time +  sspZTime/2 && walkTime <= dsp1Time + sspZTime/2 + timeInc)
 		{
 			// cout<<"At peak of step"<<endl;
-			captureStep( leg, c1_z, c2_z, C, zMax, dsp1Time, dsp2Time, sspTime, z_a_free, z_b_free, z_c_free);
+			// captureStep( leg, c1_z, c2_z, C, zMax, dsp1Time, dsp2Time, sspTime, z_a_free, z_b_free, z_c_free);
 		}
 
 		//BEST SO FAR
