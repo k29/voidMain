@@ -94,6 +94,107 @@ int Walk::kick()
 
 }
 
+int Walk::pathdribble(double vel_y, double dz, double t1, double t2)
+{
+	if (vel_y != -1)
+		veloYfi = vel_y;
+	//dz is negative for left, positive for right
+	//We want the strafing to occur by stepping outward followed by inward
+	//which is handled by this conditional construct
+	if (dz>0)
+	{
+		if (leg == LEFT)
+		{
+			dribble();	
+			this->dz = dz;
+		}
+		else
+			this->dz = dz;
+	}
+	else if (dz<0)
+	{
+		if (leg==LEFT)
+			this->dz = -dz;
+		else
+		{
+			dribble();
+			this->dz = -dz;
+		}
+	}
+	legRotfi = t1;
+	supLegRotfi = t2;
+	int x = dribble();
+	//Resetting z and theta to zero for safety
+	dz = 0;
+	legRotfi = 0;
+	supLegRotfi = 0;
+	return x;
+}
+
+int Walk::captureStep(int leg, double c1_z, double c2_z, double C, double zMax, double dsp1Time, double dsp2Time, double &sspTime, double &z_a_free, double &z_b_free, double &z_c_free)
+{
+
+	const double (&COM)[AXES] = bot->getRotCOM();
+	cout<<"At peak of step"<<endl;
+	// if (COM[2]>4)
+	{
+		// cout<<"Capture step required"<<endl;
+		cout<<"Present leg "<<leg<<endl;
+		double cap_sup_defpos = c1_z + c2_z; 
+		double cap_deviation = zMax - 1*(leg==1?1:-1)*COM[2];
+		cout<<"Step deviation is "<<cap_deviation<<endl;
+		double cap_ideal_energy = (-pow(C,2)*pow(zMax,2))/2;
+		cout<<"Energy should be "<<cap_ideal_energy<<endl;
+		double cap_actual_energy = (-pow(C,2)*pow(cap_deviation,2))/2; 
+		cout<<"Energy is "<<cap_actual_energy<<endl;
+		double cap_sup_vel = sqrt(pow(0,2) + pow(C,2)*(pow(cap_sup_defpos,2) -pow(cap_deviation,2)));
+		cout<<"Velocity at support exchange should be "<<cap_sup_vel<<endl;
+		double cap_sup_pos = sqrt(pow(zMax,2) + pow(cap_sup_vel,2)/pow(C,2));
+		cout<<"Default position at support exchange "<<cap_sup_defpos<<endl;
+		cout<<"Position of next step at support exchange should be "<<cap_sup_pos<<endl;
+		if (fabs(cap_sup_pos - cap_sup_defpos) < 60 && fabs(cap_sup_pos - cap_sup_defpos))
+		{
+			if (fabs(cap_sup_pos - cap_sup_defpos) > 11)
+			{
+				double time_factor = cap_sup_pos/cap_sup_defpos;
+				cout<<"Default ssp time is "<<sspTime<<endl;
+				// if (time_factor > 1)
+				// 	sspTime *= 1.5*time_factor;
+				// else
+				// 	sspTime /= (time_factor/1.5);
+				sspTime = 2.8;
+				cout<<"New ssp time is "<<sspTime<<endl;
+			}
+		cout<<"Generating corrective trajectory"<<endl;
+		double z_free_fi = cap_sup_pos + veloZfi*dsp2Time;
+		cout<<"z final "<<z_free_fi<<endl;
+		z_c_free = z_free_fi;
+		z_b_free = 4*(zMax - z_free_fi)/(sspTime+dsp1Time+dsp2Time);
+		z_a_free = 4*(z_free_fi - zMax)/pow(sspTime+dsp1Time+dsp2Time,2);
+		// correction_factor = fabs(cap_sup_pos - cap_sup_defpos);
+		// z_a_free = (2*(legZfi + legZin) - 4*(zMax))/pow(sspTimeVar+dsp1Time+dsp2Time,2);
+		// z_b_free = 2*((legZfi- legZin)/2 - z_a_free*pow(sspTimeVar+dsp1Time+dsp2Time,2)/2)/(sspTimeVar+dsp1Time+dsp2Time);
+		}
+	}
+}
+int Walk::handMotion(double handSwing)
+{
+	int arr_l[4], arr_r[4];
+	// cout<<"Hand Swing = "<<handSwing<<endl;
+	bot->left_hand->getGoalPositionSoft(arr_l);
+	bot->right_hand->getGoalPositionSoft(arr_r);
+	if (leg==RIGHT)
+	{
+		arr_l[0] = 4096 - handSwing;
+		bot->left_hand->setGoalPositionSoft(arr_l);
+	}
+	else
+	{
+		arr_r[0] = handSwing;
+		bot->right_hand->setGoalPositionSoft(arr_r);
+	}
+
+}
 float Walk::accelerate()
 {
 	veloYfi=veloYfi*1.72;
@@ -476,9 +577,6 @@ int Walk::dribble(int flag)
 			state = DSP;
 			x  = height - dampLift* (sin(dampFreq*((walkTime-dampStart)/(dampEnd-dampStart))+dampPhase)+dampDisplacement)/(1+dampDisplacement);
 			xr = height ;
-/*			const double (&COM)[AXES] = bot->getRotCOM();
-			if (walkTime == (stepTime) && fabs(COM[2] - mean_z) > 0.5 )
-				walkTime--;*/
 			y  = -sspYfi - veloYfi_d*(walkTime-dsp1Time-sspTime);
 			yr = -sspYSupfi - veloYfi_d*(walkTime-dsp1Time-sspTime);
 			// z  = sspZfi - veloZfi*(walkTime-dsp1Time-sspTime) -hipLength/2;
@@ -497,6 +595,7 @@ int Walk::dribble(int flag)
 			bot->reachSlow(height,y,z+feetSeparation,height,yr,zr+feetSeparation);
 			flag = 3;
 		}
+		// handMotion(handSwing);
 		// printf("X\t%3.1lf\tXR\t%3.1lf\tY\t%lf\tYR\t%lf\tZ\t%lf\tZR\t%lf\n",x,xr,y,yr,z,zr);
 		////printf("Y\t%lf\tYR\t%lf\tZ\t%lf\tZR\t%lf\tP\t%lf\tPR\t%lf\n",y,yr,z+s,zr+sr,phi,phiR);
 		///////printf("Z\t%lf\tZR\t%lf\n",z,zr);
@@ -544,7 +643,7 @@ int Walk::dribble(int flag)
 		// bot->leg[leg]->runIK(x,y - correction_y,z+feetSeparation - 1*(leg==1?1:-1)*correction_z,phi);
 		// bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeparation + 1*(leg==1?1:-1)*correction_z,phiR);
 		// printf("%f\n",COM[2]);
-		const double (&COM)[AXES] = bot->getRotCOM();
+		const double (&COM)[AXES] = bot->getCOM();
 		// printf("old_com = %f correction = %f ",COM[2],3.125*(leg==1?1:-1)*COM[2]);
 		int fcount = walkTime*fps;
 		if (flag != 3)
@@ -559,92 +658,15 @@ int Walk::dribble(int flag)
 		}
 
 		// cout<<COM[1]<<endl;		
-		int arr_l[4], arr_r[4];
-		// cout<<"Hand Swing = "<<handSwing<<endl;
-		bot->left_hand->getGoalPositionSoft(arr_l);
-		bot->right_hand->getGoalPositionSoft(arr_r);
-		if (leg==RIGHT)
-		{
-			arr_l[0] = 4096 - handSwing;
-			// bot->left_hand->setGoalPositionSoft(arr_l);
-		}
-		else
-		{
-			arr_r[0] = handSwing;
-			// bot->right_hand->setGoalPositionSoft(arr_r);
-		}
-		// arr_l[0] += (leg==1?1:-1)*stepCount*1*COM[1];
-		// arr_r[0] += (leg==1?1:-1)*stepCount*1*COM[1];
-		// cout<<"Left: "<<arr_l[0]<<" "<<arr_l[1]<<" "<<arr_l[2]<<" "<<arr_l[3]<<endl;
-		// cout<<"Right: "<<arr_r[0]<<" "<<arr_r[1]<<" "<<arr_r[2]<<" "<<arr_r[3]<<endl;
 		// cout<<COM[1]<<endl;
 
-/*		if (walkTime >= dsp1Time +  sspZTime/2 && walkTime <= dsp1Time + sspZTime/2 + timeInc)
-		{
-		//At delta theta -28 degrees approx - left hand with left support leg we get COM to default, (20 for now)
-		//As expected, similar value for right hand as well, i = 350 approx (goal position reqd is (4096 - for left) 2048+350 then)
-			arr_l[0] = 2048;
-			arr_r[0] = 2048;
-			cout<<"LEG = "<<leg<<endl;
-			for (int i = 0; i < 1000; ++i)
-			{
-				// arr_l[0] -= 1;
-				arr_r[0] += 1;
-				cout<<i<<" ";
-				bot->left_hand->setGoalPositionSoft(arr_l);
-				bot->right_hand->setGoalPositionSoft(arr_r);
-				bot->getRotCOM();
-				cout<<COM[1]<<endl;
-			}			
-		}*/
 		// printf("%f %f\n",COM[2],(COM[2]-prev_com_z)/timeInc);
 		// prev_com_z = COM[2];
 				// cout<<"WalkTime"<<walkTime<<endl;
 		if (walkTime >= dsp1Time +  sspZTime/2 && walkTime <= dsp1Time + sspZTime/2 + timeInc)
 		{
 			cout<<"At peak of step"<<endl;
-
-			// if (COM[2]>4)
-			{
-				// cout<<"Capture step required"<<endl;
-				cout<<"Present leg "<<leg<<endl;
-				double cap_sup_defpos = c1_z + c2_z; 
-				double cap_deviation = zMax - 1*(leg==1?1:-1)*COM[2];
-				cout<<"Step deviation is "<<cap_deviation<<endl;
-				double cap_ideal_energy = (-pow(C,2)*pow(zMax,2))/2;
-				cout<<"Energy should be "<<cap_ideal_energy<<endl;
-				double cap_actual_energy = (-pow(C,2)*pow(cap_deviation,2))/2; 
-				cout<<"Energy is "<<cap_actual_energy<<endl;
-				double cap_sup_vel = sqrt(pow(0,2) + pow(C,2)*(pow(cap_sup_defpos,2) -pow(cap_deviation,2)));
-				cout<<"Velocity at support exchange should be "<<cap_sup_vel<<endl;
-				double cap_sup_pos = sqrt(pow(zMax,2) + pow(cap_sup_vel,2)/pow(C,2));
-				cout<<"Default position at support exchange "<<cap_sup_defpos<<endl;
-				cout<<"Position of next step at support exchange should be "<<cap_sup_pos<<endl;
-				if (fabs(cap_sup_pos - cap_sup_defpos) < 60 && fabs(cap_sup_pos - cap_sup_defpos))
-				{
-					if (fabs(cap_sup_pos - cap_sup_defpos) > 11)
-					{
-						double time_factor = cap_sup_pos/cap_sup_defpos;
-						cout<<"Default ssp time is "<<sspTime<<endl;
-						// if (time_factor > 1)
-						// 	sspTime *= 1.5*time_factor;
-						// else
-						// 	sspTime /= (time_factor/1.5);
-						sspTime = 2.8;
-						cout<<"New ssp time is "<<sspTime<<endl;
-					}
-					cout<<"Generating corrective trajectory"<<endl;
-					double z_free_fi = cap_sup_pos + veloZfi*dsp2Time;
-					cout<<"z final "<<z_free_fi<<endl;
-					z_c_free = z_free_fi;
-					z_b_free = 4*(zMax - z_free_fi)/(sspTime+dsp1Time+dsp2Time);
-					z_a_free = 4*(z_free_fi - zMax)/pow(sspTime+dsp1Time+dsp2Time,2);
-				// correction_factor = fabs(cap_sup_pos - cap_sup_defpos);
-				// z_a_free = (2*(legZfi + legZin) - 4*(zMax))/pow(sspTimeVar+dsp1Time+dsp2Time,2);
-				// z_b_free = 2*((legZfi- legZin)/2 - z_a_free*pow(sspTimeVar+dsp1Time+dsp2Time,2)/2)/(sspTimeVar+dsp1Time+dsp2Time);
-
-				}
-			}
+			captureStep( leg, c1_z, c2_z, C, zMax, dsp1Time, dsp2Time, sspTime, z_a_free, z_b_free, z_c_free);
 		}
 		// bot->leg[leg]->runIK(x,y -6.3*(com_offsety[fcount]-13),z+feetSeparation,phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation ,phiR);
@@ -660,9 +682,10 @@ int Walk::dribble(int flag)
 		// printf("%f %f %f\n",z+feetSeparation,z+feetSeparation - 2.05*com_offset[fcount],zr+feetSeparation);
 		// printf("%f\n",COM[1]);
 		// printf("%f\n",z+feetSeparation);
-		// rms += pow(COM[2],2);
+		rms += pow(COM[2],2);
+		cout<<COM[2]<<endl;
 		// bot->getCOM();
-		rms += pow(COM[1]-20,2);
+		// rms += pow(COM[1]-20,2);
 		avg += COM[1]; 
 		// printf("oldzr = %f newzr = %f ",COM[2], zr+feetSeparation,  zr +feetSeparation + 3.125*(leg==1?1:-1)*COM[2] );
 		// rms += pow(COM[2],2);
@@ -721,43 +744,6 @@ int Walk::dribble(int flag)
 	// sspZAmp = P_sspZAmp;
 	return EXIT_SUCCESS;//endState;
 	
-}
-
-int Walk::pathdribble(double vel_y, double dz, double t1, double t2)
-{
-	if (vel_y != -1)
-		veloYfi = vel_y;
-	//dz is negative for left, positive for right
-	//We want the strafing to occur by stepping outward followed by inward
-	//which is handled by this conditional construct
-	if (dz>0)
-	{
-		if (leg == LEFT)
-		{
-			dribble();	
-			this->dz = dz;
-		}
-		else
-			this->dz = dz;
-	}
-	else if (dz<0)
-	{
-		if (leg==LEFT)
-			this->dz = -dz;
-		else
-		{
-			dribble();
-			this->dz = -dz;
-		}
-	}
-	legRotfi = t1;
-	supLegRotfi = t2;
-	int x = dribble();
-	//Resetting z and theta to zero for safety
-	dz = 0;
-	legRotfi = 0;
-	supLegRotfi = 0;
-	return x;
 }
 
 //Redundant functions to be removed follow

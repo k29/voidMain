@@ -72,6 +72,8 @@ class Walk
 	// int dribble(double dy, double dx,double t1,double t2);
 	int pathdribble(double vel_y, double dx, double t1, double t2);
 	int start();
+	int captureStep(int leg, double c1_z, double c2_z, double C, double zMax, double dsp1Time, double dsp2Time, double &sspTime, double &z_a_free, double &z_b_free, double &z_c_free);
+	int handMotion(double handSwing);
 	// int start2();
 	float accelerate();
 	float velocity();
