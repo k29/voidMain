@@ -154,17 +154,17 @@ int Walk::captureStep(int leg, double c1_z, double c2_z, double C, double zMax, 
 		cout<<"Position of next step at support exchange should be "<<cap_sup_pos<<endl;
 		if (fabs(cap_sup_pos - cap_sup_defpos) < 60 && fabs(cap_sup_pos - cap_sup_defpos))
 		{
-			if (fabs(cap_sup_pos - cap_sup_defpos) > 11)
-			{
-				double time_factor = cap_sup_pos/cap_sup_defpos;
-				cout<<"Default ssp time is "<<sspTime<<endl;
-				// if (time_factor > 1)
-				// 	sspTime *= 1.5*time_factor;
-				// else
-				// 	sspTime /= (time_factor/1.5);
-				sspTime = 2.8;
-				cout<<"New ssp time is "<<sspTime<<endl;
-			}
+			// if (fabs(cap_sup_pos - cap_sup_defpos) > 11)
+			// {
+			// 	double time_factor = cap_sup_pos/cap_sup_defpos;
+			// 	cout<<"Default ssp time is "<<sspTime<<endl;
+			// 	// if (time_factor > 1)
+			// 	// 	sspTime *= 1.5*time_factor;
+			// 	// else
+			// 	// 	sspTime /= (time_factor/1.5);
+			// 	sspTime = 2.8;
+			// 	cout<<"New ssp time is "<<sspTime<<endl;
+			// }
 		cout<<"Generating corrective trajectory"<<endl;
 		double z_free_fi = cap_sup_pos + veloZfi*dsp2Time;
 		cout<<"z final "<<z_free_fi<<endl;
