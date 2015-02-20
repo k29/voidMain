@@ -581,7 +581,7 @@ int Walk::dribble(int flag)
 			yr = -sspYSupfi - veloYfi_d*(walkTime-dsp1Time-sspTime);
 			// z  = sspZfi - veloZfi*(walkTime-dsp1Time-sspTime) -hipLength/2;
 			z = z_a_free*pow(walkTime,2) + z_b_free*(walkTime) + z_c_free -hipLength/2;
-			zr = sspZSupfi + veloZfi*(walkTime-dsp1Time-sspTime) - hipLength/2;
+			zr = sspZSupfi - veloZfi*(walkTime-dsp1Time-sspTime) - hipLength/2;
 			phi= legRotfi;
 			phiR= supLegRotfi;
 	//		////printf("DSP2\t");
@@ -605,12 +605,16 @@ int Walk::dribble(int flag)
 		// bot->printCOM();
 
 		const double (&COM)[AXES] = bot->getCOM();
-		// printf("old_com = %f correction = %f ",COM[2],3.125*(leg==1?1:-1)*COM[2]);
 		int fcount = walkTime*fps;
 		if (flag != 3)
 		{
 			bot->leg[leg]->runIK(x,y,z+feetSeparation ,phi);
 			bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation,phiR);
+			bot->getCOM();
+			// // cout<<z<<" "<<z- 6.65*(leg==1?1:-1)*COM[2]<<endl; 
+			// // bot->leg[leg]->runIK(x,y,z+feetSeparation - 6.65*(leg==1?1:-1)*COM[2],phi);
+			// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation,phiR);		
+			// bot->getCOM();
 		}
 		else
 		{
@@ -618,16 +622,14 @@ int Walk::dribble(int flag)
 			bot->leg[1-leg]->runIK(height,yr ,zr+feetSeparation,phiR);		
 		}
 
-		// cout<<COM[1]<<endl;		
-		// cout<<COM[1]<<endl;
 
 		// printf("%f %f\n",COM[2],(COM[2]-prev_com_z)/timeInc);
 		// prev_com_z = COM[2];
 				// cout<<"WalkTime"<<walkTime<<endl;
 		if (walkTime >= dsp1Time +  sspZTime/2 && walkTime <= dsp1Time + sspZTime/2 + timeInc)
 		{
-			cout<<"At peak of step"<<endl;
-			captureStep( leg, c1_z, c2_z, C, zMax, dsp1Time, dsp2Time, sspTime, z_a_free, z_b_free, z_c_free);
+			// cout<<"At peak of step"<<endl;
+			// captureStep( leg, c1_z, c2_z, C, zMax, dsp1Time, dsp2Time, sspTime, z_a_free, z_b_free, z_c_free);
 		}
 
 		//BEST SO FAR
@@ -635,12 +637,14 @@ int Walk::dribble(int flag)
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation ,phiR);
 
 		rms += pow(COM[2],2);
-		cout<<COM[2]<<endl;
+		// cout<<state<<" "<<zr<<" "<<sspZSupfi<<" "<<sspZfi<<endl;
 		// rms += pow(COM[1]-20,2);
 		avg += COM[1]; 
 
 		if (flag != 2)
 			bot->updateBot();
+		else
+			cout<<"Value setting step";
 		//printf("Sent Values\n");
 		//leg->getMotorLoad(FOOT_ROLL);
 		//revLeg->getMotorLoad(FOOT_ROLL);
@@ -652,7 +656,7 @@ int Walk::dribble(int flag)
 	rms = sqrt(rms/(stepTime*fps));
 	avg /= (stepTime*fps);
 	// printf("Avg = %f\n",avg);
-	// printf("leg = %d rms = %f multiplier = %f\n",leg,rms,stepCount*1.0);
+	// printf("leg = %d rms = %f multiplier = %f\n",leg,rms,stepCount*0.05);
 	printf("rms = %f\n",rms);
 	// printf("%f\n",-sspYfi + sspYin );
 	supLegYin  = -legYfi;
