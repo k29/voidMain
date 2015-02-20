@@ -603,46 +603,7 @@ int Walk::dribble(int flag)
 		// const double (&COM1)[AXES] = bot->getCOM();
 		// bot->printRotCOM();
 		// bot->printCOM();
-/*		prev_mean_y += COM[1]/(stepTime*(double)fps);
-		prev_mean_z += COM[2]/(stepTime*(double)fps);
-		// printf("%f\n",COM1[2]-COM[2]);
-		double err_new_z = COM[2] - mean_z;
-		deriv_term_z = deriv_const_z*(err_new_z - err_z)/timeInc;
-		prop_term_z = prop_const_z*err_new_z;
-		// printf("Velocity_Z = %f\n", (err_new_z - err_z)/timeInc);
 
-		double integ_new_z = integ_term_z + integ_const_z*(err_z + err_new_z)*timeInc/2;
-		// printf("integ = %f %f %f\n",integ_term_z,err_z,err_new_z);
-		
-		// printf(" P = %f I = %f D = %f\n",err_new_z,integ_new_z,(err_new_z - err_z)/timeInc);
-
-		if (!(integ_new_z > integ_max_z || integ_new_z < -integ_max_z))
-			integ_term_z = integ_new_z;
-		
-		correction_z = deriv_term_z + integ_term_z + prop_term_z;
-		err_z = err_new_z;
-		// printf("Mean Values %f %f \n", mean_y, mean_z);
-		double err_new_y = COM[1] - mean_y;
-		// printf("%f\n",COM[1] - COM1[1]);
-		// bot->printRotCOM();
-
-		deriv_term_y = deriv_const_y*(err_new_y - err_y)/timeInc;
-		prop_term_y = prop_const_y*err_new_y;
-		double integ_new_y = integ_term_y + integ_const_y*(err_y + err_new_y)*timeInc/2;
-		if (!(integ_new_y > integ_max_y || integ_new_y < -integ_max_y))
-			integ_term_y = integ_new_y;
-		
-		correction_y = deriv_term_y + integ_term_y + prop_term_y;
-		// printf("%d %f %f %f\n",leg,COM[1]-mean_y,yr,y);
-		// correction_y = prop_term_y;
-		err_y = err_new_y;*/
-		// correction = 0;
-
-		//PROPER 
-		// printf("leg = %d COM[2] = %f zr = %f correction = %f\n",leg,COM[2], zr,(leg==1?1:-1)*correction_z);
-		// bot->leg[leg]->runIK(x,y - correction_y,z+feetSeparation - 1*(leg==1?1:-1)*correction_z,phi);
-		// bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeparation + 1*(leg==1?1:-1)*correction_z,phiR);
-		// printf("%f\n",COM[2]);
 		const double (&COM)[AXES] = bot->getCOM();
 		// printf("old_com = %f correction = %f ",COM[2],3.125*(leg==1?1:-1)*COM[2]);
 		int fcount = walkTime*fps;
@@ -1203,3 +1164,44 @@ int Walk::start2()
 	
 }
 */
+//Previous PID implementation follows:
+/*		prev_mean_y += COM[1]/(stepTime*(double)fps);
+		prev_mean_z += COM[2]/(stepTime*(double)fps);
+		// printf("%f\n",COM1[2]-COM[2]);
+		double err_new_z = COM[2] - mean_z;
+		deriv_term_z = deriv_const_z*(err_new_z - err_z)/timeInc;
+		prop_term_z = prop_const_z*err_new_z;
+		// printf("Velocity_Z = %f\n", (err_new_z - err_z)/timeInc);
+
+		double integ_new_z = integ_term_z + integ_const_z*(err_z + err_new_z)*timeInc/2;
+		// printf("integ = %f %f %f\n",integ_term_z,err_z,err_new_z);
+		
+		// printf(" P = %f I = %f D = %f\n",err_new_z,integ_new_z,(err_new_z - err_z)/timeInc);
+
+		if (!(integ_new_z > integ_max_z || integ_new_z < -integ_max_z))
+			integ_term_z = integ_new_z;
+		
+		correction_z = deriv_term_z + integ_term_z + prop_term_z;
+		err_z = err_new_z;
+		// printf("Mean Values %f %f \n", mean_y, mean_z);
+		double err_new_y = COM[1] - mean_y;
+		// printf("%f\n",COM[1] - COM1[1]);
+		// bot->printRotCOM();
+
+		deriv_term_y = deriv_const_y*(err_new_y - err_y)/timeInc;
+		prop_term_y = prop_const_y*err_new_y;
+		double integ_new_y = integ_term_y + integ_const_y*(err_y + err_new_y)*timeInc/2;
+		if (!(integ_new_y > integ_max_y || integ_new_y < -integ_max_y))
+			integ_term_y = integ_new_y;
+		
+		correction_y = deriv_term_y + integ_term_y + prop_term_y;
+		// printf("%d %f %f %f\n",leg,COM[1]-mean_y,yr,y);
+		// correction_y = prop_term_y;
+		err_y = err_new_y;*/
+		// correction = 0;
+
+		//PROPER 
+		// printf("leg = %d COM[2] = %f zr = %f correction = %f\n",leg,COM[2], zr,(leg==1?1:-1)*correction_z);
+		// bot->leg[leg]->runIK(x,y - correction_y,z+feetSeparation - 1*(leg==1?1:-1)*correction_z,phi);
+		// bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeparation + 1*(leg==1?1:-1)*correction_z,phiR);
+		// printf("%f\n",COM[2]);
