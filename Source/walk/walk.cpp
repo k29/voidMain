@@ -595,7 +595,7 @@ int Walk::dribble(int flag)
 			bot->reachSlow(height,y,z+feetSeparation,height,yr,zr+feetSeparation);
 			flag = 3;
 		}
-		// handMotion(handSwing);
+		// handMotion(handSwing); //Turn this on for rhythmic swinging of hands with walk.
 		// printf("X\t%3.1lf\tXR\t%3.1lf\tY\t%lf\tYR\t%lf\tZ\t%lf\tZR\t%lf\n",x,xr,y,yr,z,zr);
 		////printf("Y\t%lf\tYR\t%lf\tZ\t%lf\tZR\t%lf\tP\t%lf\tPR\t%lf\n",y,yr,z+s,zr+sr,phi,phiR);
 		///////printf("Z\t%lf\tZR\t%lf\n",z,zr);
@@ -668,46 +668,16 @@ int Walk::dribble(int flag)
 			cout<<"At peak of step"<<endl;
 			captureStep( leg, c1_z, c2_z, C, zMax, dsp1Time, dsp2Time, sspTime, z_a_free, z_b_free, z_c_free);
 		}
-		// bot->leg[leg]->runIK(x,y -6.3*(com_offsety[fcount]-13),z+feetSeparation,phi);
-		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation ,phiR);
 
-		// const double (&COM2)[AXES] = bot->getCOM();
 		//BEST SO FAR
 		// bot->leg[leg]->runIK(x,y,z+feetSeparation - 2.05*com_offset[fcount],phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation ,phiR);
 
-		// printf("%f %f\n", zr+feetSeparation, z+feetSeparation - 2.05*com_offset[fcount]);
-		// cout<<COM[1]<<endl;
-		//6.3
-		// printf("%f %f %f\n",z+feetSeparation,z+feetSeparation - 2.05*com_offset[fcount],zr+feetSeparation);
-		// printf("%f\n",COM[1]);
-		// printf("%f\n",z+feetSeparation);
 		rms += pow(COM[2],2);
 		cout<<COM[2]<<endl;
-		// bot->getCOM();
 		// rms += pow(COM[1]-20,2);
 		avg += COM[1]; 
-		// printf("oldzr = %f newzr = %f ",COM[2], zr+feetSeparation,  zr +feetSeparation + 3.125*(leg==1?1:-1)*COM[2] );
-		// rms += pow(COM[2],2);
-		// cout<<zr + feetSeparation+com_offset[fcount]<<endl;
-		// cout<<"COM = "<<COM[2]<<" "<<zr + feetSeparation << " " << zr + feetSeparation + com_offset[fcount]<<endl;
-		//NON IMU			
-		// bot->leg[leg]->runIK(x,y,z+feetSeparation ,phi);
-		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation,phiR);
-		//Y IMU
-		// bot->leg[leg]->runIK(x,y - correction_y,z+feetSeparation ,phi);
-		// bot->leg[1-leg]->runIK(xr,yr - correction_y,zr+feetSeparation,phiR);
-		//On spot
-		// bot->leg[leg]->runIK(x,0,z+feetSeparation ,phi);
-		// bot->leg[1-leg]->runIK(xr,0,zr+feetSeparation ,phiR);
-				
-		// printf("Z : Integral= %f\tDerivative = %f\tProportion = %f\tCorrection = %f\n",integ_term_z, deriv_term_z, prop_term_z, correction_z);
-		// printf("Y : Integral= %f\tDerivative = %f\tProportion = %f\tCorrection = %f\n\n",integ_term_y, deriv_term_y, prop_term_y, correction_y);
 
-			
-
-		// bot->leg[leg]->runIK(x,y+y_offset-(COM[1] - 12),z+feetSeparation ,phi);
-		// bot->leg[1-leg]->runIK(xr,yr +y_offset- (COM[1] - 12),zr+feetSeparation,phiR);
 		if (flag != 2)
 			bot->updateBot();
 		//printf("Sent Values\n");
