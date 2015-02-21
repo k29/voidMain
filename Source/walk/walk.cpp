@@ -612,7 +612,7 @@ int Walk::dribble(int flag)
 		}
 		// double ynew = X(0)*pow(walkTime,3) + X(1)*pow(walkTime,2) + X(2)*pow(walkTime,1) + X(3)*pow(walkTime,0); 
 		// double ynew = -41710*pow(walkTime,4) + 34010*pow(walkTime,3) -8262*pow(walkTime,2) + 698*pow(walkTime,1) -33.2;
-		handMotion(handSwing); //Turn this on for rhythmic swinging of hands with walk.
+		// handMotion(handSwing); //Turn this on for rhythmic swinging of hands with walk.
 		// printf("X\t%3.1lf\tXR\t%3.1lf\tY\t%lf\tYR\t%lf\tZ\t%lf\tZR\t%lf\n",x,xr,y,yr,z,zr);
 		////printf("Y\t%lf\tYR\t%lf\tZ\t%lf\tZR\t%lf\tP\t%lf\tPR\t%lf\n",y,yr,z+s,zr+sr,phi,phiR);
 		///////printf("Z\t%lf\tZR\t%lf\n",z,zr);
@@ -644,7 +644,7 @@ int Walk::dribble(int flag)
 			bot->leg[1-leg]->runIK(height,yr ,zr+feetSeparation,phiR);		
 		}
 
-		cout<<z<<" "<<zr<<endl;
+		// cout<<z<<" "<<zr<<endl;
 		// printf("%f %f\n",COM[2],(COM[2]-prev_com_z)/timeInc);
 		// prev_com_z = COM[2];
 				// cout<<"WalkTime"<<walkTime<<endl;

@@ -1,7 +1,7 @@
 #include "motor.h"
 
 
-Motor::Motor(MotorType motorType, int id, Communication* comm, int offsetValue, int dMode, int zeroPos)
+Motor::Motor(MotorType motorType, int id, Communication* comm, int offsetValue, int dMode, int zeroPos, int complianceSlope, int complianceMargin, int compliancePunch, int pidGainP, int pidGainI, int pidGainD )
 {
 	this->comm = comm;
 	this->motorType = motorType;
@@ -45,8 +45,7 @@ Motor::Motor(MotorType motorType, int id, Communication* comm, int offsetValue, 
 		cenPos = 2048;
 		angleRange = 360;
 	}
-	
-	
+
 	motorID = id;
 	baudrate = comm->getBaudrate();
 	driveMode = dMode;
@@ -63,7 +62,14 @@ Motor::Motor(MotorType motorType, int id, Communication* comm, int offsetValue, 
 	offset = offsetValue;
 	this->zeroPos = zeroPos;
 	//this->networkedMotor = networkedMotor;
+	setComplianceMargin(complianceMargin);
+	setComplianceSlope(complianceSlope);
+	setCompliancePunch(compliancePunch);
 	
+	setGainP(pidGainP);
+	setGainI(pidGainI);
+	setGainD(pidGainD);
+		
 	return;
 }
 
