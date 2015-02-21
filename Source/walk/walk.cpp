@@ -186,13 +186,15 @@ int Walk::handMotion(double handSwing)
 	if (leg==RIGHT)
 	{
 		arr_l[0] = 4096 - handSwing;
-		bot->left_hand->setGoalPositionSoft(arr_l);
+		// arr_r[0] = arr_l[0] + 50;
 	}
 	else
 	{
 		arr_r[0] = handSwing;
-		bot->right_hand->setGoalPositionSoft(arr_r);
+		// arr_l[0] = arr_r[0] - 50;
 	}
+	bot->left_hand->setGoalPositionSoft(arr_l);
+	bot->right_hand->setGoalPositionSoft(arr_r);
 
 }
 float Walk::accelerate()
@@ -285,8 +287,8 @@ int Walk::dribble(int flag)
 	supLegZin += hipLength/2;
 	///// desired Values 
 	
-	double D_dsp1Time = 0.05;	// + dz/(veloZfi);		//changed from 0.03
-	double D_dsp2Time = 0.05;	//+ dz/(veloZfi);		//""
+	double D_dsp1Time = 0.03;	// + dz/(veloZfi);		//changed from 0.03
+	double D_dsp2Time = 0.03;	//+ dz/(veloZfi);		//""
 	double sspZTime = sspTimeVar;
 	// ////printf("Tc\t\t%lf\n",Tc);
 	// ////printf("legZin\t\t%lf\n",legZin);
@@ -419,10 +421,23 @@ int Walk::dribble(int flag)
 	
 	// Y (cubic)
 	
-	double a = ((-veloYfi-veloYin)-2*(-sspYfi+sspYin)/sspTime)/pow(sspTime,2);
+	double a = ((-veloYfi_d-veloYin)-2*(-sspYfi+sspYin)/sspTime)/pow(sspTime,2);
 	double b = ((-sspYfi+sspYin)/sspTime+veloYin-a*pow(sspTime,2))/sspTime;
 	double c = -veloYin;
 	double d = -sspYin;
+
+	Matrix<double, 4, 4> A;
+	Matrix<double, 4, 1> B, X;
+
+	A << 0,0,0,1,
+		 pow(stepTime,3),pow(stepTime,2),pow(stepTime,1),1,
+		 pow(0.1*stepTime,3),pow(0.1*stepTime,2),pow(0.1*stepTime,1),1,
+		 pow(0.4*stepTime,3),pow(0.4*stepTime,2),pow(0.4*stepTime,1),1,
+ 		 
+	B << -legYin,-legYfi,-10,-20;
+	X = A.colPivHouseholderQr().solve(B);
+
+	// cout<<5*X(0)*pow(stepTime,4) + 4*X(1)*pow(stepTime,3) + 3*X(2)*pow(stepTime,2) + 2*X(3)*pow(stepTime,1) + X(4)<<" "<<-veloYfi_d<<endl; 
 	
 	// double height = 400;
 	//double lift   = 30;
@@ -512,9 +527,9 @@ int Walk::dribble(int flag)
 		}
 
 		if (walkTime<dsp1Time + sspZTime/2)
-			handSwing = scurve(2048,2298,walkTime,(sspZTime+dsp1Time + dsp2Time)/2);
+			handSwing = scurve(2048,2198,walkTime,(sspZTime+dsp1Time + dsp2Time)/2);
 		else
-			handSwing = scurve(2298,2048,walkTime-(dsp1Time+dsp2Time +sspZTime)/2,(sspZTime+dsp1Time + dsp2Time)/2);
+			handSwing = scurve(2198,2048,walkTime-(dsp1Time+dsp2Time +sspZTime)/2,(sspZTime+dsp1Time + dsp2Time)/2);
 		
 		if(walkTime < dsp1Time)
 		{
@@ -595,7 +610,9 @@ int Walk::dribble(int flag)
 			bot->reachSlow(height,y,z+feetSeparation,height,yr,zr+feetSeparation);
 			flag = 3;
 		}
-		// handMotion(handSwing); //Turn this on for rhythmic swinging of hands with walk.
+		// double ynew = X(0)*pow(walkTime,3) + X(1)*pow(walkTime,2) + X(2)*pow(walkTime,1) + X(3)*pow(walkTime,0); 
+		// double ynew = -41710*pow(walkTime,4) + 34010*pow(walkTime,3) -8262*pow(walkTime,2) + 698*pow(walkTime,1) -33.2;
+		handMotion(handSwing); //Turn this on for rhythmic swinging of hands with walk.
 		// printf("X\t%3.1lf\tXR\t%3.1lf\tY\t%lf\tYR\t%lf\tZ\t%lf\tZR\t%lf\n",x,xr,y,yr,z,zr);
 		////printf("Y\t%lf\tYR\t%lf\tZ\t%lf\tZR\t%lf\tP\t%lf\tPR\t%lf\n",y,yr,z+s,zr+sr,phi,phiR);
 		///////printf("Z\t%lf\tZR\t%lf\n",z,zr);
@@ -605,15 +622,21 @@ int Walk::dribble(int flag)
 		// bot->printCOM();
 
 		const double (&COM)[AXES] = bot->getCOM();
+		// cout<<walkTime<<"\t"<<y<<"\t"<<y - 6.85*(COM[1]-17.5)<<"\t"<<ynew<<"\t"<<endl;
+		// cout<<y<<"\t"<<y - 6.85*(COM[1]-17.5)<<"\t"<<ynew<<"\t"<<endl;
 		int fcount = walkTime*fps;
 		if (flag != 3)
 		{
 			bot->leg[leg]->runIK(x,y,z+feetSeparation ,phi);
 			bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation,phiR);
-			// // cout<<z<<" "<<z- 6.65*(leg==1?1:-1)*COM[2]<<endl; 
-			// // bot->leg[leg]->runIK(x,y,z+feetSeparation - 6.65*(leg==1?1:-1)*COM[2],phi);
+			bot->getCOM();
+			// cout<<z<<" "<<z- 6.65*(leg==1?1:-1)*COM[2]<<endl; 
+			// cout<<y<<" "<<y - 6.85*(COM[1]-17.5)<<" "<<yr<<endl;
+			// cout<<walkTime<<" "<<y - 6.85*(COM[1]-17.5)<<endl;
+			// bot->leg[leg]->runIK(x,y- 6.85*(COM[1]-17.5),z+feetSeparation ,phi);
 			// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation,phiR);		
 			// bot->getCOM();
+			// cout<<COM[1]<<endl;
 		}
 		else
 		{
@@ -621,7 +644,7 @@ int Walk::dribble(int flag)
 			bot->leg[1-leg]->runIK(height,yr ,zr+feetSeparation,phiR);		
 		}
 
-
+		cout<<z<<" "<<zr<<endl;
 		// printf("%f %f\n",COM[2],(COM[2]-prev_com_z)/timeInc);
 		// prev_com_z = COM[2];
 				// cout<<"WalkTime"<<walkTime<<endl;
@@ -635,15 +658,15 @@ int Walk::dribble(int flag)
 		// bot->leg[leg]->runIK(x,y,z+feetSeparation - 2.05*com_offset[fcount],phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation ,phiR);
 
-		rms += pow(COM[2],2);
+		// rms += pow(COM[2],2);
 		// cout<<state<<" "<<zr<<" "<<sspZSupfi<<" "<<sspZfi<<endl;
-		// rms += pow(COM[1]-20,2);
+		rms += pow(COM[1]-17.5,2);
 		avg += COM[1]; 
 
 		if (flag != 2)
 			bot->updateBot();
-		else
-			cout<<"Value setting step";
+		// else
+			// cout<<"Value setting step";
 		//printf("Sent Values\n");
 		//leg->getMotorLoad(FOOT_ROLL);
 		//revLeg->getMotorLoad(FOOT_ROLL);
@@ -656,7 +679,7 @@ int Walk::dribble(int flag)
 	avg /= (stepTime*fps);
 	// printf("Avg = %f\n",avg);
 	// printf("leg = %d rms = %f multiplier = %f\n",leg,rms,stepCount*0.05);
-	printf("rms = %f\n",rms);
+	// printf("rms = %f\n",rms);
 	// printf("%f\n",-sspYfi + sspYin );
 	supLegYin  = -legYfi;
 	legYin = -supLegYfi;
