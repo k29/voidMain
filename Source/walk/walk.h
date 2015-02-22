@@ -6,10 +6,10 @@
 #include <stdlib.h>
 #include <cmath>
 #include <fstream>
-#include <eigen3/Eigen/Dense>
+// #include <eigen3/Eigen/Dense>
 
 using namespace std;
-using namespace Eigen;
+// using namespace Eigen;
 enum {SSP,DSP};
 
 class Walk

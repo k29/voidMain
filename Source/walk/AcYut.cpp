@@ -16,11 +16,11 @@ void AcYut::initialize()
 	init_val[0] =	4096-2068;
 	init_val[1] =	4096-1100;
 	init_val[2] =	4096-2148;
-	init_val[3] =	2048;//4096-3570;
+	init_val[3] =	4096-3570;//2048;
 	init_val[4] =	2048;
 	init_val[5] =	1100;
 	init_val[6] =	2048;
-	init_val[7] =	1948;//3470;//1700;
+	init_val[7] =	3470;//1948;
 	init_val[8] =	legHeight;
 	init_val[9] =	0;
 	init_val[10] =	0;
@@ -104,6 +104,23 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	offsets[25] = -270;
 	offsets[26] = -256;
 
+
+/*	offsets[0] = 65;
+	offsets[1] = 20;
+	offsets[2] = -20;
+	offsets[3] = -60;
+	offsets[4] = 60;
+	offsets[5] = -105;
+	offsets[6] = 0;//280;
+
+	offsets[20] = 40;//40
+	offsets[21] = 0;
+	offsets[22] = -0 + 20;
+	offsets[23] = -70 - 150;
+	offsets[24] = 70;
+	offsets[25] = -270;
+	offsets[26] = -256;
+*/
 /*	offsets[0] = 65;
 	offsets[1] = 20;
 	offsets[2] = -20;

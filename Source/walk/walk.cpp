@@ -12,9 +12,9 @@ Walk::Walk(AcYut* bot)
 	supLegZin=7.694539;//25.155276;
 	veloZin=-143.8459;
 	veloZfi=143.8459;
-	zMax=65;
+	zMax=55;
 	dz = 0;
-	lift=50;
+	lift=40;
 	legRotin=0;
 	legRotfi=0;
 	supLegRotin=0;
@@ -40,7 +40,7 @@ Walk::Walk(AcYut* bot)
 	prev_mean_y = 0;
 	prev_imu_yaw = 0;
 	
-	height = 380;
+	height = 400;
 	// ofstream fis;
 	// fis.open("Source/comoffset.txt");
 	// fis.close();
@@ -426,7 +426,7 @@ int Walk::dribble(int flag)
 	double c = -veloYin;
 	double d = -sspYin;
 
-	Matrix<double, 4, 4> A;
+/*	Matrix<double, 4, 4> A;
 	Matrix<double, 4, 1> B, X;
 
 	A << 0,0,0,1,
@@ -435,7 +435,7 @@ int Walk::dribble(int flag)
 		 pow(0.4*stepTime,3),pow(0.4*stepTime,2),pow(0.4*stepTime,1),1,
  		 
 	B << -legYin,-legYfi,-10,-20;
-	X = A.colPivHouseholderQr().solve(B);
+	X = A.colPivHouseholderQr().solve(B);*/
 
 	// cout<<5*X(0)*pow(stepTime,4) + 4*X(1)*pow(stepTime,3) + 3*X(2)*pow(stepTime,2) + 2*X(3)*pow(stepTime,1) + X(4)<<" "<<-veloYfi_d<<endl; 
 	

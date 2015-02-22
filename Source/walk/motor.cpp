@@ -1,7 +1,7 @@
 #include "motor.h"
 
 
-Motor::Motor(MotorType motorType, int id, Communication* comm, int offsetValue, int dMode, int zeroPos, int complianceSlope, int complianceMargin, int compliancePunch, int pidGainP, int pidGainI, int pidGainD )
+Motor::Motor(MotorType motorType, int id, Communication* comm, int offsetValue, int dMode, int zeroPos, int complianceMargin, int complianceSlope, int compliancePunch, int pidGainP, int pidGainI, int pidGainD )
 {
 	this->comm = comm;
 	this->motorType = motorType;
@@ -61,15 +61,25 @@ Motor::Motor(MotorType motorType, int id, Communication* comm, int offsetValue, 
 	slave = false;
 	offset = offsetValue;
 	this->zeroPos = zeroPos;
+	if (motorType == EX106)
+	{
+		// setComplianceMargin(1);
+		// setComplianceSlope(32);
+		// setCompliancePunch(0);
+		setComplianceMargin(complianceMargin);
+		setComplianceSlope(complianceSlope);
+		setCompliancePunch(compliancePunch);
+	}
 	//this->networkedMotor = networkedMotor;
-	setComplianceMargin(complianceMargin);
-	setComplianceSlope(complianceSlope);
-	setCompliancePunch(compliancePunch);
-	
-	setGainP(pidGainP);
-	setGainI(pidGainI);
-	setGainD(pidGainD);
-		
+	// printf("Compliance set: %d\n",motorWrite(0x1a, 0x05, complianceData , motorID));
+	// printf("Compliance set: %d %d %d\n",setComplianceMargin(40), 40, id);
+	// setComplianceMargin(complianceMargin);
+	// setComplianceSlope(complianceSlope);
+	// setCompliancePunch(compliancePunch);
+	// setGainP(pidGainP);
+	// setGainI(pidGainI);
+	// setGainD(pidGainD);
+
 	return;
 }
 
@@ -509,7 +519,8 @@ int Motor::setComplianceMargin(int margin)
 {
 	if(motorType == EX106 || motorType == RX28 || motorType == RX64)
 	{
-		if(motorWrite(0x1a, 0x01, (byte*)&margin, motorID) && motorWrite(0x1b, 0x01, (byte*)&margin, motorID))
+		byte data[] = {margin, margin};
+		if(motorWrite(0x1a, 0x02, data , motorID) )
 			return EXIT_FAILURE;
 		else
 		{
@@ -525,7 +536,8 @@ int Motor::setComplianceSlope(int slope)
 {
 	if(motorType == EX106 || motorType == RX28 || motorType == RX64)
 	{
-		if(motorWrite(0x1c, 0x01, (byte*)&slope, motorID) && motorWrite(0x1d, 0x01, (byte*)&slope, motorID))
+		byte data[] = {slope, slope};
+		if(motorWrite(0x1c, 0x02, data, motorID))
 			return EXIT_FAILURE;
 		else
 		{

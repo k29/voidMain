@@ -9,9 +9,16 @@ Leg::Leg(int leg, Communication* comm, int ids[], int offsets[], int driveMode[]
 		if (i == 6)
 			m[i] = new Motor(MX64, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);
 		else if (i == 0 || i == 5)
-			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 2, 1, 1023);
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 1, 8, 0);
+			// m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);			
+		else if (i == 1 || i == 3)
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 30, 64, 250);
+		else if (i == 2 || i == 4)
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 10, 10, 0);
+		// else if (i == 5)
+			// m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 5, 16, 32);
 		else
-			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 64, 20, 1);
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i] , 1, 32 ,0);
 	}
 	for (int i = 0; i <LEG_SLAVE_COUNT; ++i)
 	{

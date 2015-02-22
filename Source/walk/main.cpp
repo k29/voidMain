@@ -204,7 +204,7 @@ int main()
 		if (i<180)
 			i+=20;
 		// cout<<i<<" "<<endl;
-		walk.pathdribble(i,0,0,0);
+		// walk.pathdribble(i,0,0,0);
 		walk.dribble();
 	}
 	return 0;
