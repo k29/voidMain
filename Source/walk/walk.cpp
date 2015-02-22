@@ -12,7 +12,7 @@ Walk::Walk(AcYut* bot)
 	supLegZin=7.694539;//25.155276;
 	veloZin=-143.8459;
 	veloZfi=143.8459;
-	zMax=55;
+	zMax=50;
 	dz = 0;
 	lift=40;
 	legRotin=0;
@@ -24,7 +24,7 @@ Walk::Walk(AcYut* bot)
 	// strafe=0;
 	// sspZAmp=zMax;
 	stepCount = 0;
-	feetSeparation = 35;
+	feetSeparation = 30;
 	integ_const_z =0.5;//0.05;//0.05;//2;
 	deriv_const_z =0.8/120;//1.2/120.0;//0.01;//0.005;
 	prop_const_z = 1;//0.6;//1;
@@ -287,8 +287,8 @@ int Walk::dribble(int flag)
 	supLegZin += hipLength/2;
 	///// desired Values 
 	
-	double D_dsp1Time = 0.03;	// + dz/(veloZfi);		//changed from 0.03
-	double D_dsp2Time = 0.03;	//+ dz/(veloZfi);		//""
+	double D_dsp1Time = 0.05;	// + dz/(veloZfi);		//changed from 0.03
+	double D_dsp2Time = 0.05;	//+ dz/(veloZfi);		//""
 	double sspZTime = sspTimeVar;
 	// ////printf("Tc\t\t%lf\n",Tc);
 	// ////printf("legZin\t\t%lf\n",legZin);
@@ -627,7 +627,7 @@ int Walk::dribble(int flag)
 		int fcount = walkTime*fps;
 		if (flag != 3)
 		{
-			bot->leg[leg]->runIK(x,y,z+feetSeparation ,phi);
+			bot->leg[leg]->runIK(x,y ,z+feetSeparation ,phi);
 			bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation,phiR);
 			bot->getCOM();
 			// cout<<z<<" "<<z- 6.65*(leg==1?1:-1)*COM[2]<<endl; 
