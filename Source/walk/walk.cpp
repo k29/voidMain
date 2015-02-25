@@ -12,19 +12,19 @@ Walk::Walk(AcYut* bot)
 	supLegZin=7.694539;//25.155276;
 	veloZin=-143.8459;
 	veloZfi=143.8459;
-	zMax=50;
+	zMax=35;
 	dz = 0;
 	lift=40;
 	legRotin=0;
 	legRotfi=0;
 	supLegRotin=0;
 	supLegRotfi=0;
-	sspTimeVar = 0.300999;
+	sspTimeVar = 0.340999;
 	correction_factor = 0;
 	// strafe=0;
 	// sspZAmp=zMax;
 	stepCount = 0;
-	feetSeparation = 30;
+	feetSeparation = 45;
 	integ_const_z =0.5;//0.05;//0.05;//2;
 	deriv_const_z =0.8/120;//1.2/120.0;//0.01;//0.005;
 	prop_const_z = 1;//0.6;//1;
@@ -256,7 +256,8 @@ float Walk::turnleft(float theta)
 	supLegRotfi=0;
 	dribble();	
 	theta=theta-legRotfi;
-	turnleft(theta);}
+	turnleft(theta);
+}
 /*
 int Walk::setStrafe(double l_strafe)
 {
@@ -269,6 +270,7 @@ int Walk::setStrafe(double l_strafe)
 }*/
 int Walk::dribble(int flag)
 {
+
 	stepCount++;
 	leg=(LEG)(1-(int)leg);	
 //	printf("%d\t",leg);
@@ -521,6 +523,10 @@ int Walk::dribble(int flag)
 
 	for(walkTime = 0.0/fps; walkTime<=stepTime; walkTime +=timeInc)
 	{
+		timespec timer;
+		clock_gettime(CLOCK_REALTIME, &timer);
+		double time1 = timer.tv_nsec;
+
 		if (flag == 1)
 		{
 			walkTime = stepTime/2;
@@ -620,16 +626,21 @@ int Walk::dribble(int flag)
 		// const double (&COM1)[AXES] = bot->getCOM();
 		// bot->printRotCOM();
 		// bot->printCOM();
-
-		const double (&COM)[AXES] = bot->getCOM();
-		// cout<<walkTime<<"\t"<<y<<"\t"<<y - 6.85*(COM[1]-17.5)<<"\t"<<ynew<<"\t"<<endl;
+		// int a = walkTime*fps;
+		// cout<<a<<endl;
+/*		if (a%5 == 0)
+		{
+			cout<<"Reading\n";
+			const double (&COM)[AXES] = bot->getCOM();
+		}	
+*/			// cout<<walkTime<<"\t"<<y<<"\t"<<y - 6.85*(COM[1]-17.5)<<"\t"<<ynew<<"\t"<<endl;
 		// cout<<y<<"\t"<<y - 6.85*(COM[1]-17.5)<<"\t"<<ynew<<"\t"<<endl;
 		int fcount = walkTime*fps;
 		if (flag != 3)
 		{
 			bot->leg[leg]->runIK(x,y ,z+feetSeparation ,phi);
 			bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation,phiR);
-			bot->getCOM();
+			// bot->getCOM();
 			// cout<<z<<" "<<z- 6.65*(leg==1?1:-1)*COM[2]<<endl; 
 			// cout<<y<<" "<<y - 6.85*(COM[1]-17.5)<<" "<<yr<<endl;
 			// cout<<walkTime<<" "<<y - 6.85*(COM[1]-17.5)<<endl;
@@ -660,18 +671,25 @@ int Walk::dribble(int flag)
 
 		// rms += pow(COM[2],2);
 		// cout<<state<<" "<<zr<<" "<<sspZSupfi<<" "<<sspZfi<<endl;
-		rms += pow(COM[1]-17.5,2);
-		avg += COM[1]; 
-
+		// rms += pow(COM[1]-17.5,2);
+		// avg += COM[1]; 
 		if (flag != 2)
 			bot->updateBot();
+		// cout<< timer.tv_nsec<<endl;
 		// else
 			// cout<<"Value setting step";
 		//printf("Sent Values\n");
 		//leg->getMotorLoad(FOOT_ROLL);
 		//revLeg->getMotorLoad(FOOT_ROLL);
-
-		usleep(sleep);
+		// cout<<"End Frame\n";
+		clock_gettime(CLOCK_REALTIME, &timer);
+		double time2 = timer.tv_nsec;
+		// cout<<"Time diff total: "<<(time2 - time1)*pow(10.0,-3)<<endl;
+		double sub_usleep = (sleep-(time2-time1)*pow(10.0,-3));
+		// cout<<"Sleep default: "<<sleep<<endl;
+		// cout<<"Removed "<<sub_usleep<<endl;
+		if (sub_usleep>0 && (time2 - time1) > 0)
+			usleep(sub_usleep);
 		//getchar();
 		
 	}

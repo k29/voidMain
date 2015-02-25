@@ -187,7 +187,7 @@ int main()
 */	
 	Walk walk(&bot);
 	// walk.turnright(90);
-	while(walk.velocity()*1.5<=100)
+	while(walk.velocity()*1.5<=170)
 	{
 		walk.accelerate();
 		walk.dribble();
@@ -201,10 +201,10 @@ int main()
 			// walk.setStrafe(-8);
 		// }
 		// walk.pathdribble(-1,20,0,0);//Strafing
-		if (i<180)
+		if (i<220)
 			i+=20;
 		// cout<<i<<" "<<endl;
-		// walk.pathdribble(i,0,0,0);
+		walk.pathdribble(i,0,0,0);
 		walk.dribble();
 	}
 	return 0;
