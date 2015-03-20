@@ -102,7 +102,7 @@ void* walk_thread(void*)
 	// printf("in walkthread\n"); //----> DONT REMOVE THIS OR WALKTHREAD WONT WORK
 	Communication comm;
 	testBot bot(&comm);
-	Walk walk(&bot);
+	Walk walk();
 
 	// usleep(500000);
 	// double pi=acos(-1);
