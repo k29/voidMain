@@ -12,7 +12,7 @@ Leg::Leg(int leg, Communication* comm, int ids[], int offsets[], int driveMode[]
 			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 12, 20, 500);
 			// m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);			
 		else if (i == 1 || i == 3)
-			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 20, 10, 400);
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 20, 10, 0);
 		else if (i == 2 || i == 4)
 			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 5, 25, 0);
 		// else if (i == 5)

@@ -19,7 +19,7 @@ Walk::Walk(AcYut* bot)
 	legRotfi=0;
 	supLegRotin=0;
 	supLegRotfi=0;
-	sspTimeVar = 0.340999;
+	sspTimeVar = 0.400999;
 	correction_factor = 0;
 	// strafe=0;
 	// sspZAmp=zMax;
