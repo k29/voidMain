@@ -1,5 +1,6 @@
 #include "walk.h"
 
+#include <string.h>
 
 
 // #define WHEELDIAmm 100.0 //mm
@@ -34,8 +35,32 @@ void Walk::move(double walkr,double walktheta)
 
 
 	printf("Move called with instructions %lf %lf\n",walkr,walktheta);
+
+	/*if(walktheta>=0&&walktheta<=180)
+		walktheta+=180;
+	else
+		walktheta=walktheta-180;
+
+
+	walkr=(walkr+2.5)/0.145;*/ // Already incorporated in ARDUINO'S CODE
+
+
+	FILE *file;
+
+    //char S1[MAX_STRING_LENGTH],S2[MAX_STRING_LENGTH];
+
+	char S1[80],S2[80];
+    
+    file = fopen("/dev/ttyACM0","w");  //Opening device file
+
+
+    sprintf(S1, "%d", (int)walkr);
+    sprintf(S2, "%d", (int)walktheta);
+    fprintf(file,"%s %s",S1,S2);
+
+    fclose(file);
 	
-	double deltaR;
+	/*double deltaR;
 	double deltaTheta;
 	double arclen;
 	//printf("[walkthread]   walk cmd received angle=%f",enAngle);
@@ -88,7 +113,7 @@ void Walk::move(double walkr,double walktheta)
 		// pthread_mutex_lock(&mutex_walkstr);
 		// walkstr.mm.r=walkr;
 		// walkstr.mm.updated=1;
-		// pthread_mutex_unlock(&mutex_walkstr);
+		// pthread_mutex_unlock(&mutex_walkstr);*/
 		return ;
 	
 }
