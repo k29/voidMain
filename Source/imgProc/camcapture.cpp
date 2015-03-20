@@ -76,6 +76,7 @@ CamError CamCapture::init()
     }
 
     nRet = is_SetHardwareGain(hCam, 100, 4, 0, 13);
+    nRet = is_SetGainBoost(hCam, IS_SET_GAINBOOST_ON);
     if (nRet != IS_SUCCESS) 
     {
             is_GetError (hCam, &err, &errMsg);
