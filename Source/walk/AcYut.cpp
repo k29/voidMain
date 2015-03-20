@@ -101,7 +101,7 @@ AcYut::AcYut(Communication* comm, Imu* imu)
 	offsets[22] = -0 + 20;
 	offsets[23] = -60 - 150;
 	offsets[24] = 60;
-	offsets[25] = -250;
+	offsets[25] = -270;
 	offsets[26] = -256;
 
 
@@ -375,14 +375,18 @@ int AcYut::printRotCOM()
 
 double* AcYut::getWorldFrameCoods(double coods[], double ans[])
 {
-	double roll = -deg2rad(imu->roll);
-	double pitch = -deg2rad(imu->pitch);
-	double floorcoods_x = 100.0;
+	double pitch = deg2rad(imu->roll);
+	double roll  = deg2rad(imu->pitch);
+	double floorcoods_x = 40.0;
 	double floorcoods_z = 0;
 	// cout<<"IMU pitch = "<<-(imu->pitch)<<endl;
-	ans[X] = cos(roll)*cos(pitch)*floorcoods_x + sin(roll)*coods[Y] - cos(roll)*sin(pitch)*coods[Z];
-	ans[Y] = -sin(roll)*cos(pitch)*floorcoods_x + cos(roll)*coods[Y] + sin(roll)*sin(pitch)*coods[Z];
-	ans[Z] = sin(pitch)*floorcoods_x + cos(pitch)*floorcoods_z;
+	// c1c2	c1s2s3-c3s1	s1s3+c1c3s2
+	// c2s1 	c1c3+s1s2s3	c3s1s2-c1s3
+	// -s2 	c2s3 		c2c3
+	// 1 is roll, 2 is pitch, 3 is yaw
+	ans[X] = cos(roll)*cos(pitch)*floorcoods_x - sin(roll)*coods[Y] + cos(roll)*sin(pitch)*coods[Z];
+	ans[Y] = sin(roll)*cos(pitch)*floorcoods_x + cos(roll)*coods[Y] + sin(roll)*sin(pitch)*coods[Z];
+	ans[Z] = -sin(pitch)*floorcoods_x + cos(pitch)*coods[Z];
 
 /*	ans[X] = cos(roll)*cos(pitch)*coods[X] + sin(roll)*coods[Y] - cos(roll)*sin(pitch)*coods[Z];
 	ans[Y] = -sin(roll)*cos(pitch)*coods[X] + cos(roll)*coods[Y] + sin(roll)*sin(pitch)*coods[Z];

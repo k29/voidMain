@@ -194,17 +194,19 @@ int main()
 	}
 	// walk.turnright(90);	
 	int i = 90;
+	int j = 0;
 	while(1)
 	{
+		j++;
 		// i++;
 		// if (!(i%5)){
 			// walk.setStrafe(-8);
 		// }
 		// walk.pathdribble(-1,20,0,0);//Strafing
-		if (i<220)
+		if (i<200)
 			i+=20;
 		// cout<<i<<" "<<endl;
-		walk.pathdribble(i,0,0,0);
+		walk.pathdribble(i,0,0,0*pow(-1,j%2));
 		walk.dribble();
 	}
 	return 0;

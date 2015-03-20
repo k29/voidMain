@@ -664,7 +664,8 @@ int Walk::dribble(int flag)
 			// cout<<"At peak of step"<<endl;
 			// captureStep( leg, c1_z, c2_z, C, zMax, dsp1Time, dsp2Time, sspTime, z_a_free, z_b_free, z_c_free);
 		}
-
+		// cout<<leg<<" ";
+		bot->getRotCOM();
 		//BEST SO FAR
 		// bot->leg[leg]->runIK(x,y,z+feetSeparation - 2.05*com_offset[fcount],phi);
 		// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation ,phiR);
