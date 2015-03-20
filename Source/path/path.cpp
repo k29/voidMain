@@ -933,7 +933,7 @@ PathReturns Path::path_return(PathStructure ps)
 
 void Path::updatePathPacket()
 {
-		pthread_mutex_lock(&mutex_pathpacket);
+		// pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
@@ -962,7 +962,7 @@ void Path::updatePathPacket()
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
 		}
 	
-		pthread_mutex_unlock(&mutex_pathpacket);
+		// pthread_mutex_unlock(&mutex_pathpacket);
 
 }
 

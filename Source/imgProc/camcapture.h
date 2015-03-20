@@ -43,6 +43,7 @@ private:
     unsigned char* lut_green;
     unsigned char* lut_white;
     unsigned char* lut_black;
+    unsigned char* lut_ball;
     unsigned char* lut_background;
     int width_var;
     int height_var;
@@ -124,6 +125,15 @@ public:
         else
             return false;
     }
+    inline bool isBall(int i, int j)
+    {
+        if(lut_ball[returnPixel3C(rgbimg, i, j, 2)
+            |(returnPixel3C(rgbimg, i, j, 1)<<8)
+            |(returnPixel3C(rgbimg, i, j, 0)<<16)])
+            return true;
+        else
+            return false;
+    }
     inline bool isBackground(int i, int j)
     {
         if(lut_background[returnPixel3C(rgbimg, i, j, 2)
@@ -186,6 +196,15 @@ public:
     inline bool isBlack_small(int i, int j)
     {
         if(lut_black[returnPixel3C(rgbimg_small, i, j, 2)
+            |(returnPixel3C(rgbimg_small, i, j, 1)<<8)
+            |(returnPixel3C(rgbimg_small, i, j, 0)<<16)])
+            return true;
+        else
+            return false;
+    }
+    inline bool isBall_small(int i, int j)
+    {
+        if(lut_ball[returnPixel3C(rgbimg_small, i, j, 2)
             |(returnPixel3C(rgbimg_small, i, j, 1)<<8)
             |(returnPixel3C(rgbimg_small, i, j, 0)<<16)])
             return true;

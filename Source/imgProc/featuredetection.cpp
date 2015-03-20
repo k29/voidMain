@@ -7,6 +7,8 @@ using namespace cvb;
 using namespace tbb;
 using namespace LOCALIZE_INTERNALS;
 
+// #define USE_SHAPE_BASED_FOR_BALL
+
 FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_small()), IMAGE_WIDTH(cam.width_small())
 {
     seg_red = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
@@ -18,6 +20,7 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
     seg_white = cvCreateImage(cvSize(IMAGE_WIDTH/4, IMAGE_HEIGHT/4), 8, 1);
     seg_black = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
     seg_green = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
+    seg_ball = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
     seg_background = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
     ballRatio=1.0;
     ballFound_var = false;
@@ -117,6 +120,7 @@ class SegmentImages {
     IplImage* my_seg_red;
     IplImage* my_seg_green;
     IplImage* my_seg_black;
+    IplImage* my_seg_ball;
     IplImage* my_seg_background;
     CamCapture* my_cam;
 public:
@@ -148,6 +152,10 @@ public:
                  returnPixel1C(my_seg_black, x, y) = 255;
                 else
                  returnPixel1C(my_seg_black, x, y) = 0;
+                if(my_cam->isBall_small(x, y))
+                 returnPixel1C(my_seg_ball, x, y) = 255;
+                else
+                 returnPixel1C(my_seg_ball, x, y) = 0;
                 if(my_cam->isBackground_small(x, y))
                  returnPixel1C(my_seg_background, x, y) = 255;
                 else
@@ -155,8 +163,8 @@ public:
             }
         }
     }
-    SegmentImages(IplImage* &seg_yellow, IplImage* &seg_blue, IplImage* &seg_red,IplImage* &seg_green, IplImage* &seg_black, IplImage* seg_background, CamCapture &cam) :
-        my_seg_yellow(seg_yellow), my_seg_blue(seg_blue), my_seg_red(seg_red), my_seg_green(seg_green), my_seg_black(seg_black), my_seg_background(seg_background), my_cam(&cam)
+    SegmentImages(IplImage* &seg_yellow, IplImage* &seg_blue, IplImage* &seg_red,IplImage* &seg_green, IplImage* &seg_black, IplImage* seg_ball, IplImage* seg_background, CamCapture &cam) :
+        my_seg_yellow(seg_yellow), my_seg_blue(seg_blue), my_seg_red(seg_red), my_seg_green(seg_green), my_seg_black(seg_black), my_seg_ball(seg_ball), my_seg_background(seg_background), my_cam(&cam)
     {}
 };
 
@@ -167,7 +175,7 @@ public:
 void FeatureDetection::getBlobs(CamCapture &cam)
 {
     parallel_for( blocked_range2d<size_t>(0, IMAGE_WIDTH, 16, 0, IMAGE_HEIGHT, 32),     
-                  SegmentImages(seg_yellow,seg_blue,seg_red,seg_green,seg_black,seg_background,cam) );
+                  SegmentImages(seg_yellow,seg_blue,seg_red,seg_green,seg_black,seg_ball,seg_background,cam) );
     // IplConvKernel *morphkernel = cvCreateStructuringElementEx(3,3,0,0,CV_SHAPE_RECT);
     // cvMorphologyEx(seg_yellow, seg_yellow, NULL, morphkernel, CV_MOP_OPEN, 1);
 
@@ -1060,6 +1068,7 @@ void FeatureDetection::getLandmarks(CamCapture &cam, HeadMotor &hm, MotionModel 
 
 void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
 {
+    #ifndef USE_SHAPE_BASED_FOR_BALL
     int area = 0;
     CvBlobs::const_iterator it2;
     
@@ -1086,6 +1095,48 @@ void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
         findReal(it2->second->centroid.x, it2->second->centroid.y, ball.r, ball.theta, hm);
         //ball.theta +=10;
     }
+
+    #else
+    IplImage *seg_green_not = cvCreateImage(cvSize(seg_green->width, seg_green->height), 8, 1);
+    cvNot(seg_green, seg_green_not);
+    cvSmooth( seg_green_not, seg_green_not, CV_GAUSSIAN, 7, 7 );
+        
+    CvMemStorage* storage = cvCreateMemStorage(0);
+    CvSeq* circles = cvHoughCircles(seg_green_not, storage, CV_HOUGH_GRADIENT, 1, 100, 200, 20,0,40);
+    ballFound_var = false;
+    int threshold = 0;          //the amount of white pixels in the detected circles when masked with seg_ball
+    for (int i = 0; i < circles->total; i++)
+    {
+        // round the floats to an int
+        float* p = (float*)cvGetSeqElem(circles, i);
+        int ballx = cvRound(p[0]);
+        int bally = cvRound(p[1]);
+        int radius = cvRound(p[2]);
+        cvCircle(cam.rgbimg, cvPoint(ballx*2, bally*2), 3, CV_RGB(0,255,0), -1, 8, 0 );
+        IplImage *mask = cvCreateImage(cvSize(seg_green->width, seg_green->height), 8, 1);
+        IplImage *check_ball = cvCreateImage(cvSize(seg_green->width, seg_green->height), 8, 1);
+        cvZero(mask);
+        cvZero(check_ball);
+        cvCircle(mask, cvPoint(ballx, bally), radius, cvScalar(255,255,255), -1);
+        cvNot(mask, mask);
+        cvSub(seg_ball, mask, check_ball);
+        int ball_count = cvCountNonZero(check_ball);
+        if(ball_count > threshold)
+        {
+            threshold = ball_count;
+            ballX_var = ballx*2;
+            ballY_var = bally*2;
+            ballFound_var = true;
+            cvShowImage("check_ball", check_ball);
+        }
+        cvReleaseImage(&mask);
+    }
+    if(ballFound_var)
+        findReal(ballX_var, ballY_var, ball.r, ball.theta, hm);
+    cvShowImage("seg_green_not", seg_green_not);
+    // cvReleaseImage(&seg_green_not);
+    #endif
+
     CvFont font;
     cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
     char A[100] = "  DISTANCE : ";
@@ -1103,38 +1154,6 @@ void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
     cvCircle(cam.rgbimg, cvPoint(ballX_var,ballY_var), 2, cvScalar(255,255,0), 2);
     cvPutText(cam.rgbimg,A,cvPoint(ballX_var,ballY_var),&font,cvScalar(255,255,255));
     cvPutText(cam.rgbimg,B,cvPoint(ballX_var,ballY_var + 10),&font,cvScalar(255,255,255));
-
-
-    /* Simple Begin */
-    // int bx = 0, by = 0, count = 0;
-    // for(int x = 0; x < IMAGE_WIDTH; x++)
-    // {
-    //  for(int y = 0; y < IMAGE_HEIGHT; y++)
-    //  {
-    //      if(cam.isRed_small(x,y))
-    //      {
-    //          count++;
-    //          bx += x;
-    //          by += y;
-    //      }
-    //  }
-    // }
-
-    // printf("Count = %d\n", count);
-    // if(count > 50)
-    // {
-    //  bx = bx/count;
-    //  by = by/count;
-    //  ballX_var = bx*2;
-    //  ballY_var = by*2;
-    //  ballFound_var = true;
-    //  findReal(bx, by, ball.r, ball.theta, hm);
-    // }
-    // else
-    // {
-    //  ballFound_var = false;
-    // }
-    /* Simple End */
 }
 
 void FeatureDetection::updatePacket(FeaturesPacket &fp)

@@ -7,7 +7,7 @@ void call_main() //Function made to replicate path calling from the cognition mo
 	srand(time(NULL));
 	
 
-	ps.n_obstacles = 2;
+	ps.n_obstacles = 3;
 	ps.absObstacles[0].x=35; 
 	ps.absObstacles[0].y=-75;
 	ps.absObstacles[1].x=15;
@@ -48,7 +48,7 @@ void call_main() //Function made to replicate path calling from the cognition mo
 	// 	}
 	p.path_return(ps);
 	p.updatePathPacket();//true if file writing to be on...else off.
-	cvWaitKey();
+	// cvWaitKey();
 }
 int main()
 {

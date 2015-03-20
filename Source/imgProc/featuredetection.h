@@ -60,6 +60,7 @@ private:
 	IplImage* seg_white;
 	IplImage* seg_black;
 	IplImage* seg_green;
+	IplImage* seg_ball;
 	IplImage* seg_background;
 	IplImage* seg_white_count;
 	void undistort(int xd, int yd, int* xu, int* yu);
