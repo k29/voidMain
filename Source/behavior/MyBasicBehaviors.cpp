@@ -310,7 +310,7 @@ void BasicBehaviorPathToWalk::execute()
     
         p.path.updatePathPacket();
         
-        // printf("Path updated\n");
+        printf("Path updated\n");
         #endif
         #endif
 
