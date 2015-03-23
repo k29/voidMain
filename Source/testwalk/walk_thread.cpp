@@ -100,9 +100,15 @@ void* walk_thread(void*)
 {
 	
 	// printf("in walkthread\n"); //----> DONT REMOVE THIS OR WALKTHREAD WONT WORK
+<<<<<<< HEAD
+	//Communication comm;
+	//testBot bot(&comm);
+	Walk walk();
+=======
 	// Communication comm;
 	// testBot bot(&comm);
 	Walk walk;
+>>>>>>> 522e6ccb3f83a2164bbf9e8ee817ddc547048aec
 
 	// usleep(500000);
 	// double pi=acos(-1);
