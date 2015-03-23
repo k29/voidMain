@@ -7,7 +7,7 @@ using namespace cvb;
 using namespace tbb;
 using namespace LOCALIZE_INTERNALS;
 
-#define USE_SHAPE_BASED_FOR_BALL
+// #define USE_SHAPE_BASED_FOR_BALL
 
 FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_small()), IMAGE_WIDTH(cam.width_small())
 {

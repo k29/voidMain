@@ -100,9 +100,15 @@ void* walk_thread(void*)
 {
 	
 	// printf("in walkthread\n"); //----> DONT REMOVE THIS OR WALKTHREAD WONT WORK
+<<<<<<< HEAD
 	//Communication comm;
 	//testBot bot(&comm);
 	Walk walk();
+=======
+	// Communication comm;
+	// testBot bot(&comm);
+	Walk walk;
+>>>>>>> 522e6ccb3f83a2164bbf9e8ee817ddc547048aec
 
 	// usleep(500000);
 	// double pi=acos(-1);
@@ -135,7 +141,6 @@ void* walk_thread(void*)
 							executed.assign(30,0);
 						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
-
 
 		for(int i=0;i<walkpacket.no_of_points;++i)
 		{
@@ -171,8 +176,6 @@ void* walk_thread(void*)
 					pthread_mutex_unlock(&mutex_motionModel);
 					executed[i]=1;
 				}
-			
-
 		}
 
 	}
