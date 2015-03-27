@@ -100,9 +100,9 @@ void* walk_thread(void*)
 {
 	
 	// printf("in walkthread\n"); //----> DONT REMOVE THIS OR WALKTHREAD WONT WORK
-	Communication comm;
-	testBot bot(&comm);
-	Walk walk();
+	// Communication comm;
+	// testBot bot();
+	Walk walk;
 
 	// usleep(500000);
 	// double pi=acos(-1);
@@ -150,7 +150,8 @@ void* walk_thread(void*)
 						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
 			// #ifndef ALL_PRINTING_OFF
-			
+			// printf("1\n");
+			// walk.move(10,30);
 			// #endif
 			if(!executed[i])
 				{
@@ -165,7 +166,9 @@ void* walk_thread(void*)
 					
 					// walk.move(a,b);
 					// walk.move(0.005,0.08);
-					walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
+					// printf("1\n");
+					walk.move(10,30);
+					// walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					pthread_mutex_lock(&mutex_motionModel);
 					motionModel.update(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					pthread_mutex_unlock(&mutex_motionModel);

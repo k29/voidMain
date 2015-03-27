@@ -20,7 +20,7 @@ int len_to_read;
 
 Walk::Walk()
 {
-	printf("efwo\n");
+	// printf("efwo\n");
 }
 
 /*Walk::Walk(testBot* bot)

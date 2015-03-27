@@ -377,7 +377,7 @@ double* AcYut::getWorldFrameCoods(double coods[], double ans[])
 {
 	double pitch = deg2rad(imu->roll);
 	double roll  = deg2rad(imu->pitch);
-	double floorcoods_x = 40.0;
+	double floorcoods_x = 200.0;
 	double floorcoods_z = 0;
 	// cout<<"IMU pitch = "<<-(imu->pitch)<<endl;
 	// c1c2	c1s2s3-c3s1	s1s3+c1c3s2

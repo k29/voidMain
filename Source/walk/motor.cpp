@@ -176,7 +176,7 @@ int Motor::checkGoalPosition(int goalPos)
 		min = ccwAngleLimit;
 	if(goalPos < min || goalPos > max)
 	{
-		printf("Out of bound values to Motor %d \n",motorID);
+		printf("Out of bound values to Motor %d : %d\n",motorID, goalPos);
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;

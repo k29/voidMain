@@ -8,15 +8,15 @@ Leg::Leg(int leg, Communication* comm, int ids[], int offsets[], int driveMode[]
 		printf("ID\t%2d\tOffset\t%5d\tDriveMode\t%1d\tZero\t%4d\t\n",ids[i],offsets[i],driveMode[i],zeros[i]);
 		if (i == 6)
 			m[i] = new Motor(MX64, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);
-		else if (i == 0 || i == 5)
-			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 12, 20, 500);
+		else if (i == 0)
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 10, 20, 0);
 			// m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);			
 		else if (i == 1 || i == 3)
-			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 20, 10, 0);
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 40, 40, 0);
 		else if (i == 2 || i == 4)
-			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 5, 25, 0);
-		// else if (i == 5)
-			// m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 5, 16, 32);
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 35, 55, 0);
+		else if (i == 5)
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 5, 8, 0);
 		else
 			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i] , 10, 32 ,0);
 	}
