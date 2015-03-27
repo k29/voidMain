@@ -29,7 +29,7 @@ Walk::Walk()
 	WHEELDIAmm=this->bot->wheelDiameter;
 	WHEELDIST=this->bot->wheelDistance;
 	omega=this->bot->angularVelocity;
-	// ftdi_bootup();	
+	// ftdi_bootup();
 	// start2();
 	printf("START completed\n\n\n");
 };*/
@@ -56,7 +56,7 @@ void Walk::move(double walkr,double walktheta)
 
 	char S1[80],S2[80];
     
-    file = fopen("/dev/ttyACM0","w");  //Opening device file
+    file = fopen("/dev/ttyACM3","w");  //Opening device file
 
 
     sprintf(S1, "%d", (int)walkr);

@@ -103,7 +103,6 @@ void* walk_thread(void*)
 	// Communication comm;
 	// testBot bot();
 	Walk walk;
-
 	// usleep(500000);
 	// double pi=acos(-1);
 	// walk.move(100.0,0);	
@@ -135,7 +134,6 @@ void* walk_thread(void*)
 							executed.assign(30,0);
 						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
-
 
 		for(int i=0;i<walkpacket.no_of_points;++i)
 		{
@@ -174,8 +172,6 @@ void* walk_thread(void*)
 					pthread_mutex_unlock(&mutex_motionModel);
 					executed[i]=1;
 				}
-			
-
 		}
 
 	}
