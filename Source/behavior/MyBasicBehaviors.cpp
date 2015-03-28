@@ -50,10 +50,10 @@ void BasicBehaviorUpdate::execute()
         double x = (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
         double y = (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
         // printf("%d %d\n", tempx, tempy);
-        if(sqrt(x*x + y*y) > 200)
-        {
-            p.loc.randomize();
-        }
+        // if(sqrt(x*x + y*y) > 200)
+        // {
+        //     p.loc.randomize();
+        // }
 
         /* Set flags for XABSL */
 

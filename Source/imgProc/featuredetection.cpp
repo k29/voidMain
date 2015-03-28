@@ -1,8 +1,10 @@
 #include "featuredetection.h"
+#include <algorithm>
 //NOTE: THIS FILE ASSUMES IN SEVERAL PLACES THAT rgbimg_small IS HALF THE SIZE OF rgbimg!!!!!!!!!!!!!!!!!!!
 //1. Someplace in ballFind, i have multiplied ballX_var by 2 assuming main image is double the size of image used here
 //2. in finding ballRatio, same assumption has been made
 //3. in line detection etc. 1/4th of image used here is used(in the end assuming it was half of main image, as 1/8 of main image is needed)
+using namespace std;
 using namespace cvb;
 using namespace tbb;
 using namespace LOCALIZE_INTERNALS;
@@ -218,7 +220,6 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     // IplImage* histogram_x = cvCreateImage(cvSize(1, IMAGE_HEIGHT),8,1);   //image colours (histogram_y)
     int max_x=0,max_y = 0;
     int threshold;  //threshold for peaks
-
     for(int x=0;x<IMAGE_WIDTH;++x)
     {
         cvSetImageROI(seg_yellow,cvRect(x,0,1,IMAGE_HEIGHT));
@@ -228,7 +229,6 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
             max_y=n;
         returnPixel1C(histogram_y,x,0) = n;
     }
-
     cvLabel(seg_yellow, labelImg, blobs_yellow);
     cvFilterByArea(blobs_yellow, 100, 1000000);
     #ifndef INTEL_BOARD_DISPLAY
@@ -282,6 +282,13 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
             }
         }
     }
+
+    cvLabel(seg_yellow, labelImg, blobs_yellow);
+    cvFilterByArea(blobs_yellow, 200, 1000000);
+    int goalBase;
+    for (CvBlobs::const_iterator it=blobs_yellow.begin(); it!=blobs_yellow.end(); ++it)
+        goalBase = it->second->maxy;
+
     cvSetImageROI(seg_yellow,cvRect(0,max-10,IMAGE_WIDTH,20));
     cvZero(seg_yellow);
     cvResetImageROI(seg_yellow);
@@ -313,7 +320,6 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
             //Check if on image edge
             if(isOnImageEdge((it->second->maxx + it->second->minx)/2, it->second->maxy)==true)
                 continue;
-
             if(it->second ->maxx >= gpx1 && it->second ->minx <= gpx1)  //MATCHING BLOBS TO GPX1 AND GPX2
                 gp = cvPoint(gpx1,it->second->maxy);
             if(it->second ->maxx >= gpx2 && it->second ->minx <= gpx2)
@@ -352,6 +358,20 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
             nGoals++;
             if(nGoals>=2) break;
         }
+    }
+    if(nGoals < 2)
+    {
+        CvPoint gp1, gp2;
+        tempnLand -= nGoals;
+        gp1 = cvPoint(gpx1,goalBase);
+        gp2 = cvPoint(gpx2,goalBase);
+        findReal(gp1.x,gp1.y, templ[tempnLand].distance, templ[tempnLand].angle, hm);
+        findReal(gp2.x,gp2.y, templ[tempnLand+1].distance, templ[tempnLand+1].angle, hm);
+        CvScalar color = CV_RGB(255,0,0);
+        #ifdef PLOT_LANDMARKS
+            cvCircle(cam.rgbimg, cvPoint(gp1.x*2,gp1.y*2), 2, color, 2);
+            cvCircle(cam.rgbimg, cvPoint(gp2.x*2,gp2.y*2), 2, color, 2);
+        #endif
     }
     nGoals = 0;
     ///////////////////////////////////COMMENTED SO THAT NO CHANGE TO SEG_BLUE////////////////////////////////////////////

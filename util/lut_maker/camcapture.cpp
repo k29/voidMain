@@ -1,10 +1,5 @@
-#include <opencv2/opencv.hpp>
 #include "camcapture.h"
-#include "imgproc.h"
-#include <cstring>
-#include <cstdio>
-#include <ueye.h>
-using namespace std;
+using namespace std; ////
     HIDS hCam;
 //pass true as parameter to load luts, false to skip loading luts
 CamCapture::CamCapture(bool param, int percent, int percent2)
@@ -51,7 +46,7 @@ CamError CamCapture::init()
     if(doLUT == true)
     {
         printf("Loading lookup tables...");
-        if(loadLUT(REDC)==false||loadLUT(BLUEC)==false||loadLUT(YELLOWC)==false||loadLUT(GREENC)==false||loadLUT(WHITEC)==false||loadLUT(BLACKC)==false)
+        if(loadLUT(REDC)==false||loadLUT(BLUEC)==false||loadLUT(YELLOWC)==false||loadLUT(GREENC)==false||loadLUT(WHITEC)==false||loadLUT(BLACKC)==false||loadLUT(BALLC)==false||loadLUT(BACKGROUNDC)==false)
         {
             printf("Unable to open LUT\n");
             return CAM_FAILURE;
@@ -62,8 +57,9 @@ CamError CamCapture::init()
 	
     char* errMsg = (char*)malloc(sizeof(char)*200);
     int err = 0;
-
+    
     int nRet = is_InitCamera (&hCam, NULL);
+    
     if (nRet != IS_SUCCESS)
     {
         is_GetError (hCam, &err, &errMsg);
@@ -80,6 +76,7 @@ CamError CamCapture::init()
     }
 
     nRet = is_SetHardwareGain(hCam, 100, 4, 0, 13);
+    nRet = is_SetGainBoost(hCam, IS_SET_GAINBOOST_ON);
     if (nRet != IS_SUCCESS) 
     {
             is_GetError (hCam, &err, &errMsg);
@@ -103,8 +100,6 @@ CamError CamCapture::init()
         return CAM_FAILURE;
     }
 
-    // nRet = is_SetWhiteBalance (hCam, IS_SET_WB_ILLUMINANT_A);
-
     double newFPS;
     nRet = is_SetFrameRate(hCam, 60.0, &newFPS);
     printf("FPS is set to %lf\n", newFPS);
@@ -112,8 +107,10 @@ CamError CamCapture::init()
     {
         is_GetError (hCam, &err, &errMsg);
         printf("Setting framerate Unsuccessful %d: %s\n",err,errMsg);
+
         return CAM_FAILURE;
     }
+    free(errMsg);
 
     originalImg = cvCreateImage(cvSize(752,480),8,3);
     rgbimg_full = cvCreateImage(cvSize(640, 480), 8, 3);
@@ -132,23 +129,45 @@ CamError CamCapture::init()
 
 CamError CamCapture::getImage()
 {
-	if(isInit==false)
-		return CAM_FAILURE;
+	// if(isInit==false)
+ //        {
+ //        printf("CAMERA NOT INIT.\n");
+ //        sleep
+	// 	return CAM_FAILURE;
+ //        }
+
+        while(isInit==false)
+                {
+                    printf("Waiting for camera to init\n");
+                    usleep(500000);
+                }
     // Start capturing images
-  
+    
 
     char* errMsg = (char*)malloc(sizeof(char)*200);
     int err = 0;
+    // printf("stage1 getImage\n");
+    int nRet = is_FreezeVideo (hCam,IS_DONT_WAIT);
+    // printf("stage2 getImage\n");
+    // if(nRet != IS_SUCCESS)
+    // {
+    //     printf("nRet is %d\n",nRet);
+    //     is_GetError (hCam, &err, &errMsg);
+    //     printf("Could not grab image %d: %s\n",err,errMsg);
+    //     printf("lol\n");
+
+    //     return CAM_FAILURE;
+    // }
+    
+    // if(nRet != IS_SUCCESS)
+    //     {
+    //         this->~CamCapture();
+    //         printf("Camera instance destroyed");
+    //         return CAM_REINITIALIZE;
+    //     }
 
 
-    int nRet = is_FreezeVideo (hCam, IS_WAIT) ;
-    if(nRet != IS_SUCCESS)
-    {
-        is_GetError (hCam, &err, &errMsg);
-        printf("Could not grab image %d: %s\n",err,errMsg);
-        return CAM_FAILURE;
-    }
-        
+
     //fill in the OpenCV imaga data 
     memcpy(originalImg->imageData, imgPointer, 752*480 * 3);
     //originalImg->imageData = imgPointer;
@@ -158,7 +177,6 @@ CamError CamCapture::getImage()
         
     cvCopy(originalImg, rgbimg_full, NULL);
     cvResetImageROI(originalImg);
-
 
 
     if(small_percent==100)
@@ -175,6 +193,7 @@ CamError CamCapture::getImage()
         else
             cvResize(rgbimg_full, rgbimg_small, CV_INTER_NN);
     }
+    free(errMsg);
 
 #ifdef CAMCAPTURE_DEBUG
     if(doLUT==true)
@@ -191,39 +210,48 @@ bool CamCapture::loadLUT(int color)
     //Loads lut in variable lut
     FILE *fp;
     uchar** lut_address;
-    char file[20];
+    char file[100];
     switch(color)
     {
         case REDC: 
         lut_address = &lut_red;
-        strcpy(file, "red.lut");
+        strcpy(file, "Source/lut/red.lut");
         break;
 
         case BLUEC:
         lut_address = &lut_blue;
-        strcpy(file, "blue.lut");
+        strcpy(file, "Source/lut/blue.lut");
         break;
 
         case YELLOWC:
         lut_address = &lut_yellow;
-        strcpy(file, "yellow.lut");
+        strcpy(file, "Source/lut/yellow.lut");
         break;
 
         case GREENC:
         lut_address = &lut_green;
-        strcpy(file, "green.lut");
+        strcpy(file, "Source/lut/green.lut");
         break;
 
         case WHITEC:
         lut_address = &lut_white;
-        strcpy(file, "white.lut");
+        strcpy(file, "Source/lut/white.lut");
         break;
 
         case BLACKC:
         lut_address = &lut_black;
-        strcpy(file, "black.lut");
-        break;        
+        strcpy(file, "Source/lut/black.lut");
+        break;
 
+        case BALLC:
+        lut_address = &lut_ball;
+        strcpy(file, "Source/lut/ball.lut");
+        break;
+
+        case BACKGROUNDC:      
+        lut_address = &lut_background;
+        strcpy(file, "Source/lut/background.lut");
+        break;
     }
     fp = fopen(file,"rb");
     if(!fp)
