@@ -19,7 +19,9 @@ int packet_length;
 int len_to_read;
 
 Walk::Walk()
-{}
+{
+	// printf("efwo\n");
+}
 
 /*Walk::Walk(testBot* bot)
 {

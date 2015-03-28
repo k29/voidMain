@@ -5,7 +5,6 @@
 #include "commondefswalk.h"
 #include <stdio.h>
 #include <math.h>
-
 class Leg
 {
 

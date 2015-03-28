@@ -1,8 +1,8 @@
 #include "communication.h"
 #include <stdio.h>
 
-const char Communication::ftdiID1[] = "AD025KM9";//"A4007rXO";//"A800d2dg";//"AD025JOE";//"A800d2dg";//"AD025JOH";"A900fDp;//;//"A900fDpz";
-const char Communication::ftdiID2[] = "A8006BKK";//"A4007rXO";
+const char Communication::ftdiID1[] = "A8006BKK";//"A800dgTk";// "A8006BKK";//"A4007rXO";//"A800d2dg";//"AD025JOE";//"A800d2dg";//"AD025JOH";"A900fDp;//;//"A900fDpz";
+const char Communication::ftdiID2[] = "AD025KM9";//"A4007rXO";
 
 int Communication::checksum(byte packet[])
 {
@@ -27,7 +27,6 @@ int Communication::motorSend(int instruction, int dataLength, byte data[], int i
 	packet[5+i]=data[i];
 	
 	packet[5+dataLength] = checksum(packet);
-	
 	if((ftdi_write_data(&bodyFTDI1, packet, packet[3]+4)>0)&&(ftdi_write_data(&bodyFTDI1, packet, packet[3]+4)>0))
 		return EXIT_SUCCESS;
 	else 

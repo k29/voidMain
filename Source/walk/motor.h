@@ -75,7 +75,7 @@ private:
 	int checkPositionHard(int pos);
 	
 public:
-	Motor(MotorType motorType, int id, Communication* comm,int offsetValue = 0, int dMode = 0, int zeroPos = 2048);
+	Motor(MotorType motorType, int id, Communication* comm,int offsetValue = 0, int dMode = 0, int zeroPos = 2048, int complianceSlope = 32, int complianceMargin = 1, int compliancePunch = 1, int pidGainP = 32, int pidGainI = 0, int pidGainD = 0);
 	/* Accepts ID as a parameter and sets the ID in the motor structure as well as generates a packet for setting the ID on the motor if the networked flag is not set. packet generated is at braodcast ID. If more than one motor is connected all motors will be set to the same ID*/
 	int setID(int id);
 	/* Sets the ID of motor to that saved in the structure. Packet is sent at broascast ID and hence if more than one motor id connected all motor will be set to same ID */

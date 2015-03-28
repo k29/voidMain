@@ -8,8 +8,17 @@ Leg::Leg(int leg, Communication* comm, int ids[], int offsets[], int driveMode[]
 		printf("ID\t%2d\tOffset\t%5d\tDriveMode\t%1d\tZero\t%4d\t\n",ids[i],offsets[i],driveMode[i],zeros[i]);
 		if (i == 6)
 			m[i] = new Motor(MX64, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);
+		else if (i == 0)
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 10, 20, 0);
+			// m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);			
+		else if (i == 1 || i == 3)
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 40, 40, 0);
+		else if (i == 2 || i == 4)
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 35, 55, 0);
+		else if (i == 5)
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 5, 8, 0);
 		else
-			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i] , 10, 32 ,0);
 	}
 	for (int i = 0; i <LEG_SLAVE_COUNT; ++i)
 	{
@@ -219,12 +228,18 @@ const double (&(Leg::getFeetCoods()))[FEET_CORNERS][AXES]
 const double (&(Leg::runFK(Motor* mot[])))[LEG_MOTOR_COUNT][AXES]
 {
 	double theta[LEG_MOTOR_COUNT];
-	
+	// timespec timer;
+	// clock_gettime(CLOCK_REALTIME, &timer);
+	// double time1 = timer.tv_nsec;
 	for(int i=0;i<LEG_MOTOR_COUNT;i++)
 	{
+		// std::cout<<mot[i]->getGoalPosition()<<std::endl;
 		theta[i] = deg2rad(((double)(mot[i]->getGoalPositionSoft() - mot[i]->getZeroPos())/(double)mot[i]->getMaxPos() * 360));
 	}
-	
+	// clock_gettime(CLOCK_REALTIME, &timer);
+	// double time2 = timer.tv_nsec;
+	// std::cout<<"Time diff read: "<<time2 - time1<<std::endl;
+
 	if(leg == LEFT)
 	theta[HIP_YAW] *=-1; 
 	

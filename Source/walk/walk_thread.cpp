@@ -118,7 +118,7 @@ void imagepaint(foot step[] , int count, int footlr[])
 	double yl = 200 - foot_separation/20 , xl = 200 , thetal = 0;
 	double yr = 200 + foot_separation/20 , xr = 200, thetar = 0;
 	IplImage* footimage=cvCreateImage(cvSize(752,480),8,3);
-	
+	cvSet(footimage, CV_RGB(255,255,255));
 	cvLine(footimage,cvPoint(xl,(yl+yr)/2),cvPoint(xl + 100 , (yl+yr)/2),cvScalar(255,0,0)); 
 	cvCircle(footimage, cvPoint(300,200+40),40, cvScalar(255,0,0));
 	
@@ -149,7 +149,9 @@ void imagepaint(foot step[] , int count, int footlr[])
 				yl += ((step[i].delta_y )*sin(deg2rad(thetal)) + (step[i].delta_x)*cos(deg2rad(thetal)))/10;
 			}
 			thetal += step[i].delta_theta;
-			cvLine(footimage,cvPoint(xl,yl),cvPoint(xl + 0.1*cos(deg2rad(thetal)) , yl + 0.1*sin(deg2rad(thetal)) ),cvScalar(255,0,0)); 
+			// cvLine(footimage,cvPoint(xl+7,yl),cvPoint(xl +7+ 0.1*cos(deg2rad(thetal)) , yl + 0.1*sin(deg2rad(thetal)) ),cvScalar(0,0,0)); 
+			if ((i+1)%7 == 0)
+				cvCircle(footimage, cvPoint(xl+11,yl-7), 10, cvScalar(0,255,0));
 		}
 		else
 		{
@@ -164,7 +166,10 @@ void imagepaint(foot step[] , int count, int footlr[])
 				yr += ((step[i].delta_y)*sin(deg2rad(thetar)) + step[i].delta_x*cos(deg2rad(thetar)))/10;
 			}
 			thetar += -step[i].delta_theta;
-			cvLine(footimage,cvPoint(xr,yr),cvPoint(xr + 0.1*cos(deg2rad(thetar)) , yr + 0.1*sin(deg2rad(thetar)) ),cvScalar(255,255,0)); 
+			// cvLine(footimage,cvPoint(xr,yr),cvPoint(xr + 0.1*cos(deg2rad(thetar)) , yr + 0.1*sin(deg2rad(thetar)) ),cvScalar(0,0,0)); 
+			if ((i%7) == 0)
+				cvCircle(footimage, cvPoint(xr-6,yr+7), 10, cvScalar(0,255,0));
+
 		}
 
 	// cvLine(image,cvPoint(n1.x+200,n1.y+200),cvPoint(n2.x+200,n2.y+200),cvScalar(255,255,0)); //Ellipse needed
@@ -173,7 +178,9 @@ void imagepaint(foot step[] , int count, int footlr[])
 		// cvZero(footimage);
 		cvWaitKey();
 	}
+	cvSaveImage("fsp.jpg" ,footimage);
 	cvZero(footimage);
+
 	cvWaitKey();
 }
 
@@ -421,7 +428,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	//FSPMOD CODE*/
 	// printf("COUNT = %d",count);
 	stepcount = count ;
-	// imagepaint(step , count, footlr);
+	imagepaint(step , count, footlr);
 	return 0;
 }
 
