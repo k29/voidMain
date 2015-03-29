@@ -679,8 +679,7 @@ PathReturns Path::path_return(PathStructure ps)
 		b=tree.returnPathPoint(b);
 		cout<<b<<"\n";
 	}
-	cout<<"final a is "<<a<<endl;
-
+	
 
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -711,14 +710,16 @@ PathReturns Path::path_return(PathStructure ps)
 	p2.y=0;
 	i1=start;
 	i2=tree[a];
-	size_t i2a_index, i2b_index;
+	size_t i2a_index;
 
 	if(i2.y > 0)
 	{
+		start.obstacle_id = NO_OF_OBSTACLES + 3;
 		calculate_points(i2, obstacle[NO_OF_OBSTACLES + 3], p1, p2);
 	}
 	else
 	{
+		start.obstacle_id = NO_OF_OBSTACLES + 2;		
 		calculate_points(i2, obstacle[NO_OF_OBSTACLES + 2], p1, p2);
 	}
 
@@ -772,32 +773,49 @@ PathReturns Path::path_return(PathStructure ps)
  	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	#endif
 
- 	cout<<"the new return path points: \n";
- 	b=tree.returnPathPoint(1);
+ // 	cout<<"the new return path points: \n";
+ // 	b=tree.returnPathPoint(1);
+	// cout<<"1\n";
+	// cout<<b<<"\n";
+ // 	while(b!=0)
+	// {
+	// 	cvLine(image,cvPoint(tree[b].x+250,tree[b].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
+	// 	a=b;
+	// 	b=tree.returnPathPoint(b);
+	// 	if(b==0)
+	// 	{
+	// 		cout<<i2a_index<<"\n";
+	// 		cvLine(image,cvPoint(tree[0].x+250,tree[0].y+250),cvPoint(tree[i2a_index].x+250,tree[i2a_index].y+250),cvScalar(0,0,255));
+	// 		cvLine(image,cvPoint(tree[a].x+250,tree[a].y+250),cvPoint(tree[i2a_index].x+250,tree[i2a_index].y+250),cvScalar(0,0,255));
+	// 	}
+	// 	cout<<b<<"\n";
+	// }
+
+
+	////////cout<<"\nCalling Dijkstras\n";
+	tree.dijkstra();
+	cout<<"post 2nd dijkstra implementation\n";
+	a,b;
+	a=1;
+	////////cout<<"Before return path point 1";
+	
+	b=tree.returnPathPoint(1);
 	cout<<"1\n";
 	cout<<b<<"\n";
- 	while(b!=0)
+	while(b!=0)
 	{
 		cvLine(image,cvPoint(tree[b].x+250,tree[b].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
 		a=b;
 		b=tree.returnPathPoint(b);
-		if(b==0)
-		{
-			cout<<i2a_index<<"\n";
-			cvLine(image,cvPoint(tree[0].x+250,tree[0].y+250),cvPoint(tree[i2a_index].x+250,tree[i2a_index].y+250),cvScalar(0,0,255));
-			cvLine(image,cvPoint(tree[a].x+250,tree[a].y+250),cvPoint(tree[i2a_index].x+250,tree[i2a_index].y+250),cvScalar(0,0,255));
-		}
 		cout<<b<<"\n";
 	}
+	cvLine(image,cvPoint(tree[0].x+250,tree[0].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
 
 	cvWaitKey(0);
 
-
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------------------
-
-
 
 
 	path_completed_flag=true;
@@ -834,25 +852,23 @@ PathReturns Path::path_return(PathStructure ps)
 		////////cout<<"\nnext.r "<<next.r;
 		////////cout<<"\nnext.theta "<<next.theta;
 	}
+
+
 	
 //copying it to an array
 	std::size_t c,d;
 	d=1;
 	curve[0]=1;
-	//cout<<curve[0]<<"\t\t";
 	for(int i=0;i<tree.size();i++)
 	{
 		curve[i+1]=tree.returnPathPoint(d);
 		d=curve[i+1];
-		//cout<<curve[i+1]<<"\t\t";
 		if(d==0)
 		{
 			len_curve=i+2;
 			break;
 		}
 	}
-	////cout<<"\nlen_curve: "<<len_curve<<"\n";
-	//cout<<endl;
 	std::size_t tmp=0;
 	len_curvenext=0;
 	for(int i=0,j=len_curve-1;i<len_curve/2,j>=len_curve/2;i++,j--)
@@ -861,64 +877,50 @@ PathReturns Path::path_return(PathStructure ps)
 			curve[i]=curve[j];
 			curve[j]=tmp;
 	}
+	//curve contains the array in startin from 0 to 1
 
 	for(int i=0,j=0;i<len_curve-1;i++)
 	{
-		//cout<<"\n.............................\nanalysing "<<curve[i]<<" "<<curve[i+1]<<endl<<"...\n";
 		if(!tree.is_onCircle(curve[i],curve[i+1]))
 		{
-			//cout<<"straight line\n";
 			curvenext[j].r=sqrt(pow((tree[curve[i+1]].x-tree[curve[i]].x),2)+pow((tree[curve[i+1]].y-tree[curve[i]].y),2));
 			curvenext[j].theta=rad2deg((atan2((tree[curve[i+1]].y-tree[curve[i]].y),(tree[curve[i+1]].x-tree[curve[i]].x))));
-			//cout<<"curvenext["<<j<<"].r "<<curvenext[j].r<<endl;
-			//cout<<"curvenext["<<j<<"].theta "<<curvenext[j].theta<<endl;
 			j++;
-
-			////cout<<"\nlen_curvenext "<<len_curvenext++;
 		}
-
 		else
 		{
-			//cout<<"on curve \n";
 			sticks_r=STEPLENGTH;
-			//cout<<"\nsticks_r "<<sticks_r<<endl;
-			sticks_theta=2*asin(STEPLENGTH/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));
-			//cout<<"\nsticks_theta "<<sticks_theta<<endl;
+			if(i==0)
+			{
+				sticks_theta = 2*asin((double)STEPLENGTH/(2*(double)INITIAL_ORIENTATION_RADIUS));
+			}
+			else
+			{
+				sticks_theta=2*asin(STEPLENGTH/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));
+			}
 			b=sqrt(pow((tree[curve[i+1]].x-tree[curve[i]].x),2)+pow((tree[curve[i+1]].y-tree[curve[i]].y),2));
-			no_of_sticks=(int)2/sticks_theta*asin(b/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));
-			//cout<<"\nno_of_sticks "<<no_of_sticks<<endl;
+			if(i==0)
+			{
+				no_of_sticks=2/sticks_theta*asin(b/(2*INITIAL_ORIENTATION_RADIUS));
+			}
+			else
+				no_of_sticks=2/sticks_theta*asin(b/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));			
 			while(no_of_sticks--)
 			{
 				curvenext[j].r=sticks_r;
-				//cout<<"curvenext["<<j<<"].r "<<curvenext[j].r<<endl;
 				if(((atan2((tree[curve[i+1]].y-tree[curve[i]].y),(tree[curve[i+1]].x-tree[curve[i]].x))))>0)
-				{
 					curvenext[j].theta=rad2deg(sticks_theta);
-					//cout<<"\ncurvenext[j].theta "<<curvenext[j].theta<<endl;;
-				}
 				else
-				{
 					curvenext[j].theta=rad2deg(-sticks_theta);
-					//cout<<"\ncurvenext[j].theta "<<curvenext[j].theta<<endl;;
-				}
-				//cout<<"curvenext["<<j<<"].theta "<<curvenext[j].theta<<endl;
 				j++;
 				len_curvenext++;
 			}
+
+
 		}
 	 }
-	//cout<<"\nlen_curvenext "<<len_curvenext;
-	//cout<<"\ncurvenext.r\n";
-	for(int i=0;i<len_curvenext;i++)
-	{
-		//cout<<curvenext[i].r<<"\t";
-	}
-	//cout<<"\ncurvenext.theta\n";
-	for(int i=0;i<len_curvenext;i++)
-	{
-		//cout<<curvenext[i].theta<<"\t";
-	}
-	////cout<<"\ncurvearray normally..\n";
+
+
 
 
 #ifdef NEWENCIRCLING
