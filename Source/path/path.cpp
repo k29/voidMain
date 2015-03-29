@@ -2,7 +2,7 @@
 #include "path.hpp"
 #define car2pol(x,y) sqrt((x)*(x)+(y)*(y))
 #define dist(x1,y1,x2,y2) sqrt(pow(((x1)-(x2)),2)+pow(((y1)-(y2)),2))
-// #define FRAMEPAINTING
+#define FRAMEPAINTING
 //#define OLDENCIRCLING
 //#define NEWENCIRCLING
 //#define NEWNEWENCIRCLING
@@ -450,7 +450,7 @@ PathReturns Path::path_return(PathStructure ps)
     					// cvMoveWindow("Field",950,400);
 						cvShowImage("Field", image);
 						cvZero(image);
-					 	cvWaitKey(5);
+					 	cvWaitKey(0);
 					//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 					#endif
 					if(tree.is_onCircle(n1_index, n2_index)==false)
@@ -670,21 +670,144 @@ PathReturns Path::path_return(PathStructure ps)
 	////////cout<<"Before return path point 1";
 	
 	b=tree.returnPathPoint(1);
+	cout<<"1\n";
+	cout<<b<<"\n";
 	while(b!=0)
 	{
 		cvLine(image,cvPoint(tree[b].x+250,tree[b].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
 		a=b;
 		b=tree.returnPathPoint(b);
+		cout<<b<<"\n";
 	}
+	cout<<"final a is "<<a<<endl;
+
+
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+	
+
+
+	//introducing initial obsacles between 0 and a
+	obstacle[NO_OF_OBSTACLES + 2].obstacle_radius= INITIAL_ORIENTATION_RADIUS;
+	obstacle[NO_OF_OBSTACLES + 2].x=start.x;
+	obstacle[NO_OF_OBSTACLES + 2].y=start.y - ( INITIAL_ORIENTATION_RADIUS);
+	obstacle[NO_OF_OBSTACLES + 2].obstacle_id=-3;
+	obstacle[NO_OF_OBSTACLES + 2].type= CIRCLE;
+	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES + 2].x+250, obstacle[NO_OF_OBSTACLES + 2].y+250),  INITIAL_ORIENTATION_RADIUS, cvScalar(255,0,0));
+
+	obstacle[NO_OF_OBSTACLES + 3].obstacle_radius= INITIAL_ORIENTATION_RADIUS;
+	obstacle[NO_OF_OBSTACLES + 3].x=start.x;
+	obstacle[NO_OF_OBSTACLES + 3].y=start.y + ( INITIAL_ORIENTATION_RADIUS);
+	obstacle[NO_OF_OBSTACLES + 3].obstacle_id=-3;
+	obstacle[NO_OF_OBSTACLES + 3].type= CIRCLE;
+	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES + 3].x+250, obstacle[NO_OF_OBSTACLES+3].y+250),  INITIAL_ORIENTATION_RADIUS, cvScalar(255,0,0));
+
+	Point p1, p2, i1, i2;
+	p1.x=0;
+	p2.x=0;
+	p1.y=0;
+	p2.y=0;
+	i1=start;
+	i2=tree[a];
+	size_t i2a_index, i2b_index;
+
+	if(i2.y > 0)
+	{
+		calculate_points(i2, obstacle[NO_OF_OBSTACLES + 3], p1, p2);
+	}
+	else
+	{
+		calculate_points(i2, obstacle[NO_OF_OBSTACLES + 2], p1, p2);
+	}
+
+	if(pow(p1.x,2)+pow(p1.y,2) < pow(p2.x,2)+pow(p2.y,2))
+	{
+		//implies p1 is near and you consider this and not p2
+		tree.remove_edge(0, a);
+		i2a_index = tree.add_vertex(p1);
+		tree.add_edge(0,i2a_index,cost_calculation(0,i2a_index,tree),true);
+		tree.add_edge(i2a_index,a,cost_calculation(i2a_index,a,tree));
+	}
+	else
+	{
+		//implies p2 is near and you consider this and not p1
+		tree.remove_edge(0, a);
+		i2a_index = tree.add_vertex(p2);
+		tree.add_edge(0,i2a_index,cost_calculation(0,i2a_index,tree),true);
+		tree.add_edge(i2a_index,a,cost_calculation(i2a_index,a,tree));
+	}
+
+	
+	#ifdef FRAMEPAINTING
+	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	//painting the new frame
+	for(size_t ni_index=0;ni_index<tree.size(); ni_index++)
+	{
+		for(size_t nj_index = 0; nj_index < tree.size(); nj_index++)
+		{
+			if(tree.is_edge(ni_index, nj_index))
+			{
+				Point n1 = tree[ni_index];
+				Point n2 = tree[nj_index];
+				cvLine(image,cvPoint(n1.x+250,n1.y+250),cvPoint(n2.x+250,n2.y+250),cvScalar(255,255,0));
+			}
+		}
+	}
+	for(int j=0;j<NO_OF_OBSTACLES+4;j++)
+	{
+		cvCircle(image, cvPoint(obstacle[j].x+250, obstacle[j].y+250), 2, cvScalar(255,0,0));
+		cvCircle(image, cvPoint(obstacle[j].x+250, obstacle[j].y+250), obstacle[j].obstacle_radius , cvScalar(255,0,0));
+	}
+	
+	cvCircle(image, cvPoint(start.x+250, start.y+250), 2, cvScalar(0,255,0));
+	cvCircle(image, cvPoint(ball.x+250, ball.y+250), 2, cvScalar(255,0,255));
+	cvCircle(image, cvPoint(goal.x+250, goal.y+250), 10, cvScalar(255,0,255));
+	cvNamedWindow("Field");
+	// cvMoveWindow("Field",950,400);
+	cvShowImage("Field", image);
+	cvZero(image);
+ 	cvWaitKey(0);
+ 	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	#endif
+
+ 	cout<<"the new return path points: \n";
+ 	b=tree.returnPathPoint(1);
+	cout<<"1\n";
+	cout<<b<<"\n";
+ 	while(b!=0)
+	{
+		cvLine(image,cvPoint(tree[b].x+250,tree[b].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
+		a=b;
+		b=tree.returnPathPoint(b);
+		if(b==0)
+		{
+			cout<<i2a_index<<"\n";
+			cvLine(image,cvPoint(tree[0].x+250,tree[0].y+250),cvPoint(tree[i2a_index].x+250,tree[i2a_index].y+250),cvScalar(0,0,255));
+			cvLine(image,cvPoint(tree[a].x+250,tree[a].y+250),cvPoint(tree[i2a_index].x+250,tree[i2a_index].y+250),cvScalar(0,0,255));
+		}
+		cout<<b<<"\n";
+	}
+
+	cvWaitKey(0);
+
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
 	path_completed_flag=true;
-	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
 	{
 		cvCircle(image, cvPoint(obstacle[i].x+250, obstacle[i].y+250), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}
 	cvCircle(image, cvPoint(start.x+250, start.y+250), 2, cvScalar(0,255,0));
 	cvCircle(image, cvPoint(ball.x+250, ball.y+250), 2, cvScalar(255,0,255));
 	cvCircle(image, cvPoint(goal.x+250, goal.y+250), 10, cvScalar(255,0,255));
-	cvLine(image,cvPoint(tree[0].x+250,tree[0].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
 	CvFont font;
     cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 0, 1, 8);
     char A[100];
@@ -712,35 +835,6 @@ PathReturns Path::path_return(PathStructure ps)
 		////////cout<<"\nnext.theta "<<next.theta;
 	}
 	
-	// std::size_t init=1;
-	// curvearray_index[0]=init;
-	// len_curvearray_index=1;
-	// while(init!=0)
-	// {
-	// 	curvearray_index[len_curvearray_index]=tree.returnPathPoint[init];
-	// 	init=tree.returnPathPoint[init];
-	// }
-	// len_curvearray_index++;
-	// for(int i=0;i<len_curvearray_index;i++)
-	// {
-	// 	//cout<<"curvearray_index "<<curvearray_index[i]<<"\n";
-	// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //copying it to an array
 	std::size_t c,d;
 	d=1;
@@ -857,14 +951,13 @@ PathReturns Path::path_return(PathStructure ps)
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #endif
 
-	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
 	{
 		cvCircle(image, cvPoint(obstacle[i].x+250, obstacle[i].y+250), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}
 	cvCircle(image, cvPoint(start.x+250, start.y+250), 2, cvScalar(0,255,0));
 	cvCircle(image, cvPoint(ball.x+250, ball.y+250), 2, cvScalar(255,0,255));
 	cvCircle(image, cvPoint(goal.x+250, goal.y+250), 10, cvScalar(255,0,255));
-	cvLine(image,cvPoint(tree[0].x+250,tree[0].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
 
     sprintf(A,"Ball Position:  %lf, %lf",ball.x,ball.y);
     sprintf(B,"Goal Position:  %lf, %lf",goal.x,goal.y);
@@ -883,7 +976,7 @@ PathReturns Path::path_return(PathStructure ps)
 
 void Path::updatePathPacket()
 {
-		pthread_mutex_lock(&mutex_pathpacket);
+		//pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
@@ -912,7 +1005,7 @@ void Path::updatePathPacket()
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
 		}
 	
-		pthread_mutex_unlock(&mutex_pathpacket);
+		//pthread_mutex_unlock(&mutex_pathpacket);
 
 }
 
