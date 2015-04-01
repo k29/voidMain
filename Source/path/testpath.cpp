@@ -7,13 +7,13 @@ void call_main() //Function made to replicate path calling from the cognition mo
 	srand(time(NULL));
 	
 
-	ps.n_obstacles = 3;
+	ps.n_obstacles = 1;
 	ps.absObstacles[0].x=35; 
 	ps.absObstacles[0].y=-75;
-	ps.absObstacles[1].x=15;
-	ps.absObstacles[1].y=67;
-	ps.absObstacles[2].x=-40;
-	ps.absObstacles[2].y=-80;
+	// ps.absObstacles[1].x=15;
+	// ps.absObstacles[1].y=67;
+	// ps.absObstacles[2].x=-40;
+	// ps.absObstacles[2].y=-80;
 
 	ps.ball.x =92;
 	ps.ball.y =73;

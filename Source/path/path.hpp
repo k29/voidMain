@@ -32,13 +32,14 @@ private:
 	static const int ORIENTEDANGLECONST=20;//this is the distance from the ball at which a -45 to 45 degree ballangle will return oriented and then kick
 	static const int BADANGLEDIST=20;
 	static const int STEPLENGTH=5;
+	static const int INITIAL_ORIENTATION_RADIUS=20;
 	int com_id; //communication id
 	double tolerance_angle;//minimum angle for encircling
 	enum circle_type {DNE,CIRCLE}; // 0-> does not exsist 1-> circle 2-> ellipse
 	struct Point
 	{
 		double x;
-		double y;
+		double y;	
 		std::size_t obstacle_id;
 		std::size_t parent_id;
 		double obstacle_radius;

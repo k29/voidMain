@@ -11,6 +11,7 @@ playerstate::playerstate()
 	/* Image */
 	fd= new FeatureDetection(capture);
 	camcont= new CamControl(capture);
+	timesteps = 0;
 
 
 	}

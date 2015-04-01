@@ -67,14 +67,25 @@ void BasicBehaviorUpdate::execute()
         p.confidence=max( motionModel.confidence , p.loc.confidence);
 
         
-        if(p.confidence < 0.1)
+        if(p.confidence < 0.2)
+        {
             p.localizationState=CRITICAL;
+            p.timesteps++;
+        }
         // else if(motionModel.confidence > p.loc.confidence)
         //     p.localizationState=MOTIONMODEL;
             // p.localizationState=LOCALIZED;
         else
+        {
             p.localizationState=LOCALIZED;
+            p.timesteps = 0;
+        }
 
+        if(p.timesteps > 20)
+        {
+            p.loc.randomize();
+            p.timesteps = 0;
+        }
         pthread_mutex_unlock(&mutex_motionModel);
 
         /* localizationState flag end */
@@ -258,6 +269,7 @@ void BasicBehaviorMakePath::execute()
     // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
 
     p.pathreturn=p.path.path_return(p.pathstr);
+    // printf("before crash\n");
     if(p.path.tree.path_crash)
     {
         // printf("path crashed\n");
@@ -309,8 +321,13 @@ void BasicBehaviorPathToWalk::execute()
         #ifdef WALK_IS_ON
     
         p.path.updatePathPacket();
+        if(p.path.tree.path_crash)
+        {
+            // printf("path crashed\n");
+            p.path.tree.path_crash = false;
+        }
         
-        printf("Path updated\n");
+        // printf("Path updated\n");
         #endif
         #endif
 

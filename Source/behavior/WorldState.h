@@ -82,7 +82,7 @@ class playerstate
         
         double localizationConfidence;
         double confidence;
-                        
+        int timesteps;
                        
                         
 

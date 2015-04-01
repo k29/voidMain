@@ -406,6 +406,8 @@ PathReturns Path::path_return(PathStructure ps)
 	if(tree.path_crash)
 		return NOPATH;
 	tree.add_edge(0,1,cost_calculation(0,1,tree));
+	if(tree.path_crash)
+		return NOPATH;
 	cvLine(image,cvPoint(250,250),cvPoint(ball.x+250,ball.y+250),cvScalar(255,255,0)); // creates the nodes for start and ball point and paints a line.
 
 	while(flag) // iterates over the entire tree.
@@ -462,7 +464,7 @@ PathReturns Path::path_return(PathStructure ps)
     					// cvMoveWindow("Field",950,400);
 						cvShowImage("Field", image);
 						cvZero(image);
-					 	cvWaitKey(5);
+					 	cvWaitKey(0);
 					//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 					#endif
 					if(tree.is_onCircle(n1_index, n2_index)==false)
@@ -476,6 +478,8 @@ PathReturns Path::path_return(PathStructure ps)
 							{
 								flag = 1;
 								tree.remove_edge(n1_index, n2_index); //removing the edges for which there is an obstacle in b/w.
+								if(tree.path_crash)
+									return NOPATH;
 								n1a.parent_id=n1_index;							//
 								size_t n1a_index = tree.add_vertex(n1a);
 								if(tree.path_crash)
@@ -493,20 +497,27 @@ PathReturns Path::path_return(PathStructure ps)
 								if(tree.path_crash)
 									return NOPATH;			//
 								tree.add_edge(n1_index, n1a_index,cost_calculation(n1_index,n1a_index,tree));
+								if(tree.path_crash)
+									return NOPATH;
 								if(closest_intersecting_obstacle(tree[n1.parent_id],tree[n1a_index])==-1)//check the obstacle intersection from n1's parent to the point n1a...n1b.....
 								{
 
 									n1a.parent_id=n1.parent_id;
 									tree.update_vertex(n1a,n1a_index);
 									tree.add_edge(n1.parent_id,n1a_index,cost_calculation(n1.parent_id,n1a_index,tree));//add edge b/w the parent point and the point n1a,nb...
+									if(tree.path_crash)
+										return NOPATH;
 								}
 								tree.add_edge(n1_index, n1b_index,cost_calculation(n1_index,n1b_index,tree));
+								if(tree.path_crash)
+									return NOPATH;
 								if(closest_intersecting_obstacle(tree[n1.parent_id],tree[n1b_index])==-1)//check the obstacle intersection from n1's parent to the point n1a...n1b.....
 								{
 									n1b.parent_id=n1.parent_id;
 									tree.update_vertex(n1b,n1b_index);
 									tree.add_edge(n1.parent_id,n1b_index,cost_calculation(n1.parent_id,n1b_index,tree));//add edge b/w the parent point and the point n1a,nb...
-
+									if(tree.path_crash)
+										return NOPATH;
 								}
 								tree.add_edge(n2a_index, n2_index,cost_calculation(n2a_index,n2_index,tree));
 								if(closest_intersecting_obstacle(tree[n2a.parent_id],tree[n2_index])==-1)//check the obstacle intersection from n1's parent to the point n1a...n1b.....
@@ -514,6 +525,8 @@ PathReturns Path::path_return(PathStructure ps)
 									n2.parent_id=n2a.parent_id;
 									tree.update_vertex(n2,n2_index);
 									tree.add_edge(n2a.parent_id,n2_index,cost_calculation(n2a.parent_id,n2_index,tree));//add edge b/w the parent point and the point n1a,nb...
+									if(tree.path_crash)
+										return NOPATH;
 								}
 								tree.add_edge(n2b_index, n2_index,cost_calculation(n2b_index,n2_index,tree));
 								if(closest_intersecting_obstacle(tree[n2b.parent_id],tree[n2_index])==-1)//check the obstacle intersection from n1's parent to the point n1a...n1b.....
@@ -521,16 +534,22 @@ PathReturns Path::path_return(PathStructure ps)
 									n2.parent_id=n2b.parent_id;
 									tree.update_vertex(n2,n2_index);
 									tree.add_edge(n2b.parent_id,n2_index,cost_calculation(n2b.parent_id,n2_index,tree));//add edge b/w the parent point and the point n1a,nb...
+									if(tree.path_crash)
+										return NOPATH;
 								}
 								if(same_side_flag)
 								{
 									tree.add_edge(n1a_index, n2a_index,cost_calculation(n1a_index,n2a_index,tree), true);
 									tree.add_edge(n1b_index, n2b_index,cost_calculation(n1b_index,n2b_index,tree), true);
+									if(tree.path_crash)
+										return NOPATH;
 								}
 								else
 								{
 									tree.add_edge(n1a_index, n2b_index,cost_calculation(n1a_index,n2b_index,tree), true);
 									tree.add_edge(n1b_index, n2a_index,cost_calculation(n1b_index,n2a_index,tree), true);
+									if(tree.path_crash)
+										return NOPATH;
 								}
 								break;
 							}
@@ -563,10 +582,13 @@ PathReturns Path::path_return(PathStructure ps)
 											if(tree.path_crash)
 												return NOPATH;
 											tree.remove_edge(n2_index,i);
+											if(tree.path_crash)
+												return NOPATH;
 										}
 									}
 									tree.add_edge(n1a_index, n2a_index,cost_calculation(n1a_index,n2a_index,tree));
-
+									if(tree.path_crash)
+										return NOPATH;
 
 									// tree.add_edge(n2a_index, n2_index,cost_calculation(n2a_index,n2_index,tree),true);
 									// tree.remove_edge(n1a_index,n2a_index);
@@ -595,23 +617,35 @@ PathReturns Path::path_return(PathStructure ps)
 								if(tree.path_crash)
 									return NOPATH;
 								tree.add_edge(n1_index, n1a_index,cost_calculation(n1_index,n1a_index,tree));
+								if(tree.path_crash)
+									return NOPATH;
 								if(closest_intersecting_obstacle(tree[n1.parent_id],tree[n1a_index])==-1)//check the obstacle intersection from n1's parent to the point n1a...n1b.....
 								{
 									n1a.parent_id=n1.parent_id;
 									tree.update_vertex(n1a,n1a_index);
 									tree.add_edge(n1.parent_id,n1a_index,cost_calculation(n1.parent_id,n1a_index,tree));//add edge b/w the parent point and the point n1a,nb...
+									if(tree.path_crash)
+										return NOPATH;
 								}
 								tree.add_edge(n1_index, n1b_index,cost_calculation(n1_index,n1b_index,tree));
+								if(tree.path_crash)
+									return NOPATH;
 								if(closest_intersecting_obstacle(tree[n1.parent_id],tree[n1b_index])==-1)//check the obstacle intersection from n1's parent to the point n1a...n1b.....
 								{
 									n1b.parent_id=n1.parent_id;
 									tree.update_vertex(n1b,n1b_index);
 									tree.add_edge(n1.parent_id,n1b_index,cost_calculation(n1.parent_id,n1b_index,tree));//add edge b/w the parent point and the point n1a,nb...
+									if(tree.path_crash)
+										return NOPATH;
 								}
 								tree.add_edge(n1a_index,n2_index,cost_calculation(n1a_index,n2_index,tree),true);
 								tree.add_edge(n1b_index,n2_index,cost_calculation(n1b_index,n2_index,tree),true);
+								if(tree.path_crash)
+									return NOPATH;
 							}
 						}
+						if(tree.path_crash)
+							return NOPATH;
 							if(flag)
 							break;
 					}
@@ -621,6 +655,8 @@ PathReturns Path::path_return(PathStructure ps)
 				break;
 		}
 	}
+	if(tree.path_crash)
+		return NOPATH;
 	removed_index to_be_removed[tree.size()];
 	for(std::size_t i=1;i<tree.size();i++)
 	{
@@ -675,6 +711,8 @@ PathReturns Path::path_return(PathStructure ps)
 			if(!new_point_orientation(i))
 			{
 				tree.remove_edge(i,1);
+				if(tree.path_crash)
+					return NOPATH;
 			}
 		}
 	}
@@ -686,6 +724,8 @@ PathReturns Path::path_return(PathStructure ps)
 		if(to_be_removed[i].remove_count==to_be_removed[i].connected_count && to_be_removed[i].remove_count!=0)
 		{
 			tree.remove_edge(i,1);
+			if(tree.path_crash)
+				return NOPATH;
 			//cout<<"\nremoving edge  "<<i<<endl;;
 		}
 	}
@@ -706,7 +746,6 @@ PathReturns Path::path_return(PathStructure ps)
 
 	////////cout<<"\nCalling Dijkstras\n";
 	tree.dijkstra();
-	
 	std::size_t a,b;
 	a=1;
 	////////cout<<"Before return path point 1";
@@ -714,12 +753,146 @@ PathReturns Path::path_return(PathStructure ps)
 	b=tree.returnPathPoint(1);
 	while(b!=0)
 	{
-		cvLine(image,cvPoint(tree[b].x+250,tree[b].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
+		// cvLine(image,cvPoint(tree[b].x+250,tree[b].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
 		a=b;
 		b=tree.returnPathPoint(b);
 	}
+
+
+	//introducing initial obsacles between 0 and a
+	obstacle[NO_OF_OBSTACLES + 2].obstacle_radius= INITIAL_ORIENTATION_RADIUS;
+	obstacle[NO_OF_OBSTACLES + 2].x=start.x;
+	obstacle[NO_OF_OBSTACLES + 2].y=start.y - ( INITIAL_ORIENTATION_RADIUS);
+	obstacle[NO_OF_OBSTACLES + 2].obstacle_id=-3;
+	obstacle[NO_OF_OBSTACLES + 2].type= CIRCLE;
+	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES + 2].x+250, obstacle[NO_OF_OBSTACLES + 2].y+250),  INITIAL_ORIENTATION_RADIUS, cvScalar(255,0,0));
+
+	obstacle[NO_OF_OBSTACLES + 3].obstacle_radius= INITIAL_ORIENTATION_RADIUS;
+	obstacle[NO_OF_OBSTACLES + 3].x=start.x;
+	obstacle[NO_OF_OBSTACLES + 3].y=start.y + ( INITIAL_ORIENTATION_RADIUS);
+	obstacle[NO_OF_OBSTACLES + 3].obstacle_id=-3;
+	obstacle[NO_OF_OBSTACLES + 3].type= CIRCLE;
+	cvCircle(image, cvPoint(obstacle[NO_OF_OBSTACLES + 3].x+250, obstacle[NO_OF_OBSTACLES+3].y+250),  INITIAL_ORIENTATION_RADIUS, cvScalar(255,0,0));
+	Point p1, p2, i1, i2;
+	p1.x=0;
+	p2.x=0;
+	p1.y=0;
+	p2.y=0;
+	i1=start;
+	i2=tree[a];
+	size_t i2a_index;
+	if(i2.y > 0)
+	{
+		start.obstacle_id = NO_OF_OBSTACLES + 3;
+		calculate_points(i2, obstacle[NO_OF_OBSTACLES + 3], p1, p2);
+	}
+	else
+	{
+		start.obstacle_id = NO_OF_OBSTACLES + 2;		
+		calculate_points(i2, obstacle[NO_OF_OBSTACLES + 2], p1, p2);
+	}
+	if(pow(p1.x,2)+pow(p1.y,2) < pow(p2.x,2)+pow(p2.y,2))
+	{
+		//implies p1 is near and you consider this and not p2
+		tree.remove_edge(0, a);
+		// cout<<"obstacle[tree[a].obstacle_id].obstacle_radius: "<<obstacle[tree[a].obstacle_id].obstacle_radius<<endl;
+		if(tree.path_crash)
+			return NOPATH;
+
+		i2a_index = tree.add_vertex(p1);
+		if(tree.path_crash)
+			return NOPATH;
+		tree.add_edge(0,i2a_index,cost_calculation(0,i2a_index,tree),true);
+		// cout<<"i2a_index obstacle_id: "<<tree[i2a_index].obstacle_id<<endl;
+		if(tree.path_crash)
+			return NOPATH;
+		tree.add_edge(i2a_index,a,cost_calculation(i2a_index,a,tree));
+		if(tree.path_crash == true)
+			return NOPATH;
+	}
+	else
+	{
+		//implies p2 is near and you consider this and not p1
+		tree.remove_edge(0, a);
+		if(tree.path_crash)
+			return NOPATH;
+		i2a_index = tree.add_vertex(p2);
+		if(tree.path_crash)
+			return NOPATH;
+		tree.add_edge(0,i2a_index,cost_calculation(0,i2a_index,tree),true);
+		if(tree.path_crash)
+			return NOPATH;
+		// cout<<"i2a_index obstacle_id: "<<tree[i2a_index].obstacle_id<<endl;
+		tree.add_edge(i2a_index,a,cost_calculation(i2a_index,a,tree));
+		if(tree.path_crash == true)
+			return NOPATH;
+	}
+	// cout<<"before"<<endl;
+	// obstacle[tree[i2a_index].obstacle_id].obstacle_radius = INITIAL_ORIENTATION_RADIUS;
+	// cout<<"after"<<endl;
+	#ifdef FRAMEPAINTING
+	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	//painting the new frame
+	for(size_t ni_index=0;ni_index<tree.size(); ni_index++)
+	{
+		for(size_t nj_index = 0; nj_index < tree.size(); nj_index++)
+		{
+			if(tree.is_edge(ni_index, nj_index))
+			{
+				if(tree.path_crash)
+					return NOPATH;
+				Point n1 = tree[ni_index];
+				Point n2 = tree[nj_index];
+				cvLine(image,cvPoint(n1.x+250,n1.y+250),cvPoint(n2.x+250,n2.y+250),cvScalar(255,255,0));
+			}
+		}
+	}
+	for(int j=0;j<NO_OF_OBSTACLES+4;j++)
+	{
+		cvCircle(image, cvPoint(obstacle[j].x+250, obstacle[j].y+250), 2, cvScalar(255,0,0));
+		cvCircle(image, cvPoint(obstacle[j].x+250, obstacle[j].y+250), obstacle[j].obstacle_radius , cvScalar(255,0,0));
+	}
+	
+	cvCircle(image, cvPoint(start.x+250, start.y+250), 2, cvScalar(0,255,0));
+	cvCircle(image, cvPoint(ball.x+250, ball.y+250), 2, cvScalar(255,0,255));
+	cvCircle(image, cvPoint(goal.x+250, goal.y+250), 10, cvScalar(255,0,255));
+	cvNamedWindow("Field");
+	// cvMoveWindow("Field",950,400);
+	cvShowImage("Field", image);
+	cvZero(image);
+ 	cvWaitKey();
+ 	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+	#endif
+	////////cout<<"\nCalling Dijkstras\n";
+	tree.dijkstra();
+	// cout<<"post 2nd dijkstra implementation\n";
+	a,b;
+	a=1;
+	////////cout<<"Before return path point 1";
+	b=tree.returnPathPoint(1);
+	// cout<<"1\n";
+	// cout<<"b: "<<b<<"\n";
+
+	while(b!=0)
+	{
+		cvLine(image,cvPoint(tree[b].x+250,tree[b].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
+		a=b;
+		b=tree.returnPathPoint(b);
+		// cout<<"b: "<<b<<"\n";
+	}
+	cvLine(image,cvPoint(tree[0].x+250,tree[0].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
+
+	// cvWaitKey();
+	
+
+// cout<<"123"<<endl;
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------
+
 	path_completed_flag=true;
-	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
 	{
 		cvCircle(image, cvPoint(obstacle[i].x+250, obstacle[i].y+250), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}
@@ -737,74 +910,48 @@ PathReturns Path::path_return(PathStructure ps)
     cvPutText(image,B,cvPoint(10,45),&font,cvScalar(255,255,255));
 	cvShowImage("Field", image);
 	//--->> calculating the next points r and theta.
-	if(tree.is_onCircle(0, a))
-	{
-		if(tree.path_crash)
-			return NOPATH;
-		next.r=(10*180/3.1415926)*obstacle[tree[a].obstacle_id].obstacle_radius;
-		double m_prime= (tree[a].y - obstacle[tree[a].obstacle_id].y)/(tree[a].x - obstacle[tree[a].obstacle_id].x);
-		double m=-1/m_prime;
-		next.theta=rad2deg(atan(m));
-		////////cout<<"\nnext.r "<<next.r;
-		////////cout<<"\nnext.theta "<<next.theta;
-	}
-	else
-	{
-		if(tree.path_crash)
-			return NOPATH;
-		next.r = sqrt(pow((tree[a].x-tree[0].x),2)+pow((tree[a].y-tree[0].y),2));
-		next.theta=rad2deg((atan2((tree[a].y-tree[0].y),(tree[a].x-tree[0].x))));
-		////////cout<<"\nnext.r "<<next.r;
-		////////cout<<"\nnext.theta "<<next.theta;
-	}
+	// if(tree.is_onCircle(0, a))
+	// {
+	// 	if(tree.path_crash)
+	// 		return NOPATH;
+	// 	cout<<"after ret"<<endl;
+	// 	cout<<"obstacle[tree[a].obstacle_id].obstacle_radius: "<<obstacle[tree[a].obstacle_id].obstacle_radius<<endl;
+	// 	// cout<<"obstacle[tree[0].obstacle_id].obstacle_radius: "<<obstacle[tree[0].obstacle_id].obstacle_radius<<endl;
+	// 	next.r=(10*180/3.1415926)*obstacle[tree[a].obstacle_id].obstacle_radius;
+	// 	cout<<"next.r "<<next.r<<endl;
+	// 	double m_prime= (tree[a].y - obstacle[tree[a].obstacle_id].y)/(tree[a].x - obstacle[tree[a].obstacle_id].x);
+	// 	double m=-1/m_prime;
+	// 	next.theta=rad2deg(atan(m));
+	// 	////////cout<<"\nnext.r "<<next.r;
+	// 	////////cout<<"\nnext.theta "<<next.theta;
+	// }
+	// else
+	// {
+	// 	cout<<"entered else"<<endl;
+	// 	if(tree.path_crash)
+	// 		return NOPATH;
+	// 	next.r = sqrt(pow((tree[a].x-tree[0].x),2)+pow((tree[a].y-tree[0].y),2));
+	// 	next.theta=rad2deg((atan2((tree[a].y-tree[0].y),(tree[a].x-tree[0].x))));
+	// 	////////cout<<"\nnext.r "<<next.r;
+	// 	////////cout<<"\nnext.theta "<<next.theta;
+	// }
 	
-	// std::size_t init=1;
-	// curvearray_index[0]=init;
-	// len_curvearray_index=1;
-	// while(init!=0)
-	// {
-	// 	curvearray_index[len_curvearray_index]=tree.returnPathPoint[init];
-	// 	init=tree.returnPathPoint[init];
-	// }
-	// len_curvearray_index++;
-	// for(int i=0;i<len_curvearray_index;i++)
-	// {
-	// 	//cout<<"curvearray_index "<<curvearray_index[i]<<"\n";
-	// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //copying it to an array
 	std::size_t c,d;
 	d=1;
 	curve[0]=1;
-	//cout<<curve[0]<<"\t\t";
 	for(int i=0;i<tree.size();i++)
 	{
+		// printf("%d \n", i);
 		curve[i+1]=tree.returnPathPoint(d);
 		d=curve[i+1];
-		//cout<<curve[i+1]<<"\t\t";
 		if(d==0)
 		{
 			len_curve=i+2;
 			break;
 		}
 	}
-	////cout<<"\nlen_curve: "<<len_curve<<"\n";
-	//cout<<endl;
+	// cout<<len_curve<<endl;
 	std::size_t tmp=0;
 	len_curvenext=0;
 	for(int i=0,j=len_curve-1;i<len_curve/2,j>=len_curve/2;i++,j--)
@@ -813,69 +960,52 @@ PathReturns Path::path_return(PathStructure ps)
 			curve[i]=curve[j];
 			curve[j]=tmp;
 	}
+	//curve contains the array in startin from 0 to 1
 
-	for(int i=0,j=0;i<len_curve-1;i++)
-	{
-		//cout<<"\n.............................\nanalysing "<<curve[i]<<" "<<curve[i+1]<<endl<<"...\n";
-		if(!tree.is_onCircle(curve[i],curve[i+1]))
-		{
-			if(tree.path_crash)
-				return NOPATH;
-			//cout<<"straight line\n";
-			curvenext[j].r=sqrt(pow((tree[curve[i+1]].x-tree[curve[i]].x),2)+pow((tree[curve[i+1]].y-tree[curve[i]].y),2));
-			curvenext[j].theta=rad2deg((atan2((tree[curve[i+1]].y-tree[curve[i]].y),(tree[curve[i+1]].x-tree[curve[i]].x))));
-			//cout<<"curvenext["<<j<<"].r "<<curvenext[j].r<<endl;
-			//cout<<"curvenext["<<j<<"].theta "<<curvenext[j].theta<<endl;
-			j++;
+	// for(int i=0,j=0;i<len_curve-1;i++)
+	// {
+	// 	if(!tree.is_onCircle(curve[i],curve[i+1]))
+	// 	{
+	// 		curvenext[j].r=sqrt(pow((tree[curve[i+1]].x-tree[curve[i]].x),2)+pow((tree[curve[i+1]].y-tree[curve[i]].y),2));
+	// 		curvenext[j].theta=rad2deg((atan2((tree[curve[i+1]].y-tree[curve[i]].y),(tree[curve[i+1]].x-tree[curve[i]].x))));
+	// 		j++;
+	// 	}
+	// 	else
+	// 	{
+	// 		sticks_r=STEPLENGTH;
+	// 		if(i==0)
+	// 		{
+	// 			sticks_theta = 2*asin((double)STEPLENGTH/(2*(double)INITIAL_ORIENTATION_RADIUS));
+	// 		}
+	// 		else
+	// 		{
+	// 			sticks_theta=2*asin(STEPLENGTH/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));
+	// 		}
+	// 		b=sqrt(pow((tree[curve[i+1]].x-tree[curve[i]].x),2)+pow((tree[curve[i+1]].y-tree[curve[i]].y),2));
+	// 		if(i==0)
+	// 		{
+	// 			no_of_sticks=2/sticks_theta*asin(b/(2*INITIAL_ORIENTATION_RADIUS));
+	// 		}
+	// 		else
+	// 			no_of_sticks=2/sticks_theta*asin(b/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));			
+	// 		while(no_of_sticks--)
+	// 		{
+	// 			curvenext[j].r=sticks_r;
+	// 			if(((atan2((tree[curve[i+1]].y-tree[curve[i]].y),(tree[curve[i+1]].x-tree[curve[i]].x))))>0)
+	// 				curvenext[j].theta=rad2deg(sticks_theta);
+	// 			else
+	// 				curvenext[j].theta=rad2deg(-sticks_theta);
+	// 			j++;
+	// 			len_curvenext++;
+	// 		}
 
-			////cout<<"\nlen_curvenext "<<len_curvenext++;
-		}
 
-		else
-		{
-			if(tree.path_crash)
-				return NOPATH;
-			//cout<<"on curve \n";
-			sticks_r=STEPLENGTH;
-			//cout<<"\nsticks_r "<<sticks_r<<endl;
-			sticks_theta=2*asin(STEPLENGTH/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));
-			//cout<<"\nsticks_theta "<<sticks_theta<<endl;
-			b=sqrt(pow((tree[curve[i+1]].x-tree[curve[i]].x),2)+pow((tree[curve[i+1]].y-tree[curve[i]].y),2));
-			no_of_sticks=(int)2/sticks_theta*asin(b/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));
-			//cout<<"\nno_of_sticks "<<no_of_sticks<<endl;
-			while(no_of_sticks--)
-			{
-				curvenext[j].r=sticks_r;
-				//cout<<"curvenext["<<j<<"].r "<<curvenext[j].r<<endl;
-				if(((atan2((tree[curve[i+1]].y-tree[curve[i]].y),(tree[curve[i+1]].x-tree[curve[i]].x))))>0)
-				{
-					curvenext[j].theta=rad2deg(sticks_theta);
-					//cout<<"\ncurvenext[j].theta "<<curvenext[j].theta<<endl;;
-				}
-				else
-				{
-					curvenext[j].theta=rad2deg(-sticks_theta);
-					//cout<<"\ncurvenext[j].theta "<<curvenext[j].theta<<endl;;
-				}
-				//cout<<"curvenext["<<j<<"].theta "<<curvenext[j].theta<<endl;
-				j++;
-				len_curvenext++;
-			}
-		}
-	 }
-	//cout<<"\nlen_curvenext "<<len_curvenext;
-	//cout<<"\ncurvenext.r\n";
-	for(int i=0;i<len_curvenext;i++)
-	{
-		//cout<<curvenext[i].r<<"\t";
-	}
-	//cout<<"\ncurvenext.theta\n";
-	for(int i=0;i<len_curvenext;i++)
-	{
-		//cout<<curvenext[i].theta<<"\t";
-	}
-	////cout<<"\ncurvearray normally..\n";
+	// 	}
+	//  }
 
+
+
+	
 
 #ifdef NEWENCIRCLING
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^new encircling and kicking and positioning^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -907,7 +1037,7 @@ PathReturns Path::path_return(PathStructure ps)
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #endif
 
-	for(int i=0;i<NO_OF_OBSTACLES+2;i++)
+	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
 	{
 		cvCircle(image, cvPoint(obstacle[i].x+250, obstacle[i].y+250), obstacle[i].obstacle_radius, cvScalar(255,0,0));
 	}
@@ -939,30 +1069,53 @@ void Path::updatePathPacket()
 		com_id=com_id+1;
 		std::size_t b;
 		b=tree.returnPathPoint(1);
-		pathpackvar.finalpath[0].x=ball.x;
-		pathpackvar.finalpath[0].y=ball.y;
+		// pathpackvar.finalpath[0].x=ball.x;
+		// pathpackvar.finalpath[0].y=ball.y;
+		if(tree.size() >= 30)
+		{
+			tree.path_crash = true;
+			// pthread_mutex_unlock(&mutex_pathpacket);
+			return;
+		}
 		assert(tree.size()<30);
 		
 		//commented original
-		for(int i=1;i<30;i++)
+		int i = 0;
+		for(i=0;i<len_curve-1;i++)
 		{
 			// cout<<"the value of b is :"<<b<<endl;
-			if(b==0)
-				break;
-			pathpackvar.finalpath[i].x=tree[b].x;
-			pathpackvar.finalpath[i].y=tree[b].y;
+			// if(b==0)
+			// 	break;
+			pathpackvar.finalpath[i].x=tree[curve[i+1]].x;
+			pathpackvar.finalpath[i].y=tree[curve[i+1]].y;
 			// printf("path %d x: %lf y: %lf\n", i, tree[b].x, tree[b].y);
-			b=tree.returnPathPoint(b);
-			pathpackvar.no_of_points=i;
+			// b=tree.returnPathPoint(b);
+			pathpackvar.no_of_points=i+2;
 		}
+		// pathpackvar.finalpath[i].x = ball.x;
+		// pathpackvar.finalpath[i].y = ball.y;
+		// i++;
+		pathpackvar.finalpath[i].x = goal.x;
+		pathpackvar.finalpath[i].y = goal.y;	
+		// cout<<"goal.x: "<<goal.x<<endl;
+		// cout<<pathpackvar.finalpath[i].x<<endl;
+		// cout<<"No. of Points: "<<pathpackvar.no_of_points<<endl;
 		
 		if(pathpackvar.no_of_points<29)
 		{
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].x=-1;
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
 		}
-	
-		// pthread_mutex_unlock(&mutex_pathpacket);
+		// for (int i = 0; i < pathpackvar.no_of_points; ++i)
+		// {
+		// 	cout<<"x: "<<pathpackvar.finalpath[i].x<<"y; "<<pathpackvar.finalpath[i].y<<endl;
+		// }
+		// for (int i = 0; i < pathpackvar.no_of_points; ++i)
+		// {
+		// 	cout<<"x: "<<pathpackvar.finalpath[i].x<<"y: "<<pathpackvar.finalpath[i].y<<endl;
+		// }
+			
+		// 	pthread_mutex_unlock(&mutex_pathpacket);
 
 }
 

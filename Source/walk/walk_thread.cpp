@@ -6,8 +6,6 @@
 const double pi = acos(-1);
 
 
-
-
 //	c1, c2... are constants for equations which are outlined below 	
 //	vd = Current velocity, vf = Final velocity, delta_y = Step length of the foot when it moves from back to front
 													//	vd is taken as velocity at the beginning of the step and vf as vlocity at the end of the step
@@ -21,13 +19,13 @@ const double c3=(c1+1)/c5;				//	delta_y_max = c3*vd		Maximum step length possib
 const double c4=(c2+1)/c5;				//	delta_y_min	= c4*vd		Minimum step length possible, this corresponds to equation 2
 const double v_initial = 10;				 //	Velocity when bot begins to move
 const double first_delta_y= 2*v_initial/c5;//	Initial step length is calculated by using equation 4 and given initial velocity which is assumed constant, i.e, vf=vd=vi
-const double max_velocity = 90;//	Maximum velocity corresponding to above delta y assuming step length is constant for the motion	
+const double max_velocity = 150;//	Maximum velocity corresponding to above delta y assuming step length is constant for the motion	
 const double max_delta_y  = 2*max_velocity/c5;				 //	Maximum length of a step (read delta y), from back to front. This is a limitation of stability; if bot moves more farther than this, it will be unstable
 const double foot_width  = 100;				 //	Width of the foot, might not be used
 const double foot_separation = 130;			 //	Standard Length between centers of the feet during linear motion
 const double max_delta_x = 30;	
 const double max_delta_theta = 15;	
-const double min_delta_y = 6;				 //	This is an arbitrary value chosen to put a lower limit on the bot's step length such that the step length oscillates between
+const double min_delta_y = 15;				 //	This is an arbitrary value chosen to put a lower limit on the bot's step length such that the step length oscillates between
 											 //	these maximum and minimum values of delta x. This will be changed for fine-tuning the motion.
 
 const double OBSTACLE_RADIUS = 200;
@@ -94,21 +92,46 @@ int constraint_check(foot step , double vf , int loop_num)
 		return 1;
 }
 
-void convert_values (PathPacket pathpackvarlocal	,	double dist_circstart[],	double theta_arc[],	double radius[],	int footlr[])
+void convert_values (PathPacket pathpackvarlocal, double dist_circstart[], double theta_arc[], double radius[],	int footlr[])
 {
 		// dist[0]	=	distance(pathpackvar.finalpath[0].x,pathpackvar.finalpath[0].y,pathpackvar.finalpath[k-1].x,pathpackvar.finalpath[k-1].y); IS THIS NEEDED?
-		for (int i = 0;	i<=pathpackvarlocal.no_of_points/2; i++)
+		double ox = 0;
+		double oy = 0;	
+		double x1, y1, x2, y2;
+
+		double dirx=1, diry=0;
+		for (int i = 0;	i<=pathpackvarlocal.no_of_points-2; i+=2)
 		{
-			dist_circstart[i]	=	10*distance(pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i+1].x,pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i+1].y,pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i].x,pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i].y);
+			dirx = x2-x1;
+			diry = y2-y1;
+
+			x1 = pathpackvarlocal.finalpath[i].x;
+			y1 = pathpackvarlocal.finalpath[i].y;
+			x2 = pathpackvarlocal.finalpath[i+1].x;
+			y2 = pathpackvarlocal.finalpath[i+1].y;
+
+			double vector_product = (x1-ox)*(y2-y1) - (y1-oy)*(x2-x1);
+
+			footlr[i/2] = (vector_product>0)?1:0;
 			radius[i]	=	OBSTACLE_RADIUS;
-			theta_arc[i]	=	180*2*acos(sqrt(1- pow((10*distance(pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i].x,pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i].y,pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i-1].x,pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i-1].y)/(2*radius[i])),2)))/pi;
-			double vector_product	=	pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i-1].x*(pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i].y - pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i+1].y) + pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i].x*(pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i+1].y - pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i-1].y) + pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i+1].x*(pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i-1].y - pathpackvarlocal.finalpath[pathpackvarlocal.no_of_points-2*i].y);
-			//Vector product of the two vectors made by the three points will give the direction of turning.
-			footlr[i]	=	(vector_product > 0) ? 0: 1;
+
+			double theta = 180*2*acos(sqrt(1 - pow((10*distance(ox,oy,x1,y1)/(2*radius[i])),2)))/pi;
+
+			int turn = ((dirx*(y2-y1) - diry*(x2-x1))>0)?1:0;
+			if (turn)
+				theta_arc[i/2] = (footlr[i/2])?(360-theta):theta;				
+			else if (!turn)
+				theta_arc[i/2] = (!footlr[i/2])?(360-theta):theta;
+
+			dist_circstart[i/2] = 10*distance(x1,y1,x2,y2);
 			// printf ("X[i] = %f\tY[i]=%f\n",pathpackvar.finalpath[pathpackvar.no_of_points - 2*i].x,pathpackvar.finalpath[pathpackvar.no_of_points - 2*i].y);
 			// printf ("X[i+1] = %f\tY[i+1]=%f\n", pathpackvar.finalpath[pathpackvar.no_of_points - 2*i -1].x,pathpackvar.finalpath[pathpackvar.no_of_points - 2*i -1].y);
 			// printf ("X[i+2] = %f\tY[i+2]=%f\n",pathpackvar.finalpath[pathpackvar.no_of_points - 2*i-2].x,pathpackvar.finalpath[pathpackvar.no_of_points - 2*i-2].y);
-			printf("i = %d\tDist_circstart = %f\tRadius = %f\tTheta_arc	= %f\tfootlr = %d\n",i,dist_circstart[i],radius[i],theta_arc[i],footlr[i]);
+			printf("i = %d\tDist_circstart = %f\tRadius = %f\tTheta_arc	= %f\tfootlr = %d\n",i/2,dist_circstart[i/2],radius[i/2],theta_arc[i/2],footlr[i/2]);
+
+			ox = x2;
+			oy = y2;
+
 		}
 }
 
@@ -215,15 +238,20 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	double radius[30];					//	This will later be changed to an input.
 														//	This measures the angle travelled along the circular arc, in order to determine when it has to end circular motion.
 	int footlr[30]; 
-	double dist_circstart[30];				//	This is the distance to the beginning of the circle from the beginning of motion.
-
+	double dist_circstart1[30];				//	This is the distance to the beginning of the circle from the beginning of motion.
+	double dist_circstart[31];
 		
 	int i=0;	
 	int no_obstacles;
 	#ifdef IP_IS_ON
-	convert_values (pathpackvarlocal,	dist_circstart,	theta_arc,	radius,	footlr);
+	convert_values (pathpackvarlocal,	dist_circstart1,	theta_arc,	radius,	footlr);
 	// count =	0;									//	Counts number of footsteps
 	no_obstacles = pathpackvarlocal.no_of_points/2;
+	dist_circstart[0] = 0;
+	for (int i = 0; i <= no_obstacles; ++i)
+	{
+		dist_circstart[i+1] = dist_circstart1[i];
+	}
 	#endif
 	//Comment this portion for normal walk path - Currently this is conditioned on IP being off
 	#ifndef IP_IS_ON
@@ -241,7 +269,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	//till here
 	int fmscheck = 0;
 	int first_circ_foot[4] , last_circ_foot[4]; //FSPMOD CODE
-	for (int i=0;i<=no_obstacles;i++)	
+	for (int i=0;i<no_obstacles;i++)	
 	{
 	
 		footlr[i] = pow((footlr[i] - lr),2); 
@@ -395,7 +423,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	}
 	for (int i=0;i<count-1;i++)
 	{
-		printf ("Delta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
+		// printf ("Delta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
 	}
 /*	//FSPMOD CODE
 	for (int i=0; i<no_obstacles; i++)
@@ -428,7 +456,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	//FSPMOD CODE*/
 	// printf("COUNT = %d",count);
 	stepcount = count ;
-	imagepaint(step , count, footlr);
+	// imagepaint(step , count, footlr);
 	return 0;
 }
 
@@ -475,6 +503,12 @@ void* walk_thread(void*)
 	// Call walkthread here instead of reading file.
 	pthread_mutex_lock(&mutex_pathpacket);
 	pathpackvarlocal = pathpackvar;
+	cout<<"no_of_points "<<pathpackvar.no_of_points<<endl;
+	for (int i1 = 0; i1 < pathpackvar.no_of_points; ++i1)
+	{
+		cout<<"x: "<<pathpackvar.finalpath[i1].x<<"y; "<<pathpackvar.finalpath[i1].y<<endl;
+	}
+
 	pthread_mutex_unlock(&mutex_pathpacket);
 	footstepmain(10 , foot1[j].delta_y , j%2 ,  foot1 , i , pathpackvarlocal);
 	double r = 0, x = 0, y = 0, theta = 0;
@@ -482,7 +516,7 @@ void* walk_thread(void*)
 	{
 		// printf("in walk thread\n");
 		j = 0;
-		while (j<i-1 && j<50)
+		while (j<i-1 )
 		{
 			// walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
 			walk.pathdribble(foot1[j].vel_y, foot1[j].delta_x,foot1[j].delta_theta,0);
@@ -501,7 +535,7 @@ void* walk_thread(void*)
 					theta += foot1[j].delta_theta;
 					r = sqrt(pow(x,2) + pow(y,2));
 				}
-			printf("step = %d theta = %f delta_x = %f delta_y = %f vel_y = %f\n" ,j, foot1[j].delta_theta , foot1[j].delta_x, foot1[j].delta_y, foot1[j].vel_y);
+			// printf("step = %d theta = %f delta_x = %f delta_y = %f vel_y = %f\n" ,j, foot1[j].delta_theta , foot1[j].delta_x, foot1[j].delta_y, foot1[j].vel_y);
 			
 			pthread_mutex_lock(&mutex_motionModel);
 			motionModel.update(r,atan(y/x)*180/pi);
@@ -515,9 +549,13 @@ void* walk_thread(void*)
 		x = 0;
 		y = 0;
 		theta = 0;
+		cout<<'no_of_points '<<pathpackvar.no_of_points<<endl;
+		for (int i1 = 0; i1 < pathpackvar.no_of_points; ++i1)
+		{
+			cout<<"x: "<<pathpackvar.finalpath[i1].x<<"y; "<<pathpackvar.finalpath[i1].y<<endl;
+		}
 		pthread_mutex_unlock(&mutex_pathpacket);
-		// printf("%f\n" ,pathpackvarlocal.no_of_points);
-		footstepmain(walk.velocity() , foot1[j].delta_y , j%2 ,  foot1 , i , pathpackvarlocal);
+		footstepmain(walk.velocity() , foot1[j].delta_y , j%2 ,  foot1 ,i , pathpackvarlocal);
 	}
 
 

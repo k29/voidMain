@@ -17,5 +17,8 @@
 #include <inttypes.h>
 #include <sys/time.h>
 #include <termios.h>
+#include <iostream>
+
+using namespace std;
 
 void* walk_thread(void*);

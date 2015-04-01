@@ -165,8 +165,7 @@ void* walk_thread(void*)
 					// walk.move(a,b);
 					// walk.move(0.005,0.08);
 					// printf("1\n");
-					walk.move(10,30);
-					// walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
+					walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					pthread_mutex_lock(&mutex_motionModel);
 					motionModel.update(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					pthread_mutex_unlock(&mutex_motionModel);
