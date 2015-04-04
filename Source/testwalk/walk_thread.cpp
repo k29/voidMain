@@ -130,12 +130,13 @@ void* walk_thread(void*)
 					if(pathpackvar.updated==1)
 						{
 							walkpacket=convertPathPacket();
+							pathpackvarlocal=pathpackvar;
 							pathpackvar.updated=0;
 							executed.assign(30,0);
 						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
 
-		for(int i=0;i<walkpacket.no_of_points;++i)
+		for(int i=1;i<walkpacket.no_of_points-2;++i)
 		{
 
 			pthread_mutex_lock(&mutex_pathpacket);
@@ -158,6 +159,46 @@ void* walk_thread(void*)
 						printf("Size is %d\n",walkpacket.no_of_points);
 						printf("Path sent signal %f %f\n",walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					}
+
+
+					// anantanurag
+					assert(i<27);
+					if(i%2==0)// Obstacle radius == 20 cm
+					{
+						int j=0,phi;
+							{
+						if((pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath[i-1].x)*(pathpackvarlocal.finalpath.y[i+2]-pathpackvarlocal.finalpath.y[i+1])-(pathpackvarlocal.finalpath.y[i]-pathpackvarlocal.finalpath[i-1].y)*(pathpackvarlocal.finalpath.x[i+2]-pathpackvarlocal.finalpath.x[i+1])<0)
+								phi=2*asin(sqrt(sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])+sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])));
+								if((pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i-1].x)*(pathpackvarlocal.finalpath[i+1].y+pathpackvarlocal.finalpath[i+2].y)-(pathpackvarlocal.finalpath[i].y-pathpackvarlocal.finalpath[i-1].y)*(pathpackvarlocal.finalpath[i+1].x+pathpackvarlocal.finalpath[i+2].x) >0)
+									walk.move(0,phi);
+								else
+									walk.move(0,-1*phi);
+							}
+						else
+						{
+							phi=360-2*asin(sqrt(sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])+sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])));
+							//if(pathpackvarlocal.finalpath.x[i]*(pathpackvarlocal.finalpath.y[i+2]-pathpackvarlocal.finalpath.y[i+1])-pathpackvarlocal.finalpath.y[i]*(pathpackvarlocal.finalpath.x[i+2]-pathpackvarlocal.finalpath.x[i+1]))
+							if((pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i-1].x)*(pathpackvarlocal.finalpath[i+1].y+pathpackvarlocal.finalpath[i+2].y)-(pathpackvarlocal.finalpath[i].y-pathpackvarlocal.finalpath[i-1].y)*(pathpackvarlocal.finalpath[i+1].x+pathpackvarlocal.finalpath[i+2].x) >0)
+									walk.move(0,phi);
+								else
+									walk.move(0,-1*phi);
+						}
+						usleep(1.5*abs(theta*80/9)*1000);
+					}
+					else
+					{
+						walk.move(sqrt(sq(pathpackvarlocal.finalPath[i+1].x-pathpackvarlocal.finalPath[i].x)+sq(pathpackvarlocal.finalPath[i+1].y-pathpackvarlocal.finalPath[i].y)),0);
+						usleep(1000*(sqrt(sq(pathpackvarlocal.finalPath[i+1].x-pathpackvarlocal.finalPath[i].x)+sq(pathpackvarlocal.finalPath[i+1].y-pathpackvarlocal.finalPath[i].y))+2.5)/(0.145*255));
+					}
+
+					//usleep((1.5*abs(theta*80/9)+(sqrt(sq(pathpackvarlocal.finalPath[i+1].x-pathpackvarlocal.finalPath[i].x)+sq(pathpackvarlocal.finalPath[i+1].y-pathpackvarlocal.finalPath[i].y))+2.5)/(0.145*255))*1000);
+
+
+
+
+
+
+
 					
 					// double a=walkpacket.finalPath[i].r;
 					// double b=walkpacket.finalPath[i].theta;
@@ -165,7 +206,7 @@ void* walk_thread(void*)
 					// walk.move(a,b);
 					// walk.move(0.005,0.08);
 					// printf("1\n");
-					walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
+					//walk.move(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta); // Move this line to if else blocks
 					pthread_mutex_lock(&mutex_motionModel);
 					motionModel.update(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					pthread_mutex_unlock(&mutex_motionModel);

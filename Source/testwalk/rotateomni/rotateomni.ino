@@ -81,7 +81,7 @@ void loop()
     Serial.println("inp2left");Serial.println(inp2_left);*/
     
     
-    delay(abs(theta*80/9));
+    delay(1.5*abs(theta*80/9));
     /*Serial.println("enablefront");Serial.println(enable_front);
     Serial.println("enable back");Serial.println(enable_back);
     Serial.println("enable right");Serial.println(enable_right);
@@ -180,16 +180,16 @@ void implement_var_angle()
   
   if(theta>0)
   {
-    enable_front=200;
-    enable_back=200;
-    enable_right=200;
-    enable_left=200;
+    enable_front=220;
+    enable_back=220;
+    enable_right=255;
+    enable_left=220;
     
     inp1_left=1;
     inp2_left=0;
     
-    inp1_right=1;
-    inp2_right=0;
+    inp1_right=0;
+    inp2_right=1;
     
     inp1_front=1;
     inp2_front=0;
@@ -201,16 +201,16 @@ void implement_var_angle()
   else
   {
     
-    enable_front=200;
-    enable_back=200;
-    enable_right=200;
-    enable_left=200;
+    enable_front=220;
+    enable_back=220;
+    enable_right=255;
+    enable_left=220;
     
-    inp1_left=0;
-    inp2_left=1;
+    inp1_left=1;
+    inp2_left=0;
     
     inp1_right=0;
-    inp2_right=1;
+    inp2_right=1  ;
     
     inp1_front=0;
     inp2_front=1;
