@@ -102,9 +102,6 @@ void convert_values (PathPacket pathpackvarlocal, double dist_circstart[], doubl
 		double dirx=1, diry=0;
 		for (int i = 0;	i<=pathpackvarlocal.no_of_points-2; i+=2)
 		{
-			dirx = x2-x1;
-			diry = y2-y1;
-
 			x1 = pathpackvarlocal.finalpath[i].x;
 			y1 = pathpackvarlocal.finalpath[i].y;
 			x2 = pathpackvarlocal.finalpath[i+1].x;
@@ -119,9 +116,9 @@ void convert_values (PathPacket pathpackvarlocal, double dist_circstart[], doubl
 
 			int turn = ((dirx*(y2-y1) - diry*(x2-x1))>0)?1:0;
 			if (turn)
-				theta_arc[i/2] = (footlr[i/2])?(360-theta):theta;				
+				theta_arc[i/2] = (!footlr[i/2])?(360-theta):theta;				
 			else if (!turn)
-				theta_arc[i/2] = (!footlr[i/2])?(360-theta):theta;
+				theta_arc[i/2] = (footlr[i/2])?(360-theta):theta;
 
 			dist_circstart[i/2] = 10*distance(x1,y1,x2,y2);
 			// printf ("X[i] = %f\tY[i]=%f\n",pathpackvar.finalpath[pathpackvar.no_of_points - 2*i].x,pathpackvar.finalpath[pathpackvar.no_of_points - 2*i].y);
@@ -131,6 +128,10 @@ void convert_values (PathPacket pathpackvarlocal, double dist_circstart[], doubl
 
 			ox = x2;
 			oy = y2;
+			dirx = x2-x1;
+			diry = y2-y1;
+
+
 
 		}
 }
@@ -423,7 +424,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	}
 	for (int i=0;i<count-1;i++)
 	{
-		// printf ("Delta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
+		// printf ("sno = %d\tDelta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",i,step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
 	}
 /*	//FSPMOD CODE
 	for (int i=0; i<no_obstacles; i++)
@@ -510,7 +511,7 @@ void* walk_thread(void*)
 	}
 
 	pthread_mutex_unlock(&mutex_pathpacket);
-	footstepmain(10 , foot1[j].delta_y , j%2 ,  foot1 , i , pathpackvarlocal);
+	footstepmain(10 , foot1[j].delta_y , 0 ,  foot1 , i , pathpackvarlocal);
 	double r = 0, x = 0, y = 0, theta = 0;
 	while (1)
 	{
@@ -549,7 +550,7 @@ void* walk_thread(void*)
 		x = 0;
 		y = 0;
 		theta = 0;
-		cout<<'no_of_points '<<pathpackvar.no_of_points<<endl;
+		cout<<"no_of_points "<<pathpackvar.no_of_points<<endl;
 		for (int i1 = 0; i1 < pathpackvar.no_of_points; ++i1)
 		{
 			cout<<"x: "<<pathpackvar.finalpath[i1].x<<"y; "<<pathpackvar.finalpath[i1].y<<endl;

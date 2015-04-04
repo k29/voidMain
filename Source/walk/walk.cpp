@@ -105,8 +105,8 @@ int Walk::pathdribble(double vel_y, double dz, double t1, double t2)
 	{
 		if (leg == LEFT)
 		{
-			dribble();	
-			this->dz = dz;
+			// dribble();	
+			// this->dz = dz;
 		}
 		else
 			this->dz = dz;
@@ -115,12 +115,13 @@ int Walk::pathdribble(double vel_y, double dz, double t1, double t2)
 	{
 		if (leg==LEFT)
 			this->dz = -dz;
-		else
-		{
-			dribble();
-			this->dz = -dz;
-		}
+		// else
+		// {
+		// 	dribble();
+		// 	this->dz = -dz;
+		// }
 	}
+	// this->dz = dz;
 	legRotfi = t1;
 	supLegRotfi = t2;
 	int x = dribble();
