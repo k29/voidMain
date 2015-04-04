@@ -60,26 +60,45 @@ void BasicBehaviorUpdate::execute()
 
         /* localizationState flag */
         pthread_mutex_lock(&mutex_motionModel);
-                    
-        if(motionModel.confidence < p.loc.confidence && p.loc.confidence<5.0)
-            motionModel.refresh(p.loc.selfX,p.loc.selfY,p.loc.confidence);
-        
-        p.confidence=max( motionModel.confidence , p.loc.confidence);
 
-        
-        if(p.confidence < 0.2)
+        p.confidence = ALPHA*p.loc.confidence + BETA*motionModel.confidence;
+
+        if(p.confidence >= 0.2)
         {
-            p.localizationState=CRITICAL;
-            p.timesteps++;
-        }
-        // else if(motionModel.confidence > p.loc.confidence)
-        //     p.localizationState=MOTIONMODEL;
-            // p.localizationState=LOCALIZED;
-        else
-        {
-            p.localizationState=LOCALIZED;
+            p.localizationState = LOCALIZED;
             p.timesteps = 0;
         }
+        else if(p.loc.confidence >= 0.2 && p.loc.confidence < 5.0)
+        {
+            p.localizationState = LOCALIZED;
+            motionModel.refresh(p.loc.selfX, p.loc.selfY, p.loc.confidence);
+            p.timesteps = 0;
+        }
+        else
+        {
+            p.localizationState = CRITICAL;
+            p.timesteps++;
+        }
+                    
+        // if(motionModel.confidence < p.loc.confidence && p.loc.confidence<5.0)
+        //     motionModel.refresh(p.loc.selfX,p.loc.selfY,p.loc.confidence);
+        
+        // p.confidence=max( motionModel.confidence , p.loc.confidence);
+
+        
+        // if(p.confidence < 0.2)
+        // {
+        //     p.localizationState=CRITICAL;
+        //     p.timesteps++;
+        // }
+        // // else if(motionModel.confidence > p.loc.confidence)
+        // //     p.localizationState=MOTIONMODEL;
+        //     // p.localizationState=LOCALIZED;
+        // else
+        // {
+        //     p.localizationState=LOCALIZED;
+        //     p.timesteps = 0;
+        // }
 
         if(p.timesteps > 20)
         {
@@ -248,8 +267,15 @@ void BasicBehaviorMakePath::execute()
     #ifdef IP_IS_ON
     
     AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
-    double tempx=goalcoords.x-p.loc.selfX;
-    double tempy=goalcoords.y-p.loc.selfY;
+    AbsCoords selfm = motionModel.read();
+    double selfx = ALPHA*p.loc.selfX + BETA*selfm.x;
+    double selfy = ALPHA*p.loc.selfY + BETA*selfm.y;
+    selfx /= (ALPHA + BETA);
+    selfy /= (ALPHA + BETA);
+    double tempx = goalcoords.x - selfx;
+    double tempy = goalcoords.y - selfy;
+    // double tempx=goalcoords.x-p.loc.selfX;
+    // double tempy=goalcoords.y-p.loc.selfY;
     p.pathstr.goal.x= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
     p.pathstr.goal.y= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
     // printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);

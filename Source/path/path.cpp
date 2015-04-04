@@ -1063,7 +1063,7 @@ PathReturns Path::path_return(PathStructure ps)
 
 void Path::updatePathPacket()
 {
-		// pthread_mutex_lock(&mutex_pathpacket);
+		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
@@ -1074,7 +1074,7 @@ void Path::updatePathPacket()
 		if(tree.size() >= 30)
 		{
 			tree.path_crash = true;
-			// pthread_mutex_unlock(&mutex_pathpacket);
+			pthread_mutex_unlock(&mutex_pathpacket);
 			return;
 		}
 		assert(tree.size()<30);
@@ -1115,7 +1115,7 @@ void Path::updatePathPacket()
 		// 	cout<<"x: "<<pathpackvar.finalpath[i].x<<"y: "<<pathpackvar.finalpath[i].y<<endl;
 		// }
 			
-		// 	pthread_mutex_unlock(&mutex_pathpacket);
+			pthread_mutex_unlock(&mutex_pathpacket);
 
 }
 
