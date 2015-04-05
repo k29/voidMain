@@ -80,8 +80,12 @@ void loop()
     Serial.println("inp1left");Serial.println(inp1_left);
     Serial.println("inp2left");Serial.println(inp2_left);*/
     
+    if(theta>0)
+      {delay(1.4*abs(theta*80/9));}
+    else
+      {delay(1.25*abs(theta*80/9));}
     
-    delay(1.5*abs(theta*80/9));
+    
     /*Serial.println("enablefront");Serial.println(enable_front);
     Serial.println("enable back");Serial.println(enable_back);
     Serial.println("enable right");Serial.println(enable_right);
@@ -111,7 +115,7 @@ void loop()
     
     digitalWrite(in_pin1_left,inp1_left);
     digitalWrite(in_pin2_left,inp2_left);
-    delay(time*1000);
+    delay(time*1000*1.0);
     Serial.begin(9600);
     
     
@@ -182,8 +186,8 @@ void implement_var_angle()
   {
     enable_front=220;
     enable_back=220;
-    enable_right=255;
-    enable_left=220;
+    enable_right=220;
+    enable_left=255;
     
     inp1_left=1;
     inp2_left=0;
