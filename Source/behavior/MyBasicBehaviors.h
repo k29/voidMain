@@ -5,6 +5,10 @@
 
 #include "../../Xabsl/XabslEngine/XabslBasicBehavior.h"
 #include "WorldState.h"
+
+#define ALPHA 0.9
+#define BETA 0.1
+
 class BasicBehaviorPrint: public xabsl::BasicBehavior
 {
 

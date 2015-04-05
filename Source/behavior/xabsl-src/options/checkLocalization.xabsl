@@ -10,7 +10,7 @@ option checkLocalization
 							goto critical_ball;
 						else if(localizationState!=CRITICAL && ballreturn!=BALLFOUND)
 							goto localized_noBall;
-						else 
+						else
 							goto localized_ball;
 					}
 				action

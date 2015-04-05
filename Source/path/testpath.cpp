@@ -48,7 +48,7 @@ void call_main() //Function made to replicate path calling from the cognition mo
 	// 	}
 	p.path_return(ps);
 	p.updatePathPacket();//true if file writing to be on...else off.
-	// cvWaitKey();
+	cvWaitKey();
 }
 int main()
 {

@@ -1132,6 +1132,11 @@ void Path::updatePathPacket()
 		}
 		// cout<<"near flag: "<<pathpackvar.NEAR_FLAG<<endl;	
 		pthread_mutex_unlock(&mutex_pathpacket);
-
+		// for (int i = 0; i < pathpackvar.no_of_points; ++i)
+		// {
+		// 	cout<<"x: "<<pathpackvar.finalpath[i].x<<"y: "<<pathpackvar.finalpath[i].y<<endl;
+		// }
+			
+		//pthread_mutex_unlock(&mutex_pathpacket);
 }
 

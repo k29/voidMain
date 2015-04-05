@@ -9,7 +9,7 @@
 
 
 /* C=C0 exp(-n/N) where n: number of times update has been called , N: decay constant */
-#define decayConstant 50   
+#define decayConstant 50
 
       
 class MotionModel
@@ -18,7 +18,7 @@ class MotionModel
 
 		AbsCoords position;
 		
-		double decayMultiplier; 
+		double decayMultiplier;
 	
 	public:
 		double confidence;
