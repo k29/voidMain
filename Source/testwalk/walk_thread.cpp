@@ -136,7 +136,7 @@ void* walk_thread(void*)
 						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
 
-		for(int i=1;i<walkpacket.no_of_points-2;++i)
+		for(int i=0;i<walkpacket.no_of_points-2;++i)
 		{
 
 			pthread_mutex_lock(&mutex_pathpacket);
@@ -167,9 +167,9 @@ void* walk_thread(void*)
 					{
 						int j=0,phi;
 							{
-						if((pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath[i-1].x)*(pathpackvarlocal.finalpath.y[i+2]-pathpackvarlocal.finalpath.y[i+1])-(pathpackvarlocal.finalpath.y[i]-pathpackvarlocal.finalpath[i-1].y)*(pathpackvarlocal.finalpath.x[i+2]-pathpackvarlocal.finalpath.x[i+1])<0)
+						if((pathpackvarlocal.finalpath.x[i]-1)*(pathpackvarlocal.finalpath.y[i+2]-pathpackvarlocal.finalpath.y[i+1])-(pathpackvarlocal.finalpath.y[i])*(pathpackvarlocal.finalpath.x[i+2]-pathpackvarlocal.finalpath.x[i+1])<0)
 								phi=2*asin(sqrt(sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])+sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])));
-								if((pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i-1].x)*(pathpackvarlocal.finalpath[i+1].y+pathpackvarlocal.finalpath[i+2].y)-(pathpackvarlocal.finalpath[i].y-pathpackvarlocal.finalpath[i-1].y)*(pathpackvarlocal.finalpath[i+1].x+pathpackvarlocal.finalpath[i+2].x) >0)
+								if((pathpackvarlocal.finalpath[i].x-1)*(pathpackvarlocal.finalpath[i+1].y+pathpackvarlocal.finalpath[i+2].y)-(pathpackvarlocal.finalpath[i].y-pathpackvarlocal.finalpath[i-1].y)*(pathpackvarlocal.finalpath[i+1].x+pathpackvarlocal.finalpath[i+2].x) >0)
 									walk.move(0,phi);
 								else
 									walk.move(0,-1*phi);
@@ -178,7 +178,7 @@ void* walk_thread(void*)
 						{
 							phi=360-2*asin(sqrt(sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])+sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])));
 							//if(pathpackvarlocal.finalpath.x[i]*(pathpackvarlocal.finalpath.y[i+2]-pathpackvarlocal.finalpath.y[i+1])-pathpackvarlocal.finalpath.y[i]*(pathpackvarlocal.finalpath.x[i+2]-pathpackvarlocal.finalpath.x[i+1]))
-							if((pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i-1].x)*(pathpackvarlocal.finalpath[i+1].y+pathpackvarlocal.finalpath[i+2].y)-(pathpackvarlocal.finalpath[i].y-pathpackvarlocal.finalpath[i-1].y)*(pathpackvarlocal.finalpath[i+1].x+pathpackvarlocal.finalpath[i+2].x) >0)
+							if((pathpackvarlocal.finalpath[i].x-1)*(pathpackvarlocal.finalpath[i+1].y+pathpackvarlocal.finalpath[i+2].y)-(pathpackvarlocal.finalpath[i].y)*(pathpackvarlocal.finalpath[i+1].x+pathpackvarlocal.finalpath[i+2].x) >0)
 									walk.move(0,phi);
 								else
 									walk.move(0,-1*phi);
