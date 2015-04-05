@@ -359,20 +359,22 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
             if(nGoals>=2) break;
         }
     }
-    if(nGoals < 2)
-    {
-        CvPoint gp1, gp2;
-        tempnLand -= nGoals;
-        gp1 = cvPoint(gpx1,goalBase);
-        gp2 = cvPoint(gpx2,goalBase);
-        findReal(gp1.x,gp1.y, templ[tempnLand].distance, templ[tempnLand].angle, hm);
-        findReal(gp2.x,gp2.y, templ[tempnLand+1].distance, templ[tempnLand+1].angle, hm);
-        CvScalar color = CV_RGB(255,0,0);
-        #ifdef PLOT_LANDMARKS
-            cvCircle(cam.rgbimg, cvPoint(gp1.x*2,gp1.y*2), 2, color, 2);
-            cvCircle(cam.rgbimg, cvPoint(gp2.x*2,gp2.y*2), 2, color, 2);
-        #endif
-    }
+    #ifdef NEAR_GOAL_OVERIDE
+        if(nGoals < 2)
+        {
+            CvPoint gp1, gp2;
+            tempnLand -= nGoals;
+            gp1 = cvPoint(gpx1,goalBase);
+            gp2 = cvPoint(gpx2,goalBase);
+            findReal(gp1.x,gp1.y, templ[tempnLand].distance, templ[tempnLand].angle, hm);
+            findReal(gp2.x,gp2.y, templ[tempnLand+1].distance, templ[tempnLand+1].angle, hm);
+            CvScalar color = CV_RGB(255,0,0);
+            #ifdef PLOT_LANDMARKS
+                cvCircle(cam.rgbimg, cvPoint(gp1.x*2,gp1.y*2), 2, color, 2);
+                cvCircle(cam.rgbimg, cvPoint(gp2.x*2,gp2.y*2), 2, color, 2);
+            #endif
+        }
+    #endif
     nGoals = 0;
     ///////////////////////////////////COMMENTED SO THAT NO CHANGE TO SEG_BLUE////////////////////////////////////////////
     for (CvBlobs::const_iterator it=blobs_blue.begin(); it!=blobs_blue.end(); ++it)

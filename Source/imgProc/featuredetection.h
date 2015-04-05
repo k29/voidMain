@@ -17,6 +17,7 @@
 using namespace std;
 #define SYMMETRIC_LANDMARKS
 #define PLOT_LANDMARKS
+// #define NEAR_GOAL_OVERIDE
 
 // #define PLOT_HOUGH_LINES
 //new technique to get features:

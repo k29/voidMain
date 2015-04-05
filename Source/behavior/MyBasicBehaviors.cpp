@@ -67,12 +67,18 @@ void BasicBehaviorUpdate::execute()
         {
             p.localizationState = LOCALIZED;
             p.timesteps = 0;
+            pthread_mutex_lock(&mutex_rotate);
+            DO_ROTATE = false;
+            pthread_mutex_unlock(&mutex_rotate);
         }
         else if(p.loc.confidence >= 0.2 && p.loc.confidence < 5.0)
         {
             p.localizationState = LOCALIZED;
             motionModel.refresh(p.loc.selfX, p.loc.selfY, p.loc.confidence);
             p.timesteps = 0;
+            pthread_mutex_lock(&mutex_rotate);
+            DO_ROTATE = false;
+            pthread_mutex_unlock(&mutex_rotate);
         }
         else
         {
@@ -172,16 +178,15 @@ void BasicBehaviorUpdate::execute()
 }
 
 void BasicBehaviorRotate::execute()
-{   
-        // printf("BasicBehaviorRotate\n");
-        pthread_mutex_lock(&mutex_pathpacket);
-        pathpackvar.no_of_points=1;
-        pathpackvar.updated=1;
-        pathpackvar.pathType=1;
-        pathpackvar.finalpath[0].x=0.0;
-        pathpackvar.finalpath[0].y=deg2rad(5);
-        pthread_mutex_unlock(&mutex_pathpacket);
-
+{
+    printf("BasicBehaviorRotate\n");
+    pthread_mutex_lock(&mutex_pathpacket);
+    pathpackvar.no_of_points=1;
+    pathpackvar.updated=1;
+    pathpackvar.pathType=1;
+    pathpackvar.finalpath[0].x=0.0;
+    pathpackvar.finalpath[0].y=deg2rad(5);
+    pthread_mutex_unlock(&mutex_pathpacket);
 }
 void BasicBehaviorLocalize::execute()
 {   
