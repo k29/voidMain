@@ -166,9 +166,10 @@ void* walk_thread(void*)
 					if(i%2==0)// Obstacle radius == 20 cm
 					{
 						int j=0,phi;
-							{
+							
 						if((pathpackvarlocal.finalpath.x[i]-1)*(pathpackvarlocal.finalpath.y[i+2]-pathpackvarlocal.finalpath.y[i+1])-(pathpackvarlocal.finalpath.y[i])*(pathpackvarlocal.finalpath.x[i+2]-pathpackvarlocal.finalpath.x[i+1])<0)
-								phi=2*asin(sqrt(sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])+sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])));
+							{
+								phi=2*asin(sqrt(pow(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1],2)+pow(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1],2)));
 								if((pathpackvarlocal.finalpath[i].x-1)*(pathpackvarlocal.finalpath[i+1].y+pathpackvarlocal.finalpath[i+2].y)-(pathpackvarlocal.finalpath[i].y-pathpackvarlocal.finalpath[i-1].y)*(pathpackvarlocal.finalpath[i+1].x+pathpackvarlocal.finalpath[i+2].x) >0)
 									walk.move(0,phi);
 								else
@@ -176,19 +177,19 @@ void* walk_thread(void*)
 							}
 						else
 						{
-							phi=360-2*asin(sqrt(sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])+sq(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1])));
+							phi=360-2*asin(sqrt(pow(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1],2)+pow(pathpackvarlocal.finalpath.x[i]-pathpackvarlocal.finalpath.x[i+1],2)));
 							//if(pathpackvarlocal.finalpath.x[i]*(pathpackvarlocal.finalpath.y[i+2]-pathpackvarlocal.finalpath.y[i+1])-pathpackvarlocal.finalpath.y[i]*(pathpackvarlocal.finalpath.x[i+2]-pathpackvarlocal.finalpath.x[i+1]))
 							if((pathpackvarlocal.finalpath[i].x-1)*(pathpackvarlocal.finalpath[i+1].y+pathpackvarlocal.finalpath[i+2].y)-(pathpackvarlocal.finalpath[i].y)*(pathpackvarlocal.finalpath[i+1].x+pathpackvarlocal.finalpath[i+2].x) >0)
 									walk.move(0,phi);
 								else
 									walk.move(0,-1*phi);
 						}
-						usleep(1.5*abs(theta*80/9)*1000);
+						usleep(1.5*abs(phi*80/9)*1000);
 					}
 					else
 					{
-						walk.move(sqrt(sq(pathpackvarlocal.finalPath[i+1].x-pathpackvarlocal.finalPath[i].x)+sq(pathpackvarlocal.finalPath[i+1].y-pathpackvarlocal.finalPath[i].y)),0);
-						usleep(1000*(sqrt(sq(pathpackvarlocal.finalPath[i+1].x-pathpackvarlocal.finalPath[i].x)+sq(pathpackvarlocal.finalPath[i+1].y-pathpackvarlocal.finalPath[i].y))+2.5)/(0.145*255));
+						walk.move(sqrt(pow(pathpackvarlocal.finalPath[i+1].x-pathpackvarlocal.finalPath[i].x,2)+pow(pathpackvarlocal.finalPath[i+1].y-pathpackvarlocal.finalPath[i].y,2)),0);
+						usleep(1000*(sqrt(pow(pathpackvarlocal.finalPath[i+1].x-pathpackvarlocal.finalPath[i].x,2)+pow(pathpackvarlocal.finalPath[i+1].y-pathpackvarlocal.finalPath[i].y,2))+2.5)/(0.145*255));
 					}
 
 					//usleep((1.5*abs(theta*80/9)+(sqrt(sq(pathpackvarlocal.finalPath[i+1].x-pathpackvarlocal.finalPath[i].x)+sq(pathpackvarlocal.finalPath[i+1].y-pathpackvarlocal.finalPath[i].y))+2.5)/(0.145*255))*1000);
