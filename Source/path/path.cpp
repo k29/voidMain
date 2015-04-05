@@ -758,9 +758,21 @@ PathReturns Path::path_return(PathStructure ps)
 		b=tree.returnPathPoint(b);
 	}
 
-
+	//checking if the obstacle at 'a' lies within the initial obstacle
+	//if yes, reduce the initial obstacle radius until a is outside.	
+	// cout<<"before updation"<<endl;
+	// while()
+	if(sqrt(pow(tree[a].x,2) + pow(tree[a].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[a].x,2) + pow(tree[a].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS)
+	{
+		pathpackvar.NEAR_FLAG = 1;
+	}
+	else
+	{
+		pathpackvar.NEAR_FLAG = 0;
+	}
+	// cout<<"after updation"<<endl;
 	//introducing initial obsacles between 0 and a
-	obstacle[NO_OF_OBSTACLES + 2].obstacle_radius= INITIAL_ORIENTATION_RADIUS;
+	obstacle[NO_OF_OBSTACLES + 2].obstacle_radius = INITIAL_ORIENTATION_RADIUS;
 	obstacle[NO_OF_OBSTACLES + 2].x=start.x;
 	obstacle[NO_OF_OBSTACLES + 2].y=start.y - ( INITIAL_ORIENTATION_RADIUS);
 	obstacle[NO_OF_OBSTACLES + 2].obstacle_id=-3;
@@ -863,15 +875,16 @@ PathReturns Path::path_return(PathStructure ps)
  	cvWaitKey();
  	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	#endif
-	////////cout<<"\nCalling Dijkstras\n";
+	// cout<<"\nCalling Dijkstras\n";
 	tree.dijkstra();
 	// cout<<"post 2nd dijkstra implementation\n";
 	a,b;
 	a=1;
-	////////cout<<"Before return path point 1";
+	// cout<<"Before return path point 1";
 	b=tree.returnPathPoint(1);
 	// cout<<"1\n";
 	// cout<<"b: "<<b<<"\n";
+	// cout<<"before if"<<endl;
 
 	while(b!=0)
 	{
@@ -1063,7 +1076,7 @@ PathReturns Path::path_return(PathStructure ps)
 
 void Path::updatePathPacket()
 {
-		// pthread_mutex_lock(&mutex_pathpacket);
+		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
@@ -1074,11 +1087,11 @@ void Path::updatePathPacket()
 		if(tree.size() >= 30)
 		{
 			tree.path_crash = true;
-			// pthread_mutex_unlock(&mutex_pathpacket);
+			pthread_mutex_unlock(&mutex_pathpacket);
 			return;
 		}
 		assert(tree.size()<30);
-		
+		// cout<<"before pathpackvar updated"<<endl;
 		//commented original
 		int i = 0;
 		for(i=0;i<len_curve-1;i++)
@@ -1088,15 +1101,18 @@ void Path::updatePathPacket()
 			// 	break;
 			pathpackvar.finalpath[i].x=tree[curve[i+1]].x;
 			pathpackvar.finalpath[i].y=tree[curve[i+1]].y;
+			pathpackvar.finalpath[i].obstacle_radius = obstacle[tree[curve[i+1]].obstacle_id].obstacle_radius;
 			// printf("path %d x: %lf y: %lf\n", i, tree[b].x, tree[b].y);
 			// b=tree.returnPathPoint(b);
-			pathpackvar.no_of_points=i+2;
 		}
+
+		pathpackvar.no_of_points=len_curve;
+
 		// pathpackvar.finalpath[i].x = ball.x;
 		// pathpackvar.finalpath[i].y = ball.y;
 		// i++;
 		pathpackvar.finalpath[i].x = goal.x;
-		pathpackvar.finalpath[i].y = goal.y;	
+		pathpackvar.finalpath[i].y = goal.y;
 		// cout<<"goal.x: "<<goal.x<<endl;
 		// cout<<pathpackvar.finalpath[i].x<<endl;
 		// cout<<"No. of Points: "<<pathpackvar.no_of_points<<endl;
@@ -1110,12 +1126,12 @@ void Path::updatePathPacket()
 		// {
 		// 	cout<<"x: "<<pathpackvar.finalpath[i].x<<"y; "<<pathpackvar.finalpath[i].y<<endl;
 		// }
-		// for (int i = 0; i < pathpackvar.no_of_points; ++i)
-		// {
-		// 	cout<<"x: "<<pathpackvar.finalpath[i].x<<"y: "<<pathpackvar.finalpath[i].y<<endl;
-		// }
-			
-		// 	pthread_mutex_unlock(&mutex_pathpacket);
+		for (int i = 0; i < pathpackvar.no_of_points; ++i)
+		{
+			// cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<endl;
+		}
+		// cout<<"near flag: "<<pathpackvar.NEAR_FLAG<<endl;	
+		pthread_mutex_unlock(&mutex_pathpacket);
 
 }
 
