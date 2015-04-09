@@ -502,6 +502,7 @@ void* walk_thread(void*)
 	int j=0,i=0;
 	PathPacket pathpackvarlocal;
 	// Call walkthread here instead of reading file.
+	cout<<"before lock"<<endl;
 	pthread_mutex_lock(&mutex_pathpacket);
 	pathpackvarlocal = pathpackvar;
 	cout<<"no_of_points "<<pathpackvar.no_of_points<<endl;

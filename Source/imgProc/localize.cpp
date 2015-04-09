@@ -684,3 +684,19 @@ AbsCoords Localize::getGoalCoords(int g)
 	}
 	return result;
 }
+
+void Localize::setGoalCoords(double x, double y, int g)
+{
+	if(g==0)	//Blue
+	{
+		landGPB[0].x = x;
+		landGPB[0].y = y - 10;
+		landGPB[1].y = y + 10;
+	}
+	else
+	{
+		landGPY[0].x = x;
+		landGPY[0].y = y - 10;
+		landGPY[1].y = y + 10;
+	}
+}

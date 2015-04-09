@@ -1,6 +1,6 @@
 #include "MyBasicBehaviors.h"
 
-
+AbsCoords goalMouseCallBack;
 
 void BasicBehaviorPrint::execute()
 {
@@ -28,7 +28,9 @@ void BasicBehaviorInitialize::execute()
 
     p.confidence=0;
     motionModel.confidence=0;
-
+    goalMouseCallBack.x = 100.0;
+    goalMouseCallBack.y = 100.0;
+    cvNamedWindow("Field", CV_WINDOW_AUTOSIZE);
     printf("Initialized\n");
     #endif
 }
@@ -57,7 +59,7 @@ void BasicBehaviorUpdate::execute()
 
         /* Set flags for XABSL */
 
-
+        #ifndef PATH_MOUSE_CLICK_ENABLE
         /* localizationState flag */
         pthread_mutex_lock(&mutex_motionModel);
 
@@ -114,7 +116,14 @@ void BasicBehaviorUpdate::execute()
         pthread_mutex_unlock(&mutex_motionModel);
 
         /* localizationState flag end */
-    
+        #endif
+
+        #ifdef PATH_MOUSE_CLICK_ENABLE
+            p.localizationState = LOCALIZED;
+            p.confidence = 1.0;
+            cv::setMouseCallback("Field", callBack, &goalMouseCallBack);
+            p.loc.setGoalCoords(goalMouseCallBack.x, goalMouseCallBack.y, p.ACTIVE_GOAL);
+        #endif
 
 
         /* ball found flag */     
@@ -179,14 +188,17 @@ void BasicBehaviorUpdate::execute()
 
 void BasicBehaviorRotate::execute()
 {
-    printf("BasicBehaviorRotate\n");
+    // printf("BasicBehaviorRotate\n");
+    cout<<"before lock rotate"<<endl;
     pthread_mutex_lock(&mutex_pathpacket);
+    cout<<"2"<<endl;
     pathpackvar.no_of_points=1;
     pathpackvar.updated=1;
     pathpackvar.pathType=1;
     pathpackvar.finalpath[0].x=0.0;
     pathpackvar.finalpath[0].y=deg2rad(5);
     pthread_mutex_unlock(&mutex_pathpacket);
+    cout<<"unlocked rotate"<<endl;
 }
 void BasicBehaviorLocalize::execute()
 {   
@@ -272,17 +284,29 @@ void BasicBehaviorMakePath::execute()
     #ifdef IP_IS_ON
     
     AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
-    AbsCoords selfm = motionModel.read();
-    double selfx = ALPHA*p.loc.selfX + BETA*selfm.x;
-    double selfy = ALPHA*p.loc.selfY + BETA*selfm.y;
-    selfx /= (ALPHA + BETA);
-    selfy /= (ALPHA + BETA);
+    #ifndef PATH_MOUSE_CLICK_ENABLE
+        AbsCoords selfm = motionModel.read();
+        double selfx = ALPHA*p.loc.selfX + BETA*selfm.x;
+        double selfy = ALPHA*p.loc.selfY + BETA*selfm.y;
+        selfx /= (ALPHA + BETA);
+        selfy /= (ALPHA + BETA);
+    #endif
+    #ifdef PATH_MOUSE_CLICK_ENABLE
+        double selfx = 0;
+        double selfy = 0;
+    #endif
     double tempx = goalcoords.x - selfx;
     double tempy = goalcoords.y - selfy;
     // double tempx=goalcoords.x-p.loc.selfX;
     // double tempy=goalcoords.y-p.loc.selfY;
+    #ifndef PATH_MOUSE_CLICK_ENABLE
     p.pathstr.goal.x= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
     p.pathstr.goal.y= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
+    #endif
+    #ifdef PATH_MOUSE_CLICK_ENABLE
+    p.pathstr.goal.x = tempx;
+    p.pathstr.goal.y = tempy;
+    #endif
     // printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
     //printf("goal coords y:%lf\n",pathstr.goal.x);
     p.pathstr.ball.x=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));
@@ -298,7 +322,7 @@ void BasicBehaviorMakePath::execute()
     
     // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
     // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
-
+    // cout<<"before pathreturn behavior"<<endl;
     p.pathreturn=p.path.path_return(p.pathstr);
     // printf("before crash\n");
     if(p.path.tree.path_crash)
@@ -348,6 +372,7 @@ void BasicBehaviorMakePathFromMotionModel::execute()
 void BasicBehaviorPathToWalk::execute()
 {
     // printf("BasicBehaviorPathToWalk\n");
+        // printf("BasicBehaviorPathToWalk\n");
         #ifdef IP_IS_ON
         #ifdef WALK_IS_ON
     

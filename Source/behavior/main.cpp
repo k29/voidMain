@@ -5,8 +5,10 @@
 #include "../../Xabsl/XabslEngine/XabslEngine.h"
 #include "../common/common.h"
 #include "../common/commondefs.h"
+#include <opencv2/opencv.hpp>
 
 using namespace std;
+using namespace cv;
 
 playerstate ACYUT;
 MyErrorHandler myErrorHandler;
@@ -113,4 +115,28 @@ int getImuAngle()
         #ifndef IMU_IS_ON
             return -9999;
         #endif
+}
+
+void callBack(int event, int x, int y, int flags, void* userdata)
+{
+    AbsCoords *goal = (AbsCoords*) userdata;
+    if  ( event == EVENT_LBUTTONDOWN )
+    {
+        goal->x = x - 250;
+        goal->y = y - 250;
+    }
+    else if  ( event == EVENT_RBUTTONDOWN )
+    {
+        goal->x = x - 250;
+        goal->y = y - 250;
+    }
+    else if  ( event == EVENT_MBUTTONDOWN )
+    {
+        goal->x = x - 250;
+        goal->y = y - 250;
+    }
+    else if ( event == EVENT_MOUSEMOVE )
+    {
+      // cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
+    }
 }

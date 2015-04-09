@@ -24,6 +24,7 @@ int getImuAngle();
 
 void registerXABSL();
 void start();
+void callBack(int event, int x, int y, int flags, void* userdata);
 //extern Imu imu;
 
 /* Threads */
