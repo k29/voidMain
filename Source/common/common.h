@@ -24,6 +24,7 @@ int getImuAngle();
 
 void registerXABSL();
 void start();
+void callBackFunc(int event, int x, int y, int flags, void* userdata);
 //extern Imu imu;
 
 /* Threads */
@@ -41,6 +42,7 @@ extern pthread_mutex_t mutex_GCData;
 extern pthread_mutex_t mutex_pathpacket;
 extern pthread_mutex_t mutex_switch;
 extern pthread_mutex_t mutex_motionModel;
+extern pthread_mutex_t mutex_rotate;
 
 extern WalkStructure walkstr;
 extern WalkStructure prevwalkstr;
@@ -55,4 +57,5 @@ extern Imu imu;
 extern double IMU_INITIAL_ANGLE;
 
 extern int FACE_FOUND;
+extern bool DO_ROTATE;
 #endif

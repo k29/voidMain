@@ -9,9 +9,15 @@
 *.dat
 *.output
 *.rb
+*.lut
 testpath
 Source/xabsl-doc/
 Source/xabsl-xml/
+Source/Build/
 run
 Xabsl/compiler/timestamp
 imu-calibrator
+main
+move
+Source/xsens/imuyaw.angle
+Source/common/modes.h

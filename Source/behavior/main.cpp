@@ -5,6 +5,7 @@
 #include "../../Xabsl/XabslEngine/XabslEngine.h"
 #include "../common/common.h"
 #include "../common/commondefs.h"
+#include "opencv2/opencv.hpp"
 
 using namespace std;
 
@@ -113,4 +114,25 @@ int getImuAngle()
         #ifndef IMU_IS_ON
             return -9999;
         #endif
+}
+
+void callBackFunc(int event, int x, int y, int flags, void* userdata)
+{
+    AbsCoords* goal = (AbsCoords*) userdata;
+
+    if(event == cv::EVENT_LBUTTONDOWN)
+    {
+        goal->x = x - 250.0;
+        goal->y = y - 250.0;
+    }
+    if(event == cv::EVENT_RBUTTONDOWN)
+    {
+        goal->x = x - 250.0;
+        goal->y = y - 250.0;
+    }
+    if(event == cv::EVENT_MBUTTONDOWN)
+    {
+        goal->x = x - 250.0;
+        goal->y = y - 250.0;
+    }
 }

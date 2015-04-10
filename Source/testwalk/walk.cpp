@@ -1,6 +1,7 @@
 #include "walk.h"
 
 #include <cstdio>
+// #include <iostream>
 #include <string.h>
 
 
@@ -56,8 +57,8 @@ void Walk::move(double walkr,double walktheta)
 
 	char S1[80],S2[80];
     
-    file = fopen("/dev/ttyACM1","w");  //Opening device file
-
+    file = fopen("/dev/ttyACM0","w");  //Opening device file
+    // printf("file opened\n");
 
     sprintf(S1, "%d", (int)walkr);
     sprintf(S2, "%d", (int)walktheta);

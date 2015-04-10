@@ -58,6 +58,7 @@ typedef struct
 {
 	double x;
 	double y;
+	double obstacle_radius;
 }PathCoords;//Coordinate frame is relative to Acyut, acyut faces +ve Xaxis and +ve Yaxis is to the right, convert to AbsCoords using selfangle
 // ^ for communication
 
@@ -133,6 +134,7 @@ typedef struct
 	int updated;
 	int id;
 	int no_of_points;
+	bool NEAR_FLAG;
 	PathCoords finalpath[30];
 }PathPacket;
 
