@@ -47,6 +47,7 @@ void loop()
     
     
     time=r/vmax;
+    
     Serial.end();
     implement_var_angle();
     
@@ -163,7 +164,11 @@ void input_var()
       theta=(readString.substring(index+1,readString.length())).toInt();
       
         
-        
+        Serial.println("radius in cm");
+    
+    Serial.println(r);
+    Serial.println("theta is");
+    Serial.println(theta);
        r=(r+2.5)/0.145;    // in centimetres
       
       

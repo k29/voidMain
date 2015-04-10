@@ -1107,6 +1107,7 @@ void Path::updatePathPacket()
 		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
+		pathpackvar.NEAR_FLAG = 0;
 		com_id=com_id+1;
 		std::size_t b;
 		b=tree.returnPathPoint(1);
@@ -1159,13 +1160,29 @@ void Path::updatePathPacket()
 		
 		for (int i = 0; i < pathpackvar.no_of_points; ++i)
 		{
-			// cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<endl;
+			cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<endl;
+		}
+		
+		// cout<<"after unlock update pathpackvar"<<endl;
+
+	}
+	cout<<"Near Flag: "<<Near_Flag<<endl;
+	for (int i = 0; i < pathpackvar.no_of_points; ++i)
+		{
+			cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<endl;
 		}
 		
 		pthread_mutex_unlock(&mutex_pathpacket);
-		// cout<<"after unlock update pathpackvar"<<endl;
-	}
 
+	if(Near_Flag)
+	{
+		pthread_mutex_lock(&mutex_pathpacket);
+		pathpackvar.updated=1;
+		// pathpackvar.id=com_id;
+		// com_id=com_id+1;
+		pthread_mutex_unlock(&mutex_pathpacket);
+
+	}
 	// if(Near_Flag)
 	// {
 	// 	pthread_mutex_lock(&mutex_pathpacket);
@@ -1178,5 +1195,3 @@ void Path::updatePathPacket()
 	// 	pthread_mutex_unlock(&mutex_pathpacket);
 	// }
 }
-
-
