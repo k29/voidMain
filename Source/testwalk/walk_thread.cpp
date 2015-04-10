@@ -99,7 +99,7 @@ void doquitWalk()
 void* walk_thread(void*)
 {
 	
-	printf("in walkthread\n"); //----> DONT REMOVE THIS OR WALKTHREAD WONT WORK
+	// printf("in walkthread\n"); //----> DONT REMOVE THIS OR WALKTHREAD WONT WORK
 	// Communication comm;
 	// testBot bot();
 	Walk walk;
@@ -125,23 +125,18 @@ void* walk_thread(void*)
 	vector<int> executed(30,1);
 	while (1)
 	{
-		printf("%s\n","inside while1" );
 			// printf("Size is %d\n",pathpackvar.no_of_points);
 			pthread_mutex_lock(&mutex_pathpacket);
 					if(pathpackvar.updated==1)
 						{
-							// printf("before conversion\n");
 							walkpacket=convertPathPacket();
-							// printf("after conversion\n");
 							pathpackvarlocal=pathpackvar;
 							pathpackvar.updated=0;
 							executed.assign(30,0);
 						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
-			cout<<walkpacket.no_of_points<<endl;
-		//for(int i=0;i<walkpacket.no_of_points-2;++i)
-		int i=0;
-		while(1)
+
+		for(int i=0;i<walkpacket.no_of_points-2;++i)
 		{
 
 			pthread_mutex_lock(&mutex_pathpacket);
@@ -171,40 +166,36 @@ void* walk_thread(void*)
 					if(i%2==0)// Obstacle radius == 20 cm
 					{
 						int j=0,phi;
-							printf("%s\n","hello1" );
+							
 						if((pathpackvarlocal.finalpath[i].x-1)*(pathpackvarlocal.finalpath[i+2].y-pathpackvarlocal.finalpath[i+1].y)-(pathpackvarlocal.finalpath[i].y)*(pathpackvarlocal.finalpath[i+2].x-pathpackvarlocal.finalpath[i+1].x)<0)
 							{
-								phi=2*asin(sqrt(pow(pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i+1].x,2)+pow(pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i+1].x,2)));
+								phi=2*asin(sqrt(pow(pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i+1].x,2)+pow(pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i+1].x,2))/40);
+								
 								if((pathpackvarlocal.finalpath[i].x-1)*(pathpackvarlocal.finalpath[i+1].y+pathpackvarlocal.finalpath[i+2].y)-(pathpackvarlocal.finalpath[i].y-pathpackvarlocal.finalpath[i-1].y)*(pathpackvarlocal.finalpath[i+1].x+pathpackvarlocal.finalpath[i+2].x) >0)
 									walk.move(0,phi);
 								else
 									walk.move(0,-1*phi);
-								printf("%s\n","hello2" );
 							}
-							
 						else
 						{
-							phi=360-2*asin(sqrt(pow(pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i+1].x,2)+pow(pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i+1].x,2)));
+							phi=360-2*asin(sqrt(pow(pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i+1].x,2)+pow(pathpackvarlocal.finalpath[i].x-pathpackvarlocal.finalpath[i+1].x,2))/40);
 							//if(pathpackvarlocal.finalpath.x[i]*(pathpackvarlocal.finalpath.y[i+2]-pathpackvarlocal.finalpath.y[i+1])-pathpackvarlocal.finalpath.y[i]*(pathpackvarlocal.finalpath.x[i+2]-pathpackvarlocal.finalpath.x[i+1]))
 							if((pathpackvarlocal.finalpath[i].x-1)*(pathpackvarlocal.finalpath[i+1].y+pathpackvarlocal.finalpath[i+2].y)-(pathpackvarlocal.finalpath[i].y)*(pathpackvarlocal.finalpath[i+1].x+pathpackvarlocal.finalpath[i+2].x) >0)
 									walk.move(0,phi);
 								else
 									walk.move(0,-1*phi);
 						}
-						printf("%s\n","before 1st sleep" );
-						usleep(2*abs(phi*80/9)*1000);
-
+						usleep(1.5*abs(phi*80/9)*1000);
 					}
 					else
 					{
 						walk.move(sqrt(pow(pathpackvarlocal.finalpath[i+1].x-pathpackvarlocal.finalpath[i].x,2)+pow(pathpackvarlocal.finalpath[i+1].y-pathpackvarlocal.finalpath[i].y,2)),0);
-						usleep(2*1000*(sqrt(pow(pathpackvarlocal.finalpath[i+1].x-pathpackvarlocal.finalpath[i].x,2)+pow(pathpackvarlocal.finalpath[i+1].y-pathpackvarlocal.finalpath[i].y,2))+2.5)/(0.145*255));
+						usleep(1000*(sqrt(pow(pathpackvarlocal.finalpath[i+1].x-pathpackvarlocal.finalpath[i].x,2)+pow(pathpackvarlocal.finalpath[i+1].y-pathpackvarlocal.finalpath[i].y,2))+2.5)/(0.145*255));
 					}
-					printf("%s\n", "after second sleep");
 
 					//usleep((1.5*abs(theta*80/9)+(sqrt(sq(pathpackvarlocal.finalPath[i+1].x-pathpackvarlocal.finalPath[i].x)+sq(pathpackvarlocal.finalPath[i+1].y-pathpackvarlocal.finalPath[i].y))+2.5)/(0.145*255))*1000);
 
-					
+
 
 
 
@@ -222,31 +213,9 @@ void* walk_thread(void*)
 					motionModel.update(walkpacket.finalPath[i].r,walkpacket.finalPath[i].theta);
 					pthread_mutex_unlock(&mutex_motionModel);
 					executed[i]=1;
-					i++;
-					
 				}
-				pthread_mutex_lock(&mutex_pathpacket);
-						if(pathpackvar.updated==1||i>28)
-						{
-							break;
-							
-							
-							
-						}
-						else if(pathpackvar.updated==0||i>28)
-						{
-							printf("%s\n","path packet not updated and path traversed" );
-							break;
-
-						}
-						else
-						{
-
-						}
-					pthread_mutex_unlock(&mutex_pathpacket);
-				printf("%s\n","inside while 2 when not broken" );
 		}
-		printf("%s\n","while 2 broken" );
+
 	}
 
 
