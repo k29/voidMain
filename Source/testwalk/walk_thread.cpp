@@ -126,38 +126,27 @@ void* walk_thread(void*)
 	while (1)
 	{
 			// printf("Size is %d\n",pathpackvar.no_of_points);
-			cout<<"before lock walk thread"<<endl;
 			pthread_mutex_lock(&mutex_pathpacket);
-			cout<<"after lock walk thread"<<endl;
 					if(pathpackvar.updated==1)
 						{
-							cout<<"enter if 1111111"<<endl;
 							walkpacket=convertPathPacket();
 							pathpackvar.updated=0;
 							executed.assign(30,0);
-						}	
-					else
-						cout<<"PathPacket not updated"<<endl;	
+						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
-			cout<<"after unlock walk thread"<<endl;
 
 		for(int i=0;i<walkpacket.no_of_points;++i)
 		{
 
-			cout<<"before lock walk thread 11"<<endl;
 			pthread_mutex_lock(&mutex_pathpacket);
 					if(pathpackvar.updated==1)
 						{
-							// cout<<"enter if"<<endl;
 							walkpacket=convertPathPacket();
 							i=0;
 							pathpackvar.updated=0;
 							executed.assign(30,0);
-						}	
-					else
-						// cout<<"pathpackvar not updated"<<endl;	
+						}		
 			pthread_mutex_unlock(&mutex_pathpacket);
-			cout<<"after unlock walk thread 11"<<endl;
 			// #ifndef ALL_PRINTING_OFF
 			// printf("1\n");
 			// walk.move(10,30);

@@ -87,6 +87,7 @@ public:
 	graph_implementation::Graph<Point> tree; //tree is the instance of the class Graph in the header file.
 	IplImage* image;
 	bool Near_Flag;
+	double BackWalkX;
 	//OBSOLETE->int path_return(PathStructure &ps); //main function to be called by behaviour // return values : 1: successful path   2: go at r,theta    3: encircle      4: path not found.
 	PathReturns path_return(PathStructure ps);
 	/*README - ABOUT RETURN VALUES

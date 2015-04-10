@@ -1,6 +1,9 @@
 #include "MyBasicBehaviors.h"
 
-AbsCoords goalMouseCallBack;
+
+#ifdef PATH_MOUSE_CLICK_ON
+AbsCoords goal_pos;
+#endif
 
 void BasicBehaviorPrint::execute()
 {
@@ -28,9 +31,9 @@ void BasicBehaviorInitialize::execute()
 
     p.confidence=0;
     motionModel.confidence=0;
-    goalMouseCallBack.x = 100.0;
-    goalMouseCallBack.y = 100.0;
-    cvNamedWindow("Field", CV_WINDOW_AUTOSIZE);
+    goal_pos.x = 200.0;
+    goal_pos.y = 200.0;
+
     printf("Initialized\n");
     #endif
 }
@@ -59,8 +62,9 @@ void BasicBehaviorUpdate::execute()
 
         /* Set flags for XABSL */
 
-        #ifndef PATH_MOUSE_CLICK_ENABLE
+
         /* localizationState flag */
+        #ifndef PATH_MOUSE_CLICK_ON
         pthread_mutex_lock(&mutex_motionModel);
 
         p.confidence = ALPHA*p.loc.confidence + BETA*motionModel.confidence;
@@ -114,15 +118,11 @@ void BasicBehaviorUpdate::execute()
             p.timesteps = 0;
         }
         pthread_mutex_unlock(&mutex_motionModel);
-
-        /* localizationState flag end */
         #endif
-
-        #ifdef PATH_MOUSE_CLICK_ENABLE
-            p.localizationState = LOCALIZED;
+        /* localizationState flag end */
+        #ifdef PATH_MOUSE_CLICK_ON
             p.confidence = 1.0;
-            cv::setMouseCallback("Field", callBack, &goalMouseCallBack);
-            p.loc.setGoalCoords(goalMouseCallBack.x, goalMouseCallBack.y, p.ACTIVE_GOAL);
+            p.localizationState = LOCALIZED;
         #endif
 
 
@@ -188,17 +188,14 @@ void BasicBehaviorUpdate::execute()
 
 void BasicBehaviorRotate::execute()
 {
-    // printf("BasicBehaviorRotate\n");
-    cout<<"before lock rotate"<<endl;
+    printf("BasicBehaviorRotate\n");
     pthread_mutex_lock(&mutex_pathpacket);
-    cout<<"2"<<endl;
     pathpackvar.no_of_points=1;
     pathpackvar.updated=1;
     pathpackvar.pathType=1;
     pathpackvar.finalpath[0].x=0.0;
     pathpackvar.finalpath[0].y=deg2rad(5);
     pthread_mutex_unlock(&mutex_pathpacket);
-    cout<<"unlocked rotate"<<endl;
 }
 void BasicBehaviorLocalize::execute()
 {   
@@ -283,29 +280,24 @@ void BasicBehaviorMakePath::execute()
     // printf("BasicBehaviorMakePath\n");
     #ifdef IP_IS_ON
     
+    #ifndef PATH_MOUSE_CLICK_ON
     AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
-    #ifndef PATH_MOUSE_CLICK_ENABLE
-        AbsCoords selfm = motionModel.read();
-        double selfx = ALPHA*p.loc.selfX + BETA*selfm.x;
-        double selfy = ALPHA*p.loc.selfY + BETA*selfm.y;
-        selfx /= (ALPHA + BETA);
-        selfy /= (ALPHA + BETA);
-    #endif
-    #ifdef PATH_MOUSE_CLICK_ENABLE
-        double selfx = 0;
-        double selfy = 0;
-    #endif
+    AbsCoords selfm = motionModel.read();
+    double selfx = ALPHA*p.loc.selfX + BETA*selfm.x;
+    double selfy = ALPHA*p.loc.selfY + BETA*selfm.y;
+    selfx /= (ALPHA + BETA);
+    selfy /= (ALPHA + BETA);
     double tempx = goalcoords.x - selfx;
     double tempy = goalcoords.y - selfy;
     // double tempx=goalcoords.x-p.loc.selfX;
     // double tempy=goalcoords.y-p.loc.selfY;
-    #ifndef PATH_MOUSE_CLICK_ENABLE
     p.pathstr.goal.x= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
     p.pathstr.goal.y= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
     #endif
-    #ifdef PATH_MOUSE_CLICK_ENABLE
-    p.pathstr.goal.x = tempx;
-    p.pathstr.goal.y = tempy;
+    #ifdef PATH_MOUSE_CLICK_ON
+    cv::setMouseCallback("Field", callBackFunc, &goal_pos);
+    p.pathstr.goal.x = goal_pos.x;
+    p.pathstr.goal.y = goal_pos.y;
     #endif
     // printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
     //printf("goal coords y:%lf\n",pathstr.goal.x);
@@ -322,7 +314,7 @@ void BasicBehaviorMakePath::execute()
     
     // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
     // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
-    // cout<<"before pathreturn behavior"<<endl;
+
     p.pathreturn=p.path.path_return(p.pathstr);
     // printf("before crash\n");
     if(p.path.tree.path_crash)
@@ -331,7 +323,7 @@ void BasicBehaviorMakePath::execute()
         p.path.tree.path_crash = false;
         cvZero(p.path.image);
     }
-    // printf("Path Made\n");
+    printf("Path Made\n");
     #endif
 }
 
@@ -372,7 +364,6 @@ void BasicBehaviorMakePathFromMotionModel::execute()
 void BasicBehaviorPathToWalk::execute()
 {
     // printf("BasicBehaviorPathToWalk\n");
-        // printf("BasicBehaviorPathToWalk\n");
         #ifdef IP_IS_ON
         #ifdef WALK_IS_ON
     

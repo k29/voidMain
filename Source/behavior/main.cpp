@@ -5,10 +5,9 @@
 #include "../../Xabsl/XabslEngine/XabslEngine.h"
 #include "../common/common.h"
 #include "../common/commondefs.h"
-#include <opencv2/opencv.hpp>
+#include "opencv2/opencv.hpp"
 
 using namespace std;
-using namespace cv;
 
 playerstate ACYUT;
 MyErrorHandler myErrorHandler;
@@ -117,26 +116,23 @@ int getImuAngle()
         #endif
 }
 
-void callBack(int event, int x, int y, int flags, void* userdata)
+void callBackFunc(int event, int x, int y, int flags, void* userdata)
 {
-    AbsCoords *goal = (AbsCoords*) userdata;
-    if  ( event == EVENT_LBUTTONDOWN )
+    AbsCoords* goal = (AbsCoords*) userdata;
+
+    if(event == cv::EVENT_LBUTTONDOWN)
     {
-        goal->x = x - 250;
-        goal->y = y - 250;
+        goal->x = x - 250.0;
+        goal->y = y - 250.0;
     }
-    else if  ( event == EVENT_RBUTTONDOWN )
+    if(event == cv::EVENT_RBUTTONDOWN)
     {
-        goal->x = x - 250;
-        goal->y = y - 250;
+        goal->x = x - 250.0;
+        goal->y = y - 250.0;
     }
-    else if  ( event == EVENT_MBUTTONDOWN )
+    if(event == cv::EVENT_MBUTTONDOWN)
     {
-        goal->x = x - 250;
-        goal->y = y - 250;
-    }
-    else if ( event == EVENT_MOUSEMOVE )
-    {
-      // cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
+        goal->x = x - 250.0;
+        goal->y = y - 250.0;
     }
 }

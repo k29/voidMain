@@ -772,8 +772,6 @@ PathReturns Path::path_return(PathStructure ps)
 	{
 		Near_Flag = 0;
 	}
-
-	double BackWalkX;
 	
 	if(Near_Flag)
 	{
@@ -1105,7 +1103,7 @@ void Path::updatePathPacket()
 		// cout<<"abc"<<endl;
 	if(!Near_Flag)
 	{	
-		cout<<"before lock update pathpackvar"<<endl;
+		// cout<<"before lock update pathpackvar"<<endl;
 		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
@@ -1165,20 +1163,20 @@ void Path::updatePathPacket()
 		}
 		
 		pthread_mutex_unlock(&mutex_pathpacket);
-		cout<<"after unlock update pathpackvar"<<endl;
+		// cout<<"after unlock update pathpackvar"<<endl;
 	}
 
-	if(Near_Flag)
-	{
-		pthread_mutex_lock(&mutex_pathpacket);
-		pathpackvar.updated=1;
-		pathpackvar.id=com_id;
-		com_id=com_id+1;
-		pathpackvar.NEAR_FLAG = 1;
-		pathpackvar.finalpath[0].x = BackWalkX;
-		pathpackvar.finalpath[0].y = 0.0;
-		pthread_mutex_unlock(&mutex_pathpacket);
-	}
+	// if(Near_Flag)
+	// {
+	// 	pthread_mutex_lock(&mutex_pathpacket);
+	// 	pathpackvar.updated=1;
+	// 	pathpackvar.id=com_id;
+	// 	com_id=com_id+1;
+	// 	pathpackvar.NEAR_FLAG = 1;
+	// 	pathpackvar.finalpath[0].x = BackWalkX;
+	// 	pathpackvar.finalpath[0].y = 0.0;
+	// 	pthread_mutex_unlock(&mutex_pathpacket);
+	// }
 }
 
 
