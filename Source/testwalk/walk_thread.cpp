@@ -8,7 +8,7 @@ int arc_angle(float x1, float x2, float y1, float y2)
 
 	perpendicular=sqrt(pow(x2-x1,2)+pow(y2-y1,2))/2;
 
-	phi=asin(perpendicular/ARC_RADIUS);
+	phi=180/3.1415*asin(perpendicular/ARC_RADIUS);
 
 
 
@@ -26,12 +26,12 @@ int forward_move_length(float x1, float x2, float y1, float y2)
 
 bool vector_cross_reflex(/*add vars */)   // whether to follow relfex or non reflex angle
 {
-
+	return false;
 }
 
 int vector_cross_clock(/* add vars*/)  // whether to turn clockwise or anticlockwise
 {
-
+	return 1;
 }
 
 
@@ -43,7 +43,7 @@ void* walk_thread(void*)//don't know why such prototype
 	PathPacket pathpackvarlocal;
 
 	int phi, radius;
-	int x_initial=1, y_initial=0;
+	int x_initial=1, y_initial=0, flag=0;
 
 
 		while(1)
@@ -83,8 +83,12 @@ void* walk_thread(void*)//don't know why such prototype
 
 				if(i%2==0)
 				{
+					if(i==0)
+						phi=arc_angle(x_initial,pathpackvarlocal.finalpath[i].x,y_initial,pathpackvarlocal.finalpath[i].y);
+					else
+						phi=arc_angle(pathpackvarlocal.finalpath[i-1].x,pathpackvarlocal.finalpath[i].x,pathpackvarlocal.finalpath[i-1].y,pathpackvarlocal.finalpath[i].y);
 
-					phi=arc_angle(x_initial,pathpackvarlocal.finalpath[i].x,y_initial,pathpackvarlocal.finalpath[i].y);
+					
 					if(vector_cross_reflex(/* add vars*/)==true)
 						phi=360-phi;
 
@@ -106,9 +110,11 @@ void* walk_thread(void*)//don't know why such prototype
 					if(pathpackvar.updated==1)
 					{
 						printf("%s\n","breaking out of for loop" );
+						pthread_mutex_unlock(&mutex_pathpacket);
 						break;
 					}
 				pthread_mutex_unlock(&mutex_pathpacket);
+
 			}	
 			printf("%s\n","while(1) ending" );
 		}	
