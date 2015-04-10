@@ -314,7 +314,7 @@ void BasicBehaviorMakePath::execute()
     
     // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
     // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
-
+    printf("before path return\n");
     p.pathreturn=p.path.path_return(p.pathstr);
     // printf("before crash\n");
     if(p.path.tree.path_crash)
@@ -366,8 +366,9 @@ void BasicBehaviorPathToWalk::execute()
     // printf("BasicBehaviorPathToWalk\n");
         #ifdef IP_IS_ON
         #ifdef WALK_IS_ON
-    
+        printf("path called from behavior\n");
         p.path.updatePathPacket();
+        printf("path updated behavior\n");
         if(p.path.tree.path_crash)
         {
             // printf("path crashed\n");

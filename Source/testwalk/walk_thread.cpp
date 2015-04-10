@@ -48,7 +48,7 @@ void* walk_thread(void*)//don't know why such prototype
 
 		while(1)
 		{
-
+			printf("%s\n","Entering while(1)" );
 			pthread_mutex_lock(&mutex_pathpacket);
 				if(pathpackvar.updated==1)
 				{
@@ -71,7 +71,7 @@ void* walk_thread(void*)//don't know why such prototype
 		
 			for(int i=0;i<pathpackvarlocal.no_of_points;i++)
 			{
-
+				printf("%s\n","Entering for loop" );
 
 				/*
 						First packet is arc, second 
@@ -105,9 +105,11 @@ void* walk_thread(void*)//don't know why such prototype
 				pthread_mutex_lock(&mutex_pathpacket);
 					if(pathpackvar.updated==1)
 					{
+						printf("%s\n","breaking out of for loop" );
 						break;
 					}
 				pthread_mutex_unlock(&mutex_pathpacket);
 			}	
+			printf("%s\n","while(1) ending" );
 		}	
 }
