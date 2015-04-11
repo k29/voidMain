@@ -1,4 +1,5 @@
 # include "walk_thread.h"
+#include <unistd.h>
 
 # define ARC_RADIUS 20  // in cm
 int arc_angle(float x1, float x2, float y1, float y2)
@@ -24,14 +25,24 @@ int forward_move_length(float x1, float x2, float y1, float y2)
 	return length;
 }
 
-bool vector_cross_reflex(/*add vars */)   // whether to follow relfex or non reflex angle
+int vector_cross_reflex(float x1, float x2, float y1, float y2)   // whether to follow relfex or non reflex angle
 {
-	return false;
+
+	if(x1*y2-x2*y1<0)
+		return -1;
+	else
+		return 1;
+
 }
 
-int vector_cross_clock(/* add vars*/)  // whether to turn clockwise or anticlockwise
+int vector_cross_clock(float x1, float x2, float y1, float y2)  // whether to turn clockwise or anticlockwise
 {
-	return 1;
+	if (x1*y2-x2*y1<0)
+	{
+		return -1;
+	}
+	else
+		return 1;
 }
 
 
@@ -44,6 +55,8 @@ void* walk_thread(void*)//don't know why such prototype
 
 	int phi, radius;
 	int x_initial=1, y_initial=0, flag=0;
+	int reflex;
+	int direction;
 
 
 		while(1)
@@ -89,13 +102,36 @@ void* walk_thread(void*)//don't know why such prototype
 						phi=arc_angle(pathpackvarlocal.finalpath[i-1].x,pathpackvarlocal.finalpath[i].x,pathpackvarlocal.finalpath[i-1].y,pathpackvarlocal.finalpath[i].y);
 
 					
-					if(vector_cross_reflex(/* add vars*/)==true)
-						phi=360-phi;
+					if(i!=pathpackvarlocal.no_of_points-1)
+						reflex=vector_cross_reflex(x_initial,pathpackvarlocal.finalpath[i+1].x- pathpackvarlocal.finalpath[i].x ,y_initial,pathpackvarlocal.finalpath[i+1].y- pathpackvarlocal.finalpath[i].y);
+					else
+						reflex=1;
+					
 
 
 
-					walk.move(0,vector_cross_clock(/*add vars*/)*phi);
-					// arc traversal
+					if(i!=pathpackvarlocal.no_of_points-1)
+						direction=vector_cross_clock(x_initial,pathpackvarlocal.finalpath[i].x+pathpackvarlocal.finalpath[i+1].x,y_initial,pathpackvarlocal.finalpath[i].y+pathpackvarlocal.finalpath[i+1].y);
+					else
+						direction=1;
+
+
+
+					if(reflex==-1&&direction==-1)
+						walk.move(0,phi);
+					else if(reflex==1&&direction==-1)
+						walk.move(0,360-phi) ;
+					else if(reflex==-1&&direction==1)
+						walk.move(0,-1*phi);
+					else
+						walk.move(0,phi-360);
+					fflush(stdout);
+
+					usleep(1.4 *abs(phi*80/9)*1000);
+					fflush(stdout);
+					
+					
+										// arc traversal
 				}
 				else
 				{
@@ -103,6 +139,10 @@ void* walk_thread(void*)//don't know why such prototype
 					radius=forward_move_length(pathpackvarlocal.finalpath[i-1].x, pathpackvarlocal.finalpath[i].x,pathpackvarlocal.finalpath[i-1].y, pathpackvarlocal.finalpath[i].y);
 
 					walk.move(radius,0);
+					fflush(stdout);
+					usleep((radius+2.5)/0.145*1000000/255);
+					fflush(stdout);
+					
 					// straight line traversal
 				}
 
