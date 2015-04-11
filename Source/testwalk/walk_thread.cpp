@@ -14,7 +14,7 @@ int arc_angle(float x1, float x2, float y1, float y2)
 
 
 
-	return phi;
+	return 2*phi;
 }
 
 int forward_move_length(float x1, float x2, float y1, float y2)
@@ -30,9 +30,9 @@ int vector_cross_reflex(float x1, float x2, float y1, float y2)   // whether to 
 {
 
 	if(x1*y2-x2*y1<0)
-		return -1;
-	else
 		return 1;
+	else
+		return -1;
 
 }
 
@@ -40,10 +40,10 @@ int vector_cross_clock(float x1, float x2, float y1, float y2)  // whether to tu
 {
 	if (x1*y2-x2*y1<0)
 	{
-		return -1;
+		return 1;
 	}
 	else
-		return 1;
+		return -1;
 }
 
 
@@ -101,21 +101,24 @@ void* walk_thread(void*)//don't know why such prototype
 				if(i%2==0)
 				{
 					if(i==0)
-						phi=arc_angle(x_initial,pathpackvarlocal.finalpath[i].x,y_initial,pathpackvarlocal.finalpath[i].y);
+						phi=arc_angle(0,pathpackvarlocal.finalpath[i].x,0,pathpackvarlocal.finalpath[i].y);
 					else
 						phi=arc_angle(pathpackvarlocal.finalpath[i-1].x,pathpackvarlocal.finalpath[i].x,pathpackvarlocal.finalpath[i-1].y,pathpackvarlocal.finalpath[i].y);
 
 					
-					if(i!=pathpackvarlocal.no_of_points-1)
+					if(i<2)
 						reflex=vector_cross_reflex(x_initial,pathpackvarlocal.finalpath[i+1].x- pathpackvarlocal.finalpath[i].x ,y_initial,pathpackvarlocal.finalpath[i+1].y- pathpackvarlocal.finalpath[i].y);
+					else if(i!=pathpackvarlocal.no_of_points-1)
+						reflex=vector_cross_reflex(pathpackvarlocal.finalpath[i-1].x - pathpackvarlocal.finalpath[i-2].x , pathpackvarlocal.finalpath[i+1].x - pathpackvarlocal.finalpath[i].x ,pathpackvarlocal.finalpath[i-1].y - pathpackvarlocal.finalpath[i-2].y, pathpackvarlocal.finalpath[i+1].y - pathpackvarlocal.finalpath[i].y );
 					else
 						reflex=-1;
 					
 
 
-
-					if(i!=pathpackvarlocal.no_of_points-1)
+					if(i==0)
 						direction=vector_cross_clock(x_initial,pathpackvarlocal.finalpath[i].x+pathpackvarlocal.finalpath[i+1].x,y_initial,pathpackvarlocal.finalpath[i].y+pathpackvarlocal.finalpath[i+1].y);
+					else if(i!=pathpackvarlocal.no_of_points-1)
+						direction=vector_cross_clock(pathpackvarlocal.finalpath[i].x- pathpackvarlocal.finalpath[i-1].x,pathpackvarlocal.finalpath[i].x+pathpackvarlocal.finalpath[i+1].x- pathpackvarlocal.finalpath[i-1].x ,pathpackvarlocal.finalpath[i].y- pathpackvarlocal.finalpath[i-1].y,pathpackvarlocal.finalpath[i].y+pathpackvarlocal.finalpath[i+1].y- pathpackvarlocal.finalpath[i-1].y);
 					else
 						direction=-1;
 
@@ -126,14 +129,14 @@ void* walk_thread(void*)//don't know why such prototype
 					else if(reflex==1&&direction==-1)
 						walk.move(0,360-phi) ;
 					else if(reflex==-1&&direction==1)
-						walk.move(0,-1*phi);
+						walk.move(0,-1*(360-phi));
 					else
-						walk.move(0,phi-360);
+						walk.move(0,-1*phi);
 					// ostream::flush;
 					// nanosleep(100000);
 					// usleep(1000000);
-					usleep(2*1.4 *abs(phi*80/9)*1000);
-					usleep(1000000);
+					// usleep(2*1.4 *abs(phi*80/9)*1000);
+					// usleep(1000000);
 					// ostream::flush;
 					
 					
@@ -148,8 +151,8 @@ void* walk_thread(void*)//don't know why such prototype
 					// fflush(stdout);
 					walk.move(radius,0);
 					// fflush(stdout);
-					usleep(2*1000000*(radius+2.5)/(0.145*255));
-					usleep(1000000);
+					// usleep(2*1000000*(radius+2.5)/(0.145*255));
+					// usleep(1000000);
 					// fflush(stdout);
 					
 					// straight line traversal
