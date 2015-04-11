@@ -29,8 +29,8 @@ int arc_angle(float x1, float x2, float y1, float y2);
 
 int forward_move_length(float x1, float x2, float y1, float y2);
 
-bool vector_cross_reflex();   // whether to follow relfex or non reflex angle
+bool vector_cross_reflex(float x1, float x2, float y1, float y2);   // whether to follow relfex or non reflex angle
 
-int vector_cross_clock();  // whether to turn clockwise or anticlockwise
+int vector_cross_clock(float x1, float x2, float y1, float y2);  // whether to turn clockwise or anticlockwise
 
 #endif
