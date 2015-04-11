@@ -1,5 +1,4 @@
-
-
+int flag=0;
 
 double vmax=255;
 double r=0;
@@ -116,7 +115,14 @@ void loop()
     digitalWrite(in_pin1_left,inp1_left);
     digitalWrite(in_pin2_left,inp2_left);
     delay(time*1000*1.0);
+    
+    flag=1;
     Serial.begin(9600);
+    
+    Serial.write(flag);
+    
+    Serial.print("The value of flag is   ");
+    Serial.println(flag);
     
     
     
@@ -173,6 +179,10 @@ void input_var()
         
        r=(r+2.5)/0.145;    // in centimetres
       
+      flag=0;
+      
+      Serial.print("The value of flag is   ");
+      Serial.println(flag);
       
     }
     
