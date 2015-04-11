@@ -1,5 +1,6 @@
 # include "walk_thread.h"
-# include <unistd.h>
+// # include <unistd.h>
+# include <pthread.h>
 
 # define ARC_RADIUS 20  // in cm
 int arc_angle(float x1, float x2, float y1, float y2)
@@ -61,8 +62,9 @@ void* walk_thread(void*)//don't know why such prototype
 
 		while(1)
 		{
-			printf("%s\n","Entering while(1)" );
+			// printf("%s\n","Entering while(1)" );
 			pthread_mutex_lock(&mutex_pathpacket);
+
 				if(pathpackvar.updated==1)
 				{
 					pathpackvarlocal=pathpackvar;
@@ -92,7 +94,9 @@ void* walk_thread(void*)//don't know why such prototype
 				*/
 
 
-
+				if (pathpackvarlocal.no_of_points==1)
+					continue;
+				
 
 				if(i%2==0)
 				{
@@ -105,7 +109,7 @@ void* walk_thread(void*)//don't know why such prototype
 					if(i!=pathpackvarlocal.no_of_points-1)
 						reflex=vector_cross_reflex(x_initial,pathpackvarlocal.finalpath[i+1].x- pathpackvarlocal.finalpath[i].x ,y_initial,pathpackvarlocal.finalpath[i+1].y- pathpackvarlocal.finalpath[i].y);
 					else
-						reflex=1;
+						reflex=-1;
 					
 
 
@@ -113,7 +117,7 @@ void* walk_thread(void*)//don't know why such prototype
 					if(i!=pathpackvarlocal.no_of_points-1)
 						direction=vector_cross_clock(x_initial,pathpackvarlocal.finalpath[i].x+pathpackvarlocal.finalpath[i+1].x,y_initial,pathpackvarlocal.finalpath[i].y+pathpackvarlocal.finalpath[i+1].y);
 					else
-						direction=1;
+						direction=-1;
 
 					// ostream::flush;
 
@@ -126,8 +130,10 @@ void* walk_thread(void*)//don't know why such prototype
 					else
 						walk.move(0,phi-360);
 					// ostream::flush;
-
-					usleep(1.4 *abs(phi*80/9)*1000);
+					// nanosleep(100000);
+					// usleep(1000000);
+					usleep(2*1.4 *abs(phi*80/9)*1000);
+					usleep(1000000);
 					// ostream::flush;
 					
 					
@@ -142,7 +148,8 @@ void* walk_thread(void*)//don't know why such prototype
 					// fflush(stdout);
 					walk.move(radius,0);
 					// fflush(stdout);
-					usleep((radius+2.5)/0.145*1000000/255);
+					usleep(2*1000000*(radius+2.5)/(0.145*255));
+					usleep(1000000);
 					// fflush(stdout);
 					
 					// straight line traversal
@@ -158,6 +165,6 @@ void* walk_thread(void*)//don't know why such prototype
 				pthread_mutex_unlock(&mutex_pathpacket);
 
 			}	
-			printf("%s\n","while(1) ending" );
+			// printf("%s\n","while(1) ending" );
 		}	
 }

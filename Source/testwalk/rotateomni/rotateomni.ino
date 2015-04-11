@@ -166,7 +166,10 @@ void input_var()
       
       theta=(readString.substring(index+1,readString.length())).toInt();
       
-        
+        Serial.print("Radius recieved by serial monitor   ");
+        Serial.println(r);
+        Serial.print("Angle recieved by serial monitor   ");
+        Serial.println(theta);
         
        r=(r+2.5)/0.145;    // in centimetres
       
