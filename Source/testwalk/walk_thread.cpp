@@ -1,5 +1,5 @@
 # include "walk_thread.h"
-#include <unistd.h>
+# include <unistd.h>
 
 # define ARC_RADIUS 20  // in cm
 int arc_angle(float x1, float x2, float y1, float y2)
@@ -115,7 +115,7 @@ void* walk_thread(void*)//don't know why such prototype
 					else
 						direction=1;
 
-
+					// ostream::flush;
 
 					if(reflex==-1&&direction==-1)
 						walk.move(0,phi);
@@ -125,10 +125,10 @@ void* walk_thread(void*)//don't know why such prototype
 						walk.move(0,-1*phi);
 					else
 						walk.move(0,phi-360);
-					fflush(stdout);
+					// ostream::flush;
 
 					usleep(1.4 *abs(phi*80/9)*1000);
-					fflush(stdout);
+					// ostream::flush;
 					
 					
 										// arc traversal
@@ -138,10 +138,12 @@ void* walk_thread(void*)//don't know why such prototype
 
 					radius=forward_move_length(pathpackvarlocal.finalpath[i-1].x, pathpackvarlocal.finalpath[i].x,pathpackvarlocal.finalpath[i-1].y, pathpackvarlocal.finalpath[i].y);
 
+
+					// fflush(stdout);
 					walk.move(radius,0);
-					fflush(stdout);
+					// fflush(stdout);
 					usleep((radius+2.5)/0.145*1000000/255);
-					fflush(stdout);
+					// fflush(stdout);
 					
 					// straight line traversal
 				}
