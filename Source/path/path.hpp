@@ -33,6 +33,7 @@ private:
 	static const int BADANGLEDIST=20;
 	static const int STEPLENGTH=5;
 	static const int INITIAL_ORIENTATION_RADIUS=20;
+	static const int THRESHOLD = 20;
 	int com_id; //communication id
 	double tolerance_angle;//minimum angle for encircling
 	enum circle_type {DNE,CIRCLE}; // 0-> does not exsist 1-> circle 2-> ellipse
@@ -87,6 +88,7 @@ public:
 	graph_implementation::Graph<Point> tree; //tree is the instance of the class Graph in the header file.
 	IplImage* image;
 	bool Near_Flag;
+	bool Back_Walk;
 	double BackWalkX;
 	//OBSOLETE->int path_return(PathStructure &ps); //main function to be called by behaviour // return values : 1: successful path   2: go at r,theta    3: encircle      4: path not found.
 	PathReturns path_return(PathStructure ps);
@@ -114,6 +116,7 @@ public:
 		len_curve=0;
 		ORIENTATION_RADIUS=20;
 		Near_Flag = 0;
+		Back_Walk = 0;
 		// temp_Initial_Radius = INITIAL_ORIENTATION_RADIUS;
 	}
 };

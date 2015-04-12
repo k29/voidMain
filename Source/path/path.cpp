@@ -773,7 +773,12 @@ PathReturns Path::path_return(PathStructure ps)
 		Near_Flag = 0;
 	}
 	
-	if(Near_Flag)
+	if(sqrt(pow(tree[1].x, 2) + pow(tree[1].y, 2))<THRESHOLD && abs(atan(goal.y-ball.y)/(goal.x-ball.x) - atan(tree[a].y/tree[a].x)) > 30)
+		Back_Walk = 1;
+	else
+		Back_Walk = 0;
+
+	if(Back_Walk)
 	{
 		BackWalkX = ((-1.0)*((goal.x-ball.x)/(goal.y-ball.y))*ball.y)+ball.x;
 	}
@@ -997,53 +1002,7 @@ PathReturns Path::path_return(PathStructure ps)
 			curve[i]=curve[j];
 			curve[j]=tmp;
 	}
-	//curve contains the array in startin from 0 to 1
-
-	// for(int i=0,j=0;i<len_curve-1;i++)
-	// {
-	// 	if(!tree.is_onCircle(curve[i],curve[i+1]))
-	// 	{
-	// 		curvenext[j].r=sqrt(pow((tree[curve[i+1]].x-tree[curve[i]].x),2)+pow((tree[curve[i+1]].y-tree[curve[i]].y),2));
-	// 		curvenext[j].theta=rad2deg((atan2((tree[curve[i+1]].y-tree[curve[i]].y),(tree[curve[i+1]].x-tree[curve[i]].x))));
-	// 		j++;
-	// 	}
-	// 	else
-	// 	{
-	// 		sticks_r=STEPLENGTH;
-	// 		if(i==0)
-	// 		{
-	// 			sticks_theta = 2*asin((double)STEPLENGTH/(2*(double)INITIAL_ORIENTATION_RADIUS));
-	// 		}
-	// 		else
-	// 		{
-	// 			sticks_theta=2*asin(STEPLENGTH/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));
-	// 		}
-	// 		b=sqrt(pow((tree[curve[i+1]].x-tree[curve[i]].x),2)+pow((tree[curve[i+1]].y-tree[curve[i]].y),2));
-	// 		if(i==0)
-	// 		{
-	// 			no_of_sticks=2/sticks_theta*asin(b/(2*INITIAL_ORIENTATION_RADIUS));
-	// 		}
-	// 		else
-	// 			no_of_sticks=2/sticks_theta*asin(b/(2*obstacle[tree[curve[i]].obstacle_id].obstacle_radius));			
-	// 		while(no_of_sticks--)
-	// 		{
-	// 			curvenext[j].r=sticks_r;
-	// 			if(((atan2((tree[curve[i+1]].y-tree[curve[i]].y),(tree[curve[i+1]].x-tree[curve[i]].x))))>0)
-	// 				curvenext[j].theta=rad2deg(sticks_theta);
-	// 			else
-	// 				curvenext[j].theta=rad2deg(-sticks_theta);
-	// 			j++;
-	// 			len_curvenext++;
-	// 		}
-
-
-	// 	}
-	//  }
-
-
-
 	
-
 #ifdef NEWENCIRCLING
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^new encircling and kicking and positioning^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	if(car2pol(ball.x,ball.y)>2*ORIENTATION_RADIUS)
@@ -1101,9 +1060,10 @@ PathReturns Path::path_return(PathStructure ps)
 void Path::updatePathPacket()
 {
 		// cout<<"abc"<<endl;
-	if(!Near_Flag)
+	if(!Near_Flag && !Back_Walk)
 	{	
 		// cout<<"before lock update pathpackvar"<<endl;
+		cout<<"before lock path not near"<<endl;
 		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
@@ -1158,10 +1118,10 @@ void Path::updatePathPacket()
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
 		}
 		
-		for (int i = 0; i < pathpackvar.no_of_points; ++i)
-		{
-			cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<endl;
-		}
+		// for (int i = 0; i < pathpackvar.no_of_points; ++i)
+		// {
+		// 	cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<endl;
+		// }
 		
 		// cout<<"after unlock update pathpackvar"<<endl;
 
@@ -1171,27 +1131,43 @@ void Path::updatePathPacket()
 		{
 			cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<endl;
 		}
-		
+		// printf("before unlock path not near\n");
 		pthread_mutex_unlock(&mutex_pathpacket);
-
-	if(Near_Flag)
+		cout<<"after unlock path not near"<<endl;
+	else if(Near_Flag)
 	{
+		cout<<"before lock path near"<<endl;		
 		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.updated=1;
 		// pathpackvar.id=com_id;
 		// com_id=com_id+1;
 		pthread_mutex_unlock(&mutex_pathpacket);
-
+		cout<<"after unlock path near"<<endl;
 	}
-	// if(Near_Flag)
-	// {
-	// 	pthread_mutex_lock(&mutex_pathpacket);
-	// 	pathpackvar.updated=1;
-	// 	pathpackvar.id=com_id;
-	// 	com_id=com_id+1;
-	// 	pathpackvar.NEAR_FLAG = 1;
-	// 	pathpackvar.finalpath[0].x = BackWalkX;
-	// 	pathpackvar.finalpath[0].y = 0.0;
-	// 	pthread_mutex_unlock(&mutex_pathpacket);
-	// }
+	
+	if(Back_Walk)
+	{
+		pthread_mutex_lock(&mutex_pathpacket);
+		pathpackvar.updated=1;
+		pathpackvar.id=com_id;
+		com_id=com_id+1;
+		pathpackvar.BACK_WALK = 1;
+		pathpackvar.finalpath[0].x = BackWalkX;
+		pathpackvar.finalpath[0].y = 0.0;
+		pthread_mutex_unlock(&mutex_pathpacket);
+	}
+
+	if(Near_Flag && !Back_Walk)
+	{
+		pthread_mutex_lock(&mutex_pathpacket);
+		pathpackvar.updated=1;
+		pathpackvar.id=com_id;
+		com_id=com_id+1;
+		pathpackvar.NEAR_FLAG = 1;
+		//pathpackvar.finalpath[0].x = BackWalkX;
+		// pathpackvar.finalpath[0].y = 0.0;
+		pthread_mutex_unlock(&mutex_pathpacket);
+	}
+
+	
 }

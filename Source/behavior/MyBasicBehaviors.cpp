@@ -190,12 +190,14 @@ void BasicBehaviorRotate::execute()
 {
     printf("BasicBehaviorRotate\n");
     pthread_mutex_lock(&mutex_pathpacket);
+    printf("locked in behavior rotate\n");
     pathpackvar.no_of_points=1;
     pathpackvar.updated=1;
     pathpackvar.pathType=1;
     pathpackvar.finalpath[0].x=0.0;
     pathpackvar.finalpath[0].y=deg2rad(5);
     pthread_mutex_unlock(&mutex_pathpacket);
+    cout<<"after unlock behavior rotate"<<endl;
 }
 void BasicBehaviorLocalize::execute()
 {   
@@ -314,9 +316,9 @@ void BasicBehaviorMakePath::execute()
     
     // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
     // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
-
+    printf("before path return\n");
     p.pathreturn=p.path.path_return(p.pathstr);
-    // printf("before crash\n");
+    printf("after path return\n");
     if(p.path.tree.path_crash)
     {
         // printf("path crashed\n");
@@ -366,7 +368,7 @@ void BasicBehaviorPathToWalk::execute()
     // printf("BasicBehaviorPathToWalk\n");
         #ifdef IP_IS_ON
         #ifdef WALK_IS_ON
-    
+        printf("before update\n");
         p.path.updatePathPacket();
         if(p.path.tree.path_crash)
         {

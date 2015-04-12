@@ -135,6 +135,7 @@ typedef struct
 	int id;
 	int no_of_points;
 	bool NEAR_FLAG;
+	bool BACK_WALK;
 	PathCoords finalpath[30];
 }PathPacket;
 
