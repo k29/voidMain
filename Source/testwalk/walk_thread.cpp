@@ -135,8 +135,8 @@ void* walk_thread(void*)//don't know why such prototype
 					// ostream::flush;
 					// nanosleep(100000);
 					// usleep(1000000);
-					usleep(2*1.7 *abs(phi*80/9)*1000);
-					// usleep(1000000);
+					usleep(3*1.75 *abs(phi*80/9)*1000);
+					usleep(1000000);
 					// ostream::flush;
 					
 					
@@ -151,13 +151,13 @@ void* walk_thread(void*)//don't know why such prototype
 					// fflush(stdout);
 					walk.move(radius,0);
 					// fflush(stdout);
-					usleep(3*1000000*(radius+2.5)/(0.145*255));
-					// usleep(1000000);
+					usleep(1000000*(radius+2.5)/(0.145*255));
+					usleep(1000000);
 					// fflush(stdout);
 					
 					// straight line traversal
 				}
-				/*if(i%2==1)
+				if(i%2==1)
 				{
 					pthread_mutex_lock(&mutex_pathpacket);
 						if(pathpackvar.updated==1)
@@ -167,7 +167,7 @@ void* walk_thread(void*)//don't know why such prototype
 							break;
 						}
 					pthread_mutex_unlock(&mutex_pathpacket);
-				}*/
+				}
 
 			}	
 			// printf("%s\n","while(1) ending" );

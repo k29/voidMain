@@ -80,10 +80,15 @@ void loop()
     Serial.println("inp2left");Serial.println(inp2_left);*/
     
     if(theta>0)
-      {delay(1.7*abs(theta*80/9));}
+      {delay(1.75*abs(theta*80/9));}
     else
-      {delay(1.70*abs(theta*80/9));}
-    
+      {delay(1.75*abs(theta*80/9));}
+      
+    /* analogWrite(en_pin_front, 0);
+    analogWrite(en_pin_back, 0);
+    analogWrite(en_pin_right, 0);
+    analogWrite(en_pin_left, 0);
+    delay(500);*/
     
     /*Serial.println("enablefront");Serial.println(enable_front);
     Serial.println("enable back");Serial.println(enable_back);
@@ -199,7 +204,7 @@ void implement_var_angle()
   {
     enable_front=220;
     enable_back=220;
-    enable_right=220;
+    enable_right=240;
     enable_left=255;
     
     inp1_left=1;
@@ -221,7 +226,7 @@ void implement_var_angle()
     enable_front=220;
     enable_back=220;
     enable_right=255;
-    enable_left=220;
+    enable_left=240;
     
     inp1_left=1;
     inp2_left=0;
