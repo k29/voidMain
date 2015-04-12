@@ -80,9 +80,9 @@ void loop()
     Serial.println("inp2left");Serial.println(inp2_left);*/
     
     if(theta>0)
-      {delay(1.4*abs(theta*80/9));}
+      {delay(1.7*abs(theta*80/9));}
     else
-      {delay(1.25*abs(theta*80/9));}
+      {delay(1.70*abs(theta*80/9));}
     
     
     /*Serial.println("enablefront");Serial.println(enable_front);

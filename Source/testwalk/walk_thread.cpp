@@ -135,7 +135,7 @@ void* walk_thread(void*)//don't know why such prototype
 					// ostream::flush;
 					// nanosleep(100000);
 					// usleep(1000000);
-					usleep(3*1.4 *abs(phi*80/9)*1000);
+					usleep(2*1.7 *abs(phi*80/9)*1000);
 					// usleep(1000000);
 					// ostream::flush;
 					
