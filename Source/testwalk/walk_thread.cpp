@@ -94,8 +94,26 @@ void* walk_thread(void*)//don't know why such prototype
 				*/
 
 
-				if (pathpackvarlocal.no_of_points==1)
+				if (pathpackvarlocal.no_of_points==1&&pathpackvarlocal.NEAR_FLAG==1)
+				{
+					radius=forward_move_length(0, pathpackvarlocal.finalpath[i].x,0, pathpackvarlocal.finalpath[i].y);
+
+
+					// fflush(stdout);
+					walk.move(-1*radius,0);
+					// fflush(stdout);
+					usleep(1000000*(radius+2.5)/(0.145*255));
+					usleep(1000000);
+
 					continue;
+				}
+				else if(pathpackvarlocal.no_of_points==1&&pathpackvarlocal.NEAR_FLAG==0)
+				{
+					walk.move(9999,9999);
+					continue;
+				}
+				else
+					{;} // proceed
 				
 
 				if(i%2==0)
