@@ -110,6 +110,7 @@ void* walk_thread(void*)//don't know why such prototype
 				else if(pathpackvarlocal.no_of_points==1&&pathpackvarlocal.NEAR_FLAG==0)
 				{
 					walk.move(9999,9999);
+					usleep(1000000);
 					continue;
 				}
 				else
