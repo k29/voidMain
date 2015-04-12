@@ -97,7 +97,7 @@ void* walk_thread(void*)//don't know why such prototype
 				if (pathpackvarlocal.no_of_points==1&&pathpackvarlocal.NEAR_FLAG==1)
 				{
 					radius=forward_move_length(0, pathpackvarlocal.finalpath[i].x,0, pathpackvarlocal.finalpath[i].y);
-
+					printf("%f\n",radius );
 
 					// fflush(stdout);
 					walk.move(-1*radius,0);

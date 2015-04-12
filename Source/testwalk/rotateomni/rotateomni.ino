@@ -47,7 +47,7 @@ void loop()
   {
     
     
-    time=r/vmax;
+    time=abs(r)/vmax;
     Serial.end();
     implement_var_angle();
     
@@ -165,8 +165,22 @@ void loop()
     digitalWrite(in_pin1_left,inp1_left);
     digitalWrite(in_pin2_left,inp2_left);
     delay(250);
+    flag=1;
     Serial.begin(9600);
     Serial.println("implement rotate after delay");
+    Serial.print("The value of flag is   ");
+    Serial.println(flag);
+    
+    
+    
+    enable_front=0,enable_back=0, enable_right=0, enable_left=0;
+    
+    
+    r=0;
+    analogWrite(en_pin_front, enable_front);
+    analogWrite(en_pin_back, enable_back);
+    analogWrite(en_pin_right, enable_right);
+    analogWrite(en_pin_left, enable_left);
     
   }
   else

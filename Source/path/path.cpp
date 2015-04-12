@@ -1183,17 +1183,17 @@ void Path::updatePathPacket()
 	}
 
 
-	// if(Near_Flag)
-	// {
-	// 	pthread_mutex_lock(&mutex_pathpacket);
-	// 	pathpackvar.updated=1;
-	// 	pathpackvar.id=com_id;
-	// 	com_id=com_id+1;
-	// 	pathpackvar.NEAR_FLAG = 1;
-	// 	pathpackvar.finalpath[0].x = BackWalkX;
-	// 	pathpackvar.finalpath[0].y = 0.0;
-	// 	pthread_mutex_unlock(&mutex_pathpacket);
-	// }
+	if(Near_Flag)
+	{
+		pthread_mutex_lock(&mutex_pathpacket);
+		pathpackvar.updated=1;
+		pathpackvar.id=com_id;
+		com_id=com_id+1;
+		pathpackvar.NEAR_FLAG = 1;
+		pathpackvar.finalpath[0].x = BackWalkX;
+		pathpackvar.finalpath[0].y = 0.0;
+		pthread_mutex_unlock(&mutex_pathpacket);
+	}
 }
 
 
