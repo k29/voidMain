@@ -2,6 +2,7 @@
 #include "path.hpp"
 #define car2pol(x,y) sqrt((x)*(x)+(y)*(y))
 #define dist(x1,y1,x2,y2) sqrt(pow(((x1)-(x2)),2)+pow(((y1)-(y2)),2))
+#define PI 3.14159265359
 // #define FRAMEPAINTING
 //#define OLDENCIRCLING
 //#define NEWENCIRCLING
@@ -798,7 +799,7 @@ PathReturns Path::path_return(PathStructure ps)
 		Near_Obstacle = 0;
 	}
 
-	if(abs(atan(tree[a].y/tree[a].x))<10)
+	if(abs(atan(tree[a].y/tree[a].x))*180/PI<10)
 	{
 		Ignore_Arc = 1;
 	}
@@ -1146,6 +1147,7 @@ void Path::updatePathPacket()
 		{
 			cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<" ioc: "<<pathpackvar.finalpath[i].isOnCircle<<endl;
 		}
+		cout<<"ignore arc: "<<pathpackvar.IGNORE_ARC<<endl;
 		
 		// cout<<"after unlock update pathpackvar"<<endl;
 
