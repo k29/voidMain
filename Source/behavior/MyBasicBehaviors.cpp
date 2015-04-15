@@ -188,16 +188,17 @@ void BasicBehaviorUpdate::execute()
 
 void BasicBehaviorRotate::execute()
 {
-    printf("BasicBehaviorRotate\n");
-    pthread_mutex_lock(&mutex_pathpacket);
-    printf("locked in behavior rotate\n");
-    pathpackvar.no_of_points=1;
-    pathpackvar.updated=1;
-    pathpackvar.pathType=1;
-    pathpackvar.finalpath[0].x=0.0;
-    pathpackvar.finalpath[0].y=deg2rad(5);
-    pthread_mutex_unlock(&mutex_pathpacket);
-    cout<<"after unlock behavior rotate"<<endl;
+    
+    // printf("BasicBehaviorRotate\n");
+    // pthread_mutex_lock(&mutex_pathpacket);
+    // printf("locked in behavior rotate\n");
+    // pathpackvar.no_of_points=1;
+    // pathpackvar.updated=1;
+    // pathpackvar.pathType=1;
+    // pathpackvar.finalpath[0].x=0.0;
+    // pathpackvar.finalpath[0].y=deg2rad(5);
+    // pthread_mutex_unlock(&mutex_pathpacket);
+    // cout<<"after unlock behavior rotate"<<endl;
 }
 void BasicBehaviorLocalize::execute()
 {   

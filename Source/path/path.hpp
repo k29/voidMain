@@ -89,6 +89,8 @@ public:
 	IplImage* image;
 	bool Near_Flag;
 	bool Back_Walk;
+	bool Near_Obstacle;
+	bool Ignore_Arc;
 	double BackWalkX;
 	//OBSOLETE->int path_return(PathStructure &ps); //main function to be called by behaviour // return values : 1: successful path   2: go at r,theta    3: encircle      4: path not found.
 	PathReturns path_return(PathStructure ps);
@@ -117,6 +119,8 @@ public:
 		ORIENTATION_RADIUS=20;
 		Near_Flag = 0;
 		Back_Walk = 0;
+		Near_Obstacle = 0;
+		Ignore_Arc = 0;
 		// temp_Initial_Radius = INITIAL_ORIENTATION_RADIUS;
 	}
 };
