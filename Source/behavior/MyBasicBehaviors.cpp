@@ -34,6 +34,11 @@ void BasicBehaviorInitialize::execute()
     goal_pos.x = 200.0;
     goal_pos.y = 200.0;
 
+    pthread_mutex_lock(&mutex_pathpacket);
+    pathpackvar.UPDATE_FLAG = 1;
+    pthread_mutex_unlock(&mutex_pathpacket);
+
+
     printf("Initialized\n");
     #endif
 }
@@ -317,16 +322,16 @@ void BasicBehaviorMakePath::execute()
     
     // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
     // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
-    printf("before path return\n");
+    // printf("before path return\n");
     p.pathreturn=p.path.path_return(p.pathstr);
-    printf("after path return\n");
+    // printf("after path return\n");
     if(p.path.tree.path_crash)
     {
         // printf("path crashed\n");
         p.path.tree.path_crash = false;
         cvZero(p.path.image);
     }
-    printf("Path Made\n");
+    // printf("Path Made\n");
     #endif
 }
 
@@ -369,7 +374,7 @@ void BasicBehaviorPathToWalk::execute()
     // printf("BasicBehaviorPathToWalk\n");
         #ifdef IP_IS_ON
         #ifdef WALK_IS_ON
-        printf("before update\n");
+        // printf("before update\n");
         p.path.updatePathPacket();
         if(p.path.tree.path_crash)
         {

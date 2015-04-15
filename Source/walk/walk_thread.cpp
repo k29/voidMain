@@ -25,7 +25,7 @@ const double foot_width  = 100;				 //	Width of the foot, might not be used
 const double foot_separation = 130;			 //	Standard Length between centers of the feet during linear motion
 const double max_delta_x = 30;	
 const double max_delta_theta = 15;	
-const double min_delta_y = 15;				 //	This is an arbitrary value chosen to put a lower limit on the bot's step length such that the step length oscillates between
+const double min_delta_y = 10;				 //	This is an arbitrary value chosen to put a lower limit on the bot's step length such that the step length oscillates between
 											 //	these maximum and minimum values of delta x. This will be changed for fine-tuning the motion.
 
 const double OBSTACLE_RADIUS = 200;
@@ -130,9 +130,11 @@ void convert_values (PathPacket pathpackvarlocal, double dist_circstart[], doubl
 			oy = y2;
 			dirx = x2-x1;
 			diry = y2-y1;
-
-
-
+		}
+		if (pathpackvarlocal.IGNORE_ARC)
+		{
+			theta_arc[0] = 0;
+			dist_circstart[0] = sqrt(pow(pathpackvarlocal.finalpath[1].x,2) + pow(pathpackvarlocal.finalpath[1].y,2));
 		}
 }
 
@@ -424,7 +426,9 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	}
 	for (int i=0;i<count-1;i++)
 	{
-		// printf ("sno = %d\tDelta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",i,step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
+		if (fabs(step[i].delta_theta)> 15)
+			step[i].delta_theta = 0;
+		printf ("sno = %d\tDelta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",i,step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
 	}
 /*	//FSPMOD CODE
 	for (int i=0; i<no_obstacles; i++)
@@ -518,7 +522,7 @@ void* walk_thread(void*)
 	{
 		// printf("in walk thread\n");
 		j = 0;
-		while (j<i-1 )
+		while (j<i-1 && j < 20)
 		{
 			// walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
 			walk.pathdribble(foot1[j].vel_y, foot1[j].delta_x,foot1[j].delta_theta,0);
@@ -543,21 +547,33 @@ void* walk_thread(void*)
 			motionModel.update(r,atan(y/x)*180/pi);
 			pthread_mutex_unlock(&mutex_motionModel);
 			j++;
+			pthread_mutex_lock(&mutex_pathpacket);
+			pathpackvarlocal = pathpackvar;
+			pthread_mutex_unlock(&mutex_pathpacket);		
+			printf("BACK_WALK %d\n", pathpackvarlocal.BACK_WALK);
+			printf("IGNORE_ARC %d\n", pathpackvarlocal.IGNORE_ARC);
+			if (pathpackvarlocal.UPDATE_FLAG == 1)
+				break;	
 		}
 		j--;
-		pthread_mutex_lock(&mutex_pathpacket);
-		pathpackvarlocal = pathpackvar;
-		r = 0;
-		x = 0;
-		y = 0;
-		theta = 0;
-		cout<<"no_of_points "<<pathpackvar.no_of_points<<endl;
-		for (int i1 = 0; i1 < pathpackvar.no_of_points; ++i1)
+		// printf("%d\n", pathpackvarlocal.UPDATE_FLAG);
+		do
 		{
-			cout<<"x: "<<pathpackvar.finalpath[i1].x<<"y; "<<pathpackvar.finalpath[i1].y<<endl;
-		}
-		pthread_mutex_unlock(&mutex_pathpacket);
-		footstepmain(walk.velocity() , foot1[j].delta_y , j%2 ,  foot1 ,i , pathpackvarlocal);
+			pthread_mutex_lock(&mutex_pathpacket);
+			pathpackvar.UPDATE_FLAG = 0;
+			pathpackvarlocal = pathpackvar;
+			r = 0;
+			x = 0;
+			y = 0;
+			theta = 0;
+			pthread_mutex_unlock(&mutex_pathpacket);
+			if (!pathpackvarlocal.BACK_WALK)
+				footstepmain(walk.velocity() , foot1[j].delta_y , j%2 ,  foot1 ,i , pathpackvarlocal);
+			else
+				walk.backMotion(sqrt(pow(pathpackvarlocal.finalpath[0].x,2) + pow(pathpackvarlocal.finalpath[0].y,2)));
+		}		
+		while (pathpackvarlocal.BACK_WALK);
+
 	}
 
 

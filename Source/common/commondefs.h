@@ -139,6 +139,7 @@ typedef struct
 	bool BACK_WALK;
 	bool NEAR_OBSTACLE;
 	bool IGNORE_ARC;
+	bool UPDATE_FLAG;
 	PathCoords finalpath[30];
 }PathPacket;
 

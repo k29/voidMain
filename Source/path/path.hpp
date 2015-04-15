@@ -33,7 +33,7 @@ private:
 	static const int BADANGLEDIST=20;
 	static const int STEPLENGTH=5;
 	static const int INITIAL_ORIENTATION_RADIUS=20;
-	static const int THRESHOLD = 20;
+	static const int THRESHOLD = 10;
 	int com_id; //communication id
 	double tolerance_angle;//minimum angle for encircling
 	enum circle_type {DNE,CIRCLE}; // 0-> does not exsist 1-> circle 2-> ellipse

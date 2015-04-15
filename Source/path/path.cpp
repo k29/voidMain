@@ -778,8 +778,9 @@ PathReturns Path::path_return(PathStructure ps)
 	// cout<<"before updation"<<endl;
 	// while()
 	if(	//(sqrt(pow(tree[1].x,2) + pow(tree[1].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[1].x,2) + pow(tree[1].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS) ||
-		(sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS) ||
-		(sqrt(pow(tree[a].x,2) + pow(tree[a].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[a].x,2) + pow(tree[a].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS))
+		
+		(sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS)) 
+		// (sqrt(pow(tree[a].x,2) + pow(tree[a].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[a].x,2) + pow(tree[a].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS))
 	{
 		Near_Flag = 1;
 	}
@@ -1128,6 +1129,11 @@ void Path::updatePathPacket()
 			pathpackvar.IGNORE_ARC = 0;
 		}
 
+		if(pathpackvar.NEAR_FLAG!=Near_Flag)
+			pathpackvar.UPDATE_FLAG = 1;
+		if(pathpackvar.BACK_WALK != Back_Walk)
+			pathpackvar.UPDATE_FLAG = 1;			
+
 		pathpackvar.no_of_points=len_curve;
 
 		pathpackvar.finalpath[i].x = goal.x;
@@ -1143,11 +1149,11 @@ void Path::updatePathPacket()
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
 		}
 		
-		for (int i = 0; i < pathpackvar.no_of_points; ++i)
-		{
-			cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<" ioc: "<<pathpackvar.finalpath[i].isOnCircle<<endl;
-		}
-		cout<<"ignore arc: "<<pathpackvar.IGNORE_ARC<<endl;
+		// for (int i = 0; i < pathpackvar.no_of_points; ++i)
+		// {
+		// 	cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<" ioc: "<<pathpackvar.finalpath[i].isOnCircle<<endl;
+		// }
+		// cout<<"ignore arc: "<<pathpackvar.IGNORE_ARC<<endl;
 		
 		// cout<<"after unlock update pathpackvar"<<endl;
 
@@ -1160,16 +1166,18 @@ void Path::updatePathPacket()
 	// 	// printf("before unlock path not near\n");
 		pthread_mutex_unlock(&mutex_pathpacket);
 	// 	cout<<"after unlock path not near"<<endl;
-	if(Near_Flag)
-	{
-		// cout<<"before lock path near"<<endl;		
-		pthread_mutex_lock(&mutex_pathpacket);
-		pathpackvar.updated=1;
-		// pathpackvar.id=com_id;
-		// com_id=com_id+1;
-		pthread_mutex_unlock(&mutex_pathpacket);
-		// cout<<"after unlock path near"<<endl;
-	}
+	// if(Near_Flag)
+	// {
+	// 	// cout<<"before lock path near"<<endl;		
+	// 	pthread_mutex_lock(&mutex_pathpacket);
+	// 	pathpackvar.updated=1;
+	// 	if(pathpackvar.NEAR_FLAG!=Near_Flag)
+	// 		pathpackvar.UPDATE_FLAG = 1;
+	// 	// pathpackvar.id=com_id;
+	// 	// com_id=com_id+1;
+	// 	pthread_mutex_unlock(&mutex_pathpacket);
+	// 	// cout<<"after unlock path near"<<endl;
+	// }
 	
 	if(Back_Walk)
 	{
@@ -1177,6 +1185,8 @@ void Path::updatePathPacket()
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
+		if(pathpackvar.BACK_WALK != Back_Walk)
+			pathpackvar.UPDATE_FLAG = 1;
 		pathpackvar.BACK_WALK = 1;
 		pathpackvar.finalpath[0].x = BackWalkX;
 		pathpackvar.finalpath[0].y = 0.0;
@@ -1191,6 +1201,10 @@ void Path::updatePathPacket()
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
+		if(pathpackvar.NEAR_FLAG!=Near_Flag)
+			pathpackvar.UPDATE_FLAG = 1;
+		if(pathpackvar.BACK_WALK != Back_Walk)
+			pathpackvar.UPDATE_FLAG = 1;			
 		pathpackvar.NEAR_FLAG = 1;
 		//pathpackvar.finalpath[0].x = BackWalkX;
 		// pathpackvar.finalpath[0].y = 0.0;
@@ -1203,12 +1217,15 @@ void Path::updatePathPacket()
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
-		pathpackvar.NEAR_OBSTACLE = 1;
+		// pathpackvar.NEAR_OBSTACLE = 1;
+		if(pathpackvar.BACK_WALK != Back_Walk)
+			pathpackvar.UPDATE_FLAG = 1;					
+		pathpackvar.BACK_WALK = 1;
 		pathpackvar.finalpath[0].x = -10.0;
 		pathpackvar.finalpath[0].y = 0.0;
 		pathpackvar.no_of_points = 1;
 		pthread_mutex_unlock(&mutex_pathpacket);		
 	}
-	if(Near_Flag || Back_Walk || Near_Obstacle)
-		cout<<"NF: "<<Near_Flag<<" BW: "<<Back_Walk<<" NO: "<<Near_Obstacle<<endl;
+	// if(Near_Flag || Back_Walk || Near_Obstacle)
+	// 	cout<<"NF: "<<Near_Flag<<" BW: "<<Back_Walk<<" NO: "<<Near_Obstacle<<endl;
 }

@@ -19,7 +19,8 @@ Walk::Walk(AcYut* bot)
 	legRotfi=0;
 	supLegRotin=0;
 	supLegRotfi=0;
-	sspTimeVar = 0.300999;
+	sspTimeVar = 0.340999;
+	dspTime = 0.05;
 	correction_factor = 0;
 	// strafe=0;
 	// sspZAmp=zMax;
@@ -122,6 +123,7 @@ int Walk::pathdribble(double vel_y, double dz, double t1, double t2)
 		// }
 	}
 	// this->dz = dz;
+	// printf("%f %f\n", t1, t2);
 	legRotfi = t1;
 	supLegRotfi = t2;
 	int x = dribble();
@@ -130,6 +132,40 @@ int Walk::pathdribble(double vel_y, double dz, double t1, double t2)
 	legRotfi = 0;
 	supLegRotfi = 0;
 	return x;
+}
+
+int Walk::stopMotion()
+{
+	if (veloYfi == 0)
+		return 1;
+	while (fabs(veloYfi) > 20)
+	{		
+		pathdribble(veloYfi/2, 0, 0, 0);
+	}
+
+	pathdribble(0, 0, 0, 0);
+	return 1;
+}
+
+int Walk::backMotion(double distance)
+{
+	stopMotion();
+
+	pathdribble(-10, 0, 0, 0);
+
+	while (fabs(veloYfi) < 100)
+	{
+		accelerate();
+		dribble();
+		distance -= (-veloYfi*(sspTimeVar + 2*dspTime));
+	}
+
+	while (distance > 0)
+	{
+		dribble();
+		distance -= (-veloYfi*(sspTimeVar + 2*dspTime));
+	}
+	stopMotion();
 }
 
 int Walk::captureStep(int leg, double c1_z, double c2_z, double C, double zMax, double dsp1Time, double dsp2Time, double &sspTime, double &z_a_free, double &z_b_free, double &z_c_free)
@@ -200,6 +236,8 @@ int Walk::handMotion(double handSwing)
 }
 float Walk::accelerate()
 {
+	if (veloYfi == 0)
+		veloYfi = 10;
 	veloYfi=veloYfi*1.72;
 	legRotfi = 0;
 	supLegRotfi =0;
@@ -290,8 +328,8 @@ int Walk::dribble(int flag)
 	supLegZin += hipLength/2;
 	///// desired Values 
 	
-	double D_dsp1Time = 0.05;	// + dz/(veloZfi);		//changed from 0.03
-	double D_dsp2Time = 0.05;	//+ dz/(veloZfi);		//""
+	double D_dsp1Time = dspTime;	// + dz/(veloZfi);		//changed from 0.03
+	double D_dsp2Time = dspTime;	//+ dz/(veloZfi);		//""
 	double sspZTime = sspTimeVar;
 	// ////printf("Tc\t\t%lf\n",Tc);
 	// ////printf("legZin\t\t%lf\n",legZin);

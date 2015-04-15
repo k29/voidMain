@@ -193,6 +193,20 @@ int main()
 		walk.dribble();
 		// printf("%f\n",walk.velocity());
 	}
+	walk.dribble();
+	walk.dribble();
+	walk.dribble();
+	walk.dribble();
+	walk.dribble();
+	printf("11\n");
+	walk.backMotion(500);
+	printf("22\n");
+	while(walk.velocity()*1.5<=170)
+	{
+		walk.accelerate();
+		walk.dribble();
+		// printf("%f\n",walk.velocity());
+	}
 	// walk.turnright(90);	
 	int i = 150;
 	int j = 0;

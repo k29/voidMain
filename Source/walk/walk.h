@@ -21,6 +21,7 @@ class Walk
 	int hi ;
 	int stepCount;
 	double sspTimeVar;
+	double dspTime;
 	// Y Data //
 	double legYin;
 	double supLegYin;
@@ -77,6 +78,8 @@ class Walk
 	int start();
 	int captureStep(int leg, double c1_z, double c2_z, double C, double zMax, double dsp1Time, double dsp2Time, double &sspTime, double &z_a_free, double &z_b_free, double &z_c_free);
 	int handMotion(double handSwing);
+	int stopMotion();
+	int backMotion(double distance);
 	// int start2();
 	float accelerate();
 	float velocity();
