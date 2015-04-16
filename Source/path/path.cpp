@@ -1083,6 +1083,7 @@ void Path::updatePathPacket()
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		pathpackvar.NEAR_FLAG = 0;
+		pathpackvar.BACK_WALK = 0;
 		com_id=com_id+1;
 		std::size_t b;
 		b=tree.returnPathPoint(1);
@@ -1120,6 +1121,9 @@ void Path::updatePathPacket()
 			// printf("path %d x: %lf y: %lf\n", i, tree[b].x, tree[b].y);
 			// b=tree.returnPathPoint(b);
 		}
+		if(pathpackvar.IGNORE_ARC != Ignore_Arc)
+			pathpackvar.UPDATE_FLAG = 1;			
+
 		if(Ignore_Arc)
 		{
 			pathpackvar.IGNORE_ARC = 1;
@@ -1129,8 +1133,8 @@ void Path::updatePathPacket()
 			pathpackvar.IGNORE_ARC = 0;
 		}
 
-		if(pathpackvar.NEAR_FLAG!=Near_Flag)
-			pathpackvar.UPDATE_FLAG = 1;
+		// if(pathpackvar.NEAR_FLAG!=Near_Flag)
+		// 	pathpackvar.UPDATE_FLAG = 1;
 		if(pathpackvar.BACK_WALK != Back_Walk)
 			pathpackvar.UPDATE_FLAG = 1;			
 
@@ -1201,11 +1205,12 @@ void Path::updatePathPacket()
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
-		if(pathpackvar.NEAR_FLAG!=Near_Flag)
-			pathpackvar.UPDATE_FLAG = 1;
+		// if(pathpackvar.NEAR_FLAG!=Near_Flag)
+		// 	pathpackvar.UPDATE_FLAG = 1;
 		if(pathpackvar.BACK_WALK != Back_Walk)
 			pathpackvar.UPDATE_FLAG = 1;			
 		pathpackvar.NEAR_FLAG = 1;
+		pathpackvar.BACK_WALK = 0;
 		//pathpackvar.finalpath[0].x = BackWalkX;
 		// pathpackvar.finalpath[0].y = 0.0;
 		pthread_mutex_unlock(&mutex_pathpacket);

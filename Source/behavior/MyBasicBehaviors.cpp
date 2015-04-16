@@ -162,20 +162,20 @@ void BasicBehaviorUpdate::execute()
         cvPutText(flags,D,cvPoint(10,60),&font,cvScalar(255,255,255));
 
         // printf("localization updated to %lf\n",p.conf);
-        cvNamedWindow("Flags");
-        cvNamedWindow("Real Time Feed");
-        cvNamedWindow("Localization");
-        #ifdef INTEL_BOARD_DISPLAY
-        cvMoveWindow("Flags",20,30);
-        cvMoveWindow("Real Time Feed",240,30);
-        cvMoveWindow("Localization",850,30);
-        #endif
-        cvMoveWindow("Flags",50,50);
-        cvMoveWindow("Real Time Feed",300,50);
-        cvMoveWindow("Localization",950,50);
-        cvShowImage("Flags",flags);
-        cvShowImage("Real Time Feed", p.capture.rgbimg);
-        cvShowImage("Localization", p.loc.dispImage);
+        // cvNamedWindow("Flags");
+        // cvNamedWindow("Real Time Feed");
+        // cvNamedWindow("Localization");
+        // #ifdef INTEL_BOARD_DISPLAY
+        // cvMoveWindow("Flags",20,30);
+        // cvMoveWindow("Real Time Feed",240,30);
+        // cvMoveWindow("Localization",850,30);
+        // #endif
+        // cvMoveWindow("Flags",50,50);
+        // cvMoveWindow("Real Time Feed",300,50);
+        // cvMoveWindow("Localization",950,50);
+        // cvShowImage("Flags",flags);
+        // cvShowImage("Real Time Feed", p.capture.rgbimg);
+        // cvShowImage("Localization", p.loc.dispImage);
         int c = cvWaitKey(25);
         if(c == 'S' || c == 's')
             if(cvSaveImage("image.bmp", p.capture.rgbimg))

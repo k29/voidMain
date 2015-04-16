@@ -153,7 +153,7 @@ int Walk::backMotion(double distance)
 
 	pathdribble(-10, 0, 0, 0);
 
-	while (fabs(veloYfi) < 100)
+	while (fabs(veloYfi) < 90)
 	{
 		accelerate();
 		dribble();
@@ -166,6 +166,8 @@ int Walk::backMotion(double distance)
 		distance -= (-veloYfi*(sspTimeVar + 2*dspTime));
 	}
 	stopMotion();
+	pathdribble(10, 0, 0, 0);
+	return leg;
 }
 
 int Walk::captureStep(int leg, double c1_z, double c2_z, double C, double zMax, double dsp1Time, double dsp2Time, double &sspTime, double &z_a_free, double &z_b_free, double &z_c_free)
