@@ -26,6 +26,7 @@ BasicBehaviorMakePath basicBehaviorMakePath(myErrorHandler,ACYUT);
 BasicBehaviorReset basicBehaviorReset(myErrorHandler,ACYUT);
 BasicBehaviorMakePathFromMotionModel basicBehaviorMakePathFromMotionModel(myErrorHandler,ACYUT);
 BasicBehaviorGoalKeep basicBehaviorGoalKeep(myErrorHandler,ACYUT);
+BasicBehaviorDoOrient basicBehaviorDoOrient(myErrorHandler,ACYUT);
 
 void registerXABSL()
 {
@@ -46,6 +47,7 @@ void registerXABSL()
     engine->registerEnumElement("PathReturns", "PathReturns.DOKICK",DOKICK);
     engine->registerEnumElement("PathReturns", "PathReturns.DOENCIRCLE",DOENCIRCLE);
     engine->registerEnumElement("PathReturns", "PathReturns.NOPATH",NOPATH);
+    engine->registerEnumElement("PathReturns", "PathReturns.DOORIENT",DOORIENT);
 
     engine->registerDecimalInputSymbol("theta", &playerstate::getTheta);
     engine->registerDecimalInputSymbol("confidence", &playerstate::getConfidence);

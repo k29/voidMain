@@ -424,3 +424,8 @@ void BasicBehaviorGoalKeep::execute()
     cvShowImage("Real Time Feed", p.capture.rgbimg);
     cvWaitKey(25);
 }
+
+void BasicBehaviorDoOrient::execute()
+{
+    printf("BasicBehaviorDoOrient\n");
+}

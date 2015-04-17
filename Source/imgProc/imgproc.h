@@ -15,6 +15,7 @@ typedef unsigned char uchar;
 #define WHITEC 64
 #define BALLC 128
 #define BACKGROUNDC 256
+#define FOOTMARKERC 512
 
 #define returnPixel1C(image, x, y) ((uchar*)(image->imageData + image->widthStep*(y)))[x]
 #define returnPixel3C(image, x, y, color) ((uchar*)(image->imageData + image->widthStep*(y)))[(x)*3 + color]

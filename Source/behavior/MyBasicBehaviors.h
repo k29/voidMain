@@ -181,5 +181,18 @@ private:
 
 };
 
+class BasicBehaviorDoOrient: public xabsl::BasicBehavior
+{
+	public:
+	BasicBehaviorDoOrient(xabsl::ErrorHandler& errorHandler,playerstate &p):xabsl::BasicBehavior("doOrient",errorHandler),p(p)
+		{
+
+		}
+	virtual void execute();
+private:
+		playerstate &p;
+
+};
+
 
 #endif

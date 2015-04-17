@@ -16,7 +16,7 @@ namespace mySymbols("My Symbols")
 	/** Path's instruction to Walk */
 	enum PathReturns
 		{
-			DOWALK,DOENCIRCLE,DOKICK,NOPATH
+			DOWALK,DOENCIRCLE,DOKICK,NOPATH,DOORIENT
 		};
 	/** Path's instruction to Walk */
 	enum PathReturns input pathreturn;	
