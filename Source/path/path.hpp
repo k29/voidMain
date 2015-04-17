@@ -86,6 +86,8 @@ public:
 	int temp_Initial_Radius;
 	graph_implementation::Graph<Point> tree; //tree is the instance of the class Graph in the header file.
 	IplImage* image;
+	bool Near_Flag;
+	double BackWalkX;
 	//OBSOLETE->int path_return(PathStructure &ps); //main function to be called by behaviour // return values : 1: successful path   2: go at r,theta    3: encircle      4: path not found.
 	PathReturns path_return(PathStructure ps);
 	/*README - ABOUT RETURN VALUES
@@ -111,8 +113,10 @@ public:
 		no_of_sticks=0;
 		len_curve=0;
 		ORIENTATION_RADIUS=20;
-		temp_Initial_Radius = INITIAL_ORIENTATION_RADIUS;
+		Near_Flag = 0;
+		// temp_Initial_Radius = INITIAL_ORIENTATION_RADIUS;
 	}
 };
+
 #endif
 //-lopencv_highgui -lopencv_core -lopencv_imgproc

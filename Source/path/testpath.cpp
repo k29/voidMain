@@ -1,25 +1,66 @@
 #include "path.hpp"
 
+#define TESTPATH
+
+using namespace cv;
+using namespace std;
+
 PathStructure ps; //Coming from main cognition.
 PathPacket pathpackvar; //The class for writing the files.
+
+double test_x = 50, test_y = 50;
+
+void callBack(int event, int x, int y, int flags, void* userdata)
+{
+     
+     if  ( event == EVENT_LBUTTONDOWN )
+     {
+        cout << "Left button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+        test_x = x - 250;
+        test_y = y - 250;
+     }
+     else if  ( event == EVENT_RBUTTONDOWN )
+     {
+        cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+        test_x = x - 250;
+        test_y = y - 250;
+     }
+     else if  ( event == EVENT_MBUTTONDOWN )
+     {
+        cout << "Middle button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+      	test_x = x - 250;
+     	test_y = y - 250;
+     }
+     else if ( event == EVENT_MOUSEMOVE )
+     {
+          cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
+     }
+}
+
 void call_main() //Function made to replicate path calling from the cognition module.
 {
 	srand(time(NULL));
 	
-
+	// extern double test_x,test_y;
 	ps.n_obstacles = 1;
 	ps.absObstacles[0].x=35; 
 	ps.absObstacles[0].y=-75;
-	// ps.absObstacles[1].x=15;
-	// ps.absObstacles[1].y=67;
-	// ps.absObstacles[2].x=-40;
-	// ps.absObstacles[2].y=-80;
+	ps.absObstacles[1].x=15;
+	ps.absObstacles[1].y=67;
+	ps.absObstacles[2].x=-40;
+	ps.absObstacles[2].y=-80;
 
 	ps.ball.x =92;
 	ps.ball.y =73;
 
-	ps.goal.x=-39;
-	ps.goal.y=-90;
+	ps.goal.x=-39;	//get from click
+	ps.goal.y=-90;	//get from click
+
+	#ifdef TESTPATH
+	ps.goal.x = test_x;
+	ps.goal.y = test_y;
+	#endif
+
 	for(int i=0;i<ps.n_obstacles;i++)
 	 {
 	// 	ps.absObstacles[i].x=rand() % 200 - 100;
@@ -47,12 +88,22 @@ void call_main() //Function made to replicate path calling from the cognition mo
 	// 		cvWaitKey();
 	// 	}
 	p.path_return(ps);
-	p.updatePathPacket();//true if file writing to be on...else off.
-	cvWaitKey();
+	// p.updatePathPacket();//true if file writing to be on...else off.
 }
 int main()
 {
-	call_main();
+	// #ifdef TESTPATH
+	while(1)
+	{
+		// IplImage *img = cvCreateImage(cvSize(500,500), 8 ,1);
+		// cvNamedWindow("field", CV_WINDOW_AUTOSIZE);
+		setMouseCallback("Field", callBack, NULL);
+		// cvShowImage("field", img);
+		call_main();
+		cvWaitKey(10);
+		// cvReleaseImage(&img);
+		// #endif
+	}
 	return 0;
 }
 

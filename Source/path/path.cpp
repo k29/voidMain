@@ -762,14 +762,31 @@ PathReturns Path::path_return(PathStructure ps)
 	//if yes, reduce the initial obstacle radius until a is outside.	
 	// cout<<"before updation"<<endl;
 	// while()
-	if(sqrt(pow(tree[a].x,2) + pow(tree[a].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[a].x,2) + pow(tree[a].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS)
+	if(	(sqrt(pow(tree[1].x,2) + pow(tree[1].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[1].x,2) + pow(tree[1].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS) ||
+		(sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS) ||
+		(sqrt(pow(tree[a].x,2) + pow(tree[a].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[a].x,2) + pow(tree[a].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS))
 	{
-		pathpackvar.NEAR_FLAG = 1;
+		Near_Flag = 1;
 	}
 	else
 	{
-		pathpackvar.NEAR_FLAG = 0;
+		Near_Flag = 0;
 	}
+	
+	if(Near_Flag)
+	{
+		BackWalkX = ((-1.0)*((goal.x-ball.x)/(goal.y-ball.y))*ball.y)+ball.x;
+	}
+
+	// if(sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS)
+	// {
+	// 	pathpackvar.NEAR_FLAG = 1;
+	// }
+	// else
+	// {
+	// 	pathpackvar.NEAR_FLAG = 0;
+	// }
+
 	// cout<<"after updation"<<endl;
 	//introducing initial obsacles between 0 and a
 	obstacle[NO_OF_OBSTACLES + 2].obstacle_radius = INITIAL_ORIENTATION_RADIUS;
@@ -964,6 +981,13 @@ PathReturns Path::path_return(PathStructure ps)
 			break;
 		}
 	}
+
+	// if(len_curve%2 != 0)
+	// 	pathpackvar.NEAR_FLAG = 1;
+	// else
+	// 	pathpackvar.NEAR_FLAG = 0;
+
+
 	// cout<<len_curve<<endl;
 	std::size_t tmp=0;
 	len_curvenext=0;
@@ -1076,7 +1100,15 @@ PathReturns Path::path_return(PathStructure ps)
 
 void Path::updatePathPacket()
 {
+
+		// pthread_mutex_lock(&mutex_pathpacket);
+
+		// cout<<"abc"<<endl;
+	if(!Near_Flag)
+	{	
+		// cout<<"before lock update pathpackvar"<<endl;
 		pthread_mutex_lock(&mutex_pathpacket);
+
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
@@ -1087,7 +1119,7 @@ void Path::updatePathPacket()
 		if(tree.size() >= 30)
 		{
 			tree.path_crash = true;
-			pthread_mutex_unlock(&mutex_pathpacket);
+			// pthread_mutex_unlock(&mutex_pathpacket);
 			return;
 		}
 		assert(tree.size()<30);
@@ -1101,7 +1133,13 @@ void Path::updatePathPacket()
 			// 	break;
 			pathpackvar.finalpath[i].x=tree[curve[i+1]].x;
 			pathpackvar.finalpath[i].y=tree[curve[i+1]].y;
-			pathpackvar.finalpath[i].obstacle_radius = obstacle[tree[curve[i+1]].obstacle_id].obstacle_radius;
+			// cout<<"before"<<endl;
+			// pathpackvar.finalpath[i].obstacle_radius = obstacle[tree[curve[i+1]].obstacle_id].obstacle_radius;
+			if(i)
+				pathpackvar.finalpath[i].obstacle_radius = INITIAL_ORIENTATION_RADIUS;
+			else
+				pathpackvar.finalpath[i].obstacle_radius = OBSTACLE_RADIUS;
+			// cout<<"after"<<endl;
 			// printf("path %d x: %lf y: %lf\n", i, tree[b].x, tree[b].y);
 			// b=tree.returnPathPoint(b);
 		}
@@ -1122,21 +1160,40 @@ void Path::updatePathPacket()
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].x=-1;
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
 		}
+
 		// for (int i = 0; i < pathpackvar.no_of_points; ++i)
 		// {
 		// 	cout<<"x: "<<pathpackvar.finalpath[i].x<<"y; "<<pathpackvar.finalpath[i].y<<endl;
 		// }
-		for (int i = 0; i < pathpackvar.no_of_points; ++i)
-		{
-			// cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<endl;
-		}
-		// cout<<"near flag: "<<pathpackvar.NEAR_FLAG<<endl;	
-		pthread_mutex_unlock(&mutex_pathpacket);
 		// for (int i = 0; i < pathpackvar.no_of_points; ++i)
 		// {
 		// 	cout<<"x: "<<pathpackvar.finalpath[i].x<<"y: "<<pathpackvar.finalpath[i].y<<endl;
 		// }
 			
-		//pthread_mutex_unlock(&mutex_pathpacket);
+			// pthread_mutex_unlock(&mutex_pathpacket);
+
+		
+		for (int i = 0; i < pathpackvar.no_of_points; ++i)
+		{
+			// cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<endl;
+		}
+		
+		pthread_mutex_unlock(&mutex_pathpacket);
+		// cout<<"after unlock update pathpackvar"<<endl;
+	}
+
+
+	if(Near_Flag)
+	{
+		pthread_mutex_lock(&mutex_pathpacket);
+		pathpackvar.updated=1;
+		pathpackvar.id=com_id;
+		com_id=com_id+1;
+		pathpackvar.NEAR_FLAG = 1;
+		pathpackvar.finalpath[0].x = BackWalkX;
+		pathpackvar.finalpath[0].y = 0.0;
+		pthread_mutex_unlock(&mutex_pathpacket);
+	}
 }
+
 

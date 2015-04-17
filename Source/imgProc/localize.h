@@ -110,6 +110,7 @@ public:
 	void doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam, int imuangle = -9999);
 	
 	AbsCoords getGoalCoords(int g);
+	void setGoalCoords(double x, double y, int g);
 	void randomize();
 };
 
