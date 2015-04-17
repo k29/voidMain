@@ -9,3 +9,4 @@
 // #define INTEL_BOARD_DISPLAY
 #define PATH_ASSERT_OFF
 #define PATH_MOUSE_CLICK_ON
+#define GOAL_KEEPER_MODE

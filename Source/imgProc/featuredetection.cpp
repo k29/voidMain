@@ -191,7 +191,7 @@ void FeatureDetection::getBlobs(CamCapture &cam)
     cvLabel(seg_black, labelImg, blobs_black);
     // cvFilterByArea(blobs_yellow, 100, 1000000);
     // cvFilterByArea(blobs_blue, 100, 1000000);
-    cvFilterByArea(blobs_red, 10, 1000000);
+    // cvFilterByArea(blobs_red, 10, 1000000);
     // printf("After filter\n");
     //minimum obstacle area defined here
     cvFilterByArea(blobs_black, 100, 1000000);

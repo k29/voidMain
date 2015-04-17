@@ -46,4 +46,7 @@ namespace myBasicBehaviors("My Behaviors")
 		behavior doMakePathFromMotionModel
 			{
 			}
+		behavior doGoalKeep
+			{
+			}
 	}

@@ -39,3 +39,8 @@ double playerstate::getDistance()
 	{
 		return (double)theInstance->fd->ball.r;
 	}
+
+double playerstate::getGoalKeepFlag()
+	{
+		return (double)theInstance->GOAL_KEEPER_FLAG;
+	}

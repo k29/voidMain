@@ -85,4 +85,7 @@ namespace mySymbols("My Symbols")
 	/**AcYut initialization state */ 
 	bool internal init.isDone; 
 
+	/* AcYut Goal Keeper Mode */
+	float input goalkeepflag;
+
 	}

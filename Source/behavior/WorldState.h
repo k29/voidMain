@@ -8,6 +8,7 @@
 #include "../imgProc/featuredetection.h"
 #include "../imgProc/headmotor.h"
 #include "../imgProc/localize.h"
+#include "../imgProc/goalkeeper.h"
 #include "../path/path.hpp"
 #include "../common/common.h"
 #include "../common/commondefs.h"
@@ -31,8 +32,9 @@ class playerstate
                         static double getTheta();
                         static double getConfidence();
                         static playerstate* theInstance;
-						static double getRoboCupState();
-                        static double getDistance();      
+			static double getRoboCupState();
+                        static double getDistance();  
+                        static double getGoalKeepFlag();    
 
                         /* If true resets all XABSL parameters */
                         int resetflag;
@@ -55,6 +57,7 @@ class playerstate
                         FeatureDetection *fd;
                         HeadMotor hdmtr;
                         CamControl *camcont;
+                        GoalKeeper gk;
                 
        
 
@@ -83,7 +86,7 @@ class playerstate
         double localizationConfidence;
         double confidence;
         int timesteps;
-                       
+        bool GOAL_KEEPER_FLAG;         
                         
 
 

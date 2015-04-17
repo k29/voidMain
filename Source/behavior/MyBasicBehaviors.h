@@ -167,4 +167,19 @@ private:
 		playerstate &p;
 
 };
+
+class BasicBehaviorGoalKeep: public xabsl::BasicBehavior
+{
+	public:
+	BasicBehaviorGoalKeep(xabsl::ErrorHandler& errorHandler,playerstate &p):xabsl::BasicBehavior("doGoalKeep",errorHandler),p(p)
+		{
+
+		}
+	virtual void execute();
+private:
+		playerstate &p;
+
+};
+
+
 #endif

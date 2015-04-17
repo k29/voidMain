@@ -34,6 +34,10 @@ void BasicBehaviorInitialize::execute()
     goal_pos.x = 200.0;
     goal_pos.y = 200.0;
 
+    #ifdef GOAL_KEEPER_MODE
+    p.GOAL_KEEPER_FLAG = true;
+    #endif
+
     printf("Initialized\n");
     #endif
 }
@@ -44,7 +48,7 @@ void BasicBehaviorUpdate::execute()
 
         // printf("Entered update\n");       
         // p.hdmtr.update();
-        p.capture.getImage();    
+        p.capture.getImage();
         p.fd->getLandmarks(p.capture, p.hdmtr, motionModel);
         p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle());
 
@@ -404,3 +408,18 @@ void BasicBehaviorReset::execute()
     p.confidence=0;        
 }
 
+void BasicBehaviorGoalKeep::execute()
+{
+    // printf("BasicBehaviorGoalKeep\n");
+    GoalKeeperAction ret = p.gk.keeperUpdate(p.capture, p.hdmtr, p.camcont, p.fd, motionModel);
+    if(ret == STAY)
+        printf("STAY\n");
+    if(ret == FALLLEFT)
+        printf("FALLLEFT\n");
+    if(ret == FALLRIGHT)
+        printf("FALLRIGHT\n");
+    cvNamedWindow("Real Time Feed");
+    cvMoveWindow("Real Time Feed",300,50);
+    cvShowImage("Real Time Feed", p.capture.rgbimg);
+    cvWaitKey(25);
+}
