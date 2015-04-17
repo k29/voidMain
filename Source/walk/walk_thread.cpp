@@ -255,6 +255,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	{
 		dist_circstart[i+1] = dist_circstart1[i];
 	}
+	theta_arc[no_obstacles] = 0;
 	#endif
 	//Comment this portion for normal walk path - Currently this is conditioned on IP being off
 	#ifndef IP_IS_ON
@@ -272,7 +273,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	//till here
 	int fmscheck = 0;
 	int first_circ_foot[4] , last_circ_foot[4]; //FSPMOD CODE
-	for (int i=0;i<no_obstacles;i++)	
+	for (int i=0;i<=no_obstacles;i++)	
 	{
 	
 		footlr[i] = pow((footlr[i] - lr),2); 
@@ -573,6 +574,7 @@ void* walk_thread(void*)
 			x = 0;
 			y = 0;
 			theta = 0;
+			cout<<"No. of points : "<<pathpackvar.no_of_points<<endl;
 			pthread_mutex_unlock(&mutex_pathpacket);
 			if (!pathpackvarlocal.BACK_WALK)
 				footstepmain(walk.velocity() , foot1[j].delta_y , foot ,  foot1 ,i , pathpackvarlocal);

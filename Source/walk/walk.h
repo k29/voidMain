@@ -7,10 +7,9 @@
 #include <cmath>
 #include <fstream>
 #include <ctime>
-// #include <eigen3/Eigen/Dense>
+#include <deque>
 
 using namespace std;
-// using namespace Eigen;
 enum {SSP,DSP};
 
 class Walk
@@ -18,6 +17,13 @@ class Walk
 	private:
 	AcYut* bot;
 	LEG leg;
+//Physical Quantities
+	double height;
+	double feetSeparation;
+	double hipLength;
+	double Tc;
+	double C;
+
 	int hi ;
 	int stepCount;
 	double sspTimeVar;
@@ -46,7 +52,6 @@ class Walk
 	double correction_factor;
 	// X Data //
 	double lift;
-	double feetSeparation;
 	double com_offset[100];
 	double com_offsety[100];
 	//PID Constants
@@ -64,10 +69,13 @@ class Walk
 	double mean_y;
 	double prev_mean_y;
 	double prev_imu_yaw;
+	deque<double> pos_q;
+	// deque<double> imubuf_loc;
 	double integ_term_y;
+	double veldef;
 
 	double prev_y;
-	double height;
+
 	public:
 	Walk(AcYut* bot);
 	int kick();
@@ -76,7 +84,8 @@ class Walk
 	// int dribble(double dy, double dx,double t1,double t2);
 	int pathdribble(double vel_y, double dx, double t1, double t2);
 	int start();
-	int captureStep(int leg, double c1_z, double c2_z, double C, double zMax, double dsp1Time, double dsp2Time, double &sspTime, double &z_a_free, double &z_b_free, double &z_c_free);
+	int captureStepZ(double &c1_z, double &c2_z, double zMax, double dsp1Time, double dsp2Time, double cap_pos_actual, double cap_vel_actual, double walkTime, double &sspTime, double &z_a_free, double &z_b_free, double &z_c_free, double &legZfi, double &supLegZfi);
+	int captureStepY(double &c1_y, double &c2_y, double dsp1Time, double dsp2Time, double yr, double vely, double y,  double &supLegYfi, double &veloYfi_d, double cap_pos_actual, double cap_vel_actual, double walkTime, double &sspTime, double &y_a_free, double &y_b_free, double &y_c_free, double &y_d_free);
 	int handMotion(double handSwing);
 	int stopMotion();
 	int backMotion(double distance);

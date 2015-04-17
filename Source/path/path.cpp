@@ -790,7 +790,10 @@ PathReturns Path::path_return(PathStructure ps)
 	}
 
 	if(sqrt(pow(tree[1].x, 2) + pow(tree[1].y, 2))<THRESHOLD && abs(ball.y)>10)
+	{
+		Near_Flag = 0;
 		Back_Walk = 1;
+	}
 	else
 		Back_Walk = 0;
 
@@ -1153,10 +1156,10 @@ void Path::updatePathPacket()
 			pathpackvar.finalpath[pathpackvar.no_of_points+1].y=-1;
 		}
 		
-		// for (int i = 0; i < pathpackvar.no_of_points; ++i)
-		// {
-		// 	cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<" ioc: "<<pathpackvar.finalpath[i].isOnCircle<<endl;
-		// }
+		for (int i = 0; i < pathpackvar.no_of_points; ++i)
+		{
+			// cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<" ioc: "<<pathpackvar.finalpath[i].isOnCircle<<endl;
+		}
 		// cout<<"ignore arc: "<<pathpackvar.IGNORE_ARC<<endl;
 		
 		// cout<<"after unlock update pathpackvar"<<endl;
@@ -1183,7 +1186,7 @@ void Path::updatePathPacket()
 	// 	// cout<<"after unlock path near"<<endl;
 	// }
 	
-	if(Back_Walk)
+	if(Back_Walk && !Near_Flag)
 	{
 		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.updated=1;
@@ -1210,7 +1213,7 @@ void Path::updatePathPacket()
 		if(pathpackvar.BACK_WALK != Back_Walk)
 			pathpackvar.UPDATE_FLAG = 1;			
 		pathpackvar.NEAR_FLAG = 1;
-		pathpackvar.BACK_WALK = 0;
+		// pathpackvar.BACK_WALK = 0;
 		//pathpackvar.finalpath[0].x = BackWalkX;
 		// pathpackvar.finalpath[0].y = 0.0;
 		pthread_mutex_unlock(&mutex_pathpacket);

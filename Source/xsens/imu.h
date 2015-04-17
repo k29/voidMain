@@ -23,6 +23,9 @@ public:
 		roll = 0.;
 		pitch = 0.;
 		yaw = 0.;
+		vroll = 0.;
+		vpitch = 0.;
+		vyaw = 0.;
 		msgCount = 0;
 	};
 	~Imu();
@@ -30,6 +33,6 @@ public:
 	void __update();
 	void __flush();
 	bool threadActive;
-	double roll, pitch, yaw;
+	double roll, pitch, yaw, vroll, vpitch, vyaw;
 };
 #endif

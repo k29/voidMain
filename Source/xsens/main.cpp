@@ -52,6 +52,10 @@ int main()
 		printf("%lf\n",value);		
 	}
 	f1<<imu.yaw;
+	// f1<<endl;
+	// f1<<imu.roll;
+	// f1<<endl;
+	// f1<<imu.pitch;
 	f1.close();
 	return 0;
 }
