@@ -350,6 +350,13 @@ PathReturns Path::path_return(PathStructure ps)
 			obstacle[i].y=1000;
 		}
 	}
+//****************Kick if ball within 5 cm of bot***************************
+	if(car2pol(ball.x,ball.y) <= KICKDIST)
+	{
+		//cout<<"\npath returning \n\nDOKICK\n\n " ;
+
+		return DOKICK;
+	}
 
 #ifdef OLDENCIRCLING
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -803,11 +810,13 @@ PathReturns Path::path_return(PathStructure ps)
 		Near_Obstacle = 0;
 	}
 
+	Ignore_Arc_Old = Ignore_Arc;
+
 	if(abs(atan(tree[a].y/tree[a].x))*180/PI<10)
 	{
 		Ignore_Arc = 1;
 	}
-	else
+	else if(abs(atan(tree[a].y/tree[a].x))*180/PI>15)
 		Ignore_Arc = 0;
 
 	// cout<<"after updation"<<endl;
@@ -1069,6 +1078,10 @@ PathReturns Path::path_return(PathStructure ps)
 	{
 		tree.no_path_flag=0;
 		return NOPATH;
+	}
+	if(Near_Flag)
+	{
+		return DOORIENT;
 	}
 	//cout<<"\npath returning \n\nDOWALK\n\n  theta "<<next.theta<< " distance "<<next.r<<endl;
 	cvReleaseImage(&image);
