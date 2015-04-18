@@ -137,14 +137,12 @@ typedef struct
 	int id;
 	int no_of_points;
 	bool NEAR_FLAG;
-<<<<<<< HEAD
+
 	bool BACK_WALK;
 	bool NEAR_OBSTACLE;
 	bool IGNORE_ARC;
 	bool UPDATE_FLAG;
-=======
 	bool DO_KICK;
->>>>>>> 2b03bea54f027d2fb46866319beccf00dc796512
 	PathCoords finalpath[30];
 }PathPacket;
 

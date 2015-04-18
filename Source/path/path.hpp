@@ -91,6 +91,7 @@ public:
 	bool Back_Walk;
 	bool Near_Obstacle;
 	bool Ignore_Arc;
+	bool
 	double BackWalkX;
 	//OBSOLETE->int path_return(PathStructure &ps); //main function to be called by behaviour // return values : 1: successful path   2: go at r,theta    3: encircle      4: path not found.
 	PathReturns path_return(PathStructure ps);

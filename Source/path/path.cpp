@@ -810,8 +810,6 @@ PathReturns Path::path_return(PathStructure ps)
 		Near_Obstacle = 0;
 	}
 
-	Ignore_Arc_Old = Ignore_Arc;
-
 	if(abs(atan(tree[a].y/tree[a].x))*180/PI<10)
 	{
 		Ignore_Arc = 1;
