@@ -53,6 +53,7 @@ private:
 	cvb::CvBlobs blobs_blue;
 	cvb::CvBlobs blobs_yellow;
 	cvb::CvBlobs blobs_black;
+	cvb::CvBlobs blobs_footmarker;
 	IplImage* seg_red;
 	IplImage* seg_blue;
 	IplImage* seg_yellow;
@@ -64,6 +65,7 @@ private:
 	IplImage* seg_ball;
 	IplImage* seg_background;
 	IplImage* seg_white_count;
+	IplImage* seg_footmarker;
 	void undistort(int xd, int yd, int* xu, int* yu);
 	void findReal(int x,int y, double &objdis, double &objangdeg, HeadMotor &hm);
 	void getGoals(CamCapture &cam, HeadMotor &hm);
@@ -73,6 +75,7 @@ private:
 	void getCorners(CamCapture &cam, HeadMotor &hm);
 	void getBall(CamCapture &cam, HeadMotor &hm);
 	void getRandomBall(CamCapture &cam, HeadMotor &hm);
+	void getFootMarker(CamCapture &cam, HeadMotor &hm);
 	bool ballFound_var;
 	int ballX_var;
 	int ballY_var;
@@ -129,6 +132,7 @@ public:
 	ifstream constants;
 	// int nLand;
 	Coords ball;
+	Coords footMarker;
 	FeatureDetection(CamCapture &cam);
 	void getLandmarks(CamCapture &cam, HeadMotor &hm, MotionModel &mm);
 	inline bool ballFound(){return ballFound_var;};

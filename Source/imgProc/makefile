@@ -1,9 +1,9 @@
 all: ../Build/imgProc.a
 
 
-../Build/imgProc.a: ../Build/camcapture.o ../Build/camcontrol.o ../Build/featuredetection.o ../Build/headmotor.o ../Build/imgproc.o ../Build/localize.o
+../Build/imgProc.a: ../Build/camcapture.o ../Build/camcontrol.o ../Build/featuredetection.o ../Build/headmotor.o ../Build/imgproc.o ../Build/localize.o ../Build/goalkeeper.o
 	@echo $@
-	@ar rc $@ ../Build/camcapture.o ../Build/camcontrol.o ../Build/featuredetection.o ../Build/headmotor.o ../Build/imgproc.o ../Build/localize.o
+	@ar rc $@ ../Build/camcapture.o ../Build/camcontrol.o ../Build/featuredetection.o ../Build/headmotor.o ../Build/imgproc.o ../Build/localize.o ../Build/goalkeeper.o
 	@echo
 	@ranlib $@
 
@@ -31,6 +31,11 @@ all: ../Build/imgProc.a
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
 	@g++ -c localize.cpp -lueye_api  -fpermissive -o $@
+
+../Build/goalkeeper.o: goalkeeper.cpp goalkeeper.h
+	@echo $@
+	@if !(test -d ../Build); then mkdir ../Build; fi
+	@g++ -c goalkeeper.cpp -lueye_api  -fpermissive -o $@
 
 ../Build/imgproc.o: imgproc.cpp imgproc.h
 	@echo $@

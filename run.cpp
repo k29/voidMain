@@ -70,7 +70,6 @@ int main(void)
 	        	f1>>IMU_INITIAL_ANGLE;
 	        	f1.close();
 	    	#endif
-
 	        registerXABSL();
 	  		start();	
 			

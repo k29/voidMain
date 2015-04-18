@@ -16,7 +16,7 @@ namespace mySymbols("My Symbols")
 	/** Path's instruction to Walk */
 	enum PathReturns
 		{
-			DOWALK,DOENCIRCLE,DOKICK,NOPATH
+			DOWALK,DOENCIRCLE,DOKICK,NOPATH,DOORIENT
 		};
 	/** Path's instruction to Walk */
 	enum PathReturns input pathreturn;	
@@ -84,5 +84,8 @@ namespace mySymbols("My Symbols")
 	
 	/**AcYut initialization state */ 
 	bool internal init.isDone; 
+
+	/* AcYut Goal Keeper Mode */
+	float input goalkeepflag;
 
 	}

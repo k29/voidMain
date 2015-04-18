@@ -25,6 +25,8 @@ BasicBehaviorMakePath basicBehaviorMakePath(myErrorHandler,ACYUT);
 // BasicBehaviorFindBall basicBehaviorFindBall(myErrorHandler,ACYUT);
 BasicBehaviorReset basicBehaviorReset(myErrorHandler,ACYUT);
 BasicBehaviorMakePathFromMotionModel basicBehaviorMakePathFromMotionModel(myErrorHandler,ACYUT);
+BasicBehaviorGoalKeep basicBehaviorGoalKeep(myErrorHandler,ACYUT);
+BasicBehaviorDoOrient basicBehaviorDoOrient(myErrorHandler,ACYUT);
 
 void registerXABSL()
 {
@@ -45,12 +47,14 @@ void registerXABSL()
     engine->registerEnumElement("PathReturns", "PathReturns.DOKICK",DOKICK);
     engine->registerEnumElement("PathReturns", "PathReturns.DOENCIRCLE",DOENCIRCLE);
     engine->registerEnumElement("PathReturns", "PathReturns.NOPATH",NOPATH);
+    engine->registerEnumElement("PathReturns", "PathReturns.DOORIENT",DOORIENT);
 
     engine->registerDecimalInputSymbol("theta", &playerstate::getTheta);
     engine->registerDecimalInputSymbol("confidence", &playerstate::getConfidence);
     engine->registerDecimalInputSymbol("resetflag", &playerstate::getReset);
     engine->registerDecimalInputSymbol("RoboCup.state",&playerstate::getRoboCupState);
     engine->registerDecimalInputSymbol("ball.distance",&playerstate::getDistance);
+    engine->registerDecimalInputSymbol("goalkeepflag", &playerstate::getGoalKeepFlag);
 
     engine->registerBasicBehavior(basicBehaviorInitialize);
     engine->registerBasicBehavior(basicBehaviorLocalize);
@@ -63,6 +67,8 @@ void registerXABSL()
     // engine->registerBasicBehavior(basicBehaviorFindBall);
     engine->registerBasicBehavior(basicBehaviorReset);
     engine->registerBasicBehavior(basicBehaviorMakePathFromMotionModel);
+    engine->registerBasicBehavior(basicBehaviorGoalKeep);
+    engine->registerBasicBehavior(basicBehaviorDoOrient);
 
     MyFileInputSource input("intermediate-code.dat");
     engine->createOptionGraph(input);   

@@ -58,11 +58,14 @@ void Walk::move(double walkr,double walktheta)
 	char S1[80],S2[80];
     
     file = fopen("/dev/ttyACM0","w");  //Opening device file
-    printf("file opened\n");
-
+    // printf("file opened\n");
+    if(file==NULL)
+    	printf("File not opened\n");
     sprintf(S1, "%d", (int)walkr);
     sprintf(S2, "%d", (int)walktheta);
+    // printf("\n Radius in path fn to serial monitor %s\n angle in path fn to serial monitor %s  \n",S1,S2 );
     fprintf(file,"%s %s\n",S1,S2);
+    printf("\n Radius in path fn to serial monitor %s\n angle in path fn to serial monitor %s  \n",S1,S2 );
 
 
 

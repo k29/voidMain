@@ -7,6 +7,7 @@ enum BallReturns{BALLFOUND=0,BALLFINDING=1,TURNRIGHT,TURNLEFT};
 enum GoalReturns{GOALFINDING,ENCIRCLER,ENCIRCLEL,GOALFOUND};
 enum PathReturns{DOWALK,DOENCIRCLE,DOKICK,NOPATH,DOORIENT};
 enum LocalizationState{CRITICAL,LOCALIZED,MOTIONMODEL};
+enum GoalKeeperAction{STAY, FALLLEFT, FALLRIGHT};
 
 //Behaviour Local IMP--------------------------------------------------------------------
 enum Ball{NOTFOUND,FOUND};

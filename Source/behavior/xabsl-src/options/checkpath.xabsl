@@ -10,7 +10,8 @@ option checkpath
 
 				else if(pathreturn==NOPATH)
 					goto ballfollow;
-
+				else if(pathreturn == DOORIENT)
+					goto orient;
 			}
 
 		
@@ -29,5 +30,13 @@ option checkpath
 						ballfollowing();
 					}
 
-			}	
+			}
+
+		state orient
+		{
+			action
+			{
+				doOrient();
+			}
+		}	
 	} 

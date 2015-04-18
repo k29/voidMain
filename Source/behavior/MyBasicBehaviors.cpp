@@ -38,6 +38,12 @@ void BasicBehaviorInitialize::execute()
     pathpackvar.UPDATE_FLAG = 1;
     pthread_mutex_unlock(&mutex_pathpacket);
 
+    #ifdef GOAL_KEEPER_MODE
+    p.GOAL_KEEPER_FLAG = true;
+    #endif
+    #ifndef GOAL_KEEPER_MODE
+    p.GOAL_KEEPER_FLAG = false;
+    #endif
 
     printf("Initialized\n");
     #endif
@@ -49,7 +55,7 @@ void BasicBehaviorUpdate::execute()
 
         // printf("Entered update\n");       
         // p.hdmtr.update();
-        p.capture.getImage();    
+        p.capture.getImage();
         p.fd->getLandmarks(p.capture, p.hdmtr, motionModel);
         p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle());
 
@@ -375,7 +381,9 @@ void BasicBehaviorPathToWalk::execute()
         #ifdef IP_IS_ON
         #ifdef WALK_IS_ON
         // printf("before update\n");
+        // printf("path called from behavior\n");
         p.path.updatePathPacket();
+        // printf("path updated behavior\n");
         if(p.path.tree.path_crash)
         {
             // printf("path crashed\n");
@@ -412,3 +420,23 @@ void BasicBehaviorReset::execute()
     p.confidence=0;        
 }
 
+void BasicBehaviorGoalKeep::execute()
+{
+    // printf("BasicBehaviorGoalKeep\n");
+    GoalKeeperAction ret = p.gk.keeperUpdate(p.capture, p.hdmtr, p.camcont, p.fd, motionModel);
+    if(ret == STAY)
+        printf("STAY\n");
+    if(ret == FALLLEFT)
+        printf("FALLLEFT\n");
+    if(ret == FALLRIGHT)
+        printf("FALLRIGHT\n");
+    cvNamedWindow("Real Time Feed");
+    cvMoveWindow("Real Time Feed",300,50);
+    cvShowImage("Real Time Feed", p.capture.rgbimg);
+    cvWaitKey(25);
+}
+
+void BasicBehaviorDoOrient::execute()
+{
+    printf("BasicBehaviorDoOrient\n");
+}

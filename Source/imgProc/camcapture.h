@@ -45,6 +45,7 @@ private:
     unsigned char* lut_black;
     unsigned char* lut_ball;
     unsigned char* lut_background;
+    unsigned char* lut_footmarker;
     int width_var;
     int height_var;
     int width_var_full;
@@ -143,6 +144,15 @@ public:
         else
             return false;
     }
+    inline bool isFootMarke(int i, int j)
+    {
+        if(lut_footmarker[returnPixel3C(rgbimg, i, j, 2)
+            |(returnPixel3C(rgbimg, i, j, 1)<<8)
+            |(returnPixel3C(rgbimg, i, j, 0)<<16)])
+            return true;
+        else
+            return false;
+    }
 
     inline bool isRed_small(int i, int j)
     {
@@ -214,6 +224,16 @@ public:
     inline bool isBackground_small(int i, int j)
     {
         if(lut_background[returnPixel3C(rgbimg_small, i, j, 2)
+            |(returnPixel3C(rgbimg_small, i, j, 1)<<8)
+            |(returnPixel3C(rgbimg_small, i, j, 0)<<16)])
+            return true;
+        else
+            return false;
+
+    }
+    inline bool isFootMarker_small(int i, int j)
+    {
+        if(lut_footmarker[returnPixel3C(rgbimg_small, i, j, 2)
             |(returnPixel3C(rgbimg_small, i, j, 1)<<8)
             |(returnPixel3C(rgbimg_small, i, j, 0)<<16)])
             return true;

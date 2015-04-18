@@ -12,7 +12,7 @@ playerstate::playerstate()
 	fd= new FeatureDetection(capture);
 	camcont= new CamControl(capture);
 	timesteps = 0;
-
+	GOAL_KEEPER_FLAG = false;
 
 	}
 
@@ -38,4 +38,9 @@ double playerstate::getRoboCupState()
 double playerstate::getDistance()
 	{
 		return (double)theInstance->fd->ball.r;
+	}
+
+double playerstate::getGoalKeepFlag()
+	{
+		return (double)theInstance->GOAL_KEEPER_FLAG;
 	}
