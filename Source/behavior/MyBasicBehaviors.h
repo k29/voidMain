@@ -194,5 +194,18 @@ private:
 
 };
 
+class BasicBehaviorDoKick: public xabsl::BasicBehavior
+{
+	public:
+	BasicBehaviorDoKick(xabsl::ErrorHandler& errorHandler,playerstate &p):xabsl::BasicBehavior("doKick",errorHandler),p(p)
+		{
+
+		}
+	virtual void execute();
+private:
+		playerstate &p;
+
+};
+
 
 #endif
