@@ -67,6 +67,7 @@ option begin
 			}
 			action
 			{
+				printmsg(o = 110);
 				//doUpdate();
 				doGoalKeep();
 			}

@@ -57,7 +57,9 @@ class playerstate
                         FeatureDetection *fd;
                         HeadMotor hdmtr;
                         CamControl *camcont;
+                        // #ifdef GOAL_KEEPER_MODE
                         GoalKeeper gk;
+                        // #endif
                 
        
 

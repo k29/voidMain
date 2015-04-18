@@ -68,6 +68,7 @@ void registerXABSL()
     engine->registerBasicBehavior(basicBehaviorReset);
     engine->registerBasicBehavior(basicBehaviorMakePathFromMotionModel);
     engine->registerBasicBehavior(basicBehaviorGoalKeep);
+    engine->registerBasicBehavior(basicBehaviorDoOrient);
 
     MyFileInputSource input("intermediate-code.dat");
     engine->createOptionGraph(input);   

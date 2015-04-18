@@ -24,6 +24,7 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
     seg_green = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
     seg_ball = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
     seg_background = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
+    seg_footmarker = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
     ballRatio=1.0;
     ballFound_var = false;
     tempnLand = 0;
@@ -1090,7 +1091,9 @@ void FeatureDetection::getLandmarks(CamCapture &cam, HeadMotor &hm, MotionModel 
         #endif
     }
     #endif
+    #ifdef GET_FOOT_MARKERS
     getFootMarker(cam, hm);
+    #endif
 }
 
 
@@ -1187,6 +1190,7 @@ void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
 
 void FeatureDetection::getFootMarker(CamCapture &cam, HeadMotor &hm)
 {
+    #ifdef GET_FOOT_MARKERS
     for (CvBlobs::const_iterator it=blobs_footmarker.begin(); it != blobs_footmarker.end(); ++it)
     {
         if(((it->second->maxy - it->second->miny)/(it->second->maxx - it->second->minx)) >= 1)
@@ -1194,8 +1198,8 @@ void FeatureDetection::getFootMarker(CamCapture &cam, HeadMotor &hm)
             //Check if on image edge
             // if(isOnImageEdgeObstacle((it->second->maxx + it->second->minx)*2, it->second->maxy*4)==true)
             //   continue;
-            if(isOnImageEdge((it->second->maxx + it->second->minx)/2, it->second->maxy)==true)
-                continue;
+            // if(isOnImageEdge((it->second->maxx + it->second->minx)/2, it->second->maxy)==true)
+                // continue;
             #ifndef ALL_PRINTING_OFF
             printf("Found Foot Marker\n");
             #endif
@@ -1210,6 +1214,7 @@ void FeatureDetection::getFootMarker(CamCapture &cam, HeadMotor &hm)
             findReal((it->second->maxx + it->second->minx)/2, it->second->maxy, footMarker.r, footMarker.theta, hm);
         }
     }
+    #endif
 }
 
 void FeatureDetection::updatePacket(FeaturesPacket &fp)

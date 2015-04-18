@@ -2,7 +2,7 @@
 
 GoalKeeper::GoalKeeper()
 {
-	printf("Goal Keeper created.\n");
+	// printf("Goal Keeper created.\n");
 }
 
 GoalKeeperAction GoalKeeper::keeperUpdate(CamCapture &cam, HeadMotor &hm, CamControl* camcont, FeatureDetection* fd, MotionModel &mm)

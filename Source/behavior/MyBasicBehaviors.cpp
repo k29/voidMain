@@ -37,6 +37,9 @@ void BasicBehaviorInitialize::execute()
     #ifdef GOAL_KEEPER_MODE
     p.GOAL_KEEPER_FLAG = true;
     #endif
+    #ifndef GOAL_KEEPER_MODE
+    p.GOAL_KEEPER_FLAG = false;
+    #endif
 
     printf("Initialized\n");
     #endif
@@ -318,7 +321,7 @@ void BasicBehaviorMakePath::execute()
     
     // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
     // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
-    printf("before path return\n");
+    // printf("before path return\n");
     p.pathreturn=p.path.path_return(p.pathstr);
     // printf("before crash\n");
     if(p.path.tree.path_crash)

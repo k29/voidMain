@@ -12,7 +12,7 @@ playerstate::playerstate()
 	fd= new FeatureDetection(capture);
 	camcont= new CamControl(capture);
 	timesteps = 0;
-
+	GOAL_KEEPER_FLAG = false;
 
 	}
 
