@@ -52,4 +52,7 @@ namespace myBasicBehaviors("My Behaviors")
 		behavior doOrient
 			{
 			}
+		behavior doKick
+			{
+			}
 	}

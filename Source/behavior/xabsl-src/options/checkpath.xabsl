@@ -12,6 +12,8 @@ option checkpath
 					goto ballfollow;
 				else if(pathreturn == DOORIENT)
 					goto orient;
+				else if(pathreturn == DOKICK)
+					goto kick;
 			}
 
 		
@@ -38,5 +40,12 @@ option checkpath
 			{
 				doOrient();
 			}
-		}	
+		}
+		state kick
+		{
+			action
+			{
+				doKick();
+			}
+		}
 	} 

@@ -27,6 +27,7 @@ BasicBehaviorReset basicBehaviorReset(myErrorHandler,ACYUT);
 BasicBehaviorMakePathFromMotionModel basicBehaviorMakePathFromMotionModel(myErrorHandler,ACYUT);
 BasicBehaviorGoalKeep basicBehaviorGoalKeep(myErrorHandler,ACYUT);
 BasicBehaviorDoOrient basicBehaviorDoOrient(myErrorHandler,ACYUT);
+BasicBehaviorDoKick basicBehaviorDoKick(myErrorHandler,ACYUT);
 
 void registerXABSL()
 {
@@ -69,6 +70,7 @@ void registerXABSL()
     engine->registerBasicBehavior(basicBehaviorMakePathFromMotionModel);
     engine->registerBasicBehavior(basicBehaviorGoalKeep);
     engine->registerBasicBehavior(basicBehaviorDoOrient);
+    engine->registerBasicBehavior(basicBehaviorDoKick);
 
     MyFileInputSource input("intermediate-code.dat");
     engine->createOptionGraph(input);   

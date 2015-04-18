@@ -432,3 +432,11 @@ void BasicBehaviorDoOrient::execute()
 {
     printf("BasicBehaviorDoOrient\n");
 }
+
+void BasicBehaviorDoKick::execute()
+{
+    printf("BasicBehaviorDoKick\n");
+    pthread_mutex_lock(&mutex_pathpacket);
+    pathpackvar.DO_KICK = true;
+    pthread_mutex_unlock(&mutex_pathpacket);
+}
