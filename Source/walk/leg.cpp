@@ -9,7 +9,7 @@ Leg::Leg(int leg, Communication* comm, int ids[], int offsets[], int driveMode[]
 		if (i == 6)
 			m[i] = new Motor(MX64, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);
 		else if (i == 0)
-			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 20, 20, 0);
+			m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i], 20, 5, 0);
 			// m[i] = new Motor(EX106, ids[i], this->comm, offsets[i], driveMode[i], zeros[i]);			
 		else if (i == 1 || i == 3)
 			// if (leg == 1)

@@ -7,7 +7,7 @@ Walk::Walk(AcYut* bot)
 
 	Tc = sqrt(600.00/9810.0);
 	C = 1/Tc;
-	feetSeparation = 45;
+	feetSeparation = 50;
 	hipLength = 130;
 	height = 400;
 
@@ -15,7 +15,7 @@ Walk::Walk(AcYut* bot)
 	supLegYin=-4.571982;
 	veloYin=-0.611621;
 	veloYfi=10;
-	zMax=35;
+	zMax=40;
 	dz = 0;
 	dspTime = 0.05;
 	lift=50;

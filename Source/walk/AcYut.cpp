@@ -434,7 +434,7 @@ double* AcYut::getWorldFrameVel(double coods[], double ans[], double velz, doubl
 	// cout<<"vRollpitch "<<rad2deg(imu->vroll)<<" "<<rad2deg(imu->vpitch)<<endl;
 	ans[X] = cos(roll)*cos(pitch)*floorcoods_x - sin(roll)*floorcoods_y + cos(roll)*sin(pitch)*floorcoods_z;
 	ans[Y] = (cos(roll)*cos(pitch)*vroll - sin(roll)*sin(pitch)*vpitch)*floorcoods_x/8 - sin(roll)*floorcoods_y*vroll + cos(roll)*vely + (cos(roll)*sin(pitch)*vroll + sin(roll)*cos(pitch)*vpitch)*floorcoods_z + sin(roll)*sin(pitch)*velz;	
-	ans[Z] = -cos(pitch)*floorcoods_x*vpitch/10 - sin(pitch)*floorcoods_z*vpitch + cos(pitch)*(velz);
+	ans[Z] = -cos(pitch)*floorcoods_x*vpitch/15 - sin(pitch)*floorcoods_z*vpitch + cos(pitch)*(velz);
 
 	// ans[Z] = -sin(pitch)*floorcoods_x + cos(pitch)*coods[Z];
 /*	ans[X] = cos(roll)*cos(pitch)*coods[X] + sin(roll)*coods[Y] - cos(roll)*sin(pitch)*coods[Z];

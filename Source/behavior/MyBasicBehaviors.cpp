@@ -31,9 +31,10 @@ void BasicBehaviorInitialize::execute()
 
     p.confidence=0;
     motionModel.confidence=0;
+    #ifdef PATH_MOUSE_CLICK_ON
     goal_pos.x = 200.0;
     goal_pos.y = 10.0;
-
+    #endif
     pthread_mutex_lock(&mutex_pathpacket);
     pathpackvar.UPDATE_FLAG = 1;
     pthread_mutex_unlock(&mutex_pathpacket);
