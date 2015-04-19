@@ -5,7 +5,7 @@ main: main.cpp ../Build/testwalk.a
 
 ../Build/testwalk.a: ../Build/walk_thread.o ../Build/walk.o ../Build/testBot.o ../Build/communication.o ../Build/commondefswalk.o
 	@echo $@
-	@ar rc $@ ../Build/walk_thread.o ../Build/walk.o ../Build/testBot.o ../Build/communication.o ../Build/commondefswalk.o
+	@ar rc $@ ../Build/walk.o ../Build/walk_thread.o  ../Build/testBot.o ../Build/communication.o ../Build/commondefswalk.o
 	@echo $@
 	@ranlib $@
 
@@ -13,12 +13,12 @@ main: main.cpp ../Build/testwalk.a
 ../Build/walk_thread.o: walk_thread.cpp walk_thread.h 
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
-	@g++ -c walk_thread.cpp -fpermissive -o $@
+	@g++ -c walk_thread.cpp -fpermissive -std=c++11 -o $@
 
-../Build/walk.o: walk.cpp walk.h
+../Build/walk.o: serial.cpp serial.h
 	@echo $@
 	@if !(test -d ../Build); then mkdir ../Build; fi
-	@g++ -c walk.cpp -fpermissive -o $@	
+	@g++ -c serial.cpp -fpermissive -o $@	
 
 ../Build/testBot.o: testBot.cpp testBot.h
 	@echo $@
