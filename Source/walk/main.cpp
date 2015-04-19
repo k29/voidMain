@@ -186,6 +186,20 @@ int main()
 	}	
 */	
 	Walk walk(&bot);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// walk.turnright(90);
 	while(walk.velocity()*1.5<160)
 	{
@@ -201,9 +215,9 @@ int main()
 	walk.dribble();
 	walk.dribble();
 	printf("11\n");
-	walk.backMotion(500);
+	// walk.backMotion(500);
 	printf("22\n");
-	while(walk.velocity()*1.5<160)
+	while(walk.velocity()*1.5<100)
 	{
 		walk.accelerate();
 		walk.dribble();

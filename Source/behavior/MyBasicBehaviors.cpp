@@ -32,7 +32,7 @@ void BasicBehaviorInitialize::execute()
     p.confidence=0;
     motionModel.confidence=0;
     goal_pos.x = 200.0;
-    goal_pos.y = 200.0;
+    goal_pos.y = 10.0;
 
     pthread_mutex_lock(&mutex_pathpacket);
     pathpackvar.UPDATE_FLAG = 1;
@@ -303,15 +303,29 @@ void BasicBehaviorMakePath::execute()
     selfy /= (ALPHA + BETA);
     double tempx = goalcoords.x - selfx;
     double tempy = goalcoords.y - selfy;
+    AbsCoords gpl, gpr;
+    p.loc.getGoalPosts(gpl, gpr);
+    double gpleftx = gpl.x - selfx;
+    double gplefty = gpl.y - selfy;
+    double gprightx = gpr.x - selfx;
+    double gprighty = gpr.y - selfy;
     // double tempx=goalcoords.x-p.loc.selfX;
     // double tempy=goalcoords.y-p.loc.selfY;
     p.pathstr.goal.x= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
     p.pathstr.goal.y= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
+    p.pathstr.gpleft.x= (gpleftx*cos(deg2rad(p.loc.selfAngle))) - (gplefty* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
+    p.pathstr.gpleft.y= (gpleftx*sin(deg2rad(p.loc.selfAngle))) + (gplefty* cos(deg2rad(p.loc.selfAngle)));
+    p.pathstr.gpright.x= (gprightx*cos(deg2rad(p.loc.selfAngle))) - (gprighty* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
+    p.pathstr.gpright.y= (gprightx*sin(deg2rad(p.loc.selfAngle))) + (gprighty* cos(deg2rad(p.loc.selfAngle)));
     #endif
     #ifdef PATH_MOUSE_CLICK_ON
     cv::setMouseCallback("Field", callBackFunc, &goal_pos);
     p.pathstr.goal.x = goal_pos.x;
     p.pathstr.goal.y = goal_pos.y;
+    p.pathstr.gpleft.x = goal_pos.x;
+    p.pathstr.gpright.x = goal_pos.x;
+    p.pathstr.gpleft.y = goal_pos.y+60;
+    p.pathstr.gpright.y = goal_pos.y-60;
     #endif
     // printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
     //printf("goal coords y:%lf\n",pathstr.goal.x);
@@ -438,7 +452,57 @@ void BasicBehaviorGoalKeep::execute()
 
 void BasicBehaviorDoOrient::execute()
 {
-    printf("BasicBehaviorDoOrient\n");
+    // printf("BasicBehaviorDoOrient\n");
+    p.path.orientSelf(p.pathstr);
+//     double ballx, bally;
+//     double goalx, goaly;
+// AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
+//     AbsCoords selfm = motionModel.read();
+//     double selfx = ALPHA*p.loc.selfX + BETA*selfm.x;
+//     double selfy = ALPHA*p.loc.selfY + BETA*selfm.y;
+//     selfx /= (ALPHA + BETA);
+//     selfy /= (ALPHA + BETA);
+//     double tempx = goalcoords.x - selfx;
+//     double tempy = goalcoords.y - selfy;
+//     // double tempx=goalcoords.x-p.loc.selfX;
+//     // double tempy=goalcoords.y-p.loc.selfY;
+//     goalx= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
+//     goaly= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
+
+//     // printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
+//     //printf("goal coords y:%lf\n",pathstr.goal.x);
+//     ballx=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));
+//     bally=p.fd->ball.r*sin(deg2rad(p.fd->ball.theta));
+
+//     double targetx, targety;
+
+//     double target_distance = 10;
+
+//     if (sqrt(pow(targetx,2) + pow(targety,2)) < 5)
+//     {
+//         //rotation flag
+//     }
+
+//     else
+//     {
+//         double theta = atan2((bally - goaly),(ballx - goalx));
+
+//         int signx = 1;
+//         int signy = 1;
+
+//         int signy = (((goaly - bally)/sin(theta))>0)?-1:1;
+//         int signx = (((goalx - ballx)/cos(theta))>0)?-1:1;
+
+
+
+
+
+
+//     }
+
+
+
+
 }
 
 void BasicBehaviorDoKick::execute()

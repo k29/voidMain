@@ -70,6 +70,8 @@ typedef struct
 	int n_obstacles;
 	AbsCoords goal;
 	AbsCoords ball;
+	AbsCoords gpleft;
+	AbsCoords gpright;
 }PathStructure;
 //---------------------------------------------------------------------------------------
 //These are the variables that must be present in CamControl class,
@@ -136,12 +138,16 @@ typedef struct
 	int updated;
 	int id;
 	int no_of_points;
+	double theta;
+	double distance;
 	bool NEAR_FLAG;
-
 	bool BACK_WALK;
 	bool NEAR_OBSTACLE;
 	bool IGNORE_ARC;
 	bool UPDATE_FLAG;
+	bool ROTATE;
+	bool ROTATE_RIGHT;
+	bool BALLFOLLOW;
 	bool DO_KICK;
 	PathCoords finalpath[30];
 }PathPacket;

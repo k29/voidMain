@@ -19,13 +19,13 @@ const double c3=(c1+1)/c5;				//	delta_y_max = c3*vd		Maximum step length possib
 const double c4=(c2+1)/c5;				//	delta_y_min	= c4*vd		Minimum step length possible, this corresponds to equation 2
 const double v_initial = 10;				 //	Velocity when bot begins to move
 const double first_delta_y= 2*v_initial/c5;//	Initial step length is calculated by using equation 4 and given initial velocity which is assumed constant, i.e, vf=vd=vi
-const double max_velocity = 130;//	Maximum velocity corresponding to above delta y assuming step length is constant for the motion	
+const double max_velocity = 100;//	Maximum velocity corresponding to above delta y assuming step length is constant for the motion	
 const double max_delta_y  = 2*max_velocity/c5;				 //	Maximum length of a step (read delta y), from back to front. This is a limitation of stability; if bot moves more farther than this, it will be unstable
 const double foot_width  = 100;				 //	Width of the foot, might not be used
 const double foot_separation = 130;			 //	Standard Length between centers of the feet during linear motion
 const double max_delta_x = 30;	
 const double max_delta_theta = 15;	
-const double min_delta_y = 5;				 //	This is an arbitrary value chosen to put a lower limit on the bot's step length such that the step length oscillates between
+const double min_delta_y = 15;				 //	This is an arbitrary value chosen to put a lower limit on the bot's step length such that the step length oscillates between
 											 //	these maximum and minimum values of delta x. This will be changed for fine-tuning the motion.
 
 const double OBSTACLE_RADIUS = 200;
@@ -559,6 +559,8 @@ void* walk_thread(void*)
 			printf("BACK WALK %d\n", pathpackvarlocal.BACK_WALK);
 			printf("IGNORE ARC %d\n", pathpackvarlocal.IGNORE_ARC);
 			printf("UPDATE FLAG %d\n", pathpackvarlocal.UPDATE_FLAG);
+			printf("ROTATE %d\n", pathpackvarlocal.ROTATE);
+			printf("BALLFOLLOW %d\n",pathpackvarlocal.BALLFOLLOW );
 			if (pathpackvarlocal.UPDATE_FLAG == 1)
 				break;	
 		}
@@ -576,14 +578,48 @@ void* walk_thread(void*)
 			theta = 0;
 			cout<<"No. of points : "<<pathpackvar.no_of_points<<endl;
 			pthread_mutex_unlock(&mutex_pathpacket);
-			if (!pathpackvarlocal.BACK_WALK)
-				footstepmain(walk.velocity() , foot1[j].delta_y , foot ,  foot1 ,i , pathpackvarlocal);
+			if (pathpackvarlocal.BACK_WALK)
+			{
+				foot = walk.backMotion(10*sqrt(pow(pathpackvarlocal.finalpath[0].x,2) + pow(pathpackvarlocal.finalpath[0].y,2)));
+				cout<<"Back walk distance: "<<10*sqrt(pow(pathpackvarlocal.finalpath[0].x,2) + pow(pathpackvarlocal.finalpath[0].y,2))<<endl;
+			}
+			else if (pathpackvarlocal.ROTATE)
+			{
+				walk.stopMotion();
+				if (pathpackvarlocal.ROTATE_RIGHT)
+				{
+					walk.turnright(fabs(rad2deg(pathpackvarlocal.theta)));
+				}
+				else
+					walk.turnleft(fabs(rad2deg(pathpackvarlocal.theta)));
+				cout<<"Turning angle (right is positive) "<<(pathpackvarlocal.ROTATE_RIGHT?1:-1)*pathpackvarlocal.theta<<endl;
+			}
+			else if (pathpackvarlocal.BALLFOLLOW)
+			{
+				if (walk.velocity() < 90 && walk.velocity() > 0)
+				{
+					walk.accelerate();
+					walk.dribble();
+				}
+				else if (walk.velocity() < 0)
+				{
+					walk.pathdribble(10,0,0,0);
+					walk.dribble();
+				}
+				else
+					walk.dribble();
+			}
 			else
-				foot = walk.backMotion(sqrt(pow(pathpackvarlocal.finalpath[0].x,2) + pow(pathpackvarlocal.finalpath[0].y,2)));
-			printf("back flag loop %d\n",pathpackvarlocal.BACK_WALK );
+				footstepmain(walk.velocity() , foot1[j].delta_y , foot ,  foot1 ,i , pathpackvarlocal);
 			// usleep(100);
+			cout<<"No path made cases"<<endl;
+			printf("BACK WALK %d\n", pathpackvarlocal.BACK_WALK);
+			printf("IGNORE ARC %d\n", pathpackvarlocal.IGNORE_ARC);
+			printf("UPDATE FLAG %d\n", pathpackvarlocal.UPDATE_FLAG);
+			printf("ROTATE %d\n", pathpackvarlocal.ROTATE);
+			printf("BALLFOLLOW %d\n",pathpackvarlocal.BALLFOLLOW );			
 		}		
-		while (pathpackvarlocal.BACK_WALK == 1);
+		while (pathpackvarlocal.BACK_WALK == 1 || pathpackvarlocal.ROTATE == 1 | pathpackvarlocal.BALLFOLLOW == 1);
 
 	}
 

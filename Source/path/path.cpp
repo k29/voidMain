@@ -226,6 +226,102 @@ double Path::cost_calculation(std::size_t source,std::size_t target, Graph <Poin
 	return cost;
 }
 
+bool Path::checkLines(AbsCoords lGoal, AbsCoords rGoal, AbsCoords ball)
+{
+	AbsCoords midGoal;
+	midGoal.x = (lGoal.x + rGoal.x)/2;
+	midGoal.y = (lGoal.y + rGoal.y)/2;
+
+	double l1 = (midGoal.y-ball.y)-(((lGoal.y-ball.y)/(lGoal.x - ball.x))*(midGoal.x-ball.x));
+	double l2 = (midGoal.y-ball.y)-(((rGoal.y-ball.y)/(rGoal.x - ball.x))*(midGoal.x-ball.x));
+	// printf("%lf\n", l1);
+	// printf("%lf\n", l2);
+	// printf("%lf\n", rGoal.y);
+	// printf("%lf\n", rGoal.x);	
+	double selfl1 = (-ball.y)-((lGoal.y-ball.y)/(lGoal.x - ball.x))*(-ball.x);
+	double selfl2 = (-ball.y)-((rGoal.y-ball.y)/(rGoal.x - ball.x))*(-ball.x);
+	// printf("%lf\n", selfl1);
+	// printf("%lf\n", selfl2);
+
+	if(l1*l2*selfl1*selfl2>0)
+		return true;
+	else
+		return false;
+}
+
+void Path::orientSelf(PathStructure ps)
+{
+	if(checkLines(ps.gpleft, ps.gpright, ps.ball))
+	{
+		//send atan2(ball.y, ball.x);
+		// printf("checklines\n");
+		pthread_mutex_lock(&mutex_pathpacket);
+		pathpackvar.theta = atan2(ps.ball.y, ps.ball.x);
+		pathpackvar.ROTATE = 1;
+		pathpackvar.BACK_WALK = 0;
+		pathpackvar.BALLFOLLOW = 0;
+		if(ps.ball.y>0)
+			pathpackvar.ROTATE_RIGHT = 1;
+		else
+			pathpackvar.ROTATE_RIGHT = 0;		
+			
+		if(abs(pathpackvar.theta)<5*PI/180)
+		{
+			pathpackvar.ROTATE = 0;
+			pathpackvar.distance = sqrt(pow(ps.ball.y, 2)+pow(ps.ball.x, 2))-5;
+			pathpackvar.no_of_points = 1;
+			pathpackvar.BALLFOLLOW = 1;
+		}	
+		// printf("BACK WALK %d\n", pathpackvar.BACK_WALK);
+		// printf("IGNORE ARC %d\n", pathpackvar.IGNORE_ARC);
+		// printf("UPDATE FLAG %d\n", pathpackvar.UPDATE_FLAG);
+		// printf("ROTATE %d\n", pathpackvar.ROTATE);
+		// printf("BALLFOLLOW %d\n",pathpackvar.BALLFOLLOW );
+		// printf("check\n");
+
+		pthread_mutex_unlock(&mutex_pathpacket);
+	}
+	else
+	{
+		// printf("no checklines\n");
+		AbsCoords pointOnLine;
+		pointOnLine.y = 0;
+		pointOnLine.x = ((-1.0)*((goal.x-ball.x)/(goal.y-ball.y))*ball.y)+ball.x;
+
+		AbsCoords pointOnCircle;
+		pointOnCircle.y = 0;
+		pointOnCircle.x = (-1.0)*(sqrt(pow(INITIAL_ORIENTATION_RADIUS+10,2)-pow(ps.ball.y,2))) + ps.ball.x;
+		pthread_mutex_lock(&mutex_pathpacket);
+		pathpackvar.ROTATE = 0;
+		pathpackvar.BALLFOLLOW = 0;
+		if(pointOnCircle.x<pointOnLine.x)
+		{
+			//send pointonline
+			pathpackvar.BACK_WALK = 1;
+			pathpackvar.finalpath[0].x = pointOnLine.x;
+			pathpackvar.finalpath[0].y = 0;
+			pathpackvar.no_of_points = 1;
+		}
+		else
+		{
+			//send point oncircle
+			pathpackvar.BACK_WALK = 1;
+			pathpackvar.finalpath[0].x = pointOnCircle.x;
+			pathpackvar.finalpath[0].y = 0;
+			pathpackvar.no_of_points = 1;			
+		}
+			// printf("BACK WALK %d\n", pathpackvar.BACK_WALK);
+			// printf("IGNORE ARC %d\n", pathpackvar.IGNORE_ARC);
+			// printf("UPDATE FLAG %d\n", pathpackvar.UPDATE_FLAG);
+			// printf("ROTATE %d\n", pathpackvar.ROTATE);
+			// printf("BALLFOLLOW %d\n",pathpackvar.BALLFOLLOW );
+
+
+
+		pthread_mutex_unlock(&mutex_pathpacket);
+	}
+}
+
 PathReturns Path::path_return(PathStructure ps)
 {
 	// printf("PR line 226\n");
@@ -251,6 +347,9 @@ PathReturns Path::path_return(PathStructure ps)
 	goal.obstacle_id=-1;
 	////////cout<<"Goal Position\n"<<goal.x<<" "<<goal.y<<endl;
 	cvCircle(image, cvPoint(goal.x+250, goal.y+250), 10, cvScalar(255,0,255)); //Initialising the goal point and painting it.
+	// cvCircle(image, cvPoint(goal.x+250, goal.y+250+10), 5, cvScalar(255,0,255)); //Initialising the goal point and painting it.
+	// cvCircle(image, cvPoint(goal.x+250, goal.y+250-10), 5, cvScalar(255,0,255)); //Initialising the goal point and painting it.
+	
 	tree.cleartree(); //Clearing all previous data from the graphs....i.e. initialises the graph for a fresh start.
 	for(int i = 0; i < NO_OF_OBSTACLES; i++)
 	{
@@ -350,7 +449,7 @@ PathReturns Path::path_return(PathStructure ps)
 			obstacle[i].y=1000;
 		}
 	}
-//****************Kick if ball within 5 cm of bot***************************
+//****************Kick if ball is within 5 cm of bot***************************
 	if(car2pol(ball.x,ball.y) <= KICKDIST)
 	{
 		//cout<<"\npath returning \n\nDOKICK\n\n " ;
@@ -780,10 +879,6 @@ PathReturns Path::path_return(PathStructure ps)
 		b=tree.returnPathPoint(b);
 	}
 
-	//checking if the obstacle at 'a' lies within the initial obstacle
-	//if yes, reduce the initial obstacle radius until a is outside.	
-	// cout<<"before updation"<<endl;
-	// while()
 	if(	//(sqrt(pow(tree[1].x,2) + pow(tree[1].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[1].x,2) + pow(tree[1].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS) ||
 		
 		(sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y+INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS)) 
@@ -791,12 +886,12 @@ PathReturns Path::path_return(PathStructure ps)
 	{
 		Near_Flag = 1;
 	}
-	else
+	else if(sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y-INITIAL_ORIENTATION_RADIUS, 2))<INITIAL_ORIENTATION_RADIUS || sqrt(pow(tree[tree.returnPathPoint(1)].x,2) + pow(tree[tree.returnPathPoint(1)].y+INITIAL_ORIENTATION_RADIUS, 2))> INITIAL_ORIENTATION_RADIUS + 10)
 	{
 		Near_Flag = 0;
 	}
 
-	if(sqrt(pow(tree[1].x, 2) + pow(tree[1].y, 2))<THRESHOLD && abs(ball.y)>10)
+	if(sqrt(pow(tree[1].x, 2) + pow(tree[1].y, 2))<THRESHOLD && abs(ball.y)>30)
 	{
 		Near_Flag = 0;
 		Back_Walk = 1;
@@ -809,13 +904,24 @@ PathReturns Path::path_return(PathStructure ps)
 		BackWalkX = ((-1.0)*((goal.x-ball.x)/(goal.y-ball.y))*ball.y)+ball.x;
 		Near_Obstacle = 0;
 	}
-
-	if(abs(atan(tree[a].y/tree[a].x))*180/PI<10)
+	if(sqrt(pow(tree[a].x, 2) + pow(tree[a].y, 2))<100)
 	{
-		Ignore_Arc = 1;
+		if(abs(atan(tree[a].y/tree[a].x))*180/PI<10)
+		{
+			Ignore_Arc = 1;
+		}
+		else if(abs(atan(tree[a].y/tree[a].x))*180/PI>20)
+			Ignore_Arc = 0;
 	}
-	else if(abs(atan(tree[a].y/tree[a].x))*180/PI>15)
-		Ignore_Arc = 0;
+	else
+	{
+		if(abs(atan(tree[a].y/tree[a].x))*180/PI<10)
+		{
+			Ignore_Arc = 1;
+		}
+		else if(abs(atan(tree[a].y/tree[a].x))*180/PI>35)
+			Ignore_Arc = 0;		
+	}
 
 	// cout<<"after updation"<<endl;
 	//introducing initial obsacles between 0 and a
@@ -941,15 +1047,6 @@ PathReturns Path::path_return(PathStructure ps)
 		// cout<<"b: "<<b<<"\n";
 	}
 	cvLine(image,cvPoint(tree[0].x+250,tree[0].y+250),cvPoint(tree[a].x+250,tree[a].y+250),cvScalar(0,0,255));
-
-	// cvWaitKey();
-	
-
-// cout<<"123"<<endl;
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------------------------------------------------------------
 
 	path_completed_flag=true;
 	for(int i=0;i<NO_OF_OBSTACLES+4;i++)
@@ -1097,7 +1194,8 @@ void Path::updatePathPacket()
 		// cout<<"before lock update pathpackvar"<<endl;
 		// cout<<"before lock path not near"<<endl;
 		pthread_mutex_lock(&mutex_pathpacket);
-
+		pathpackvar.ROTATE = 0;
+		pathpackvar.BALLFOLLOW = 0;
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		pathpackvar.NEAR_FLAG = 0;
@@ -1196,6 +1294,8 @@ void Path::updatePathPacket()
 	if(Back_Walk && !Near_Flag)
 	{
 		pthread_mutex_lock(&mutex_pathpacket);
+		pathpackvar.ROTATE = 0;
+		pathpackvar.BALLFOLLOW = 0;
 		pathpackvar.updated=1;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
@@ -1213,6 +1313,8 @@ void Path::updatePathPacket()
 	{
 		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.updated=1;
+		pathpackvar.ROTATE = 0;
+		pathpackvar.BALLFOLLOW = 0;
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
 		// if(pathpackvar.NEAR_FLAG!=Near_Flag)
@@ -1230,6 +1332,8 @@ void Path::updatePathPacket()
 	{
 		pthread_mutex_lock(&mutex_pathpacket);		
 		pathpackvar.updated=1;
+		pathpackvar.ROTATE = 0;	
+		pathpackvar.BALLFOLLOW = 0;	
 		pathpackvar.id=com_id;
 		com_id=com_id+1;
 		// pathpackvar.NEAR_OBSTACLE = 1;

@@ -33,7 +33,7 @@ private:
 	static const int BADANGLEDIST=20;
 	static const int STEPLENGTH=5;
 	static const int INITIAL_ORIENTATION_RADIUS=20;
-	static const int THRESHOLD = 20;
+	static const int THRESHOLD = 30;
 	int com_id; //communication id
 	double tolerance_angle;//minimum angle for encircling
 	enum circle_type {DNE,CIRCLE}; // 0-> does not exsist 1-> circle 2-> ellipse
@@ -65,6 +65,7 @@ private:
 	bool on_which_side(double a, double b,struct Point n1, struct Point n2,struct Point obstacle);
 	void calculate_points(struct Point main_point,struct Point obstacle_centre, Point &p1, Point &p2);
 	bool path_completed_flag;
+	bool checkLines(AbsCoords lGoal, AbsCoords rGoal, AbsCoords ball);
 	bool new_point_orientation(std::size_t point_index);
 	int curve[100];
 	int len_curve;
@@ -91,10 +92,10 @@ public:
 	bool Back_Walk;
 	bool Near_Obstacle;
 	bool Ignore_Arc;
-	bool
 	double BackWalkX;
 	//OBSOLETE->int path_return(PathStructure &ps); //main function to be called by behaviour // return values : 1: successful path   2: go at r,theta    3: encircle      4: path not found.
 	PathReturns path_return(PathStructure ps);
+	void orientSelf(PathStructure ps);
 	/*README - ABOUT RETURN VALUES
 	*If path succesfully generated(case1 previously)-> update nextr and nexttheta as usual and return DOWALK
 	*If close and there is no need to generate path(case2 previously), update nextr and nexttheta (and return DOWALK) till I reach ENCIRCLE_THRESHOLD_DIST(value to be decided during testing)
