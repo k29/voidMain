@@ -18,7 +18,7 @@ Walk::Walk(AcYut* bot)
 	zMax=40;
 	dz = 0;
 	dspTime = 0.05;
-	lift=50;
+	lift=60;
 	legRotin=0;
 	legRotfi=0;
 	supLegRotin=0;

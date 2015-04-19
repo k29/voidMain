@@ -251,12 +251,22 @@ bool Path::checkLines(AbsCoords lGoal, AbsCoords rGoal, AbsCoords ball)
 
 void Path::orientSelf(PathStructure ps)
 {
-	if(checkLines(ps.gpleft, ps.gpright, ps.ball))
+	
+		bool Rotate;
+		bool Back_Walk;
+		bool Ballfollow;
+if(checkLines(ps.gpleft, ps.gpright, ps.ball))
 	{
 		//send atan2(ball.y, ball.x);
 		// printf("checklines\n");
+		// bool Rotate;
+		// bool Back_Walk;
+		// bool Ballfollow;
 		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.theta = atan2(ps.ball.y, ps.ball.x);
+		Rotate = 1;
+		if(pathpackvar.ROTATE!= Rotate)
+			pathpackvar.UPDATE_FLAG = 1;
 		pathpackvar.ROTATE = 1;
 		pathpackvar.BACK_WALK = 0;
 		pathpackvar.BALLFOLLOW = 0;
@@ -265,11 +275,14 @@ void Path::orientSelf(PathStructure ps)
 		else
 			pathpackvar.ROTATE_RIGHT = 0;		
 			
-		if(abs(pathpackvar.theta)<5*PI/180)
+		if(abs(pathpackvar.theta)<15*PI/180)
 		{
 			pathpackvar.ROTATE = 0;
 			pathpackvar.distance = sqrt(pow(ps.ball.y, 2)+pow(ps.ball.x, 2))-5;
 			pathpackvar.no_of_points = 1;
+			Ballfollow = 1;
+			if(pathpackvar.BALLFOLLOW!=Ballfollow)
+				pathpackvar.UPDATE_FLAG = 1;
 			pathpackvar.BALLFOLLOW = 1;
 		}	
 		// printf("BACK WALK %d\n", pathpackvar.BACK_WALK);
@@ -292,11 +305,20 @@ void Path::orientSelf(PathStructure ps)
 		pointOnCircle.y = 0;
 		pointOnCircle.x = (-1.0)*(sqrt(pow(INITIAL_ORIENTATION_RADIUS+10,2)-pow(ps.ball.y,2))) + ps.ball.x;
 		pthread_mutex_lock(&mutex_pathpacket);
+		Rotate = 0;
+		if(pathpackvar.ROTATE != Rotate)
+			pathpackvar.UPDATE_FLAG = 1;
 		pathpackvar.ROTATE = 0;
+		Ballfollow = 0;
+		if(Ballfollow!= pathpackvar.BALLFOLLOW)
+			pathpackvar.UPDATE_FLAG = 1;
 		pathpackvar.BALLFOLLOW = 0;
 		if(pointOnCircle.x<pointOnLine.x)
 		{
 			//send pointonline
+			Back_Walk = 1;
+			if(Back_Walk!=pathpackvar.BACK_WALK)
+				pathpackvar.UPDATE_FLAG = 1;
 			pathpackvar.BACK_WALK = 1;
 			pathpackvar.finalpath[0].x = pointOnLine.x;
 			pathpackvar.finalpath[0].y = 0;
@@ -305,6 +327,9 @@ void Path::orientSelf(PathStructure ps)
 		else
 		{
 			//send point oncircle
+			Back_Walk = 1;
+			if(Back_Walk!=pathpackvar.BACK_WALK)
+				pathpackvar.UPDATE_FLAG = 1;
 			pathpackvar.BACK_WALK = 1;
 			pathpackvar.finalpath[0].x = pointOnCircle.x;
 			pathpackvar.finalpath[0].y = 0;
@@ -1286,7 +1311,7 @@ void Path::updatePathPacket()
 			// cout<<"x: "<<pathpackvar.finalpath[i].x<<" y: "<<pathpackvar.finalpath[i].y<<" r: "<<pathpackvar.finalpath[i].obstacle_radius<<" ioc: "<<pathpackvar.finalpath[i].isOnCircle<<endl;
 		}
 		// cout<<"ignore arc: "<<pathpackvar.IGNORE_ARC<<endl;
-		
+		// cout<<endl;
 		// cout<<"after unlock update pathpackvar"<<endl;
 		pthread_mutex_unlock(&mutex_pathpacket);
 	}

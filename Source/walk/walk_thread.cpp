@@ -112,8 +112,9 @@ void convert_values (PathPacket pathpackvarlocal, double dist_circstart[], doubl
 			footlr[i/2] = (vector_product>0)?1:0;
 			radius[i/2]	=	OBSTACLE_RADIUS;
 
-			double theta = 180*2*acos(sqrt(1 - pow((10*distance(ox,oy,x1,y1)/(2*radius[i])),2)))/pi;
+			double theta = 180*2*acos(sqrt(1 - pow((10*distance(ox,oy,x1,y1)/(2*radius[i/2])),2)))/pi;
 
+			cout<<"Circle points "<<ox<<" "<<oy<<" "<<x1<<" "<<y1<<" "<<theta<<endl;
 			int turn = ((dirx*(y2-y1) - diry*(x2-x1))>0)?1:0;
 			if (turn)
 				theta_arc[i/2] = (!footlr[i/2])?(360-theta):theta;				
@@ -311,126 +312,57 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 			dist_covered = calc_dist_covered(count,count_ref,step);
 			// printf(" I was here %d\n",count);
 		}
-		first_circ_foot[i] = count + 1;	//FSPMOD CODE
-						
+	
+
 		int constraint_value;
 		double inner_radius = fabs(radius[i] - foot_separation/2); 
 		double theta_current = 0;	
 		check = 0;
-		if (fmscheck == 2)
+
+		while (theta_current<theta_arc[i] - 20)
 		{
-			step[count+1].delta_y = c4 * vd + 0.01;
-			step[count+1].delta_x = 0;
-			step[count+1].delta_theta = 0;
+			step[count+1].delta_y = c3 * vd - 0.01;
+			if (step[count+1].delta_y>=max_delta_y)
+			{
+				if (fmscheck == 0)
+				{
+					step[count+1].delta_y = max_delta_y;
+					fmscheck++;
+				}
+				else if (fmscheck == 1)
+				{
+					step[count+1].delta_y = (vd + c5*step[count].delta_y/2)/c5;
+					fmscheck++;
+				}
+				else if (fmscheck == 2)
+				{
+					step[count+1].delta_y = max_delta_y;
+				}
+			}
+
 			vf = c5*step[count+1].delta_y - vd;
-			vd = vf;
+			vd = vf;								//	It seems unnecessary to involve vf here, but this is done to establish a standard for the code used to develop motion along
+													//  the circle, where vf will be necessary. It will also be useful for later modifications.
 			step[count + 1].vel_y = vd;
 			count++;
-			
-			step[count+1].delta_y = c4 * vd + 0.01;
-			step[count+1].delta_x = 0;
-			step[count+1].delta_theta = 0;
-			vf = c5*step[count+1].delta_y - vd;
-			vd = vf;
-			step[count + 1].vel_y = vd;
-			count++;	
-		}
-		if (theta_arc[i]>=365 || theta_arc[i]<=-5 )
-			check = 2;
-		while(check!=2)
-		{
-			check=0;											
-			while (check==0)
+
+			if ((count+1)%2 == footlr[i])				//This assumes that the entering foot is the inner one. This will be changed later in order to generalize.
 			{
-				// printf("stuck1\n");
-				step[count+1].delta_y = c3 * vd - 0.01;
-				if ((count+1)%2 == footlr[i])				//This assumes that the entering foot is the inner one. This will be changed later in order to generalize.
-				{
-					step[count].delta_x = calc_delta_x(inner_radius , step[count]);
-					step[count].delta_theta = calc_delta_theta(inner_radius , step[count]);
-				}
-				else
-				{
-					step[count].delta_x = 0;
-					step[count].delta_theta = -1*step[count-1].delta_theta;
-				}
-				vf = c5*step[count+1].delta_y - vd;
-				constraint_value = constraint_check(step[count+1] , vf , 1);	//	1 indicates loop 1
-				if (constraint_value == 1)
-				{
-					if ((count+1)%2 == footlr[i])
-						theta_current += step[count].delta_theta;
-					if (theta_current<theta_arc[i])
-						{
-							vd=vf;
-							step[count + 1].vel_y = vd;
-							count++;
-						}
-					else
-						check=2;
-					// printf("\nvf = %f\tDelta_theta[%d] = %f\tTheta_Current = %f\n",vf,count,step[count].delta_theta,theta_current);	
-					
-				}
-				else
-				{
-					check = 1;
-					// printf("\nConstraint Violation Loop 1 = %d\n",constraint_value);
-					// printf("\nInterrupt vf = %f\tStep_length[%d] = %f\t%f\n",vf,count+1,step[count+1].delta_y,step[count+1].delta_theta);	
-				}
+				step[count].delta_x = calc_delta_x(inner_radius , step[count]);
+				step[count].delta_theta = calc_delta_theta(inner_radius , step[count]);
+				theta_current += step[count].delta_theta;
 			}
-
-			if (check!=2)
-				check=0;
-			while (check==0)
+			else
 			{
-				// printf("stuck2\n");
-
-				step[count+1].delta_y = c4 * vd + 0.01;
-				if ((count+1)%2 == footlr[i])				//This assumes that the entering foot is the inner one. This will be changed later in order to generalize.
-				{
-					step[count].delta_x = calc_delta_x(inner_radius , step[count]);
-					step[count].delta_theta = calc_delta_theta(inner_radius , step[count]);
-				}
-				else
-				{
-					step[count].delta_x = 0;
-					step[count].delta_theta = -1*step[count-1].delta_theta;
-				}
-				vf = c5*step[count+1].delta_y - vd;
-				constraint_value = constraint_check(step[count+1] , vf , 2);		//2 indicates loop 2
-				if (constraint_value == 1)
-				{
-					if ((count+1)%2 == footlr[i])
-						theta_current += step[count].delta_theta;
-					if (theta_current<theta_arc[i])
-					{
-						vd = vf;
-						step[count + 1].vel_y = vd;
-						count++;
-					}
-					else
-						check=2;
-					// printf("\nvf = %f\tDelta_theta[%d] = %f\tTheta_Current = %f\n",vf,count,step[count].delta_theta,theta_current);	
-					
-				}
-				else
-				{
-					check=1;
-					// printf("\nConstraint Violation Loop 2 = %d\n",constraint_value);
-					// printf("\nInterrupt vf = %f\tStep_length[%d] = %f\t%f\n",vf,count+1,step[count+1].delta_y,step[count+1].delta_theta);	
-				}
-
-
-
-				
+				step[count].delta_x = 0;
+				step[count].delta_theta = -1*step[count-1].delta_theta;
 			}
-
 		}
-		last_circ_foot[i] = count;		//FSPMOD CODE
+
 	}
 	for (int i=0;i<count-1;i++)
 	{
-		if (fabs(step[i].delta_theta)> 20)
+		if (fabs(step[i].delta_theta)> 30)
 			step[i].delta_theta = 0;
 		// step[i].delta_x = 0;
 		printf ("sno = %d\tDelta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",i,step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
@@ -592,7 +524,7 @@ void* walk_thread(void*)
 				}
 				else
 					walk.turnleft(fabs(rad2deg(pathpackvarlocal.theta)));
-				cout<<"Turning angle (right is positive) "<<(pathpackvarlocal.ROTATE_RIGHT?1:-1)*pathpackvarlocal.theta<<endl;
+				cout<<"Turning angle (right is positive) "<<(pathpackvarlocal.ROTATE_RIGHT?1:-1)*rad2deg(pathpackvarlocal.theta)<<endl;
 			}
 			else if (pathpackvarlocal.BALLFOLLOW)
 			{
