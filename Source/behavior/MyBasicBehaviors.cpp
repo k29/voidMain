@@ -32,7 +32,18 @@ void BasicBehaviorInitialize::execute()
     p.confidence=0;
     motionModel.confidence=0;
     goal_pos.x = 200.0;
-    goal_pos.y = 200.0;
+    goal_pos.y = 10.0;
+
+    pthread_mutex_lock(&mutex_pathpacket);
+    pathpackvar.UPDATE_FLAG = 1;
+    pthread_mutex_unlock(&mutex_pathpacket);
+
+    #ifdef GOAL_KEEPER_MODE
+    p.GOAL_KEEPER_FLAG = true;
+    #endif
+    #ifndef GOAL_KEEPER_MODE
+    p.GOAL_KEEPER_FLAG = false;
+    #endif
 
     printf("Initialized\n");
     #endif
@@ -44,7 +55,7 @@ void BasicBehaviorUpdate::execute()
 
         // printf("Entered update\n");       
         // p.hdmtr.update();
-        p.capture.getImage();    
+        p.capture.getImage();
         p.fd->getLandmarks(p.capture, p.hdmtr, motionModel);
         p.loc.doLocalize(*p.fd, motionModel, p.capture, getImuAngle());
 
@@ -157,20 +168,20 @@ void BasicBehaviorUpdate::execute()
         cvPutText(flags,D,cvPoint(10,60),&font,cvScalar(255,255,255));
 
         // printf("localization updated to %lf\n",p.conf);
-        cvNamedWindow("Flags");
-        cvNamedWindow("Real Time Feed");
-        cvNamedWindow("Localization");
-        #ifdef INTEL_BOARD_DISPLAY
-        cvMoveWindow("Flags",20,30);
-        cvMoveWindow("Real Time Feed",240,30);
-        cvMoveWindow("Localization",850,30);
-        #endif
-        cvMoveWindow("Flags",50,50);
-        cvMoveWindow("Real Time Feed",300,50);
-        cvMoveWindow("Localization",950,50);
-        cvShowImage("Flags",flags);
-        cvShowImage("Real Time Feed", p.capture.rgbimg);
-        cvShowImage("Localization", p.loc.dispImage);
+        // cvNamedWindow("Flags");
+        // cvNamedWindow("Real Time Feed");
+        // cvNamedWindow("Localization");
+        // #ifdef INTEL_BOARD_DISPLAY
+        // cvMoveWindow("Flags",20,30);
+        // cvMoveWindow("Real Time Feed",240,30);
+        // cvMoveWindow("Localization",850,30);
+        // #endif
+        // cvMoveWindow("Flags",50,50);
+        // cvMoveWindow("Real Time Feed",300,50);
+        // cvMoveWindow("Localization",950,50);
+        // cvShowImage("Flags",flags);
+        // cvShowImage("Real Time Feed", p.capture.rgbimg);
+        // cvShowImage("Localization", p.loc.dispImage);
         int c = cvWaitKey(25);
         if(c == 'S' || c == 's')
             if(cvSaveImage("image.bmp", p.capture.rgbimg))
@@ -188,14 +199,17 @@ void BasicBehaviorUpdate::execute()
 
 void BasicBehaviorRotate::execute()
 {
-    printf("BasicBehaviorRotate\n");
-    pthread_mutex_lock(&mutex_pathpacket);
-    pathpackvar.no_of_points=1;
-    pathpackvar.updated=1;
-    pathpackvar.pathType=1;
-    pathpackvar.finalpath[0].x=0.0;
-    pathpackvar.finalpath[0].y=deg2rad(5);
-    pthread_mutex_unlock(&mutex_pathpacket);
+    
+    // printf("BasicBehaviorRotate\n");
+    // pthread_mutex_lock(&mutex_pathpacket);
+    // printf("locked in behavior rotate\n");
+    // pathpackvar.no_of_points=1;
+    // pathpackvar.updated=1;
+    // pathpackvar.pathType=1;
+    // pathpackvar.finalpath[0].x=0.0;
+    // pathpackvar.finalpath[0].y=deg2rad(5);
+    // pthread_mutex_unlock(&mutex_pathpacket);
+    // cout<<"after unlock behavior rotate"<<endl;
 }
 void BasicBehaviorLocalize::execute()
 {   
@@ -289,15 +303,29 @@ void BasicBehaviorMakePath::execute()
     selfy /= (ALPHA + BETA);
     double tempx = goalcoords.x - selfx;
     double tempy = goalcoords.y - selfy;
+    AbsCoords gpl, gpr;
+    p.loc.getGoalPosts(gpl, gpr);
+    double gpleftx = gpl.x - selfx;
+    double gplefty = gpl.y - selfy;
+    double gprightx = gpr.x - selfx;
+    double gprighty = gpr.y - selfy;
     // double tempx=goalcoords.x-p.loc.selfX;
     // double tempy=goalcoords.y-p.loc.selfY;
     p.pathstr.goal.x= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
     p.pathstr.goal.y= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
+    p.pathstr.gpleft.x= (gpleftx*cos(deg2rad(p.loc.selfAngle))) - (gplefty* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
+    p.pathstr.gpleft.y= (gpleftx*sin(deg2rad(p.loc.selfAngle))) + (gplefty* cos(deg2rad(p.loc.selfAngle)));
+    p.pathstr.gpright.x= (gprightx*cos(deg2rad(p.loc.selfAngle))) - (gprighty* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
+    p.pathstr.gpright.y= (gprightx*sin(deg2rad(p.loc.selfAngle))) + (gprighty* cos(deg2rad(p.loc.selfAngle)));
     #endif
     #ifdef PATH_MOUSE_CLICK_ON
     cv::setMouseCallback("Field", callBackFunc, &goal_pos);
     p.pathstr.goal.x = goal_pos.x;
     p.pathstr.goal.y = goal_pos.y;
+    p.pathstr.gpleft.x = goal_pos.x;
+    p.pathstr.gpright.x = goal_pos.x;
+    p.pathstr.gpleft.y = goal_pos.y+60;
+    p.pathstr.gpright.y = goal_pos.y-60;
     #endif
     // printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
     //printf("goal coords y:%lf\n",pathstr.goal.x);
@@ -314,16 +342,16 @@ void BasicBehaviorMakePath::execute()
     
     // printf("relative ball----> %f  %f\n",p.fd->ball.r,p.fd->ball.theta);
     // printf("Passed:-->>>>ball coords x:%lf  y:%lf\n",p.pathstr.ball.x,p.pathstr.ball.y);
-
+    // printf("before path return\n");
     p.pathreturn=p.path.path_return(p.pathstr);
-    // printf("before crash\n");
+    // printf("after path return\n");
     if(p.path.tree.path_crash)
     {
         // printf("path crashed\n");
         p.path.tree.path_crash = false;
         cvZero(p.path.image);
     }
-    printf("Path Made\n");
+    // printf("Path Made\n");
     #endif
 }
 
@@ -366,8 +394,10 @@ void BasicBehaviorPathToWalk::execute()
     // printf("BasicBehaviorPathToWalk\n");
         #ifdef IP_IS_ON
         #ifdef WALK_IS_ON
-    
+        // printf("before update\n");
+        // printf("path called from behavior\n");
         p.path.updatePathPacket();
+        // printf("path updated behavior\n");
         if(p.path.tree.path_crash)
         {
             // printf("path crashed\n");
@@ -404,3 +434,81 @@ void BasicBehaviorReset::execute()
     p.confidence=0;        
 }
 
+void BasicBehaviorGoalKeep::execute()
+{
+    // printf("BasicBehaviorGoalKeep\n");
+    GoalKeeperAction ret = p.gk.keeperUpdate(p.capture, p.hdmtr, p.camcont, p.fd, motionModel);
+    if(ret == STAY)
+        printf("STAY\n");
+    if(ret == FALLLEFT)
+        printf("FALLLEFT\n");
+    if(ret == FALLRIGHT)
+        printf("FALLRIGHT\n");
+    cvNamedWindow("Real Time Feed");
+    cvMoveWindow("Real Time Feed",300,50);
+    cvShowImage("Real Time Feed", p.capture.rgbimg);
+    cvWaitKey(25);
+}
+
+void BasicBehaviorDoOrient::execute()
+{
+    // printf("BasicBehaviorDoOrient\n");
+    p.path.orientSelf(p.pathstr);
+//     double ballx, bally;
+//     double goalx, goaly;
+// AbsCoords goalcoords=p.loc.getGoalCoords(p.ACTIVE_GOAL);
+//     AbsCoords selfm = motionModel.read();
+//     double selfx = ALPHA*p.loc.selfX + BETA*selfm.x;
+//     double selfy = ALPHA*p.loc.selfY + BETA*selfm.y;
+//     selfx /= (ALPHA + BETA);
+//     selfy /= (ALPHA + BETA);
+//     double tempx = goalcoords.x - selfx;
+//     double tempy = goalcoords.y - selfy;
+//     // double tempx=goalcoords.x-p.loc.selfX;
+//     // double tempy=goalcoords.y-p.loc.selfY;
+//     goalx= (tempx*cos(deg2rad(p.loc.selfAngle))) - (tempy* sin(deg2rad(p.loc.selfAngle)));//Rotating coordinate system.
+//     goaly= (tempx*sin(deg2rad(p.loc.selfAngle))) + (tempy* cos(deg2rad(p.loc.selfAngle)));
+
+//     // printf("Passed:-->>>>goal coords x:%lf  y:%lf\n",p.pathstr.goal.x,p.pathstr.goal.y);
+//     //printf("goal coords y:%lf\n",pathstr.goal.x);
+//     ballx=p.fd->ball.r*cos(deg2rad(p.fd->ball.theta));
+//     bally=p.fd->ball.r*sin(deg2rad(p.fd->ball.theta));
+
+//     double targetx, targety;
+
+//     double target_distance = 10;
+
+//     if (sqrt(pow(targetx,2) + pow(targety,2)) < 5)
+//     {
+//         //rotation flag
+//     }
+
+//     else
+//     {
+//         double theta = atan2((bally - goaly),(ballx - goalx));
+
+//         int signx = 1;
+//         int signy = 1;
+
+//         int signy = (((goaly - bally)/sin(theta))>0)?-1:1;
+//         int signx = (((goalx - ballx)/cos(theta))>0)?-1:1;
+
+
+
+
+
+
+//     }
+
+
+
+
+}
+
+void BasicBehaviorDoKick::execute()
+{
+    printf("BasicBehaviorDoKick\n");
+    pthread_mutex_lock(&mutex_pathpacket);
+    pathpackvar.DO_KICK = true;
+    pthread_mutex_unlock(&mutex_pathpacket);
+}

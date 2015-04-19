@@ -167,4 +167,45 @@ private:
 		playerstate &p;
 
 };
+
+class BasicBehaviorGoalKeep: public xabsl::BasicBehavior
+{
+	public:
+	BasicBehaviorGoalKeep(xabsl::ErrorHandler& errorHandler,playerstate &p):xabsl::BasicBehavior("doGoalKeep",errorHandler),p(p)
+		{
+
+		}
+	virtual void execute();
+private:
+		playerstate &p;
+
+};
+
+class BasicBehaviorDoOrient: public xabsl::BasicBehavior
+{
+	public:
+	BasicBehaviorDoOrient(xabsl::ErrorHandler& errorHandler,playerstate &p):xabsl::BasicBehavior("doOrient",errorHandler),p(p)
+		{
+
+		}
+	virtual void execute();
+private:
+		playerstate &p;
+
+};
+
+class BasicBehaviorDoKick: public xabsl::BasicBehavior
+{
+	public:
+	BasicBehaviorDoKick(xabsl::ErrorHandler& errorHandler,playerstate &p):xabsl::BasicBehavior("doKick",errorHandler),p(p)
+		{
+
+		}
+	virtual void execute();
+private:
+		playerstate &p;
+
+};
+
+
 #endif

@@ -24,6 +24,7 @@ FeatureDetection::FeatureDetection(CamCapture &cam): IMAGE_HEIGHT(cam.height_sma
     seg_green = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
     seg_ball = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
     seg_background = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
+    seg_footmarker = cvCreateImage(cvSize(IMAGE_WIDTH, IMAGE_HEIGHT), 8, 1);
     ballRatio=1.0;
     ballFound_var = false;
     tempnLand = 0;
@@ -124,6 +125,7 @@ class SegmentImages {
     IplImage* my_seg_black;
     IplImage* my_seg_ball;
     IplImage* my_seg_background;
+    IplImage* my_seg_footmarker;
     CamCapture* my_cam;
 public:
     void operator()( const blocked_range2d<size_t>& r ) const {
@@ -162,11 +164,15 @@ public:
                  returnPixel1C(my_seg_background, x, y) = 255;
                 else
                  returnPixel1C(my_seg_background, x, y) = 0;
+                if(my_cam->isFootMarker_small(x, y))
+                 returnPixel1C(my_seg_footmarker, x, y) = 255;
+                else
+                 returnPixel1C(my_seg_footmarker, x, y) = 0;
             }
         }
     }
-    SegmentImages(IplImage* &seg_yellow, IplImage* &seg_blue, IplImage* &seg_red,IplImage* &seg_green, IplImage* &seg_black, IplImage* seg_ball, IplImage* seg_background, CamCapture &cam) :
-        my_seg_yellow(seg_yellow), my_seg_blue(seg_blue), my_seg_red(seg_red), my_seg_green(seg_green), my_seg_black(seg_black), my_seg_ball(seg_ball), my_seg_background(seg_background), my_cam(&cam)
+    SegmentImages(IplImage* &seg_yellow, IplImage* &seg_blue, IplImage* &seg_red,IplImage* &seg_green, IplImage* &seg_black, IplImage* seg_ball, IplImage* seg_background, IplImage* seg_footmarker, CamCapture &cam) :
+        my_seg_yellow(seg_yellow), my_seg_blue(seg_blue), my_seg_red(seg_red), my_seg_green(seg_green), my_seg_black(seg_black), my_seg_ball(seg_ball), my_seg_background(seg_background), my_seg_footmarker(seg_footmarker), my_cam(&cam)
     {}
 };
 
@@ -177,7 +183,7 @@ public:
 void FeatureDetection::getBlobs(CamCapture &cam)
 {
     parallel_for( blocked_range2d<size_t>(0, IMAGE_WIDTH, 16, 0, IMAGE_HEIGHT, 32),     
-                  SegmentImages(seg_yellow,seg_blue,seg_red,seg_green,seg_black,seg_ball,seg_background,cam) );
+                  SegmentImages(seg_yellow,seg_blue,seg_red,seg_green,seg_black,seg_ball,seg_background,seg_footmarker,cam) );
     // IplConvKernel *morphkernel = cvCreateStructuringElementEx(3,3,0,0,CV_SHAPE_RECT);
     // cvMorphologyEx(seg_yellow, seg_yellow, NULL, morphkernel, CV_MOP_OPEN, 1);
 
@@ -189,9 +195,10 @@ void FeatureDetection::getBlobs(CamCapture &cam)
     cvLabel(seg_red, labelImg, blobs_red);
     //getInGreen should have been called before this
     cvLabel(seg_black, labelImg, blobs_black);
+    cvLabel(seg_footmarker, labelImg, blobs_footmarker);
     // cvFilterByArea(blobs_yellow, 100, 1000000);
     // cvFilterByArea(blobs_blue, 100, 1000000);
-    cvFilterByArea(blobs_red, 10, 1000000);
+    // cvFilterByArea(blobs_red, 10, 1000000);
     // printf("After filter\n");
     //minimum obstacle area defined here
     cvFilterByArea(blobs_black, 100, 1000000);
@@ -232,9 +239,9 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     cvLabel(seg_yellow, labelImg, blobs_yellow);
     cvFilterByArea(blobs_yellow, 100, 1000000);
     #ifndef INTEL_BOARD_DISPLAY
-    cvNamedWindow("YELLOW");
-    cvMoveWindow("YELLOW",400,600);
-    cvShowImage("YELLOW",seg_yellow);
+    // cvNamedWindow("YELLOW");
+    // cvMoveWindow("YELLOW",400,600);
+    // cvShowImage("YELLOW",seg_yellow);
     #endif
     int max = IMAGE_HEIGHT;
     for (CvBlobs::const_iterator it=blobs_yellow.begin(); it!=blobs_yellow.end(); ++it)
@@ -527,9 +534,9 @@ bool FeatureDetection::getObstacles(CamCapture &cam, HeadMotor &hm)
         }
     }
     #ifndef INTEL_BOARD_DISPLAY
-    cvNamedWindow("BLACK");
-    cvMoveWindow("BLACK",720,600);
-    cvShowImage("BLACK",seg_black);
+    // cvNamedWindow("BLACK");
+    // cvMoveWindow("BLACK",720,600);
+    // cvShowImage("BLACK",seg_black);
     #endif
     return obstacleOnEdge;
 }
@@ -735,8 +742,8 @@ void FeatureDetection::getCorners(CamCapture &cam, HeadMotor &hm)
         cvCircle(color_dst, line[0], 5, cvScalar(64),5);
     }
 
-    cvNamedWindow( "Hough", 1 );
-    cvShowImage( "Hough", color_dst );
+    // cvNamedWindow( "Hough", 1 );
+    // cvShowImage( "Hough", color_dst );
 #endif
 
     // Clear the memory storage which was used before
@@ -932,9 +939,9 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     //     }
     // }
     #ifndef INTEL_BOARD_DISPLAY
-    cvNamedWindow("RED");
-    cvMoveWindow("RED",50,600);
-    cvShowImage("RED", seg_red);
+    // cvNamedWindow("RED");
+    // cvMoveWindow("RED",50,600);
+    // cvShowImage("RED", seg_red);
     #endif
 
     cvReleaseImage(&histogram);
@@ -1084,6 +1091,9 @@ void FeatureDetection::getLandmarks(CamCapture &cam, HeadMotor &hm, MotionModel 
         #endif
     }
     #endif
+    #ifdef GET_FOOT_MARKERS
+    getFootMarker(cam, hm);
+    #endif
 }
 
 
@@ -1149,13 +1159,14 @@ void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
             ballX_var = ballx*2;
             ballY_var = bally*2;
             ballFound_var = true;
-            cvShowImage("check_ball", check_ball);
+            // cvShowImage("check_ball", check_ball);
         }
         cvReleaseImage(&mask);
     }
     if(ballFound_var)
         findReal(ballX_var, ballY_var, ball.r, ball.theta, hm);
-    cvShowImage("seg_green_not", seg_green_not);
+    // 
+    Image("seg_green_not", seg_green_not);
     // cvReleaseImage(&seg_green_not);
     #endif
 
@@ -1176,6 +1187,35 @@ void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
     cvCircle(cam.rgbimg, cvPoint(ballX_var,ballY_var), 2, cvScalar(255,255,0), 2);
     cvPutText(cam.rgbimg,A,cvPoint(ballX_var,ballY_var),&font,cvScalar(255,255,255));
     cvPutText(cam.rgbimg,B,cvPoint(ballX_var,ballY_var + 10),&font,cvScalar(255,255,255));
+}
+
+void FeatureDetection::getFootMarker(CamCapture &cam, HeadMotor &hm)
+{
+    #ifdef GET_FOOT_MARKERS
+    for (CvBlobs::const_iterator it=blobs_footmarker.begin(); it != blobs_footmarker.end(); ++it)
+    {
+        if(((it->second->maxy - it->second->miny)/(it->second->maxx - it->second->minx)) >= 1)
+        {
+            //Check if on image edge
+            // if(isOnImageEdgeObstacle((it->second->maxx + it->second->minx)*2, it->second->maxy*4)==true)
+            //   continue;
+            // if(isOnImageEdge((it->second->maxx + it->second->minx)/2, it->second->maxy)==true)
+                // continue;
+            #ifndef ALL_PRINTING_OFF
+            printf("Found Foot Marker\n");
+            #endif
+            #ifdef PLOT_LANDMARKS
+                CvScalar color = {255,255,255};
+                cvCircle(cam.rgbimg, cvPoint((it->second->maxx + it->second->minx), it->second->maxy*2), 2, color, 2);
+                CvFont font;
+                cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.3, 0.3, 0, 1, 8);
+                char A[100] = " Foot Marker";
+                cvPutText(cam.rgbimg,A,cvPoint((it->second->maxx + it->second->minx), it->second->maxy*2),&font,cvScalar(255,255,255));
+            #endif
+            findReal((it->second->maxx + it->second->minx)/2, it->second->maxy, footMarker.r, footMarker.theta, hm);
+        }
+    }
+    #endif
 }
 
 void FeatureDetection::updatePacket(FeaturesPacket &fp)

@@ -12,8 +12,10 @@ option begin
 					goto _reset;
 
 				/**If initialized */ 
-				else if(init.isDone)
+				else if(init.isDone && goalkeepflag == 0)
 					goto play;
+				else if(init.isDone && goalkeepflag == 1)
+					goto goalkeep;
 				else
 					stay;
 				}
@@ -35,8 +37,10 @@ option begin
 					goto _reset;
 
 				/**If initialized */
-				else if(init.isDone)
+				else if(init.isDone && goalkeepflag == 0)
 					stay;
+				else if(init.isDone && goalkeepflag == 1)
+					goto goalkeep;
 				else
 					goto initialize;
 				}
@@ -47,6 +51,27 @@ option begin
 					}
 					
 			}
+
+		state goalkeep
+		{
+			decision
+			{
+				if(resetflag == 1)
+				goto _reset;
+				else if(!init.isDone)
+					goto initialize;
+				else if(goalkeepflag == 1)
+					stay;
+				else
+					goto play;
+			}
+			action
+			{
+				printmsg(o = 110);
+				//doUpdate();
+				doGoalKeep();
+			}
+		}
 
 		state _reset
 			{		

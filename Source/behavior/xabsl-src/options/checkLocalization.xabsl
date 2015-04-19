@@ -4,7 +4,7 @@ option checkLocalization
 			{
 				decision
 					{
-						if(localizationState==CRITICAL && ballreturn!=BALLFOUND)
+						if(localizationState == CRITICAL && ballreturn!=BALLFOUND)
 							stay;
 						else if(localizationState==CRITICAL && ballreturn==BALLFOUND)
 							goto critical_ball;

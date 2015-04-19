@@ -109,6 +109,7 @@ public:
 	void printPosition();
 	void doLocalize(FeatureDetection &fd, MotionModel &mm, CamCapture &cam, int imuangle = -9999);
 	
+	void getGoalPosts(AbsCoords &g1, AbsCoords &g2);
 	AbsCoords getGoalCoords(int g);
 	void setGoalCoords(double x, double y, int g);
 	void randomize();

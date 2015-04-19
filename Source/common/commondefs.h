@@ -7,6 +7,7 @@ enum BallReturns{BALLFOUND=0,BALLFINDING=1,TURNRIGHT,TURNLEFT};
 enum GoalReturns{GOALFINDING,ENCIRCLER,ENCIRCLEL,GOALFOUND};
 enum PathReturns{DOWALK,DOENCIRCLE,DOKICK,NOPATH,DOORIENT};
 enum LocalizationState{CRITICAL,LOCALIZED,MOTIONMODEL};
+enum GoalKeeperAction{STAY, FALLLEFT, FALLRIGHT};
 
 //Behaviour Local IMP--------------------------------------------------------------------
 enum Ball{NOTFOUND,FOUND};
@@ -59,6 +60,7 @@ typedef struct
 	double x;
 	double y;
 	double obstacle_radius;
+	bool isOnCircle;
 }PathCoords;//Coordinate frame is relative to Acyut, acyut faces +ve Xaxis and +ve Yaxis is to the right, convert to AbsCoords using selfangle
 // ^ for communication
 
@@ -68,6 +70,8 @@ typedef struct
 	int n_obstacles;
 	AbsCoords goal;
 	AbsCoords ball;
+	AbsCoords gpleft;
+	AbsCoords gpright;
 }PathStructure;
 //---------------------------------------------------------------------------------------
 //These are the variables that must be present in CamControl class,
@@ -134,7 +138,17 @@ typedef struct
 	int updated;
 	int id;
 	int no_of_points;
+	double theta;
+	double distance;
 	bool NEAR_FLAG;
+	bool BACK_WALK;
+	bool NEAR_OBSTACLE;
+	bool IGNORE_ARC;
+	bool UPDATE_FLAG;
+	bool ROTATE;
+	bool ROTATE_RIGHT;
+	bool BALLFOLLOW;
+	bool DO_KICK;
 	PathCoords finalpath[30];
 }PathPacket;
 

@@ -4,27 +4,36 @@ double pi = acos(-1);
 Walk::Walk(AcYut* bot)
 {
 	this->bot = bot;
+
+	Tc = sqrt(600.00/9810.0);
+	C = 1/Tc;
+	feetSeparation = 45;
+	hipLength = 130;
+	height = 400;
+
 	legYin=-1.773347;
 	supLegYin=-4.571982;
 	veloYin=-0.611621;
 	veloYfi=10;
-	legZin=7.694539;//25.155276;
-	supLegZin=7.694539;//25.155276;
-	veloZin=-143.8459;
-	veloZfi=143.8459;
 	zMax=35;
 	dz = 0;
-	lift=60;
+	dspTime = 0.05;
+	lift=50;
 	legRotin=0;
 	legRotfi=0;
 	supLegRotin=0;
 	supLegRotfi=0;
-	sspTimeVar = 0.300999;
+	sspTimeVar = 0.340999;
+	veldef = C*zMax*(exp(-C*sspTimeVar/2) - exp(C*sspTimeVar/2))/2;
+	veloZin = veldef;
+	veloZfi = -veldef;
+	supLegZin = zMax*(exp(-C*sspTimeVar/2) + exp(C*sspTimeVar/2))/2 - dspTime*veloZin - hipLength/2;//25.155276;
+	legZin = supLegZin;//25.155276;
 	correction_factor = 0;
 	// strafe=0;
 	// sspZAmp=zMax;
 	stepCount = 0;
-	feetSeparation = 45;
+
 	integ_const_z =0.5;//0.05;//0.05;//2;
 	deriv_const_z =0.8/120;//1.2/120.0;//0.01;//0.005;
 	prop_const_z = 1;//0.6;//1;
@@ -40,11 +49,9 @@ Walk::Walk(AcYut* bot)
 	prev_mean_y = 0;
 	prev_imu_yaw = 0;
 	
-	height = 400;
 	// ofstream fis;
 	// fis.open("Source/comoffset.txt");
 	// fis.close();
-	
 /*	ifstream fil;
 	
 	fil.open("Source/walk/comoffset.txt");
@@ -103,13 +110,14 @@ int Walk::pathdribble(double vel_y, double dz, double t1, double t2)
 	//which is handled by this conditional construct
 	if (dz>0)
 	{
-		if (leg == LEFT)
-		{
-			// dribble();	
-			// this->dz = dz;
-		}
-		else
-			this->dz = dz;
+		this->dz = dz;
+		// if (leg == LEFT)
+		// {
+		// 	// dribble();	
+		// 	// this->dz = dz;
+		// }
+		// else
+		// 	this->dz = dz;
 	}
 	else if (dz<0)
 	{
@@ -122,6 +130,7 @@ int Walk::pathdribble(double vel_y, double dz, double t1, double t2)
 		// }
 	}
 	// this->dz = dz;
+	// printf("%f %f\n", t1, t2);
 	legRotfi = t1;
 	supLegRotfi = t2;
 	int x = dribble();
@@ -132,52 +141,176 @@ int Walk::pathdribble(double vel_y, double dz, double t1, double t2)
 	return x;
 }
 
-int Walk::captureStep(int leg, double c1_z, double c2_z, double C, double zMax, double dsp1Time, double dsp2Time, double &sspTime, double &z_a_free, double &z_b_free, double &z_c_free)
+int Walk::stopMotion()
+{
+	if (veloYfi == 0)
+		return 1;
+	while (fabs(veloYfi) > 20)
+	{		
+		pathdribble(veloYfi/2, 0, 0, 0);
+	}
+
+	pathdribble(0, 0, 0, 0);
+	return 1;
+}
+
+int Walk::backMotion(double distance)
+{
+	stopMotion();
+
+	pathdribble(-10, 0, 0, 0);
+
+	while (fabs(veloYfi) < 90)
+	{
+		accelerate();
+		dribble();
+		distance -= (-veloYfi*(sspTimeVar + 2*dspTime));
+	}
+
+	while (distance > 0)
+	{
+		dribble();
+		distance -= (-veloYfi*(sspTimeVar + 2*dspTime));
+	}
+	stopMotion();
+	pathdribble(10, 0, 0, 0);
+	return leg;
+}
+
+int Walk::captureStepZ(double &c1_z, double &c2_z, double zMax, double dsp1Time, double dsp2Time, double cap_pos_actual, double cap_vel_actual, double walkTime, double &sspTime, double &z_a_free, double &z_b_free, double &z_c_free, double &legZfi, double &supLegZfi)
 {
 
-	const double (&COM)[AXES] = bot->getRotCOM();
-	cout<<"At peak of step"<<endl;
-	// if (COM[2]>4)
+	double cap_sup_defpos = c1_z*exp(C*sspTime) + c2_z*exp(-C*sspTime); 
+	double cap_sup_defvel = C*(c1_z*exp(C*sspTime) - c2_z*exp(-C*sspTime));
+	// double cap_pos_actual = zMax - 1*(leg==1?1:-1)*COM[2];
+	double cap_pos_ideal = c1_z*exp(C*(walkTime-dspTime)) + c2_z*exp(-C*(walkTime-dspTime));
+	 cout<<"COM position should be "<<cap_pos_ideal<<endl;
+	 cout<<"Actual COM position is "<<cap_pos_actual<<endl;
+	 cout<<"Actual velocity is "<<cap_vel_actual<<endl;
+
+	// cap_pos_actual = zMax;
+	// cap_vel_actual = 0; 
+	double cap_ideal_energy = (-pow(C,2)*pow(cap_pos_ideal,2))/2;
+	 cout<<"Energy should be "<<cap_ideal_energy<<endl;
+	double cap_actual_energy = (pow(cap_vel_actual,2)-pow(C,2)*pow(cap_pos_actual,2))/2; 
+	 cout<<"Energy is "<<cap_actual_energy<<endl;
+
+	if (fabs(cap_ideal_energy - cap_actual_energy) < 1000)
+		return -1;
+	double time_left = sspTime - (walkTime - dsp1Time);
+
+	double cap_sup_vel =  C*cap_pos_actual*sinh(C*time_left) + cap_vel_actual*cosh(C*time_left) ;
+	 cout<<"Velocity at support exchange should be "<<cap_sup_vel<<endl;
+	double cap_sup_pos = sqrt(pow(zMax,2) + pow(cap_sup_vel,2)/pow(C,2));
+	 cout<<"Default position at support exchange "<<cap_sup_defpos<<endl;
+	 cout<<"Position of next step at support exchange should be "<<cap_sup_pos <<endl;
+
+	 int flag = 0;
+/*	if (fabs(cap_sup_pos - cap_sup_defpos) < 2)
 	{
-		// cout<<"Capture step required"<<endl;
-		cout<<"Present leg "<<leg<<endl;
-		double cap_sup_defpos = c1_z + c2_z; 
-		double cap_deviation = zMax - 1*(leg==1?1:-1)*COM[2];
-		cout<<"Step deviation is "<<cap_deviation<<endl;
-		double cap_ideal_energy = (-pow(C,2)*pow(zMax,2))/2;
-		cout<<"Energy should be "<<cap_ideal_energy<<endl;
-		double cap_actual_energy = (-pow(C,2)*pow(cap_deviation,2))/2; 
-		cout<<"Energy is "<<cap_actual_energy<<endl;
-		double cap_sup_vel = sqrt(pow(0,2) + pow(C,2)*(pow(cap_sup_defpos,2) -pow(cap_deviation,2)));
-		cout<<"Velocity at support exchange should be "<<cap_sup_vel<<endl;
-		double cap_sup_pos = sqrt(pow(zMax,2) + pow(cap_sup_vel,2)/pow(C,2));
-		cout<<"Default position at support exchange "<<cap_sup_defpos<<endl;
-		cout<<"Position of next step at support exchange should be "<<cap_sup_pos<<endl;
-		if (fabs(cap_sup_pos - cap_sup_defpos) < 60 && fabs(cap_sup_pos - cap_sup_defpos))
-		{
-			// if (fabs(cap_sup_pos - cap_sup_defpos) > 11)
-			// {
-			// 	double time_factor = cap_sup_pos/cap_sup_defpos;
-			// 	cout<<"Default ssp time is "<<sspTime<<endl;
-			// 	// if (time_factor > 1)
-			// 	// 	sspTime *= 1.5*time_factor;
-			// 	// else
-			// 	// 	sspTime /= (time_factor/1.5);
-			// 	sspTime = 2.8;
-			// 	cout<<"New ssp time is "<<sspTime<<endl;
-			// }
-		cout<<"Generating corrective trajectory"<<endl;
-		double z_free_fi = cap_sup_pos + veloZfi*dsp2Time;
-		cout<<"z final "<<z_free_fi<<endl;
-		z_c_free = z_free_fi;
-		z_b_free = 4*(zMax - z_free_fi)/(sspTime+dsp1Time+dsp2Time);
-		z_a_free = 4*(z_free_fi - zMax)/pow(sspTime+dsp1Time+dsp2Time,2);
-		// correction_factor = fabs(cap_sup_pos - cap_sup_defpos);
-		// z_a_free = (2*(legZfi + legZin) - 4*(zMax))/pow(sspTimeVar+dsp1Time+dsp2Time,2);
-		// z_b_free = 2*((legZfi- legZin)/2 - z_a_free*pow(sspTimeVar+dsp1Time+dsp2Time,2)/2)/(sspTimeVar+dsp1Time+dsp2Time);
-		}
+		cap_sup_pos = cap_sup_defpos;
+		flag++;
 	}
+	if (fabs(cap_sup_vel - cap_sup_defvel) < 5)
+	{
+	 	cap_sup_vel = cap_sup_defvel;
+	 	flag++;
+	}
+	if (flag == 2)
+	{
+		veloZfi = -veldef;
+		return -1;
+	}	*/
+ 	double veloZfi_d = cap_sup_vel;
+
+	cout<<"Plotting new trajectories "<<endl;	
+	c1_z = (cap_pos_actual + cap_vel_actual/C)*exp(-C*(walkTime-dsp1Time))/2;
+	c2_z = (cap_pos_actual - cap_vel_actual/C)*exp(C*(walkTime-dsp1Time))/2;
+
+	double sspZSupfi = c1_z*exp(C*sspTime) + c2_z*exp(-C*sspTime);
+	cout<<"Original supLegZfi "<<supLegZfi<<endl;
+	supLegZfi = sspZSupfi + veloZfi_d*dsp2Time;
+	cout<<"Final supLegZfi "<<supLegZfi<<endl;
+
+	double P_veloZin = -veloZfi_d;
+	double P_sspZSupin = cap_sup_pos;
+	double P_supLegZin  = P_sspZSupin - (P_veloZin)*dsp2Time;
+
+	double P_c1_z = (P_sspZSupin + P_veloZin/C)/2;
+	double P_c2_z = (P_sspZSupin - P_veloZin/C)/2;
+	veloZfi = C*(P_c1_z*exp(C*sspTime) - P_c2_z*exp(-C*sspTime));
+	// cout<<veloZfi<<" Look "<<endl;
+	cout<<"Original legZfi "<<legZfi<<endl;
+	legZfi    = P_supLegZin;
+	cout<<"New legZfi "<<legZfi<<endl;
+
+	z_c_free = legZfi;
+	z_b_free = 4*(zMax - legZfi)/(sspTime+dsp1Time+dsp2Time);
+	z_a_free = 4*(legZfi- zMax)/pow(sspTime+dsp1Time+dsp2Time,2);	
+		// if (P_sspZSupin+feetSeparation + cap_sup_vel*dsp2Time> 130)
+			// z_next_initial = 130-feetSeparation - cap_sup_vel*dsp2Time;
+	return 1;
+	// }
+	// else
+		// return -1;
 }
+
+int Walk::captureStepY(double &c1_y, double &c2_y, double dsp1Time, double dsp2Time, double yr, double vely, double y, double &supLegYfi, double &veloYfi_d, double cap_pos_actual, double cap_vel_actual, double walkTime,  double &sspTime, double &y_a_free, double &y_b_free, double &y_c_free, double &y_d_free )
+{
+	cout<<"Actual COM position is "<<cap_pos_actual<<endl;
+	cout<<"Position should be "<<-yr<<endl;
+	// cap_vel_actual = -vely;
+	cout<<"Actual COM velocity is "<<cap_vel_actual<<endl;
+	cout<<"Velocity should be "<<-vely<<endl;
+	double cap_ideal_energy =  (pow(vely,2.0) - pow(C,2.0)*pow(yr,2.0))/2.0;
+	double time_left = sspTime - (walkTime - dsp1Time);
+	cout<<"Energy should be "<<cap_ideal_energy<<endl;
+	double cap_actual_energy =  (pow(cap_vel_actual,2.0) - pow(C,2.0)*pow(cap_pos_actual,2.0))/2.0;
+	cout<<"Energy is "<<cap_actual_energy<<endl;
+	double cap_sup_vel =  C*cap_pos_actual*sinh(C*time_left) + cap_vel_actual*cosh(C*time_left) ;
+	cout<<"Original velocity at support exchange "<<veloYfi_d<<endl;
+	cout<<"Velocity required at support exchange "<<cap_sup_vel<<endl;
+	double cap_sup_pos = cap_sup_vel*tanh(C*time_left)/C + cap_pos_actual;
+	double cap_sup_defpos = c1_y*exp(C*sspTime) + c2_y*exp(-C*sspTime);
+	cout<<"Position of next step at support exchange should be "<<cap_sup_pos <<endl;
+	cout<<"Original position at support exchange "<<cap_sup_defpos<<endl;
+
+	if (cap_sup_pos > 45)
+		cap_sup_pos = 45;
+
+	veloYfi_d = cap_sup_vel;
+	if (veloYfi_d > 260)
+		veloYfi_d = 260;
+	c1_y = (cap_sup_pos + veloYfi_d/C)*exp(-C*sspTime)/2;
+	c2_y = (cap_sup_pos - veloYfi_d/C)*exp(C*sspTime)/2;
+
+	supLegYfi = cap_sup_pos + veloYfi_d*dsp2Time;
+
+
+
+	// double y_free_fi = cap_sup_pos - veloYfi_d*(dsp1Time + dsp2Time);
+	// if (y_free_fi > 90)
+	// 	y_free_fi = 90;
+	// cout<<"New free leg target "<<y_free_fi<<endl;
+	// Matrix<double, 4, 4> A;
+	// Matrix<double, 4, 1> B, X;
+
+	// A << pow(sspTime/2,3),pow(sspTime/2,2),pow(sspTime/2,1),1,
+	// 	 pow(sspTime,3),pow(sspTime,2),pow(sspTime,1),1,
+	// 	 3*pow(sspTime/2,2),2*pow(sspTime/2,1),1,0,
+	// 	 3*pow(sspTime,2),2*pow(sspTime,1),1,0,
+	// B << y,y_free_fi, cap_vel_actual, -veloYfi_d;
+	// X = A.colPivHouseholderQr().solve(B);
+
+	// y_a_free = X(0);
+	// y_b_free = X(1);
+	// y_c_free = X(2);
+	// y_d_free = X(3);
+
+	// legYfi = y_free_fi + veloYfi_d*dsp2Time;
+	// cout<<"legYfi c"<<legYfi<<endl;
+}
+
 int Walk::handMotion(double handSwing)
 {
 	int arr_l[4], arr_r[4];
@@ -200,6 +333,8 @@ int Walk::handMotion(double handSwing)
 }
 float Walk::accelerate()
 {
+	if (veloYfi == 0)
+		veloYfi = 10;
 	veloYfi=veloYfi*1.72;
 	legRotfi = 0;
 	supLegRotfi =0;
@@ -281,21 +416,19 @@ int Walk::dribble(int flag)
 	int sleep = 1000000.0/(double)fps;
 	double timeInc =1.0/(double)fps;
 	// double feetSeparation = 30;
-	double hipLength = 130;
 	
 	double y_offset = 0;
 
-	double Tc = sqrt(600.00/9810.0);
 	legZin += hipLength/2;
 	supLegZin += hipLength/2;
 	///// desired Values 
 	
-	double D_dsp1Time = 0.05;	// + dz/(veloZfi);		//changed from 0.03
-	double D_dsp2Time = 0.05;	//+ dz/(veloZfi);		//""
+	double D_dsp1Time = dspTime;	// + dz/(veloZfi);		//changed from 0.03
+	double D_dsp2Time = dspTime;	//+ dz/(veloZfi);		//""
 	double sspZTime = sspTimeVar;
 	// ////printf("Tc\t\t%lf\n",Tc);
-	// ////printf("legZin\t\t%lf\n",legZin);
-	// ////printf("supLegZin\t%lf\n",supLegZin);
+	// printf("legZin\t\t%lf\n",legZin);
+	// printf("supLegZin\t%lf\n",supLegZin);
 	
 	//// Z Control 
 
@@ -313,39 +446,50 @@ int Walk::dribble(int flag)
 
 	//exponential equations
 	// double C = 1.0/Tc;
-	double C = 1.0/Tc;
-	double c1_z = zMax*exp(-C*sspZTime/2.0)/2.0;
-	double c2_z = zMax*exp(C*sspZTime/2.0)/2.0;
-	double sspZSupin = c1_z + c2_z;
+	double sspZSupin  = supLegZin + (veloZin)* D_dsp2Time;
+
+	double c1_z = (sspZSupin + veloZin/C)/2;
+	double c2_z = (sspZSupin - veloZin/C)/2;
+
+	// double c1_z = zMax*exp(-C*sspZTime/2.0)/2.0;
+	// double c2_z = zMax*exp(C*sspZTime/2.0)/2.0;
+	// double sspZSupin = c1_z + c2_z;
 	double sspZSupfi = c1_z*exp(C*sspZTime) + c2_z*exp(-C*sspZTime);
 	double veloZfi_d = C*(c1_z*exp(C*sspZTime) - c2_z*exp(-C*sspZTime));
 
 	double sspTime   = sspZTime;
-	double dsp1Time  = (supLegZin - sspZSupin)/(-veloZin);		
+	double dsp1Time  = D_dsp1Time;		
 	double dsp2Time  = D_dsp2Time;
 	double stepTime  = sspTime + dsp1Time + dsp2Time;
 	
-	double sspZin    = legZin + (-veloZin)*dsp1Time;
 	// double P_sspZAmp = zMax;
 	double P_sspZTime = sspTimeVar;
-	double P_c1_z = zMax*exp(-C*sspZTime/2.0)/2.0;
-	double P_c2_z = zMax*exp(C*sspZTime/2.0)/2.0;
+	double P_veloZin = -veloZfi_d;
+	// veloZfi = -veldef;	//Returning to default trajectory
+	double P_c1_z = (veloZfi - P_veloZin*exp(-C*P_sspZTime))/(C*(exp(C*P_sspZTime) - exp(-C*P_sspZTime)));
+	double P_c2_z = P_c1_z - P_veloZin/C;
+	// cout<<"P_velozin "<<P_veloZin<<endl;
+	// cout<<"veldef "<<veldef<<endl;
+	veloZfi = -veldef;	//Returning to default trajectory
+	// P_c1_z = zMax*exp(-C*sspZTime/2.0)/2.0;
+	// P_c2_z = zMax*exp(C*sspZTime/2.0)/2.0;
+	
 	// double P_c1_z = cosh(P_sspZTime/Tc) - 1;
 	// double P_s1 = sinh(P_sspZTime/Tc);
 	// double P_sspZAmp = sqrt(pow(strafe/P_c1_z,2) + 2*pow(veloZfi_d*Tc,2)/P_c1_z + 2*strafe*P_s1*veloZfi_d*Tc/pow(P_c1_z,2));
 	// printf("\n\nStrafe = %lf\n\n", strafe);
 	// double P_sspZPhs = asinh(-veloZfi_d*Tc/P_sspZAmp);	
-	// double P_veloZfi
-
 	// double P_sspZPhs = asinh(-veloZfi*Tc/P_sspZAmp);
+
 	double P_sspZSupin  = P_c1_z + P_c2_z;
-	double P_supLegZin  = P_sspZSupin - (-veloZfi_d)* D_dsp2Time;
-	double P_veloZfi = C*(P_c1_z - P_c2_z);
+	double P_supLegZin  = P_sspZSupin - (P_veloZin)* D_dsp2Time;
+	// double P_veloZfi = C*(P_c1_z - P_c2_z);
 	// double P_sspZTime= Tc * (asinh(P_veloZfi*Tc/P_sspZAmp) - P_sspZPhs);
 	
-	double sspZfi    = P_supLegZin + veloZfi_d*dsp1Time + dz; //Make this an input for strafe
-	double legZfi    = sspZfi - veloZfi_d*dsp2Time;
-	double supLegZfi = sspZSupfi + veloZfi_d*dsp2Time;
+	// double sspZfi    = P_supLegZin + veloZfi_d*dsp1Time + dz; //Make this an input for strafe
+	double sspZfi    = P_supLegZin - P_veloZin*dsp1Time;
+	double legZfi    = sspZfi + P_veloZin*dsp2Time;
+	double supLegZfi = sspZSupfi - P_veloZin*dsp2Time;
 	
 	// double c1_z_swing = (sspZin - sspZfi*exp(-C*sspTimeVar))/(exp(C*sspTimeVar) - exp(-C*sspTimeVar));
 	// double c2_z_swing = sspZin - c1_z_swing;
@@ -353,6 +497,8 @@ int Walk::dribble(int flag)
 	double z_c_free = legZin;
 	double z_a_free = (2*(legZfi + legZin) - 4*(zMax))/pow(sspTime+dsp1Time+dsp2Time,2);
 	double z_b_free = 2*((legZfi- legZin)/2 - z_a_free*pow(sspTime+dsp1Time+dsp2Time,2)/2)/(sspTime+dsp1Time+dsp2Time);
+
+
 	// cout<<z_a_free*pow(sspTime/2,2) + z_b_free*sspTime/2 + z_c_free<<endl;
 
 	// printf("%f %f\n",c1_z_swing,c2_z_swing);
@@ -421,13 +567,14 @@ int Walk::dribble(int flag)
 	// cout<<" see "<<	 Ay*cosh(sspTime/Tc) + By*sinh(sspTime/Tc) <<" "<<sspYSupfi<<endl;
 	double legYfi    = sspYfi + veloYfi_d*dsp2Time;
 	double supLegYfi = sspYSupfi + veloYfi_d*dsp2Time;
-	
+	// cout<<"legYfi "<<legYfi<<endl;
+	// cout<<"sspYfi "<<sspYSupfi<<endl;
 	// Y (cubic)
 	
-	double a = ((-veloYfi_d-veloYin)-2*(-sspYfi+sspYin)/sspTime)/pow(sspTime,2);
-	double b = ((-sspYfi+sspYin)/sspTime+veloYin-a*pow(sspTime,2))/sspTime;
-	double c = -veloYin;
-	double d = -sspYin;
+	double y_a_free = ((-veloYfi_d-veloYin)-2*(-sspYfi+sspYin)/sspTime)/pow(sspTime,2);
+	double y_b_free = ((-sspYfi+sspYin)/sspTime+veloYin-y_a_free*pow(sspTime,2))/sspTime;
+	double y_c_free = -veloYin;
+	double y_d_free = -sspYin;
 
 /*	Matrix<double, 4, 4> A;
 	Matrix<double, 4, 1> B, X;
@@ -520,7 +667,11 @@ int Walk::dribble(int flag)
 	double z_free_traj;
 	double prev_com_z = 0;
 	double handSwing = 0;
+	double pos_z_actual, vel_z_actual;
+	double pos_y_actual, vel_y_actual;
+	double vely = 0;
 
+		// cout<<endl;
 	for(walkTime = 0.0/fps; walkTime<=stepTime; walkTime +=timeInc)
 	{
 		timespec timer;
@@ -557,21 +708,40 @@ int Walk::dribble(int flag)
 			if (walkTime<= dsp1Time + sspZTime)
 			{
 				x  = height - lift * (sin(xfreq*((walkTime-startX)/(stopX-startX))+xPhase) + displacement)/(1+displacement) - scurve(0, 5, walkTime-dsp1Time, sspTime + dsp1Time);
-			// x = height- lift*fraction*(2-fraction);
+				// x = height- lift*fraction*(2-fraction);
 				xr = height - scurve(0, 5, walkTime-dsp1Time, sspTime + dsp1Time);//- 10*sin(pi*(walkTime - dsp1Time)/sspTime);
-				y=a*pow(walkTime-dsp1Time,3)+b*pow(walkTime-dsp1Time,2)+c*(walkTime-dsp1Time)+d;
-			//y  = linear(-sspYin,-sspYfi, ((walkTime-dsp1Time)/sspTime);
+				y=y_a_free*pow(walkTime-dsp1Time,3)+y_b_free*pow(walkTime-dsp1Time,2)+y_c_free*(walkTime-dsp1Time)+y_d_free;
+				//y  = linear(-sspYin,-sspYfi, ((walkTime-dsp1Time)/sspTime);
 				// yr = -(Ay*cosh((walkTime-dsp1Time)/Tc) + By*sinh((walkTime-dsp1Time)/Tc));
 				yr = -(c1_y*exp(C*(walkTime-dsp1Time)) + c2_y*exp(-C*(walkTime-dsp1Time)));
-			// yr = -sspYAmp * sinh((walkTime-dsp1Time)/Tc +sspYPhs);
-			// z  = scurve(sspZin,sspZfi, walkTime-dsp1Time,sspTime) - hipLength/2;
-			// zr =  sspZAmp * cosh((walkTime-dsp1Time)/Tc + sspZPhs) -hipLength/2;
+				vely = -C*(c1_y*exp(C*(walkTime-dsp1Time)) - c2_y*exp(-C*(walkTime-dsp1Time)));
+				// cout<<"yr = "<<yr<<" vely = "<<vely<<" y_energy = "<<y_energy<<endl;
+				// z  = scurve(sspZin,sspZfi, walkTime-dsp1Time,sspTime) - hipLength/2;
 				z = z_a_free*pow(walkTime,2) + z_b_free*(walkTime) + z_c_free -hipLength/2;
 				zr = c1_z*exp(C*(walkTime-dsp1Time)) + c2_z*exp(-C*(walkTime-dsp1Time)) -hipLength/2;
 				phi= scurve(legRotin,legRotfi,walkTime-dsp1Time,sspTime);
 				phiR=scurve(supLegRotin,supLegRotfi,walkTime-dsp1Time,sspTime);
+				double t_remain = stepTime - walkTime - dsp2Time;
+				const double (&COM)[AXES] = bot->getRotCOM();
+				pos_z_actual = zr+hipLength/2 + 1*(leg==1?-1:1)*COM[2];
+				double velz =  C*(c1_z*exp(C*(walkTime-dsp1Time)) - c2_z*exp(-C*(walkTime-dsp1Time)));
+		// cout<<z<<" "<<zr<<endl;
+
+				pos_y_actual = yr - COM[1];
+				// cout<<yr<<endl;
+				const double (&COMVel)[AXES] = bot->getRotCOMVel((leg?-1:1)*velz, -vely);
+				vel_z_actual = (leg?-1:1)*COMVel[2];
+				vel_y_actual = COMVel[1];
+				// cout<<COMVel[2]<<" \t"<<velz<<endl;
+				// cout<<leg<<" "<<COMVel[2]<<" \t"<</velz<<" \t"<<COM[2]<<" \t"<<COM0[2]<<endl;
+				// double zmp_offset_z = (sspZSupfi*2*C*exp(C*t_remain) - (pos_z_actual)*C*(1+exp(2*C*t_remain)) + COMVel[2]*(1-exp(2*C*t_remain)))/(C*(exp(2*C*t_remain) - 2*exp(C*t_remain) + 1));
+				// double zmp_offset_z2 = (pow(C,2)*(pow(sspZSupfi,2) - pow(zr+hipLength/2, 2)) + pow(velz,2) - pow(veloZfi,2))/(2*pow(C,2)*(sspZSupfi - (zr+hipLength/2) ));
+				// double time_1 = log((sspZSupfi - zmp_offset_z)/(pos_z_actual + COMVel[2]/C - zmp_offset_z) + sqrt(pow(sspZSupfi - zmp_offset_z,2)/pow((pos_z_actual+ COMVel[2]/C - zmp_offset_z),2) - (pos_z_actual - COMVel[2]/C - zmp_offset_z)/(pos_z_actual+ COMVel[2]/C - zmp_offset_z)))/C; 
+				// zmp_offset_y = (-sspYSupfi - veloYfi_d/C -  exp(C*sspTime)*(yr+vely/C))/(1-exp(C*sspTime));
+				// cout<<pos_z_actual<<" "<<zr+hipLength/2<<" "<<velz<<" "<<vel_z_actual<<" "<<zmp_offset_z<<" "<<t_remain<<" "<<time_1<<endl;
+				// cout<<" Z_off_z "<<zmp_offset_z<<" z_off_y "<<zmp_offset_y<<" t_rem "<<t_remain<<" zr "<<zr + hipLength/2<<" velz "<<velz<<endl;
+				// cout<<leg<<" "<<velz<<endl;
 			}
-			// double velz =  C*(c1_z*exp(C*(walkTime-dsp1Time)) - c2_z*exp(-C*(walkTime-dsp1Time)));
 
 			// double z_traj = c1_z*exp(C*(walkTime-dsp1Time)) + c2_z*exp(-C*(walkTime-dsp1Time)) -hipLength/2;
 			else
@@ -611,12 +781,13 @@ int Walk::dribble(int flag)
 		{
 	//		////printf("************* SOMETHING WRONG*******************\n");
 		}
+		// cout<<z<<" "<<zr<<endl;
 		if (flag == 1)
 		{
 			bot->reachSlow(height,y,z+feetSeparation,height,yr,zr+feetSeparation);
 			flag = 3;
 		}
-		// double ynew = X(0)*pow(walkTime,3) + X(1)*pow(walkTime,2) + X(2)*pow(walkTime,1) + X(3)*pow(walkTime,0); 
+
 		// double ynew = -41710*pow(walkTime,4) + 34010*pow(walkTime,3) -8262*pow(walkTime,2) + 698*pow(walkTime,1) -33.2;
 		// handMotion(handSwing); //Turn this on for rhythmic swinging of hands with walk.
 		// printf("X\t%3.1lf\tXR\t%3.1lf\tY\t%lf\tYR\t%lf\tZ\t%lf\tZR\t%lf\n",x,xr,y,yr,z,zr);
@@ -648,21 +819,26 @@ int Walk::dribble(int flag)
 			// bot->leg[1-leg]->runIK(xr,yr ,zr+feetSeparation,phiR);		
 			// bot->getCOM();
 			// cout<<COM[1]<<endl;
+			// cout<<z<<" "<<zr<<endl;
 		}
 		else
 		{
 			bot->leg[leg]->runIK(height,y,z+feetSeparation ,phi);
 			bot->leg[1-leg]->runIK(height,yr ,zr+feetSeparation,phiR);		
 		}
-
 		// cout<<z<<" "<<zr<<endl;
 		// printf("%f %f\n",COM[2],(COM[2]-prev_com_z)/timeInc);
 		// prev_com_z = COM[2];
 				// cout<<"WalkTime"<<walkTime<<endl;
-		if (walkTime >= dsp1Time +  sspZTime/2 && walkTime <= dsp1Time + sspZTime/2 + timeInc)
+		if (walkTime >= dsp1Time +  sspZTime/2 -timeInc && walkTime <= dsp1Time + sspZTime/2 && flag == 0)
 		{
-			// cout<<"At peak of step"<<endl;
-			// captureStep( leg, c1_z, c2_z, C, zMax, dsp1Time, dsp2Time, sspTime, z_a_free, z_b_free, z_c_free);
+			const double (&COMVelHalfTime)[AXES] = bot->getRotCOMVel(0, -vely);
+			vel_z_actual = (leg?-1:1)*COMVelHalfTime[2];
+			vel_y_actual = COMVelHalfTime[1];
+			// cout<<"Look "<<legZfi<<endl;
+			// captureStepZ(  c1_z, c2_z, zMax, dsp1Time, dsp2Time, pos_z_actual, vel_z_actual,walkTime, sspTime, z_a_free, z_b_free, z_c_free, legZfi, supLegZfi);
+			// cout<<"Look "<<legZfi<<endl;
+			// captureStepY(c1_y, c2_y, dsp1Time, dsp2Time, yr, vely, y, supLegYfi, veloYfi_d, -pos_y_actual, vel_y_actual, walkTime, sspTime, y_a_free, y_b_free, y_c_free, y_d_free);
 		}
 		// cout<<leg<<" ";
 		// bot->getRotCOM();
@@ -674,6 +850,7 @@ int Walk::dribble(int flag)
 		// cout<<state<<" "<<zr<<" "<<sspZSupfi<<" "<<sspZfi<<endl;
 		// rms += pow(COM[1]-17.5,2);
 		// avg += COM[1]; 
+
 		if (flag != 2)
 			bot->updateBot();
 		// cout<< timer.tv_nsec<<endl;
@@ -703,21 +880,28 @@ int Walk::dribble(int flag)
 	supLegYin  = -legYfi;
 	legYin = -supLegYfi;
 	veloYin=veloYfi_d;
-	// supLegZin = legZfi - hipLength/2; 
-	// legZin = supLegZfi - hipLength/2;
+
+	supLegZin = legZfi - hipLength/2; 
+	legZin = supLegZfi - hipLength/2;
 //@Above two lines, This is what should happen, but this implementation will be changed because
 	//we want the robot to strafe, and to do that we need to have it put the free foot out in each step,
 	//and bring the next free foot back inside on the next step
 	//for this we need the deviation to be reflected in calculations of initial state of next step
-//@Below two lines are coded for this.
-	supLegZin = supLegZfi - hipLength/2; 
-	legZin = legZfi - hipLength/2;
+// @Below two lines are coded for this.
+	// supLegZin = supLegZfi - hipLength/2; 
+	// legZin = legZfi - hipLength/2;
 
 	veloZin = -veloZfi_d;
-	veloZfi= P_veloZfi;  
+	// veloZfi= P_veloZfi;  
 	supLegRotin  = legRotfi;
 	legRotin = supLegRotfi;
 	// sspZAmp = P_sspZAmp;
+
+	if (pos_z_actual<0)
+	{
+		// cout<<"Look "<<pos_z_actual<<endl;
+		leg=(LEG)(1-(int)leg);	
+	}
 	return EXIT_SUCCESS;//endState;
 	
 }

@@ -61,6 +61,9 @@ int main(int argc, char const *argv[])
 	int yellow = false;
 	int white = false;
 	int green = false;
+	int ball = false;
+	int bground = false;
+	int fmarker = false;
 
 	cvNamedWindow("sliders", CV_WINDOW_NORMAL);
 	cvCreateTrackbar("yminval","sliders",&yminval,255,0);
@@ -77,6 +80,9 @@ int main(int argc, char const *argv[])
 	cvCreateTrackbar("yellow", "LUT Color (Choose 1 only)", &yellow, 1, 0);
 	cvCreateTrackbar("white", "LUT Color (Choose 1 only)", &white, 1, 0);
 	cvCreateTrackbar("green", "LUT Color (Choose 1 only)", &green, 1, 0);
+	cvCreateTrackbar("ball", "LUT Color (Choose 1 only)", &ball, 1, 0);
+	cvCreateTrackbar("bground", "LUT Color (Choose 1 only)", &bground, 1, 0);
+	cvCreateTrackbar("fmarker", "LUT Color (Choose 1 only)", &fmarker, 1, 0);
 
 	while(1)
 	{
@@ -154,6 +160,27 @@ int main(int argc, char const *argv[])
 			{
 				uchar *mylut = marker_create_lut(c);
 				FILE *fp = fopen("./lut_out/green.lut", "wb");
+				fwrite(mylut,sizeof(uchar),256*256*256,fp);
+    			fclose(fp);
+			}
+			if(ball)
+			{
+				uchar *mylut = marker_create_lut(c);
+				FILE *fp = fopen("./lut_out/ball.lut", "wb");
+				fwrite(mylut,sizeof(uchar),256*256*256,fp);
+    			fclose(fp);
+			}
+			if(bground)
+			{
+				uchar *mylut = marker_create_lut(c);
+				FILE *fp = fopen("./lut_out/background.lut", "wb");
+				fwrite(mylut,sizeof(uchar),256*256*256,fp);
+    			fclose(fp);
+			}
+			if(fmarker)
+			{
+				uchar *mylut = marker_create_lut(c);
+				FILE *fp = fopen("./lut_out/footmarker.lut", "wb");
 				fwrite(mylut,sizeof(uchar),256*256*256,fp);
     			fclose(fp);
 			}

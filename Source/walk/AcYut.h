@@ -9,7 +9,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <iostream>
-#include "xsens/imu.h"
+#include "../xsens/imu.h"
 
 #define ACYUT_MOTOR 31
 
@@ -23,6 +23,8 @@ private:
 	Communication* comm;
 	double COM[AXES];
 	double rotCOM[AXES];
+	double rotCOMVel[AXES];
+	double zeroIMU[AXES];
 	static const double legHeight = 380;
 	supportPolygon poly;
 	int polyPoints;
@@ -42,10 +44,12 @@ public:
 	int pingBot();
 	
 	double* getWorldFrameCoods(double coods[AXES],double ans[AXES]);
+	double* getWorldFrameVel(double coods[AXES],double ans[AXES], double velz, double vely);
 	int getFeetCoods(int leg);
 	int getFeetCoods();
 	const double (&(getCOM())) [AXES];
 	const double (&(getRotCOM()))[AXES];
+	const double (&(getRotCOMVel(double velz, double vely)))[AXES];
 	void getArmTorsoCOM(double armTorsoCOM[AXES]);
 	const supportPolygon calcSupportPolygon();
 	int clearPoS();
