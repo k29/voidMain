@@ -147,6 +147,13 @@ typedef struct
 	Coords finalPath[30];
 }WalkPacket;
 
+typedef struct
+{
+	bool STAY;
+	bool FALLLEFT;
+	bool FALLRIGHT;
+}GoalKeeperPacket;
+
 typedef struct 
 {
 	/*data*/
