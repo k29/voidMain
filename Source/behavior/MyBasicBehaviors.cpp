@@ -445,6 +445,26 @@ void BasicBehaviorGoalKeep::execute()
         printf("FALLLEFT\n");
     if(ret == FALLRIGHT)
         printf("FALLRIGHT\n");
+    pthread_mutex_lock(&mutex_goalkeeperpacket);
+    if(ret == STAY)
+    {
+        goalkeeperpack.STAY = true;
+        goalkeeperpack.FALLLEFT = false;
+        goalkeeperpack.FALLRIGHT = false;
+    }
+    else if(ret == FALLLEFT)
+    {
+        goalkeeperpack.STAY = false;
+        goalkeeperpack.FALLLEFT = true;
+        goalkeeperpack.FALLRIGHT = false;
+    }
+    else
+    {
+        goalkeeperpack.STAY = false;
+        goalkeeperpack.FALLLEFT = false;
+        goalkeeperpack.FALLRIGHT = true;
+    }
+    pthread_mutex_unlock(&mutex_goalkeeperpacket);
     cvNamedWindow("Real Time Feed");
     cvMoveWindow("Real Time Feed",300,50);
     cvShowImage("Real Time Feed", p.capture.rgbimg);
