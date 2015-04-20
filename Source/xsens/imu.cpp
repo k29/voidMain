@@ -33,7 +33,7 @@ bool Imu::init()
     int mtCount;
     
     printf("Scanning for connected Xsens devices...");
-    xsens::cmtScanPorts(portInfo);
+    xsens::cmtScanPorts(portInfo, CMT_DEFAULT_BAUD_RATE);
     portCount = portInfo.length();
     printf("done\n");
 
@@ -69,7 +69,7 @@ bool Imu::init()
     //     if (strlen(portname) == 0)
     //             sprintf(portname, "/dev/ttyUSB0");
 
-    if (serial.open(portInfo[0].m_portName, B115200) != XRV_OK)
+    if (serial.open(portInfo[0].m_portName, CMT_DEFAULT_BAUD_RATE) != XRV_OK)
         EXIT_ERROR("open");
     
     msg.setMessageId(CMT_MID_GOTOCONFIG);
@@ -89,7 +89,7 @@ bool Imu::init()
     // printf("Period is now set to 100Hz\n");
 
     msg.setMessageId(CMT_MID_SETOUTPUTMODE);
-    msg.setDataShort(CMT_OUTPUTMODE_ORIENT);
+    msg.setDataShort(CMT_OUTPUTMODE_ORIENTCALIB);
     if (serial.writeMessage(&msg))
         EXIT_ERROR("set output mode");
     if (serial.waitForMessage(&reply, CMT_MID_SETOUTPUTMODEACK, 0,  1) != XRV_OK)
@@ -97,7 +97,7 @@ bool Imu::init()
     printf("Output mode is now set to orientation\n");
 
     msg.setMessageId(CMT_MID_SETOUTPUTSETTINGS);
-    msg.setDataLong(CMT_OUTPUTSETTINGS_ORIENTMODE_EULER | CMT_OUTPUTSETTINGS_TIMESTAMP_SAMPLECNT);
+    msg.setDataLong(CMT_OUTPUTSETTINGS_ORIENTCALIB_GYREULER | CMT_OUTPUTSETTINGS_TIMESTAMP_SAMPLECNT);
     if (serial.writeMessage(&msg))
         EXIT_ERROR("set output settings");
     if (serial.waitForMessage(&reply, CMT_MID_SETOUTPUTSETTINGSACK, 0,  1) != XRV_OK)
@@ -160,9 +160,12 @@ void Imu::__update()
      //     (double) reply.getDataFloat(1*4),  // pitch
      //     (double) reply.getDataFloat(2*4)   // yaw
      //     );
-    roll = reply.getDataFloat(0*4);
-    pitch = reply.getDataFloat(1*4);
-    yaw = reply.getDataFloat(2*4);
+    vroll = reply.getDataFloat(0*4);
+    vpitch = reply.getDataFloat(1*4);
+    vyaw = reply.getDataFloat(2*4);
+    roll = reply.getDataFloat(3*4);
+    pitch = reply.getDataFloat(4*4);
+    yaw = reply.getDataFloat(5*4);
 }
 
 void Imu::__flush()

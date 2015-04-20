@@ -667,7 +667,13 @@ void Localize::calcConfidence()
 	
 }
 
-
+void Localize::getGoalPosts(AbsCoords &g1, AbsCoords &g2)
+{
+	g1.x = landGPY[0].x;
+	g1.y = landGPY[0].y;
+	g2.x = landGPY[1].x;
+	g2.y = landGPY[1].y;
+}
 
 AbsCoords Localize::getGoalCoords(int g)
 {

@@ -9,6 +9,7 @@ PathStructure ps; //Coming from main cognition.
 PathPacket pathpackvar; //The class for writing the files.
 
 double test_x = 50, test_y = 50;
+double ball_x = 25, ball_y = 25;
 
 void callBack(int event, int x, int y, int flags, void* userdata)
 {
@@ -22,8 +23,8 @@ void callBack(int event, int x, int y, int flags, void* userdata)
      else if  ( event == EVENT_RBUTTONDOWN )
      {
         cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
-        test_x = x - 250;
-        test_y = y - 250;
+        ball_x = x - 250;
+        ball_y = y - 250;
      }
      else if  ( event == EVENT_MBUTTONDOWN )
      {
@@ -31,10 +32,10 @@ void callBack(int event, int x, int y, int flags, void* userdata)
       	test_x = x - 250;
      	test_y = y - 250;
      }
-     else if ( event == EVENT_MOUSEMOVE )
-     {
-          cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
-     }
+     // else if ( event == EVENT_MOUSEMOVE )
+     // {
+     //      cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
+     // }
 }
 
 void call_main() //Function made to replicate path calling from the cognition module.
@@ -42,7 +43,7 @@ void call_main() //Function made to replicate path calling from the cognition mo
 	srand(time(NULL));
 	
 	// extern double test_x,test_y;
-	ps.n_obstacles = 1;
+	ps.n_obstacles = 3;
 	ps.absObstacles[0].x=35; 
 	ps.absObstacles[0].y=-75;
 	ps.absObstacles[1].x=15;
@@ -57,23 +58,25 @@ void call_main() //Function made to replicate path calling from the cognition mo
 	ps.goal.y=-90;	//get from click
 
 	#ifdef TESTPATH
-	ps.goal.x = test_x;
-	ps.goal.y = test_y;
+	ps.absObstacles[0].x = test_x;
+	ps.absObstacles[0].y = test_y;
+	ps.ball.x = ball_x;
+	ps.ball.y = ball_y;	
 	#endif
 
-	for(int i=0;i<ps.n_obstacles;i++)
-	 {
-	// 	ps.absObstacles[i].x=rand() % 200 - 100;
-	// 	ps.absObstacles[i].y=rand() % 200 - 100;
-		std::cout<<"obstacle "<<i<<" x value "<<ps.absObstacles[i].x<<std::endl;
-		std::cout<<"obstacle "<<i<<" y value "<<ps.absObstacles[i].y<<std::endl;
-	 }
+	// for(int i=0;i<ps.n_obstacles;i++)
+	//  {
+	// // 	ps.absObstacles[i].x=rand() % 200 - 100;
+	// // 	ps.absObstacles[i].y=rand() % 200 - 100;
+	// 	std::cout<<"obstacle "<<i<<" x value "<<ps.absObstacles[i].x<<std::endl;
+	// 	std::cout<<"obstacle "<<i<<" y value "<<ps.absObstacles[i].y<<std::endl;
+	//  }
 	// ps.ball.x=rand() % 200 - 100;
 	// ps.ball.y=rand() % 200 - 100;	
 	// ps.goal.x = rand() % 200 - 100;
 	// ps.goal.y = rand() % 200 - 100;
-	std::cout<<"ball "<<ps.ball.x<<" "<<ps.ball.y<<std::endl;	
-	std::cout<<"goal "<<ps.goal.x<<" "<<ps.goal.y<<std::endl;	
+	// std::cout<<"ball "<<ps.ball.x<<" "<<ps.ball.y<<std::endl;	
+	// std::cout<<"goal "<<ps.goal.x<<" "<<ps.goal.y<<std::endl;	
 
 	int r=200;
 	int theta=100;
@@ -88,7 +91,7 @@ void call_main() //Function made to replicate path calling from the cognition mo
 	// 		cvWaitKey();
 	// 	}
 	p.path_return(ps);
-	// p.updatePathPacket();//true if file writing to be on...else off.
+	p.updatePathPacket();//true if file writing to be on...else off.
 }
 int main()
 {

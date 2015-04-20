@@ -67,6 +67,8 @@ void Walk::move(double walkr,double walktheta)
     fprintf(file,"%s %s\n",S1,S2);
     printf("\n Radius in path fn to serial monitor %s\n angle in path fn to serial monitor %s  \n",S1,S2 );
 
+
+
     fclose(file);
 		return ;
 	

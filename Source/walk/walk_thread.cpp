@@ -19,7 +19,7 @@ const double c3=(c1+1)/c5;				//	delta_y_max = c3*vd		Maximum step length possib
 const double c4=(c2+1)/c5;				//	delta_y_min	= c4*vd		Minimum step length possible, this corresponds to equation 2
 const double v_initial = 10;				 //	Velocity when bot begins to move
 const double first_delta_y= 2*v_initial/c5;//	Initial step length is calculated by using equation 4 and given initial velocity which is assumed constant, i.e, vf=vd=vi
-const double max_velocity = 150;//	Maximum velocity corresponding to above delta y assuming step length is constant for the motion	
+const double max_velocity = 100;//	Maximum velocity corresponding to above delta y assuming step length is constant for the motion	
 const double max_delta_y  = 2*max_velocity/c5;				 //	Maximum length of a step (read delta y), from back to front. This is a limitation of stability; if bot moves more farther than this, it will be unstable
 const double foot_width  = 100;				 //	Width of the foot, might not be used
 const double foot_separation = 130;			 //	Standard Length between centers of the feet during linear motion
@@ -82,12 +82,12 @@ int constraint_check(foot step , double vf , int loop_num)
 		return 2;
 	else if (loop_num ==2 && step.delta_y<min_delta_y)
 		return 3;
-	else if (vf>max_velocity/2)
-		return 4;
-	else if (step.delta_x>max_delta_x)
-		return 5;
-	else if (step.delta_theta>max_delta_theta)
-		return 6;		
+	// else if (vf>2*max_velocity/3)
+		// return 4;
+	// else if (step.delta_x>max_delta_x)
+		// return 5;
+	// else if (step.delta_theta>max_delta_theta)
+		// return 6;		
 	else
 		return 1;
 }
@@ -110,7 +110,7 @@ void convert_values (PathPacket pathpackvarlocal, double dist_circstart[], doubl
 			double vector_product = (x1-ox)*(y2-y1) - (y1-oy)*(x2-x1);
 
 			footlr[i/2] = (vector_product>0)?1:0;
-			radius[i]	=	OBSTACLE_RADIUS;
+			radius[i/2]	=	OBSTACLE_RADIUS;
 
 			double theta = 180*2*acos(sqrt(1 - pow((10*distance(ox,oy,x1,y1)/(2*radius[i])),2)))/pi;
 
@@ -130,9 +130,11 @@ void convert_values (PathPacket pathpackvarlocal, double dist_circstart[], doubl
 			oy = y2;
 			dirx = x2-x1;
 			diry = y2-y1;
-
-
-
+		}
+		if (pathpackvarlocal.IGNORE_ARC)
+		{
+			theta_arc[0] = 0;
+			dist_circstart[0] = sqrt(pow(pathpackvarlocal.finalpath[1].x,2) + pow(pathpackvarlocal.finalpath[1].y,2));
 		}
 }
 
@@ -253,6 +255,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	{
 		dist_circstart[i+1] = dist_circstart1[i];
 	}
+	theta_arc[no_obstacles] = 0;
 	#endif
 	//Comment this portion for normal walk path - Currently this is conditioned on IP being off
 	#ifndef IP_IS_ON
@@ -270,7 +273,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	//till here
 	int fmscheck = 0;
 	int first_circ_foot[4] , last_circ_foot[4]; //FSPMOD CODE
-	for (int i=0;i<no_obstacles;i++)	
+	for (int i=0;i<=no_obstacles;i++)	
 	{
 	
 		footlr[i] = pow((footlr[i] - lr),2); 
@@ -339,6 +342,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 			check=0;											
 			while (check==0)
 			{
+				// printf("stuck1\n");
 				step[count+1].delta_y = c3 * vd - 0.01;
 				if ((count+1)%2 == footlr[i])				//This assumes that the entering foot is the inner one. This will be changed later in order to generalize.
 				{
@@ -379,6 +383,8 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 				check=0;
 			while (check==0)
 			{
+				// printf("stuck2\n");
+
 				step[count+1].delta_y = c4 * vd + 0.01;
 				if ((count+1)%2 == footlr[i])				//This assumes that the entering foot is the inner one. This will be changed later in order to generalize.
 				{
@@ -424,7 +430,10 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	}
 	for (int i=0;i<count-1;i++)
 	{
-		// printf ("sno = %d\tDelta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",i,step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
+		if (fabs(step[i].delta_theta)> 20)
+			step[i].delta_theta = 0;
+		// step[i].delta_x = 0;
+		printf ("sno = %d\tDelta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",i,step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
 	}
 /*	//FSPMOD CODE
 	for (int i=0; i<no_obstacles; i++)
@@ -514,11 +523,12 @@ void* walk_thread(void*)
 	pthread_mutex_unlock(&mutex_pathpacket);
 	footstepmain(10 , foot1[j].delta_y , 0 ,  foot1 , i , pathpackvarlocal);
 	double r = 0, x = 0, y = 0, theta = 0;
+	bool foot = 0;
 	while (1)
 	{
 		// printf("in walk thread\n");
 		j = 0;
-		while (j<i-1 )
+		while (j<i-1 && j < 10)
 		{
 			// walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
 			walk.pathdribble(foot1[j].vel_y, foot1[j].delta_x,foot1[j].delta_theta,0);
@@ -537,27 +547,80 @@ void* walk_thread(void*)
 					theta += foot1[j].delta_theta;
 					r = sqrt(pow(x,2) + pow(y,2));
 				}
-			// printf("step = %d theta = %f delta_x = %f delta_y = %f vel_y = %f\n" ,j, foot1[j].delta_theta , foot1[j].delta_x, foot1[j].delta_y, foot1[j].vel_y);
-			
+			printf("step = %d theta = %f delta_x = %f delta_y = %f vel_y = %f\n" ,j, foot1[j].delta_theta , foot1[j].delta_x, foot1[j].delta_y, foot1[j].vel_y);
+			foot = !foot;
 			pthread_mutex_lock(&mutex_motionModel);
 			motionModel.update(r,atan(y/x)*180/pi);
 			pthread_mutex_unlock(&mutex_motionModel);
 			j++;
+			pthread_mutex_lock(&mutex_pathpacket);
+			pathpackvarlocal = pathpackvar;
+			pthread_mutex_unlock(&mutex_pathpacket);		
+			printf("BACK WALK %d\n", pathpackvarlocal.BACK_WALK);
+			printf("IGNORE ARC %d\n", pathpackvarlocal.IGNORE_ARC);
+			printf("UPDATE FLAG %d\n", pathpackvarlocal.UPDATE_FLAG);
+			printf("ROTATE %d\n", pathpackvarlocal.ROTATE);
+			printf("BALLFOLLOW %d\n",pathpackvarlocal.BALLFOLLOW );
+			if (pathpackvarlocal.UPDATE_FLAG == 1)
+				break;	
 		}
 		j--;
-		pthread_mutex_lock(&mutex_pathpacket);
-		pathpackvarlocal = pathpackvar;
-		r = 0;
-		x = 0;
-		y = 0;
-		theta = 0;
-		cout<<"no_of_points "<<pathpackvar.no_of_points<<endl;
-		for (int i1 = 0; i1 < pathpackvar.no_of_points; ++i1)
+		// printf("%d\n", pathpackvarlocal.UPDATE_FLAG);
+		do
 		{
-			cout<<"x: "<<pathpackvar.finalpath[i1].x<<"y; "<<pathpackvar.finalpath[i1].y<<endl;
-		}
-		pthread_mutex_unlock(&mutex_pathpacket);
-		footstepmain(walk.velocity() , foot1[j].delta_y , j%2 ,  foot1 ,i , pathpackvarlocal);
+			pthread_mutex_lock(&mutex_pathpacket);
+			pathpackvar.UPDATE_FLAG = 0;
+			printf("actual pathpacket back flag %d\n", pathpackvar.BACK_WALK);
+			pathpackvarlocal = pathpackvar;
+			r = 0;
+			x = 0;
+			y = 0;
+			theta = 0;
+			cout<<"No. of points : "<<pathpackvar.no_of_points<<endl;
+			pthread_mutex_unlock(&mutex_pathpacket);
+			if (pathpackvarlocal.BACK_WALK)
+			{
+				foot = walk.backMotion(10*sqrt(pow(pathpackvarlocal.finalpath[0].x,2) + pow(pathpackvarlocal.finalpath[0].y,2)));
+				cout<<"Back walk distance: "<<10*sqrt(pow(pathpackvarlocal.finalpath[0].x,2) + pow(pathpackvarlocal.finalpath[0].y,2))<<endl;
+			}
+			else if (pathpackvarlocal.ROTATE)
+			{
+				walk.stopMotion();
+				if (pathpackvarlocal.ROTATE_RIGHT)
+				{
+					walk.turnright(fabs(rad2deg(pathpackvarlocal.theta)));
+				}
+				else
+					walk.turnleft(fabs(rad2deg(pathpackvarlocal.theta)));
+				cout<<"Turning angle (right is positive) "<<(pathpackvarlocal.ROTATE_RIGHT?1:-1)*pathpackvarlocal.theta<<endl;
+			}
+			else if (pathpackvarlocal.BALLFOLLOW)
+			{
+				if (walk.velocity() < 90 && walk.velocity() > 0)
+				{
+					walk.accelerate();
+					walk.dribble();
+				}
+				else if (walk.velocity() < 0)
+				{
+					walk.pathdribble(10,0,0,0);
+					walk.dribble();
+				}
+				else
+					walk.dribble();
+			}
+			else
+				footstepmain(walk.velocity() , foot1[j].delta_y , foot ,  foot1 ,i , pathpackvarlocal);
+			// usleep(100);
+			cout<<"No path made cases"<<endl;
+			printf("BACK WALK %d\n", pathpackvarlocal.BACK_WALK);
+			printf("IGNORE ARC %d\n", pathpackvarlocal.IGNORE_ARC);
+			printf("UPDATE FLAG %d\n", pathpackvarlocal.UPDATE_FLAG);
+			printf("ROTATE %d\n", pathpackvarlocal.ROTATE);
+			printf("BALLFOLLOW %d\n",pathpackvarlocal.BALLFOLLOW );			
+		}		
+		while (pathpackvarlocal.BACK_WALK == 1 || pathpackvarlocal.ROTATE == 1 | pathpackvarlocal.BALLFOLLOW == 1);
+
 	}
 
 

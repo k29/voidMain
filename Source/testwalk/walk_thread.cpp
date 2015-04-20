@@ -58,27 +58,30 @@ void* walk_thread(void*)//don't know why such prototype
 	int x_initial=1, y_initial=0, flag=0;
 	int reflex;
 	int direction;
-
+	bool flagStop = 0;
 
 		while(1)
 		{
 			// printf("%s\n","Entering while(1)" );
 			pthread_mutex_lock(&mutex_pathpacket);
+				// printf("walk_thread locked\n");
 
 				if(pathpackvar.updated==1)
 				{
 					pathpackvarlocal=pathpackvar;
 					pathpackvar.updated=0;
+					// flagStop = 1;
 
 				}
 			pthread_mutex_unlock(&mutex_pathpacket);
+				// printf("walk_thread unlocked\n");
 
 
-			printf("%d\n",pathpackvarlocal.no_of_points );
+			// printf("%d\n",pathpackvarlocal.no_of_points );
 			for(int i=0;i<pathpackvarlocal.no_of_points;i++)
 			{
-				printf("%f\n",pathpackvarlocal.finalpath[i].x );
-				printf("%f\n",pathpackvarlocal.finalpath[i].y );
+				// printf("%f\n",pathpackvarlocal.finalpath[i].x );
+				// printf("%f\n",pathpackvarlocal.finalpath[i].y );
 			}
 
 
@@ -86,7 +89,7 @@ void* walk_thread(void*)//don't know why such prototype
 		
 			for(int i=0;i<pathpackvarlocal.no_of_points;i++)
 			{
-				printf("%s\n","Entering for loop" );
+				// printf("%s\n","Entering for loop" );
 
 				/*
 						First packet is arc, second 
@@ -94,11 +97,11 @@ void* walk_thread(void*)//don't know why such prototype
 				*/
 
 
-				if (pathpackvarlocal.no_of_points==1&&pathpackvarlocal.NEAR_FLAG==1)
+				if (pathpackvarlocal.no_of_points==1&&(pathpackvarlocal.BACK_WALK==1 || pathpackvarlocal.NEAR_OBSTACLE))
 				{
 					radius=forward_move_length(0, pathpackvarlocal.finalpath[i].x,0, pathpackvarlocal.finalpath[i].y);
-					printf("%f\n",radius );
-
+					// printf("%f\n",radius );
+ 
 					// fflush(stdout);
 					walk.move(-1*radius,0);
 					// fflush(stdout);
@@ -107,14 +110,14 @@ void* walk_thread(void*)//don't know why such prototype
 
 					continue;
 				}
-				else if(pathpackvarlocal.no_of_points==1&&pathpackvarlocal.NEAR_FLAG==0)
-				{
-					walk.move(9999,9999);
-					usleep(1000000);
-					continue;
-				}
-				else
-					{;} // proceed
+				// else if(pathpackvarlocal.no_of_points==1&&pathpackvarlocal.BACK_WALK==0)
+				// {
+				// 	walk.move(9999,9999);
+				// 	usleep(1000000);
+				// 	continue;
+				// }
+				// else
+				// 	{;} // proceed
 				
 
 				if(i%2==0)
@@ -154,8 +157,8 @@ void* walk_thread(void*)//don't know why such prototype
 					// ostream::flush;
 					// nanosleep(100000);
 					// usleep(1000000);
-					usleep(3*1.75 *abs(phi*80/9)*1000);
-					usleep(1000000);
+					usleep(1.5*1.75 *abs(phi*80/9)*1000);
+					usleep(500000);
 					// ostream::flush;
 					
 					
@@ -171,7 +174,7 @@ void* walk_thread(void*)//don't know why such prototype
 					walk.move(radius,0);
 					// fflush(stdout);
 					usleep(1000000*(radius+2.5)/(0.145*255));
-					usleep(1000000);
+					usleep(500000);
 					// fflush(stdout);
 					
 					// straight line traversal
@@ -179,13 +182,15 @@ void* walk_thread(void*)//don't know why such prototype
 				if(i%2==1)
 				{
 					pthread_mutex_lock(&mutex_pathpacket);
+						// printf("walk_thread locked\n");
 						if(pathpackvar.updated==1)
 						{
-							printf("%s\n","breaking out of for loop" );
+							// printf("%s\n","breaking out of for loop" );
 							pthread_mutex_unlock(&mutex_pathpacket);
 							break;
 						}
 					pthread_mutex_unlock(&mutex_pathpacket);
+						// printf("walk_thread unlocked\n");
 				}
 
 			}	

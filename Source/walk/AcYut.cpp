@@ -50,7 +50,10 @@ void AcYut::initialize()
 	
 	//left_leg->getLoad();
 	//right_leg->getLoad();
-	
+
+	zeroIMU[X] = imu->roll;
+	zeroIMU[Y] = imu->pitch;
+	zeroIMU[Z] = imu->yaw;
 	printf("Initialized Bot\n");
 }
 
@@ -356,6 +359,12 @@ const double (&(AcYut::getRotCOM()))[AXES]
 	getWorldFrameCoods(COM,rotCOM);
 	return rotCOM;
 }
+const double (&(AcYut::getRotCOMVel(double velz, double vely)))[AXES]
+{
+	getCOM();
+	getWorldFrameVel(COM,rotCOMVel, velz, vely);
+	return rotCOMVel;
+}
 
 int AcYut::printCOM()
 {
@@ -375,26 +384,66 @@ int AcYut::printRotCOM()
 
 double* AcYut::getWorldFrameCoods(double coods[], double ans[])
 {
-	double pitch = deg2rad(imu->roll);
-	double roll  = deg2rad(imu->pitch);
-	double floorcoods_x = 200.0;
+	double pitch = deg2rad(imu->roll - zeroIMU[X]);
+	double roll  = deg2rad(imu->pitch - zeroIMU[Y]);
+	double floorcoods_x = 450.0;
 	double floorcoods_z = 0;
+	double floorcoods_y = 0;
+	if (fabs(imu->roll - zeroIMU[X]) < 10)
+		pitch = 0;
+	if (fabs(imu->pitch - zeroIMU[Y]) < 10)
+		roll = 0;
+	// c1c2	c1s2s3-c3s1	s1s3+c1c3s2
+	// c2s1 	c1c3+s1s2s3	c3s1s2-c1s3
+	// -s2 	c2s3 		c2c3
+	// 1 is roll, 2 is pitch, 3 is yaw
+	ans[X] = cos(roll)*cos(pitch)*floorcoods_x - sin(roll)*floorcoods_y + cos(roll)*sin(pitch)*floorcoods_z;
+	ans[Y] = sin(roll)*cos(pitch)*floorcoods_x/8 + cos(roll)*floorcoods_y + sin(roll)*sin(pitch)*floorcoods_z;
+	ans[Z] = -sin(pitch)*floorcoods_x/3 + cos(pitch)*floorcoods_z;
+
+	// #ifdef DEBUG
+	// printf("X\t%3.3lf\tY\t%3.3lf\tZ\t%3.3lf\n",coods[X],coods[Y],coods[Z]);
+	// printf("ROT X\t%3.3lf\tY\t%3.3lf\tZ\t%3.3lf\n",ans[X],ans[Y],ans[Z]);
+	// printf("IMU ROLL = %f PITCH = %f YAW = %f VROLL = %f VPITCH = %f VYAW = %f\n", imu->roll,imu->pitch,imu->yaw, imu->vroll,imu->vpitch,imu->vyaw);
+	// #endif
+	
+	return ans;
+}
+double* AcYut::getWorldFrameVel(double coods[], double ans[], double velz, double vely)
+{
+	double pitch = deg2rad(imu->roll - zeroIMU[X]);
+	double roll  = deg2rad(imu->pitch - zeroIMU[Y]);
+	double vpitch = (imu->vroll);
+	double vroll  = (imu->vpitch);
+	double floorcoods_x = 450.0;
+	double floorcoods_z = 0;
+	double floorcoods_y = 0;
+	if (fabs(imu->roll - zeroIMU[X]) < 10)
+		pitch = 0;
+	if (fabs(imu->pitch - zeroIMU[Y]) < 10)
+		roll = 0;
+	if (fabs(rad2deg(vroll))<20)
+		vroll = 0;
+	if (fabs(rad2deg(vpitch))<40)
+		vpitch = 0;
 	// cout<<"IMU pitch = "<<-(imu->pitch)<<endl;
 	// c1c2	c1s2s3-c3s1	s1s3+c1c3s2
 	// c2s1 	c1c3+s1s2s3	c3s1s2-c1s3
 	// -s2 	c2s3 		c2c3
 	// 1 is roll, 2 is pitch, 3 is yaw
-	ans[X] = cos(roll)*cos(pitch)*floorcoods_x - sin(roll)*coods[Y] + cos(roll)*sin(pitch)*coods[Z];
-	ans[Y] = sin(roll)*cos(pitch)*floorcoods_x + cos(roll)*coods[Y] + sin(roll)*sin(pitch)*coods[Z];
-	ans[Z] = -sin(pitch)*floorcoods_x + cos(pitch)*coods[Z];
+	// cout<<"vRollpitch "<<rad2deg(imu->vroll)<<" "<<rad2deg(imu->vpitch)<<endl;
+	ans[X] = cos(roll)*cos(pitch)*floorcoods_x - sin(roll)*floorcoods_y + cos(roll)*sin(pitch)*floorcoods_z;
+	ans[Y] = (cos(roll)*cos(pitch)*vroll - sin(roll)*sin(pitch)*vpitch)*floorcoods_x/8 - sin(roll)*floorcoods_y*vroll + cos(roll)*vely + (cos(roll)*sin(pitch)*vroll + sin(roll)*cos(pitch)*vpitch)*floorcoods_z + sin(roll)*sin(pitch)*velz;	
+	ans[Z] = -cos(pitch)*floorcoods_x*vpitch/15 - sin(pitch)*floorcoods_z*vpitch + cos(pitch)*(velz);
 
+	// ans[Z] = -sin(pitch)*floorcoods_x + cos(pitch)*coods[Z];
 /*	ans[X] = cos(roll)*cos(pitch)*coods[X] + sin(roll)*coods[Y] - cos(roll)*sin(pitch)*coods[Z];
 	ans[Y] = -sin(roll)*cos(pitch)*coods[X] + cos(roll)*coods[Y] + sin(roll)*sin(pitch)*coods[Z];
 	ans[Z] = sin(pitch)*coods[X] + cos(pitch)*coods[Z];*/
 	// #ifdef DEBUG
 	// printf("X\t%3.3lf\tY\t%3.3lf\tZ\t%3.3lf\n",coods[X],coods[Y],coods[Z]);
 	// printf("ROT X\t%3.3lf\tY\t%3.3lf\tZ\t%3.3lf\n",ans[X],ans[Y],ans[Z]);
-	// printf("IMU ROLL = %f PITCH = %f YAW = %f\n", imu->roll,imu->pitch,imu->yaw);
+	// printf("IMU ROLL = %f PITCH = %f YAW = %f VROLL = %f VPITCH = %f VYAW = %f\n", imu->roll,imu->pitch,imu->yaw, imu->vroll,imu->vpitch,imu->vyaw);
 	// #endif
 	
 	return ans;

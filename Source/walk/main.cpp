@@ -186,8 +186,38 @@ int main()
 	}	
 */	
 	Walk walk(&bot);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// walk.turnright(90);
-	while(walk.velocity()*1.5<=170)
+	while(walk.velocity()*1.5<160)
+	{
+		walk.accelerate();
+		walk.dribble();
+		// printf("%f\n",walk.velocity());
+	}
+	walk.dribble();
+	walk.dribble();
+	walk.dribble();
+	walk.dribble();
+	walk.dribble();
+	walk.dribble();
+	walk.dribble();
+	printf("11\n");
+	// walk.backMotion(500);
+	printf("22\n");
+	while(walk.velocity()*1.5<100)
 	{
 		walk.accelerate();
 		walk.dribble();
@@ -204,8 +234,8 @@ int main()
 			// walk.setStrafe(-8);
 		// }
 		// walk.pathdribble(-1,20,0,0);//Strafing
-		if (i<280)
-			i+=15;
+		// if (i<280)
+//			i+=15;
 		// cout<<i<<" "<<endl;
 		walk.pathdribble(i,0,0,0*pow(-1,j%2));
 		walk.dribble();

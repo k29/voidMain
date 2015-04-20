@@ -239,9 +239,9 @@ void FeatureDetection::getGoals(CamCapture &cam, HeadMotor &hm)
     cvLabel(seg_yellow, labelImg, blobs_yellow);
     cvFilterByArea(blobs_yellow, 100, 1000000);
     #ifndef INTEL_BOARD_DISPLAY
-    cvNamedWindow("YELLOW");
-    cvMoveWindow("YELLOW",400,600);
-    cvShowImage("YELLOW",seg_yellow);
+    // cvNamedWindow("YELLOW");
+    // cvMoveWindow("YELLOW",400,600);
+    // cvShowImage("YELLOW",seg_yellow);
     #endif
     int max = IMAGE_HEIGHT;
     for (CvBlobs::const_iterator it=blobs_yellow.begin(); it!=blobs_yellow.end(); ++it)
@@ -534,9 +534,9 @@ bool FeatureDetection::getObstacles(CamCapture &cam, HeadMotor &hm)
         }
     }
     #ifndef INTEL_BOARD_DISPLAY
-    cvNamedWindow("BLACK");
-    cvMoveWindow("BLACK",720,600);
-    cvShowImage("BLACK",seg_black);
+    // cvNamedWindow("BLACK");
+    // cvMoveWindow("BLACK",720,600);
+    // cvShowImage("BLACK",seg_black);
     #endif
     return obstacleOnEdge;
 }
@@ -742,8 +742,8 @@ void FeatureDetection::getCorners(CamCapture &cam, HeadMotor &hm)
         cvCircle(color_dst, line[0], 5, cvScalar(64),5);
     }
 
-    cvNamedWindow( "Hough", 1 );
-    cvShowImage( "Hough", color_dst );
+    // cvNamedWindow( "Hough", 1 );
+    // cvShowImage( "Hough", color_dst );
 #endif
 
     // Clear the memory storage which was used before
@@ -939,9 +939,9 @@ void FeatureDetection::getInGreen(CamCapture &cam)
     //     }
     // }
     #ifndef INTEL_BOARD_DISPLAY
-    cvNamedWindow("RED");
-    cvMoveWindow("RED",50,600);
-    cvShowImage("RED", seg_red);
+    // cvNamedWindow("RED");
+    // cvMoveWindow("RED",50,600);
+    // cvShowImage("RED", seg_red);
     #endif
 
     cvReleaseImage(&histogram);
@@ -1159,13 +1159,14 @@ void FeatureDetection::getBall(CamCapture &cam, HeadMotor &hm)
             ballX_var = ballx*2;
             ballY_var = bally*2;
             ballFound_var = true;
-            cvShowImage("check_ball", check_ball);
+            // cvShowImage("check_ball", check_ball);
         }
         cvReleaseImage(&mask);
     }
     if(ballFound_var)
         findReal(ballX_var, ballY_var, ball.r, ball.theta, hm);
-    cvShowImage("seg_green_not", seg_green_not);
+    // 
+    Image("seg_green_not", seg_green_not);
     // cvReleaseImage(&seg_green_not);
     #endif
 
