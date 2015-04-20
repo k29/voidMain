@@ -49,7 +49,7 @@ void* readGameController(void*)
     hints.ai_flags = AI_PASSIVE; // use my IP
 
 
-    if ((rv = getaddrinfo(NULL, MYPORT, &hints, &servinfo)) != 0)
+    if ((rv = getaddrinfo("10.0.0.15", MYPORT, &hints, &servinfo)) != 0)
     {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
         return (int*)1;

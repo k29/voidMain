@@ -249,9 +249,25 @@ bool Path::checkLines(AbsCoords lGoal, AbsCoords rGoal, AbsCoords ball)
 		return false;
 }
 
+bool checkDirection(AbsCoords lGoal, AbsCoords rGoal, AbsCoords ball)
+{
+	AbsCoords midGoal;
+	midGoal.x = (lGoal.x + rGoal.x)/2;
+	midGoal.y = (lGoal.y + rGoal.y)/2;
+
+	double goalsign = (midGoal.y-ball.y) - ((lGoal.y-rGoal.y)/(lGoal.x-rGoal.x))*(midGoal.x-ball.x);
+	double selfsign = (-ball.y) - ((lGoal.y-rGoal.y)/(lGoal.x-rGoal.x))*(-ball.x);
+
+	if(goalsign*selfsign > 0)
+		return false;
+	else
+		return true;
+}
+
 void Path::orientSelf(PathStructure ps)
 {
-	if(checkLines(ps.gpleft, ps.gpright, ps.ball))
+	bool Rotate;
+	if(checkLines(ps.gpleft, ps.gpright, ps.ball) && checkDirection(ps.gpleft, ps.gpright, ps.ball))
 	{
 		//send atan2(ball.y, ball.x);
 		// printf("checklines\n");
@@ -260,12 +276,13 @@ void Path::orientSelf(PathStructure ps)
 		pathpackvar.ROTATE = 1;
 		pathpackvar.BACK_WALK = 0;
 		pathpackvar.BALLFOLLOW = 0;
+		pathpackvar.SIDE_WALK = 0;
 		if(ps.ball.y>0)
 			pathpackvar.ROTATE_RIGHT = 1;
 		else
 			pathpackvar.ROTATE_RIGHT = 0;		
 			
-		if(abs(pathpackvar.theta)<5*PI/180)
+		if(abs(pathpackvar.theta)<15*PI/180)
 		{
 			pathpackvar.ROTATE = 0;
 			pathpackvar.distance = sqrt(pow(ps.ball.y, 2)+pow(ps.ball.x, 2))-5;
@@ -281,9 +298,31 @@ void Path::orientSelf(PathStructure ps)
 
 		pthread_mutex_unlock(&mutex_pathpacket);
 	}
+	else if(!checkLines(ps.gpleft, ps.gpright, ps.ball) && ps.ball.x >= 5 && checkDirection(ps.gpleft, ps.gpright, ps.ball))
+	{
+		//sidewalk
+		bool Sidewalk;
+		bool Rotate;
+		bool Ballfollow;
+		bool Back_Walk;
+
+		pthread_mutex_lock(&mutex_pathpacket);
+		Sidewalk = 1;
+		if(Sidewalk != pathpackvar.SIDE_WALK)
+			pathpackvar.UPDATE_FLAG = 1;
+		pathpackvar.SIDE_WALK = 1;
+		pathpackvar.BACK_WALK = 0;
+		pathpackvar.ROTATE = 0;
+		pathpackvar.BALLFOLLOW = 0;
+		pathpackvar.no_of_points = 1;
+		pathpackvar.finalpath[0].x = 0;
+		pathpackvar.finalpath[0].y = ps.ball.y;
+		pthread_mutex_unlock(&mutex_pathpacket);
+	}
 	else
 	{
 		// printf("no checklines\n");
+
 		AbsCoords pointOnLine;
 		pointOnLine.y = 0;
 		pointOnLine.x = ((-1.0)*((goal.x-ball.x)/(goal.y-ball.y))*ball.y)+ball.x;
@@ -294,9 +333,14 @@ void Path::orientSelf(PathStructure ps)
 		pthread_mutex_lock(&mutex_pathpacket);
 		pathpackvar.ROTATE = 0;
 		pathpackvar.BALLFOLLOW = 0;
+		pathpackvar.SIDE_WALK = 0;
+
 		if(pointOnCircle.x<pointOnLine.x)
 		{
 			//send pointonline
+			Back_Walk = 1;
+			if(Back_Walk!=pathpackvar.BACK_WALK)
+				pathpackvar.UPDATE_FLAG = 1;
 			pathpackvar.BACK_WALK = 1;
 			pathpackvar.finalpath[0].x = pointOnLine.x;
 			pathpackvar.finalpath[0].y = 0;
@@ -305,6 +349,9 @@ void Path::orientSelf(PathStructure ps)
 		else
 		{
 			//send point oncircle
+			Back_Walk = 1;
+			if(Back_Walk!=pathpackvar.BACK_WALK)
+				pathpackvar.UPDATE_FLAG = 1;
 			pathpackvar.BACK_WALK = 1;
 			pathpackvar.finalpath[0].x = pointOnCircle.x;
 			pathpackvar.finalpath[0].y = 0;
@@ -1248,7 +1295,9 @@ void Path::updatePathPacket()
 		{
 			pathpackvar.IGNORE_ARC = 0;
 		}
-
+		//update path in walkthread when approaching ball
+		if(sqrt(pow(ball.x,2) + pow(ball.y, 2))<25 && sqrt(pow(ball.x,2) + pow(ball.y, 2))>23)
+			pathpackvar.UPDATE_FLAG = 1;
 		// if(pathpackvar.NEAR_FLAG!=Near_Flag)
 		// 	pathpackvar.UPDATE_FLAG = 1;
 		if(pathpackvar.BACK_WALK != Back_Walk)

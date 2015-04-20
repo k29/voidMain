@@ -18,7 +18,7 @@ Walk::Walk(AcYut* bot)
 	zMax=40;
 	dz = 0;
 	dspTime = 0.05;
-	lift=50;
+	lift=70;
 	legRotin=0;
 	legRotfi=0;
 	supLegRotin=0;
@@ -140,6 +140,39 @@ int Walk::pathdribble(double vel_y, double dz, double t1, double t2)
 	supLegRotfi = 0;
 	return x;
 }
+
+int Walk::sideMotion(double distance)
+{
+	stopMotion();
+	if ((leg == LEFT && distance > 0 )|| (leg == RIGHT && distance < 0))
+	{
+		dribble();
+	}
+	pathdribble(-20, 0, 0, 0);
+	pathdribble(-50, 0, 0, 0);
+	int j = 1;
+	while((10.0*j) < fabs(distance))
+	{
+		if (j%2)
+		{
+			veloZfi = -veldef + 100;
+		}
+		else
+		{
+			veloZfi = -veldef;
+		}
+		j++;
+		// cout<<"VeloZfi "<<veloZfi<<" supLegZin "<<legZin<<endl;
+		dribble();
+	}
+
+	veloZfi = -veldef;
+
+
+	pathdribble(0, 0, 0, 0);
+	pathdribble(10, 0, 0, 0);
+}
+
 
 int Walk::stopMotion()
 {
