@@ -45,7 +45,7 @@ void BasicBehaviorInitialize::execute()
     #ifndef GOAL_KEEPER_MODE
     p.GOAL_KEEPER_FLAG = false;
     #endif
-
+    printf("goal keeper flag: %d\n", p.GOAL_KEEPER_FLAG);
     printf("Initialized\n");
     #endif
 }
@@ -168,21 +168,21 @@ void BasicBehaviorUpdate::execute()
         cvPutText(flags,C,cvPoint(10,45),&font,cvScalar(255,255,255));
         cvPutText(flags,D,cvPoint(10,60),&font,cvScalar(255,255,255));
 
-        // printf("localization updated to %lf\n",p.conf);
-        // cvNamedWindow("Flags");
-        // cvNamedWindow("Real Time Feed");
-        // cvNamedWindow("Localization");
-        // #ifdef INTEL_BOARD_DISPLAY
-        // cvMoveWindow("Flags",20,30);
-        // cvMoveWindow("Real Time Feed",240,30);
-        // cvMoveWindow("Localization",850,30);
-        // #endif
-        // cvMoveWindow("Flags",50,50);
-        // cvMoveWindow("Real Time Feed",300,50);
-        // cvMoveWindow("Localization",950,50);
-        // cvShowImage("Flags",flags);
-        // cvShowImage("Real Time Feed", p.capture.rgbimg);
-        // cvShowImage("Localization", p.loc.dispImage);
+        #ifdef CAMERA_FEED
+        cvNamedWindow("Flags");
+        cvNamedWindow("Real Time Feed");
+        cvNamedWindow("Localization");
+        #ifdef INTEL_BOARD_DISPLAY
+        cvMoveWindow("Flags",20,30);
+        cvMoveWindow("Real Time Feed",240,30);
+        cvMoveWindow("Localization",850,30);
+        #endif
+        cvMoveWindow("Flags",50,50);
+        cvMoveWindow("Real Time Feed",300,50);
+        cvMoveWindow("Localization",950,50);
+        cvShowImage("Flags",flags);
+        cvShowImage("Real Time Feed", p.capture.rgbimg);
+        cvShowImage("Localization", p.loc.dispImage);
         int c = cvWaitKey(25);
         if(c == 'S' || c == 's')
             if(cvSaveImage("image.bmp", p.capture.rgbimg))
@@ -190,6 +190,7 @@ void BasicBehaviorUpdate::execute()
         cvReleaseImage(&flags);
         if(c == 27)
             exit(0);
+        #endif
         #endif
 
         #ifndef IP_IS_ON
@@ -200,7 +201,7 @@ void BasicBehaviorUpdate::execute()
 
 void BasicBehaviorRotate::execute()
 {
-    
+    p.hdmtr.doRotate();   
     // printf("BasicBehaviorRotate\n");
     // pthread_mutex_lock(&mutex_pathpacket);
     // printf("locked in behavior rotate\n");
@@ -445,6 +446,26 @@ void BasicBehaviorGoalKeep::execute()
         printf("FALLLEFT\n");
     if(ret == FALLRIGHT)
         printf("FALLRIGHT\n");
+    pthread_mutex_lock(&mutex_goalkeeperpacket);
+    if(ret == STAY)
+    {
+        goalkeeperpack.STAY = true;
+        goalkeeperpack.FALLLEFT = false;
+        goalkeeperpack.FALLRIGHT = false;
+    }
+    else if(ret == FALLLEFT)
+    {
+        goalkeeperpack.STAY = false;
+        goalkeeperpack.FALLLEFT = true;
+        goalkeeperpack.FALLRIGHT = false;
+    }
+    else
+    {
+        goalkeeperpack.STAY = false;
+        goalkeeperpack.FALLLEFT = false;
+        goalkeeperpack.FALLRIGHT = true;
+    }
+    pthread_mutex_unlock(&mutex_goalkeeperpacket);
     cvNamedWindow("Real Time Feed");
     cvMoveWindow("Real Time Feed",300,50);
     cvShowImage("Real Time Feed", p.capture.rgbimg);
@@ -509,7 +530,17 @@ void BasicBehaviorDoOrient::execute()
 void BasicBehaviorDoKick::execute()
 {
     printf("BasicBehaviorDoKick\n");
+    bool ballfollow;
     pthread_mutex_lock(&mutex_pathpacket);
     pathpackvar.DO_KICK = true;
+    ballfollow = 1;
+    if(pathpackvar.BALLFOLLOW != ballfollow)
+        pathpackvar.UPDATE_FLAG = 1;
+    pathpackvar.BALLFOLLOW = 1;
+    pathpackvar.ROTATE = 0;
+    pathpackvar.BACK_WALK = 0;
+    pathpackvar.SIDE_WALK = 0;
+    pathpackvar.IGNORE_ARC = 0;
+
     pthread_mutex_unlock(&mutex_pathpacket);
 }

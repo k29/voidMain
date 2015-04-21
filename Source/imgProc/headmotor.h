@@ -12,7 +12,7 @@
 //Name was changed from WRITE to WRITE_FTDI as it is a global #define.
 //Any way to make this local to headmotor class?
 #define WRITE_FTDI ftdi_write_data(&ftdic1_camera,pack,pack[3]+4)
-#define serialusb2d_camera "A4007rX0"//"A900fDpA"//"A4007rXO"//"A800d2dg"//"A900fDpz"//"A7003N1d" //"A4007sgE"//"A900fDpz"//"A700eSSZ"//"A4007sgG"//"A900fDpz"//A700eSSZ"//"A4007sgG"//"A900fDhp"// "A900fDpA"//"A900fDpA"
+#define serialusb2d_camera "A8006BKK"//"A900fDpA"//"A4007rXO"//"A800d2dg"//"A900fDpz"//"A7003N1d" //"A4007sgE"//"A900fDpz"//"A700eSSZ"//"A4007sgG"//"A900fDpz"//A700eSSZ"//"A4007sgG"//"A900fDhp"// "A900fDpA"//"A900fDpA"
 
 typedef unsigned char byte;
 
@@ -21,9 +21,12 @@ class HeadMotor
 private:
         static const int NO_OF_TRIES = 20;
         static const int offsetx=210,offsety=-90;
+        static const int offset = -78;
         static const int ERROR_MOTORS = -900;
         static const int FPS = 120;
         static const int MAX_STEP = 30;
+        static const int MAX_LIMIT_RIGHT = 300;
+        static const int MAX_LIMIT_LEFT = 700;
         int STEP_SIZE_17;
         int STEP_SIZE_18;        
         struct ftdi_context ftdic1_camera;
@@ -41,7 +44,9 @@ private:
         int motorX_var, motorY_var;
         int current_pos[2];
         int goal_pos[2];
+        int curr_pos;   //for fisheye camera
         bool initPos;
+        bool direction; //0 turn right 1 turn left
         //0 is Y-axis motor, 1 is X-axis (in goal and current pos) everywhere
 
 public:
@@ -56,6 +61,8 @@ public:
         int stop_motor();
         int go2state(int state);
         void update();
+        void doRotate();
+        int getCurrPos();
         inline float thetaX(){ return thetaX_var;}
         inline float thetaY(){ return thetaY_var;}
         inline int motorX(){ return motorX_var;}
