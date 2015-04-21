@@ -8,8 +8,10 @@
 #include <fstream>
 #include <ctime>
 #include <deque>
+#include <eigen3/Eigen/Dense>
 
 using namespace std;
+using namespace Eigen;
 enum {SSP,DSP};
 
 class Walk
