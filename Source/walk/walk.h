@@ -92,6 +92,7 @@ class Walk
 	int stopMotion();
 	int sideMotion(double distance);
 	int backMotion(double distance);
+	int getLeg();
 	// int start2();
 	float accelerate();
 	float velocity();

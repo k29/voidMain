@@ -201,6 +201,7 @@ int main()
 		walk.dribble();
 		// printf("%f\n",walk.velocity());
 	}
+	// walk.stopMotion();
 	int i = 150;
 	int j = 0;
 	while(1)

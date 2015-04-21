@@ -149,7 +149,7 @@ int Walk::sideMotion(double distance)
 		dribble();
 	}
 	// pathdribble(-20, 0, 0, 0);
-	// pathdribble(-50, 0, 0, 0);
+	pathdribble(-30, 0, 0, 0);
 	int j = 1;
 	while((10.0*j) < fabs(distance))
 	{
@@ -180,7 +180,7 @@ int Walk::stopMotion()
 		return 1;
 	while (fabs(veloYfi) > 20)
 	{		
-		pathdribble(veloYfi/2, 0, 0, 0);
+		pathdribble(veloYfi/3, 0, 0, 0);
 	}
 
 	pathdribble(0, 0, 0, 0);
@@ -408,7 +408,10 @@ float Walk::turnright(float theta)
 	theta=theta-legRotfi;
 	turnright(theta);	
 }
-
+int Walk::getLeg()
+{
+	return leg;
+}
 float Walk::turnleft(float theta)
 {
 	if(theta==0)
