@@ -45,7 +45,7 @@ void BasicBehaviorInitialize::execute()
     #ifndef GOAL_KEEPER_MODE
     p.GOAL_KEEPER_FLAG = false;
     #endif
-
+    printf("goal keeper flag: %d\n", p.GOAL_KEEPER_FLAG);
     printf("Initialized\n");
     #endif
 }
@@ -167,6 +167,7 @@ void BasicBehaviorUpdate::execute()
         cvPutText(flags,B,cvPoint(10,30),&font,cvScalar(255,255,255));
         cvPutText(flags,C,cvPoint(10,45),&font,cvScalar(255,255,255));
         cvPutText(flags,D,cvPoint(10,60),&font,cvScalar(255,255,255));
+
         #ifdef CAMERA_FEED
         printf("localization updated to %lf\n",p.conf);
         cvNamedWindow("Flags");
@@ -201,7 +202,7 @@ void BasicBehaviorUpdate::execute()
 
 void BasicBehaviorRotate::execute()
 {
-    
+    p.hdmtr.doRotate();   
     // printf("BasicBehaviorRotate\n");
     // pthread_mutex_lock(&mutex_pathpacket);
     // printf("locked in behavior rotate\n");

@@ -42,7 +42,6 @@ void* readGameController(void*)
     struct sockaddr_storage their_addr;
     socklen_t addr_len;
     char s[INET6_ADDRSTRLEN];
-    ;
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC; // set to AF_INET to force IPv4
     hints.ai_socktype = SOCK_DGRAM;
@@ -102,8 +101,6 @@ void* readGameController(void*)
         else
             printf("[GameController] corrupt packet \n");
         usleep(50000);
-
-
 	//printf("listener: got packet from %s\n",inet_ntop(their_addr.ss_family,get_in_addr((struct sockaddr *)&their_addr),s, sizeof s))
 	//printf("listener: packet is %d bytes long\n", numbytes);
     }

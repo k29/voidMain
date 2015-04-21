@@ -111,6 +111,7 @@ void FeatureDetection::findReal(int X,int Y, double &objdis, double &objangdeg, 
 
     objdis = sqrt(objdis*objdis+perpend*perpend);
     objangdeg = rad2deg(atan2(perpend, objdis)) + rad2deg(thetaY);
+    objangdeg -= (hm.getCurrPos() - 512.0)*(300.0/1023.0);
 
 }
 

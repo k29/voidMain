@@ -494,7 +494,7 @@ void* walk_thread(void*)
 	int foot_lr = 0;
 	foot_lr = walk.getLeg();
 	cout<<"FOOT LR "<<foot_lr<<endl;
-	footstepmain(10 , foot1[j].delta_y , !foot_lr ,  foot1 , i , pathpackvarlocal);
+	footstepmain(10 , foot1[j].delta_y , foot_lr ,  foot1 , i , pathpackvarlocal);
 	double r = 0, x = 0, y = 0, theta = 0;
 	while (1)
 	{
@@ -585,7 +585,7 @@ void* walk_thread(void*)
 			{
 				foot_lr = walk.getLeg();
 				cout<<"FOOT LR "<<foot_lr<<endl;
-				footstepmain(walk.velocity() , foot1[j].delta_y , !foot_lr ,  foot1 ,i , pathpackvarlocal);
+				footstepmain(walk.velocity() , foot1[j].delta_y , foot_lr ,  foot1 ,i , pathpackvarlocal);
 			}
 			// usleep(100);
 			cout<<"No path made cases"<<endl;

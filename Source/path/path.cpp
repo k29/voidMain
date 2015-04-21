@@ -9,7 +9,7 @@
 //#define NEWNEWENCIRCLING
 #define OLDDELETION
 // #define NEWDELETION
-
+// #define testpath
 
 using namespace std;
 using namespace graph_implementation;
@@ -271,7 +271,9 @@ void Path::orientSelf(PathStructure ps)
 	{
 		//send atan2(ball.y, ball.x);
 		// printf("checklines\n");
+		#ifndef testpath
 		pthread_mutex_lock(&mutex_pathpacket);
+		#endif
 		pathpackvar.theta = atan2(ps.ball.y, ps.ball.x);
 		pathpackvar.ROTATE = 1;
 		pathpackvar.BACK_WALK = 0;
@@ -295,8 +297,9 @@ void Path::orientSelf(PathStructure ps)
 		// printf("ROTATE %d\n", pathpackvar.ROTATE);
 		// printf("BALLFOLLOW %d\n",pathpackvar.BALLFOLLOW );
 		// printf("check\n");
-
+		#ifndef testpath
 		pthread_mutex_unlock(&mutex_pathpacket);
+		#endif
 	}
 	else if(!checkLines(ps.gpleft, ps.gpright, ps.ball) && ps.ball.x >= 5 && checkDirection(ps.gpleft, ps.gpright, ps.ball))
 	{
@@ -305,8 +308,9 @@ void Path::orientSelf(PathStructure ps)
 		bool Rotate;
 		bool Ballfollow;
 		bool Back_Walk;
-
+		#ifndef testpath
 		pthread_mutex_lock(&mutex_pathpacket);
+		#endif
 		Sidewalk = 1;
 		if(Sidewalk != pathpackvar.SIDE_WALK)
 			pathpackvar.UPDATE_FLAG = 1;
@@ -317,7 +321,9 @@ void Path::orientSelf(PathStructure ps)
 		pathpackvar.no_of_points = 1;
 		pathpackvar.finalpath[0].x = 0;
 		pathpackvar.finalpath[0].y = ps.ball.y;
+		#ifndef testpath
 		pthread_mutex_unlock(&mutex_pathpacket);
+		#endif
 	}
 	else
 	{
@@ -330,7 +336,9 @@ void Path::orientSelf(PathStructure ps)
 		AbsCoords pointOnCircle;
 		pointOnCircle.y = 0;
 		pointOnCircle.x = (-1.0)*(sqrt(pow(INITIAL_ORIENTATION_RADIUS+10,2)-pow(ps.ball.y,2))) + ps.ball.x;
+		#ifndef testpath
 		pthread_mutex_lock(&mutex_pathpacket);
+		#endif
 		pathpackvar.ROTATE = 0;
 		pathpackvar.BALLFOLLOW = 0;
 		pathpackvar.SIDE_WALK = 0;
@@ -364,8 +372,9 @@ void Path::orientSelf(PathStructure ps)
 			// printf("BALLFOLLOW %d\n",pathpackvar.BALLFOLLOW );
 
 
-
+		#ifndef testpath
 		pthread_mutex_unlock(&mutex_pathpacket);
+		#endif
 	}
 }
 
@@ -1240,7 +1249,9 @@ void Path::updatePathPacket()
 	{	
 		// cout<<"before lock update pathpackvar"<<endl;
 		// cout<<"before lock path not near"<<endl;
+		#ifndef testpath
 		pthread_mutex_lock(&mutex_pathpacket);
+		#endif
 		pathpackvar.ROTATE = 0;
 		pathpackvar.BALLFOLLOW = 0;
 		pathpackvar.updated=1;
@@ -1255,7 +1266,9 @@ void Path::updatePathPacket()
 		if(tree.size() >= 30)
 		{
 			tree.path_crash = true;
-			// pthread_mutex_unlock(&mutex_pathpacket);
+			#ifndef testpath
+			 pthread_mutex_unlock(&mutex_pathpacket);
+			#endif
 			return;
 		}
 		assert(tree.size()<30);
@@ -1337,12 +1350,16 @@ void Path::updatePathPacket()
 		// cout<<"ignore arc: "<<pathpackvar.IGNORE_ARC<<endl;
 		
 		// cout<<"after unlock update pathpackvar"<<endl;
+		#ifndef testpath
 		pthread_mutex_unlock(&mutex_pathpacket);
+		#endif
 	}
 
 	if(Back_Walk && !Near_Flag)
 	{
+		#ifndef testpath
 		pthread_mutex_lock(&mutex_pathpacket);
+		#endif
 		pathpackvar.ROTATE = 0;
 		pathpackvar.BALLFOLLOW = 0;
 		pathpackvar.updated=1;
@@ -1356,11 +1373,15 @@ void Path::updatePathPacket()
 		pathpackvar.no_of_points = 1;
 
 	}
+		#ifndef testpath
 		pthread_mutex_unlock(&mutex_pathpacket);
+		#endif
 
 	if(Near_Flag && !Back_Walk)
 	{
+		#ifndef testpath
 		pthread_mutex_lock(&mutex_pathpacket);
+		#endif
 		pathpackvar.updated=1;
 		pathpackvar.ROTATE = 0;
 		pathpackvar.BALLFOLLOW = 0;
@@ -1374,12 +1395,16 @@ void Path::updatePathPacket()
 		// pathpackvar.BACK_WALK = 0;
 		//pathpackvar.finalpath[0].x = BackWalkX;
 		// pathpackvar.finalpath[0].y = 0.0;
+		#ifndef testpath
 		pthread_mutex_unlock(&mutex_pathpacket);
+		#endif
 	}
 	// cout<<"NF: "<<Near_Flag<<" BW: "<<Back_Walk<<endl;
 	if(Near_Obstacle)
 	{
+		#ifndef testpath
 		pthread_mutex_lock(&mutex_pathpacket);		
+		#endif
 		pathpackvar.updated=1;
 		pathpackvar.ROTATE = 0;	
 		pathpackvar.BALLFOLLOW = 0;	
@@ -1392,7 +1417,9 @@ void Path::updatePathPacket()
 		pathpackvar.finalpath[0].x = -10.0;
 		pathpackvar.finalpath[0].y = 0.0;
 		pathpackvar.no_of_points = 1;
+		#ifndef testpath
 		pthread_mutex_unlock(&mutex_pathpacket);		
+		#endif
 	}
 	// if(Near_Flag || Back_Walk || Near_Obstacle)
 	// 	cout<<"NF: "<<Near_Flag<<" BW: "<<Back_Walk<<" NO: "<<Near_Obstacle<<endl;
