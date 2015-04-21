@@ -14,6 +14,7 @@ HeadMotor::HeadMotor(bool param)	//param is there to see if need to initialize p
 	// goal_pos[1] = 640;
 	current_pos[0] = goal_pos[0];
 	current_pos[1] = goal_pos[1];
+	curr_pos = 512 - offsety;
 	speed_motor(MOTOR_SPEED,700);
 }
 
@@ -38,15 +39,20 @@ int HeadMotor::bootup_files()
     else
     {
     	printf("USB2D ftdi successfully open\n");
-		if(initPos==true)
+		// if(initPos==true)
+		// {
+		// 	set_speed(18, 0);
+		// 	set_speed(17, 0);
+		// 	int id[] = {18,17};
+		// 	int gp[2];
+		// 	gp[0] = (300.0 - 150)*(1023.0/300.0) - offsety;
+		// 	gp[1] = (300.0 - 80)*(1023.0/300.0) - offsetx; 
+		// 	// sync_write_gp(id, gp, 2);
+		// }
+		if(initPos == true)
 		{
 			set_speed(18, 0);
-			set_speed(17, 0);
-			int id[] = {18,17};
-			int gp[2];
-			gp[0] = (300.0 - 150)*(1023.0/300.0) - offsety;
-			gp[1] = (300.0 - 80)*(1023.0/300.0) - offsetx; 
-			// sync_write_gp(id, gp, 2);
+			set_gp(18, 512 - offset);
 		}
 	}
 
@@ -436,4 +442,32 @@ int HeadMotor::go2state(int state)
 //	write_motor(c[0], c[1]);
 
 	return 0;
+}
+
+void HeadMotor::doRotate()
+{
+	if(direction == 0)
+	{
+		curr_pos -= MAX_STEP;
+		if(curr_pos < MAX_LIMIT_RIGHT)
+		{
+			curr_pos = MAX_LIMIT_RIGHT;
+			direction = ~direction;
+		}
+	}
+	else
+	{
+		curr_pos += MAX_STEP;
+		if(curr_pos > MAX_LIMIT_LEFT)
+		{
+			curr_pos = MAX_LIMIT_LEFT;
+			direction = ~direction;
+		}
+	}
+	set_gp(18, curr_pos);
+}
+
+int HeadMotor::getCurrPos()
+{
+	return curr_pos + offset;
 }
