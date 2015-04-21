@@ -17,13 +17,13 @@ Walk::Walk(AcYut* bot)
 	veloYfi=10;
 	zMax=40;
 	dz = 0;
-	dspTime = 0.05;
-	lift=50;
+	dspTime = 0.07;
+	lift=70;
 	legRotin=0;
 	legRotfi=0;
 	supLegRotin=0;
 	supLegRotfi=0;
-	sspTimeVar = 0.340999;
+	sspTimeVar = 0.290999;
 	veldef = C*zMax*(exp(-C*sspTimeVar/2) - exp(C*sspTimeVar/2))/2;
 	veloZin = veldef;
 	veloZfi = -veldef;
@@ -140,6 +140,39 @@ int Walk::pathdribble(double vel_y, double dz, double t1, double t2)
 	supLegRotfi = 0;
 	return x;
 }
+
+int Walk::sideMotion(double distance)
+{
+	stopMotion();
+	if ((leg == LEFT && distance > 0 )|| (leg == RIGHT && distance < 0))
+	{
+		dribble();
+	}
+	// pathdribble(-20, 0, 0, 0);
+	// pathdribble(-50, 0, 0, 0);
+	int j = 1;
+	while((10.0*j) < fabs(distance))
+	{
+		if (j%2)
+		{
+			veloZfi = -veldef + 80;
+		}
+		else
+		{
+			veloZfi = -veldef;
+		}
+		j++;
+		// cout<<"VeloZfi "<<veloZfi<<" supLegZin "<<legZin<<endl;
+		dribble();
+	}
+
+	veloZfi = -veldef;
+
+
+	pathdribble(0, 0, 0, 0);
+	pathdribble(10, 0, 0, 0);
+}
+
 
 int Walk::stopMotion()
 {
@@ -447,7 +480,7 @@ int Walk::dribble(int flag)
 	//exponential equations
 	// double C = 1.0/Tc;
 	double sspZSupin  = supLegZin + (veloZin)* D_dsp2Time;
-
+	double sspZin = legZin - veloZin*D_dsp2Time;
 	double c1_z = (sspZSupin + veloZin/C)/2;
 	double c2_z = (sspZSupin - veloZin/C)/2;
 
@@ -494,16 +527,55 @@ int Walk::dribble(int flag)
 	// double c1_z_swing = (sspZin - sspZfi*exp(-C*sspTimeVar))/(exp(C*sspTimeVar) - exp(-C*sspTimeVar));
 	// double c2_z_swing = sspZin - c1_z_swing;
 
-	double z_c_free = legZin;
+/*	double z_c_free = legZin;
 	double z_a_free = (2*(legZfi + legZin) - 4*(zMax))/pow(sspTime+dsp1Time+dsp2Time,2);
 	double z_b_free = 2*((legZfi- legZin)/2 - z_a_free*pow(sspTime+dsp1Time+dsp2Time,2)/2)/(sspTime+dsp1Time+dsp2Time);
 
+*/
+	Matrix<double, 5, 5> A;
+	Matrix<double, 5, 1> B, X;
 
+	A << 0,0,0,0,1,
+		 0,0,0,1,0,
+		 pow(sspTime,4),pow(sspTime,3),pow(sspTime,2),pow(sspTime,1),1,
+		 4*pow(sspTime,3),3*pow(sspTime,2),2*pow(sspTime,1),1,0,
+		 pow(sspTime/2,4),pow(sspTime/2,3),pow(sspTime/2,2),pow(sspTime/2,1),1,
+ 		 
+	B << sspZin, -veloZin,sspZfi,-veloZfi_d, zMax;
+	X = A.colPivHouseholderQr().solve(B);
+
+	double z_a_free = X(0);
+	double z_b_free = X(1);
+	double z_c_free = X(2);
+	double z_d_free = X(3);
+	double z_e_free = X(4);
+
+/*	Matrix<double, 7, 7> A;
+	Matrix<double, 7, 1> B, X;
+
+	A << 0,0,0,0,0,0,1,
+ 		 0,0,0,0,0,1,0,
+ 		 0,0,0,0,2,0,0,
+		 pow(sspTime,6),pow(sspTime,5),pow(sspTime,4),pow(sspTime,3),pow(sspTime,2),pow(sspTime,1),1,
+		 6*pow(sspTime,5),5*pow(sspTime,4),4*pow(sspTime,3),3*pow(sspTime,2),2*pow(sspTime,1),1,0,
+		 pow(sspTime/2,6),pow(sspTime/2,5),pow(sspTime/2,4),pow(sspTime/2,3),pow(sspTime/2,2),pow(sspTime/2,1),1,
+		 30*pow(sspTime,4),20*pow(sspTime,3),12*pow(sspTime,2),6*pow(sspTime,1),2,0,0,
+	B << sspZin, -veloZin,0, sspZfi,-veloZfi_d, zMax,0;
+	X = A.colPivHouseholderQr().solve(B);
+
+	double z_a_free = X(0);
+	double z_b_free = X(1);
+	double z_c_free = X(2);
+	double z_d_free = X(3);
+	double z_e_free = X(4);
+	double z_f_free = X(5);
+	double z_g_free = X(6);*/
 	// cout<<z_a_free*pow(sspTime/2,2) + z_b_free*sspTime/2 + z_c_free<<endl;
 
 	// printf("%f %f\n",c1_z_swing,c2_z_swing);
 	// printf("%f %f %f %f \n", sspZin, c1_z_swing + c2_z_swing, sspZfi, c1_z_swing*exp(C*sspTimeVar) + c2_z_swing*exp(-C*sspTimeVar));
 	//TODO add case in which dsp1Time becomes negative 
+	
 	//TODO add case where dsp2Time needs to be modified (if required)
 	//TODO calculation of sspZfi for next step based on predicted change in velocity for the next step 
 	// printf("legZin\t\t%lf\n",legZin);
@@ -694,8 +766,8 @@ int Walk::dribble(int flag)
 			xr = height ;
 			y  = -legYin - veloYin*walkTime;
 			yr = -supLegYin - veloYin*walkTime;
-			// z  = legZin - veloZin*walkTime - hipLength/2;
-			z = z_a_free*pow(walkTime,2) + z_b_free*(walkTime) + z_c_free -hipLength/2;
+			z  = legZin - veloZin*walkTime - hipLength/2;
+			// z = z_a_free*pow(walkTime,2) + z_b_free*(walkTime) + z_c_free -hipLength/2;
 			zr = supLegZin + veloZin*walkTime - hipLength/2;
 			phi= legRotin; 
 			phiR= supLegRotin;
@@ -717,7 +789,9 @@ int Walk::dribble(int flag)
 				vely = -C*(c1_y*exp(C*(walkTime-dsp1Time)) - c2_y*exp(-C*(walkTime-dsp1Time)));
 				// cout<<"yr = "<<yr<<" vely = "<<vely<<" y_energy = "<<y_energy<<endl;
 				// z  = scurve(sspZin,sspZfi, walkTime-dsp1Time,sspTime) - hipLength/2;
-				z = z_a_free*pow(walkTime,2) + z_b_free*(walkTime) + z_c_free -hipLength/2;
+				// z = z_a_free*pow(walkTime-dsp1Time,2) + z_b_free*(walkTime-dsp1Time) + z_c_free -hipLength/2;
+				z = z_a_free*pow(walkTime-dsp1Time,4) + z_b_free*pow(walkTime-dsp1Time,3) + z_c_free*pow(walkTime-dsp1Time,2) + z_d_free*(walkTime-dsp1Time) + z_e_free -hipLength/2;
+				// z = z_a_free*pow(walkTime-dsp1Time,6) + z_b_free*pow(walkTime-dsp1Time,5) + z_c_free*pow(walkTime-dsp1Time,4) + z_d_free*pow(walkTime-dsp1Time,3) + z_e_free*pow(walkTime-dsp1Time, 2) + z_f_free*pow(walkTime-dsp1Time,1) + z_g_free - hipLength/2;
 				zr = c1_z*exp(C*(walkTime-dsp1Time)) + c2_z*exp(-C*(walkTime-dsp1Time)) -hipLength/2;
 				phi= scurve(legRotin,legRotfi,walkTime-dsp1Time,sspTime);
 				phiR=scurve(supLegRotin,supLegRotfi,walkTime-dsp1Time,sspTime);
@@ -770,9 +844,9 @@ int Walk::dribble(int flag)
 			xr = height - scurve(5, 0, walkTime-dsp1Time-sspTime, stepTime);
 			y  = -sspYfi - veloYfi_d*(walkTime-dsp1Time-sspTime);
 			yr = -sspYSupfi - veloYfi_d*(walkTime-dsp1Time-sspTime);
-			// z  = sspZfi - veloZfi*(walkTime-dsp1Time-sspTime) -hipLength/2;
-			z = z_a_free*pow(walkTime,2) + z_b_free*(walkTime) + z_c_free -hipLength/2;
-			zr = sspZSupfi - veloZfi*(walkTime-dsp1Time-sspTime) - hipLength/2;
+			z  = sspZfi - veloZfi_d*(walkTime-dsp1Time-sspTime) -hipLength/2;
+			// z = z_a_free*pow(walkTime,2) + z_b_free*(walkTime) + z_c_free -hipLength/2;
+			zr = sspZSupfi + veloZfi_d*(walkTime-dsp1Time-sspTime) - hipLength/2;
 			phi= legRotfi;
 			phiR= supLegRotfi;
 	//		////printf("DSP2\t");

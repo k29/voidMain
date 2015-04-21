@@ -148,6 +148,7 @@ typedef struct
 	bool ROTATE;
 	bool ROTATE_RIGHT;
 	bool BALLFOLLOW;
+	bool SIDE_WALK;
 	bool DO_KICK;
 	PathCoords finalpath[30];
 }PathPacket;

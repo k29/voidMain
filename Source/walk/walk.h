@@ -8,8 +8,10 @@
 #include <fstream>
 #include <ctime>
 #include <deque>
+#include <eigen3/Eigen/Dense>
 
 using namespace std;
+using namespace Eigen;
 enum {SSP,DSP};
 
 class Walk
@@ -82,12 +84,13 @@ class Walk
 	int dribble(int flag = 0);
 	// int dribble_new(double dy, double dx,double t1,double t2);
 	// int dribble(double dy, double dx,double t1,double t2);
-	int pathdribble(double vel_y, double dx, double t1, double t2);
+	int pathdribble(double vel_y, double vel_z, double t1, double t2);
 	int start();
 	int captureStepZ(double &c1_z, double &c2_z, double zMax, double dsp1Time, double dsp2Time, double cap_pos_actual, double cap_vel_actual, double walkTime, double &sspTime, double &z_a_free, double &z_b_free, double &z_c_free, double &legZfi, double &supLegZfi);
 	int captureStepY(double &c1_y, double &c2_y, double dsp1Time, double dsp2Time, double yr, double vely, double y,  double &supLegYfi, double &veloYfi_d, double cap_pos_actual, double cap_vel_actual, double walkTime, double &sspTime, double &y_a_free, double &y_b_free, double &y_c_free, double &y_d_free);
 	int handMotion(double handSwing);
 	int stopMotion();
+	int sideMotion(double distance);
 	int backMotion(double distance);
 	// int start2();
 	float accelerate();
