@@ -1,3 +1,6 @@
+#ifndef WALK_THREAD_H
+#define WALK_THREAD_H
+
 #include "../common/common.h" 
 #include "walk.h"
 #include "../behavior/motionmodel.h"
@@ -18,7 +21,9 @@
 #include <sys/time.h>
 #include <termios.h>
 #include <iostream>
+#include "motor.h"
 
 using namespace std;
 
 void* walk_thread(void*);
+#endif

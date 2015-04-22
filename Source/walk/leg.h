@@ -5,6 +5,7 @@
 #include "commondefswalk.h"
 #include <stdio.h>
 #include <math.h>
+
 class Leg
 {
 
@@ -12,7 +13,7 @@ private:
 	
 	Communication* comm;
 	Motor* m[LEG_MOTOR_COUNT];
-	
+	Motor* hm;
 	float legCoods[AXES+1];
 	float x;
 	float y;

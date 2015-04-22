@@ -45,13 +45,13 @@ private:
         int motorX_var, motorY_var;
         int current_pos[2];
         int goal_pos[2];
-        int curr_pos;   //for fisheye camera
         bool initPos;
         bool direction; //0 turn right 1 turn left
         //0 is Y-axis motor, 1 is X-axis (in goal and current pos) everywhere
 
 public:
         static const int MOTOR_SPEED = 50;
+        int curr_pos;   //for fisheye camera
         int read_pos(int id);        //Actually reads position from motor. Should not be used in current implementation. Only for testing
         HeadMotor(bool param = true);
         int bootup_files();

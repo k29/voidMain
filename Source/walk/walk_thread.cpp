@@ -479,6 +479,8 @@ void* walk_thread(void*)
 	int j=0,i=0;
 	PathPacket pathpackvarlocal;
 	// Call walkthread here instead of reading file.
+	Motor* hm = new Motor(RX64, 18, &comm, 0, 0, 0 );
+
 	cout<<"before lock"<<endl;
 	pthread_mutex_lock(&mutex_pathpacket);
 	pathpackvarlocal = pathpackvar;
@@ -499,6 +501,9 @@ void* walk_thread(void*)
 		j = 0;
 		while (j<i-1 && j < 8)
 		{
+			pthread_mutex_lock(&mutex_head_rotate);
+			hm->setGoalPositionSync(headmotorpacket.goal_pos);
+			pthread_mutex_unlock(&mutex_head_rotate);
 			// walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
 			walk.pathdribble(foot1[j].vel_y, foot1[j].delta_x,foot1[j].delta_theta,0);
 			if (j%2 == 0)		

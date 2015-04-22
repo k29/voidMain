@@ -20,6 +20,10 @@ void BasicBehaviorInitialize::execute()
     
 
     p.hdmtr.bootup_files();
+    pthread_mutex_lock(&mutex_head_rotate);
+    headmotorpacket.id = 18;
+    headmotorpacket.goal_pos = p.hdmtr.curr_pos;
+    pthread_mutex_unlock(&mutex_head_rotate);
     
 
     while(!p.capture.init())
@@ -202,7 +206,7 @@ void BasicBehaviorUpdate::execute()
 void BasicBehaviorRotate::execute()
 {
     // printf("BasicBehaviorRotate\n");
-    // p.hdmtr.doRotate(); 
+    p.hdmtr.doRotate(); 
     // pthread_mutex_lock(&mutex_pathpacket);
     // printf("locked in behavior rotate\n");
     // pathpackvar.no_of_points=1;

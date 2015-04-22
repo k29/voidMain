@@ -31,6 +31,12 @@ Leg::Leg(int leg, Communication* comm, int ids[], int offsets[], int driveMode[]
 	{
 		m[legSlaveMotors[i]]->slaveModeSoft();
 	}
+
+/*	if (leg == LEFT)
+	{
+		hm = new Motor(RX64, 18, this->comm, 0, 0, 0 );
+	}
+*/
 	x = legHeight;
 	y = 0;
 	z = 0;
@@ -223,7 +229,10 @@ int Leg::setGoalPositionSync()
 			return EXIT_FAILURE;			
 		}
 	}
-	
+/*
+	pthread_mutex_lock(&mutex_head_rotate);
+	hm->setGoalPositionSync(headmotorpacket.goal_pos);
+	pthread_mutex_unlock(&mutex_head_rotate);*/
 	return EXIT_SUCCESS;
 }
 
