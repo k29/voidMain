@@ -112,8 +112,9 @@ void convert_values (PathPacket pathpackvarlocal, double dist_circstart[], doubl
 			footlr[i/2] = (vector_product>0)?1:0;
 			radius[i/2]	=	OBSTACLE_RADIUS;
 
-			double theta = 180*2*acos(sqrt(1 - pow((10*distance(ox,oy,x1,y1)/(2*radius[i])),2)))/pi;
+			double theta = 180*2*acos(sqrt(1 - pow((10*distance(ox,oy,x1,y1)/(2*radius[i/2])),2)))/pi;
 
+			cout<<"Circle points "<<ox<<" "<<oy<<" "<<x1<<" "<<y1<<" "<<theta<<endl;
 			int turn = ((dirx*(y2-y1) - diry*(x2-x1))>0)?1:0;
 			if (turn)
 				theta_arc[i/2] = (!footlr[i/2])?(360-theta):theta;				
@@ -222,6 +223,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 	if (initial_delta_y == 0)
 	{
 		step[0].delta_y = first_delta_y;
+		count++;
 	}
 	else
 		step[0].delta_y = initial_delta_y;			//	delta_length is initialized with initial step length	
@@ -311,8 +313,8 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 			dist_covered = calc_dist_covered(count,count_ref,step);
 			// printf(" I was here %d\n",count);
 		}
-		first_circ_foot[i] = count + 1;	//FSPMOD CODE
-						
+	
+
 		int constraint_value;
 		double inner_radius = fabs(radius[i] - foot_separation/2); 
 		double theta_current = 0;	
@@ -335,105 +337,71 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 			step[count + 1].vel_y = vd;
 			count++;	
 		}
-		if (theta_arc[i]>=365 || theta_arc[i]<=-5 )
-			check = 2;
-		while(check!=2)
+
+		while (theta_current < theta_arc[i])
 		{
-			check=0;											
-			while (check==0)
+			// printf("stuck2\n");
+			step[count+1].delta_y = c3 * vd - 0.01;
+			if (step[count+1].delta_y>=max_delta_y)
 			{
-				// printf("stuck1\n");
-				step[count+1].delta_y = c3 * vd - 0.01;
-				if ((count+1)%2 == footlr[i])				//This assumes that the entering foot is the inner one. This will be changed later in order to generalize.
+				if (fmscheck == 0)
 				{
-					step[count].delta_x = calc_delta_x(inner_radius , step[count]);
-					step[count].delta_theta = calc_delta_theta(inner_radius , step[count]);
+					step[count+1].delta_y = max_delta_y;
+					fmscheck++;
 				}
-				else
+				else if (fmscheck == 1)
 				{
-					step[count].delta_x = 0;
-					step[count].delta_theta = -1*step[count-1].delta_theta;
+					step[count+1].delta_y = (vd + c5*step[count].delta_y/2)/c5;
+					fmscheck++;
 				}
-				vf = c5*step[count+1].delta_y - vd;
-				constraint_value = constraint_check(step[count+1] , vf , 1);	//	1 indicates loop 1
-				if (constraint_value == 1)
+				else if (fmscheck == 2)
 				{
-					if ((count+1)%2 == footlr[i])
-						theta_current += step[count].delta_theta;
-					if (theta_current<theta_arc[i])
-						{
-							vd=vf;
-							step[count + 1].vel_y = vd;
-							count++;
-						}
-					else
-						check=2;
-					// printf("\nvf = %f\tDelta_theta[%d] = %f\tTheta_Current = %f\n",vf,count,step[count].delta_theta,theta_current);	
-					
-				}
-				else
-				{
-					check = 1;
-					// printf("\nConstraint Violation Loop 1 = %d\n",constraint_value);
-					// printf("\nInterrupt vf = %f\tStep_length[%d] = %f\t%f\n",vf,count+1,step[count+1].delta_y,step[count+1].delta_theta);	
+					step[count+1].delta_y = max_delta_y;
 				}
 			}
 
-			if (check!=2)
-				check=0;
-			while (check==0)
+			vf = c5*step[count+1].delta_y - vd;
+			vd = vf;								//	It seems unnecessary to involve vf here, but this is done to establish a standard for the code used to develop motion along
+													//  the circle, where vf will be necessary. It will also be useful for later modifications.
+			step[count + 1].vel_y = vd;
+			count++;
+			if ((count+1)%2 == footlr[i])				//This assumes that the entering foot is the inner one. This will be changed later in order to generalize.
 			{
-				// printf("stuck2\n");
-
-				step[count+1].delta_y = c4 * vd + 0.01;
-				if ((count+1)%2 == footlr[i])				//This assumes that the entering foot is the inner one. This will be changed later in order to generalize.
-				{
-					step[count].delta_x = calc_delta_x(inner_radius , step[count]);
-					step[count].delta_theta = calc_delta_theta(inner_radius , step[count]);
-				}
-				else
-				{
-					step[count].delta_x = 0;
-					step[count].delta_theta = -1*step[count-1].delta_theta;
-				}
-				vf = c5*step[count+1].delta_y - vd;
-				constraint_value = constraint_check(step[count+1] , vf , 2);		//2 indicates loop 2
-				if (constraint_value == 1)
-				{
-					if ((count+1)%2 == footlr[i])
-						theta_current += step[count].delta_theta;
-					if (theta_current<theta_arc[i])
-					{
-						vd = vf;
-						step[count + 1].vel_y = vd;
-						count++;
-					}
-					else
-						check=2;
-					// printf("\nvf = %f\tDelta_theta[%d] = %f\tTheta_Current = %f\n",vf,count,step[count].delta_theta,theta_current);	
-					
-				}
-				else
-				{
-					check=1;
-					// printf("\nConstraint Violation Loop 2 = %d\n",constraint_value);
-					// printf("\nInterrupt vf = %f\tStep_length[%d] = %f\t%f\n",vf,count+1,step[count+1].delta_y,step[count+1].delta_theta);	
-				}
-
-
-
-				
+				step[count].delta_x = calc_delta_x(inner_radius , step[count]);
+				step[count].delta_theta = calc_delta_theta(inner_radius , step[count]);
+				theta_current += step[count].delta_theta/3.0;
 			}
-
+			else
+			{
+				step[count].delta_x = 0;
+				step[count].delta_theta = -1*step[count-1].delta_theta;
+			}
 		}
-		last_circ_foot[i] = count;		//FSPMOD CODE
+/*		if (fmscheck == 2)
+		{
+			step[count+1].delta_y = c4 * vd + 0.01;
+			step[count+1].delta_x = 0;
+			step[count+1].delta_theta = 0;
+			vf = c5*step[count+1].delta_y - vd;
+			vd = vf;
+			step[count + 1].vel_y = vd;
+			count++;
+			
+			step[count+1].delta_y = c4 * vd + 0.01;
+			step[count+1].delta_x = 0;
+			step[count+1].delta_theta = 0;
+			vf = c5*step[count+1].delta_y - vd;
+			vd = vf;
+			step[count + 1].vel_y = vd;
+			count++;	
+		}*/
 	}
 	for (int i=0;i<count-1;i++)
 	{
-		if (fabs(step[i].delta_theta)> 20)
+		if (fabs(step[i].delta_theta)> 30)
 			step[i].delta_theta = 0;
 		// step[i].delta_x = 0;
-		printf ("sno = %d\tDelta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",i,step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
+		// printf ("sno = %d\tDelta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",i,step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
 	}
 /*	//FSPMOD CODE
 	for (int i=0; i<no_obstacles; i++)
@@ -521,14 +489,15 @@ void* walk_thread(void*)
 	}
 
 	pthread_mutex_unlock(&mutex_pathpacket);
-	footstepmain(10 , foot1[j].delta_y , 0 ,  foot1 , i , pathpackvarlocal);
+	int foot_lr = 0;
+	foot_lr = walk.getLeg();
+	footstepmain(10 , foot1[j].delta_y , foot_lr ,  foot1 , i , pathpackvarlocal);
 	double r = 0, x = 0, y = 0, theta = 0;
-	bool foot = 0;
 	while (1)
 	{
 		// printf("in walk thread\n");
 		j = 0;
-		while (j<i-1 && j < 10)
+		while (j<i-1 && j < 8)
 		{
 			// walk.dribble(foot1[j].delta_y/2,foot1[j].delta_x,foot1[j].delta_theta,0);
 			walk.pathdribble(foot1[j].vel_y, foot1[j].delta_x,foot1[j].delta_theta,0);
@@ -548,7 +517,6 @@ void* walk_thread(void*)
 					r = sqrt(pow(x,2) + pow(y,2));
 				}
 			printf("step = %d theta = %f delta_x = %f delta_y = %f vel_y = %f\n" ,j, foot1[j].delta_theta , foot1[j].delta_x, foot1[j].delta_y, foot1[j].vel_y);
-			foot = !foot;
 			pthread_mutex_lock(&mutex_motionModel);
 			motionModel.update(r,atan(y/x)*180/pi);
 			pthread_mutex_unlock(&mutex_motionModel);
@@ -561,6 +529,8 @@ void* walk_thread(void*)
 			printf("UPDATE FLAG %d\n", pathpackvarlocal.UPDATE_FLAG);
 			printf("ROTATE %d\n", pathpackvarlocal.ROTATE);
 			printf("BALLFOLLOW %d\n",pathpackvarlocal.BALLFOLLOW );
+			printf("NEAR_FLAG %d\n", pathpackvarlocal.NEAR_FLAG);
+			cout<<endl;
 			if (pathpackvarlocal.UPDATE_FLAG == 1)
 				break;	
 		}
@@ -580,11 +550,13 @@ void* walk_thread(void*)
 			pthread_mutex_unlock(&mutex_pathpacket);
 			if (pathpackvarlocal.BACK_WALK)
 			{
-				foot = walk.backMotion(10*sqrt(pow(pathpackvarlocal.finalpath[0].x,2) + pow(pathpackvarlocal.finalpath[0].y,2)));
+				printf("x: %lf y: %lf\n", pathpackvarlocal.finalpath[0].x, pathpackvarlocal.finalpath[0].y);
 				cout<<"Back walk distance: "<<10*sqrt(pow(pathpackvarlocal.finalpath[0].x,2) + pow(pathpackvarlocal.finalpath[0].y,2))<<endl;
+				walk.backMotion(10*sqrt(pow(pathpackvarlocal.finalpath[0].x,2) + pow(pathpackvarlocal.finalpath[0].y,2)));
 			}
 			else if (pathpackvarlocal.ROTATE)
 			{
+				cout<<"Turning angle (right is positive) "<<(pathpackvarlocal.ROTATE_RIGHT?1:-1)*rad2deg(pathpackvarlocal.theta)<<endl;
 				walk.stopMotion();
 				if (pathpackvarlocal.ROTATE_RIGHT)
 				{
@@ -592,17 +564,17 @@ void* walk_thread(void*)
 				}
 				else
 					walk.turnleft(fabs(rad2deg(pathpackvarlocal.theta)));
-				cout<<"Turning angle (right is positive) "<<(pathpackvarlocal.ROTATE_RIGHT?1:-1)*pathpackvarlocal.theta<<endl;
-			}
+				walk.pathdribble(10, 0, 0, 0);			}
 			else if (pathpackvarlocal.BALLFOLLOW)
 			{
-				if (walk.velocity() < 90 && walk.velocity() > 0)
+				if (walk.velocity() < max_velocity && walk.velocity() > 0)
 				{
 					walk.accelerate();
 					walk.dribble();
 				}
 				else if (walk.velocity() < 0)
 				{
+					walk.stopMotion();
 					walk.pathdribble(10,0,0,0);
 					walk.dribble();
 				}
@@ -610,7 +582,10 @@ void* walk_thread(void*)
 					walk.dribble();
 			}
 			else
-				footstepmain(walk.velocity() , foot1[j].delta_y , foot ,  foot1 ,i , pathpackvarlocal);
+			{
+				foot_lr = walk.getLeg();
+				footstepmain(walk.velocity() , foot1[j].delta_y , foot_lr ,  foot1 ,i , pathpackvarlocal);
+			}
 			// usleep(100);
 			cout<<"No path made cases"<<endl;
 			printf("BACK WALK %d\n", pathpackvarlocal.BACK_WALK);
@@ -618,6 +593,7 @@ void* walk_thread(void*)
 			printf("UPDATE FLAG %d\n", pathpackvarlocal.UPDATE_FLAG);
 			printf("ROTATE %d\n", pathpackvarlocal.ROTATE);
 			printf("BALLFOLLOW %d\n",pathpackvarlocal.BALLFOLLOW );			
+			cout<<endl;
 		}		
 		while (pathpackvarlocal.BACK_WALK == 1 || pathpackvarlocal.ROTATE == 1 | pathpackvarlocal.BALLFOLLOW == 1);
 

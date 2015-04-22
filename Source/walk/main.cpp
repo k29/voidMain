@@ -189,6 +189,9 @@ int main()
 
 	// walk.turnright(90);
 	walk.dribble();
+
+	// walk.pathdribble(250, 0, 0, 0);
+	// walk.dribble();
 	// cout<<"Moving right"<<endl;
 	// walk.sideMotion(200);
 	// cout<<"Moving left"<<endl;
@@ -201,6 +204,7 @@ int main()
 		walk.dribble();
 		// printf("%f\n",walk.velocity());
 	}
+	// walk.stopMotion();
 	int i = 150;
 	int j = 0;
 	while(1)

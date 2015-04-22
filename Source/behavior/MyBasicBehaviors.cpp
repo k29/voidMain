@@ -168,7 +168,7 @@ void BasicBehaviorUpdate::execute()
         cvPutText(flags,C,cvPoint(10,45),&font,cvScalar(255,255,255));
         cvPutText(flags,D,cvPoint(10,60),&font,cvScalar(255,255,255));
 
-        // printf("localization updated to %lf\n",p.conf);
+        #ifdef CAMERA_FEED
         cvNamedWindow("Flags");
         cvNamedWindow("Real Time Feed");
         cvNamedWindow("Localization");
@@ -191,6 +191,7 @@ void BasicBehaviorUpdate::execute()
         if(c == 27)
             exit(0);
         #endif
+        #endif
 
         #ifndef IP_IS_ON
         p.confidence=1;
@@ -200,8 +201,8 @@ void BasicBehaviorUpdate::execute()
 
 void BasicBehaviorRotate::execute()
 {
-    p.hdmtr.doRotate();   
     // printf("BasicBehaviorRotate\n");
+    // p.hdmtr.doRotate(); 
     // pthread_mutex_lock(&mutex_pathpacket);
     // printf("locked in behavior rotate\n");
     // pathpackvar.no_of_points=1;
@@ -529,7 +530,17 @@ void BasicBehaviorDoOrient::execute()
 void BasicBehaviorDoKick::execute()
 {
     printf("BasicBehaviorDoKick\n");
+    bool ballfollow;
     pthread_mutex_lock(&mutex_pathpacket);
     pathpackvar.DO_KICK = true;
+    ballfollow = 1;
+    if(pathpackvar.BALLFOLLOW != ballfollow)
+        pathpackvar.UPDATE_FLAG = 1;
+    pathpackvar.BALLFOLLOW = 1;
+    pathpackvar.ROTATE = 0;
+    pathpackvar.BACK_WALK = 0;
+    pathpackvar.SIDE_WALK = 0;
+    pathpackvar.IGNORE_ARC = 0;
+
     pthread_mutex_unlock(&mutex_pathpacket);
 }

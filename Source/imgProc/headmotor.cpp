@@ -14,7 +14,7 @@ HeadMotor::HeadMotor(bool param)	//param is there to see if need to initialize p
 	// goal_pos[1] = 640;
 	current_pos[0] = goal_pos[0];
 	current_pos[1] = goal_pos[1];
-	curr_pos = 512 - offsety;
+	curr_pos = 512 - offset;
 	speed_motor(MOTOR_SPEED,700);
 }
 
@@ -52,7 +52,7 @@ int HeadMotor::bootup_files()
 		if(initPos == true)
 		{
 			set_speed(18, 0);
-			set_gp(18, 512 - offset);
+			set_gp(18, curr_pos);
 		}
 	}
 
@@ -446,29 +446,38 @@ int HeadMotor::go2state(int state)
 
 void HeadMotor::doRotate()
 {
+	// printf("rotating\n");
 	if(direction == 0)
 	{
 		curr_pos -= MAX_STEP;
-		if(curr_pos < MAX_LIMIT_RIGHT)
-		{
-			curr_pos = MAX_LIMIT_RIGHT;
-			direction = ~direction;
-		}
+		// if(curr_pos <= MAX_LIMIT_RIGHT)
+		// {
+		// 	curr_pos = MAX_LIMIT_RIGHT;
+		// 	direction = ~direction;
+		// }
 	}
 	else
 	{
 		curr_pos += MAX_STEP;
-		if(curr_pos > MAX_LIMIT_LEFT)
-		{
-			curr_pos = MAX_LIMIT_LEFT;
-			direction = ~direction;
-		}
+		// if(curr_pos >= MAX_LIMIT_LEFT)
+		// {
+		// 	curr_pos = MAX_LIMIT_LEFT;
+		// 	direction = ~direction;
+		// }
+	}
+	if(curr_pos <= MAX_LIMIT_RIGHT || curr_pos >= MAX_LIMIT_LEFT)
+	{
+		if(direction == 0)
+			direction = 1;
+		else
+			direction = 0;
 	}
 	pthread_mutex_lock(&mutex_head_rotate);
 	headmotorpacket.id = 18;
 	headmotorpacket.goal_pos = curr_pos;
 	pthread_mutex_unlock(&mutex_head_rotate);
 	// set_gp(18, curr_pos);
+	// printf("curr_pos: %d\n", curr_pos);
 }
 
 int HeadMotor::getCurrPos()
