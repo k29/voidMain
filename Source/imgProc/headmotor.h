@@ -9,6 +9,7 @@
 #include <termios.h>
 #include <ftdi.h>
 #include "../common/defines.h"
+#include "../common/common.h"
 //Name was changed from WRITE to WRITE_FTDI as it is a global #define.
 //Any way to make this local to headmotor class?
 #define WRITE_FTDI ftdi_write_data(&ftdic1_camera,pack,pack[3]+4)
@@ -21,12 +22,12 @@ class HeadMotor
 private:
         static const int NO_OF_TRIES = 20;
         static const int offsetx=210,offsety=-90;
-        static const int offset = 0;
+        static const int offset = -78;
         static const int ERROR_MOTORS = -900;
         static const int FPS = 120;
         static const int MAX_STEP = 30;
-        static const int MAX_LIMIT_RIGHT = 300;
-        static const int MAX_LIMIT_LEFT = 700;
+        static const int MAX_LIMIT_RIGHT = 300 - offset;
+        static const int MAX_LIMIT_LEFT = 700 - offset;
         int STEP_SIZE_17;
         int STEP_SIZE_18;        
         struct ftdi_context ftdic1_camera;

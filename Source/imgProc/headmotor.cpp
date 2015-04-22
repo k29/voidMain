@@ -464,7 +464,11 @@ void HeadMotor::doRotate()
 			direction = ~direction;
 		}
 	}
-	set_gp(18, curr_pos);
+	pthread_mutex_lock(&mutex_head_rotate);
+	headmotorpacket.id = 18;
+	headmotorpacket.goal_pos = curr_pos;
+	pthread_mutex_unlock(&mutex_head_rotate);
+	// set_gp(18, curr_pos);
 }
 
 int HeadMotor::getCurrPos()

@@ -167,6 +167,12 @@ typedef struct
 	bool FALLRIGHT;
 }GoalKeeperPacket;
 
+typedef struct
+{
+	int id;
+	int goal_pos;
+}HeadMotorPacket;
+
 typedef struct 
 {
 	/*data*/

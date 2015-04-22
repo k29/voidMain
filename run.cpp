@@ -27,6 +27,7 @@ pthread_mutex_t mutex_switch=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_motionModel=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_rotate=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_goalkeeperpacket = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex_head_rotate = PTHREAD_MUTEX_INITIALIZER;
 
 Imu imu;
 double IMU_INITIAL_ANGLE;
@@ -37,6 +38,7 @@ RoboCupGameControlData GCData;
 PathPacket pathpackvar;
 PathPacket pathpackvarLast;
 GoalKeeperPacket goalkeeperpack;
+HeadMotorPacket headmotorpacket;
 bool DO_ROTATE = false;
 
 // void doquit(int para)

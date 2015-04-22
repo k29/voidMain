@@ -44,6 +44,7 @@ extern pthread_mutex_t mutex_switch;
 extern pthread_mutex_t mutex_motionModel;
 extern pthread_mutex_t mutex_rotate;
 extern pthread_mutex_t mutex_goalkeeperpacket;
+extern pthread_mutex_t mutex_head_rotate;
 
 extern WalkStructure walkstr;
 extern WalkStructure prevwalkstr;
@@ -54,6 +55,7 @@ extern RoboCupGameControlData GCData;
 extern PathPacket pathpackvar;
 extern PathPacket pathpackvarLast;
 extern GoalKeeperPacket goalkeeperpack;
+extern HeadMotorPacket headmotorpacket;
 extern Imu imu; 
 
 extern double IMU_INITIAL_ANGLE;
