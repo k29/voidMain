@@ -271,7 +271,7 @@ void Path::orientSelf(PathStructure ps)
 	bool Back_Walk;
 	bool Ballfollow;
 
-	if(checkLines(ps.gpleft, ps.gpright, ps.ball) && checkDirection(ps.gpleft, ps.gpright, ps.ball))
+	if(checkLines(ps.gpleft, ps.gpright, ps.ball)) //&& checkDirection(ps.gpleft, ps.gpright, ps.ball))
 	{
 		//send atan2(ball.y, ball.x);
 		// printf("checklines\n");
@@ -291,7 +291,7 @@ void Path::orientSelf(PathStructure ps)
 		else
 			pathpackvar.ROTATE_RIGHT = 0;		
 			
-		if(abs(pathpackvar.theta)<15*PI/180)
+		if(fabs(pathpackvar.theta)<10*PI/180)
 		{
 			pathpackvar.ROTATE = 0;
 			pathpackvar.distance = sqrt(pow(ps.ball.y, 2)+pow(ps.ball.x, 2))-5;
@@ -386,14 +386,17 @@ void Path::orientSelf(PathStructure ps)
 			// printf("UPDATE FLAG %d\n", pathpackvar.UPDATE_FLAG);
 			// printf("ROTATE %d\n", pathpackvar.ROTATE);
 			// printf("BALLFOLLOW %d\n",pathpackvar.BALLFOLLOW );
-		
+			// cout<<"path rotate: "<<pathpackvar.ROTATE<<endl;
+
 
 		#ifndef testpath
 		pthread_mutex_unlock(&mutex_pathpacket);
 		#endif
 	}
 	else 
-			cout<<"chud gayi"<<endl;
+			cout<<"exception"<<endl;
+
+	// cout<<"path rotate: "<<Rotate<<endl;
 }
 
 PathReturns Path::path_return(PathStructure ps)
@@ -557,7 +560,7 @@ PathReturns Path::path_return(PathStructure ps)
 		//ballgoalangle=>angle made by line joining acyut and ball with line joining ball and goal
 		tolerance_angle=rad2deg(atan(BADANGLEDIST/sqrt(pow(ball.x,2)+pow(ball.y,2)))); //dyanmically generating tolerance angle for orientation purposes(i.e facing the ball before orienting)
 		double ballangle=rad2deg(atan2(ball.y,ball.x));
-		if(abs(ballangle)>tolerance_angle)
+		if(fabs(ballangle)>tolerance_angle)
 		{
 			if(ballangle>0)
 			{
@@ -965,7 +968,7 @@ PathReturns Path::path_return(PathStructure ps)
 		Near_Flag = 0;
 	}
 
-	if(sqrt(pow(tree[1].x, 2) + pow(tree[1].y, 2))<THRESHOLD && abs(ball.y)>30)
+	if(sqrt(pow(tree[1].x, 2) + pow(tree[1].y, 2))<THRESHOLD && fabs(ball.y)>30)
 	{
 		Near_Flag = 0;
 		Back_Walk = 1;
@@ -978,30 +981,32 @@ PathReturns Path::path_return(PathStructure ps)
 		Back_Walk = 0;
 	}
 
+	// if(checkLines(ps.gpleft, ps.gpright, ps.ball))
+
 	if(Back_Walk)
 	{
 		cout<<"goal x: "<<goal.x<<" y: "<<goal.y<<" ball x: "<<ball.x<<" y: "<<ball.y<<endl;
 		BackWalkX = ((-1.0)*((goal.x-ball.x)/(goal.y-ball.y))*ball.y)+ball.x;
-		if(abs(BackWalkX)<0.005 || abs(BackWalkX)>15 || (goal.y - ball.y)<1.0)
+		if(fabs(BackWalkX)<0.005 || fabs(BackWalkX)>15 || (goal.y - ball.y)<1.0)
 			BackWalkX = -10.0;
 		Near_Obstacle = 0;
 	}
 	if(sqrt(pow(tree[a].x, 2) + pow(tree[a].y, 2))<100)
 	{
-		if(abs(atan(tree[a].y/tree[a].x))*180/PI<10)
+		if(fabs(atan(tree[a].y/tree[a].x))*180/PI<10)
 		{
 			Ignore_Arc = 1;
 		}
-		else if(abs(atan(tree[a].y/tree[a].x))*180/PI>20)
+		else if(fabs(atan(tree[a].y/tree[a].x))*180/PI>20)
 			Ignore_Arc = 0;
 	}
 	else
 	{
-		if(abs(atan(tree[a].y/tree[a].x))*180/PI<10)
+		if(fabs(atan(tree[a].y/tree[a].x))*180/PI<10)
 		{
 			Ignore_Arc = 1;
 		}
-		else if(abs(atan(tree[a].y/tree[a].x))*180/PI>35)
+		else if(fabs(atan(tree[a].y/tree[a].x))*180/PI>35)
 			Ignore_Arc = 0;		
 	}
 
@@ -1256,8 +1261,9 @@ PathReturns Path::path_return(PathStructure ps)
 		tree.no_path_flag=0;
 		return NOPATH;
 	}
-	if(Near_Flag || (sqrt(pow(ball.x, 2) + pow(ball.y, 2)) < 75 && checkLines(ps.gpleft, ps.gpright, ps.ball)))
+	if(Near_Flag || (sqrt(pow(ball.x, 2) + pow(ball.y, 2)) < 150 && checkLines(ps.gpleft, ps.gpright, ps.ball)))
 	{
+		// cout<<"doorient"<<endl;
 		return DOORIENT;
 	}
 	//cout<<"\npath returning \n\nDOWALK\n\n  theta "<<next.theta<< " distance "<<next.r<<endl;

@@ -201,8 +201,8 @@ void BasicBehaviorUpdate::execute()
 
 void BasicBehaviorRotate::execute()
 {
-    p.hdmtr.doRotate();   
     // printf("BasicBehaviorRotate\n");
+    // p.hdmtr.doRotate(); 
     // pthread_mutex_lock(&mutex_pathpacket);
     // printf("locked in behavior rotate\n");
     // pathpackvar.no_of_points=1;

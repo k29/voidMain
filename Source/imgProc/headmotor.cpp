@@ -446,7 +446,7 @@ int HeadMotor::go2state(int state)
 
 void HeadMotor::doRotate()
 {
-	printf("rotating\n");
+	// printf("rotating\n");
 	if(direction == 0)
 	{
 		curr_pos -= MAX_STEP;
@@ -472,7 +472,7 @@ void HeadMotor::doRotate()
 		else
 			direction = 0;
 	}
-	printf("curr_pos: %d\n", curr_pos);
+	// printf("curr_pos: %d\n", curr_pos);
 	set_gp(18, curr_pos);
 }
 

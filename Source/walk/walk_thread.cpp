@@ -72,7 +72,7 @@ double calc_delta_x(double inner_radius , foot step)
 double calc_delta_theta(double inner_radius , foot step)	
 {
 	// double delta_theta = fabs(acos((pow ((pow(inner_radius,2) - pow(step.delta_y,2)), 0.5))/inner_radius))*180/pi;
-	double delta_theta = 0.5*fabs(asin(step.delta_y/inner_radius))*180/pi;
+	double delta_theta = fabs(asin(step.delta_y/inner_radius))*180/pi;
 	return delta_theta;
 }
 
@@ -369,7 +369,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 			{
 				step[count].delta_x = calc_delta_x(inner_radius , step[count]);
 				step[count].delta_theta = calc_delta_theta(inner_radius , step[count]);
-				theta_current += step[count].delta_theta;
+				theta_current += step[count].delta_theta/3.0;
 			}
 			else
 			{
@@ -401,7 +401,7 @@ int footstepmain(double v_initial , double initial_delta_y , int lr ,  foot step
 		if (fabs(step[i].delta_theta)> 30)
 			step[i].delta_theta = 0;
 		// step[i].delta_x = 0;
-		printf ("sno = %d\tDelta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",i,step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
+		// printf ("sno = %d\tDelta_y = %f\tDelta_x = %f\tDelta_theta = %f\tVel_y = %f\n",i,step[i].delta_y,step[i].delta_x,step[i].delta_theta, step[i].vel_y);
 	}
 /*	//FSPMOD CODE
 	for (int i=0; i<no_obstacles; i++)
@@ -556,6 +556,7 @@ void* walk_thread(void*)
 			}
 			else if (pathpackvarlocal.ROTATE)
 			{
+				cout<<"Turning angle (right is positive) "<<(pathpackvarlocal.ROTATE_RIGHT?1:-1)*rad2deg(pathpackvarlocal.theta)<<endl;
 				walk.stopMotion();
 				if (pathpackvarlocal.ROTATE_RIGHT)
 				{
@@ -563,9 +564,7 @@ void* walk_thread(void*)
 				}
 				else
 					walk.turnleft(fabs(rad2deg(pathpackvarlocal.theta)));
-				walk.pathdribble(10, 0, 0, 0);
-				cout<<"Turning angle (right is positive) "<<(pathpackvarlocal.ROTATE_RIGHT?1:-1)*pathpackvarlocal.theta<<endl;
-			}
+				walk.pathdribble(10, 0, 0, 0);			}
 			else if (pathpackvarlocal.BALLFOLLOW)
 			{
 				if (walk.velocity() < max_velocity && walk.velocity() > 0)
